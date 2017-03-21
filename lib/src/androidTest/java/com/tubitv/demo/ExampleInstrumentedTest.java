@@ -1,4 +1,4 @@
-package com.tubitv.media;
+package com.tubitv.demo;
 
 import android.content.Context;
 import android.support.test.InstrumentationRegistry;

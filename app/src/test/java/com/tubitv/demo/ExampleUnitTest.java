@@ -1,4 +1,4 @@
-package com.tubitv.media;
+package com.tubitv.demo;
 
 import org.junit.Test;
 
