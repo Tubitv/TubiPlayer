@@ -11,6 +11,7 @@
     <style name="PlayerTheme" parent="android:Theme.Holo">
         <item name="android:windowNoTitle">true</item>
         <item name="android:windowBackground">@android:color/black</item>
+        <item name="android:keepScreenOn">true</item>
     </style>
 
 </resources>
