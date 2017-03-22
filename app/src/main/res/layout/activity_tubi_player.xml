@@ -5,9 +5,10 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.tubitv.media.TubiPlayerActivity">
+    tools:context="com.tubitv.demo.DemoActivity">
 
-    <com.google.android.exoplayer2.ui.SimpleExoPlayerView android:id="@+id/simple_exoplayer"
+    <com.tubitv.media.views.TubiExoPlayerView
+        android:id="@+id/tubitv_player"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:layout_constraintBottom_toBottomOf="parent"

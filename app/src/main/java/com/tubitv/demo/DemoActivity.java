@@ -1,4 +1,4 @@
-package com.tubitv.media;
+package com.tubitv.demo;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -6,12 +6,11 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.text.TextUtils;
+import android.view.View;
 
 import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.DefaultLoadControl;
-import com.google.android.exoplayer2.ExoPlayerFactory;
 import com.google.android.exoplayer2.LoadControl;
-import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.extractor.DefaultExtractorsFactory;
 import com.google.android.exoplayer2.source.ConcatenatingMediaSource;
 import com.google.android.exoplayer2.source.ExtractorMediaSource;
@@ -26,18 +25,17 @@ import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
 import com.google.android.exoplayer2.trackselection.MappingTrackSelector;
 import com.google.android.exoplayer2.trackselection.TrackSelection;
 import com.google.android.exoplayer2.trackselection.TrackSelector;
-import com.google.android.exoplayer2.ui.SimpleExoPlayerView;
 import com.google.android.exoplayer2.upstream.DataSource;
 import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter;
 import com.google.android.exoplayer2.util.Util;
+import com.tubitv.media.MediaHelper;
+import com.tubitv.media.TubiExoPlayer;
+import com.tubitv.media.views.TubiExoPlayerView;
 
-/**
- * Created by stoyan on 3/22/17.
- */
-public class TubiPlayerActivity extends Activity {
-    private SimpleExoPlayer mExoPlayer;
+public class DemoActivity extends Activity {
+    private TubiExoPlayer mTubiExoPlayer;
     private Handler mMainHandler;
-    private SimpleExoPlayerView mSimpleExoPlayerView;
+    private TubiExoPlayerView mTubiPlayerView;
     private DataSource.Factory mMediaDataSourceFactory;
     private TrackSelector mTrackSelector;
     private EventLogger mEventLogger;
@@ -49,6 +47,14 @@ public class TubiPlayerActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        View decorView = getWindow().getDecorView();
+        // Hide both the navigation bar and the status bar.
+        // SYSTEM_UI_FLAG_FULLSCREEN is only available on Android 4.1 and higher, but as
+        // a general rule, you should design your app to hide the status bar whenever you
+        // hide the navigation bar.
+        int uiOptions = View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
+                | View.SYSTEM_UI_FLAG_FULLSCREEN;
+        decorView.setSystemUiVisibility(uiOptions);
         shouldAutoPlay = true;
         mMediaDataSourceFactory = buildDataSourceFactory(true);
         initLayout();
@@ -75,7 +81,7 @@ public class TubiPlayerActivity extends Activity {
     @Override
     public void onResume() {
         super.onResume();
-        if ((Util.SDK_INT <= 23 || mExoPlayer == null)) {
+        if ((Util.SDK_INT <= 23 || mTubiExoPlayer == null)) {
             setupExo();
         }
     }
@@ -98,9 +104,15 @@ public class TubiPlayerActivity extends Activity {
 
     private void initLayout() {
         setContentView(R.layout.activity_tubi_player);
-        mSimpleExoPlayerView = (SimpleExoPlayerView) findViewById(R.id.simple_exoplayer);
-//        mSimpleExoPlayerView.setControllerVisibilityListener(this);
-        mSimpleExoPlayerView.requestFocus();
+        mTubiPlayerView = (TubiExoPlayerView) findViewById(R.id.tubitv_player);
+//        mTubiPlayerView.setControllerVisibilityListener(this);
+        mTubiPlayerView.requestFocus();
+        mTubiPlayerView.addOnLayoutChangeListener(new View.OnLayoutChangeListener() {
+            @Override
+            public void onLayoutChange(View v, int left, int top, int right, int bottom, int oldLeft, int oldTop, int oldRight, int oldBottom) {
+
+            }
+        });
     }
 
     private void setupExo() {
@@ -114,18 +126,18 @@ public class TubiPlayerActivity extends Activity {
         // 2. Create a default LoadControl
         LoadControl loadControl = new DefaultLoadControl();
 
-        // 3. Create the mExoPlayer
-        mExoPlayer =
-                ExoPlayerFactory.newSimpleInstance(this, mTrackSelector, loadControl);
+        // 3. Create the mTubiExoPlayer
+        mTubiExoPlayer =
+                TubiExoPlayer.newInstance(this, mTrackSelector, loadControl);
 
         mEventLogger = new EventLogger((MappingTrackSelector) mTrackSelector);
-        mExoPlayer.addListener(mEventLogger);
-        mExoPlayer.setAudioDebugListener(mEventLogger);
-        mExoPlayer.setVideoDebugListener(mEventLogger);
-        mExoPlayer.setMetadataOutput(mEventLogger);
+        mTubiExoPlayer.addListener(mEventLogger);
+        mTubiExoPlayer.setAudioDebugListener(mEventLogger);
+        mTubiExoPlayer.setVideoDebugListener(mEventLogger);
+        mTubiExoPlayer.setMetadataOutput(mEventLogger);
 
-        mSimpleExoPlayerView.setPlayer(mExoPlayer);
-        mExoPlayer.setPlayWhenReady(shouldAutoPlay);
+        mTubiPlayerView.setPlayer(mTubiExoPlayer);
+        mTubiExoPlayer.setPlayWhenReady(shouldAutoPlay);
 
         //fake media
         Uri[] uris = new Uri[1];
@@ -139,14 +151,14 @@ public class TubiPlayerActivity extends Activity {
         mediaSources[0] = buildMediaSource(uris[0], extensions[0]);
         MediaSource mediaSource = mediaSources.length == 1 ? mediaSources[0]
                 : new ConcatenatingMediaSource(mediaSources);
-        mExoPlayer.prepare(mediaSource, true, false);
+        mTubiExoPlayer.prepare(mediaSource, true, false);
     }
 
     private void releasePlayer() {
-        if (mExoPlayer != null) {
-            shouldAutoPlay = mExoPlayer.getPlayWhenReady();
-            mExoPlayer.release();
-            mExoPlayer = null;
+        if (mTubiExoPlayer != null) {
+            shouldAutoPlay = mTubiExoPlayer.getPlayWhenReady();
+            mTubiExoPlayer.release();
+            mTubiExoPlayer = null;
             mTrackSelector = null;
         }
     }

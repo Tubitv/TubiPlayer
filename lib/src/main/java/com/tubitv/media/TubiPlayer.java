@@ -17,8 +17,7 @@ public class TubiPlayer extends SimpleExoPlayer {
                       DrmSessionManager<FrameworkMediaCrypto> drmSessionManager,
                       @ExtensionRendererMode int extensionRendererMode, long allowedVideoJoiningTimeMs) {
         super(context, trackSelector, loadControl, drmSessionManager, extensionRendererMode, allowedVideoJoiningTimeMs);
-
-
-
     }
+
+
 }
