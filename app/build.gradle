@@ -22,9 +22,6 @@ android {
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
 
-    compile 'com.android.support:appcompat-v7:25.3.0'
-    compile 'com.android.support.constraint:constraint-layout:1.0.0-alpha9'
-
     compile project(':lib')
 
     androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
