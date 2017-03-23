@@ -37,7 +37,7 @@
             android:progress="50"/>
 
         <TextView
-            android:id="@+id/view_tubi_play_time"
+            android:id="@+id/view_tubi_play_progress_time"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentLeft="true"

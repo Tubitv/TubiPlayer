@@ -71,23 +71,13 @@ public class TubiPlaybackControlView extends FrameLayout {
         }
 
     };
-
-    public static final int DEFAULT_FAST_FORWARD_MS = 15000;
-    public static final int DEFAULT_REWIND_MS = 5000;
     public static final int DEFAULT_SHOW_TIMEOUT_MS = 5000;
-
     private static final int PROGRESS_BAR_MAX = 1000;
-    private static final long MAX_POSITION_FOR_SEEK_TO_PREVIOUS = 3000;
 
+    private final TextView mPlayProgressTime;
     private final ComponentListener componentListener;
-    private final View previousButton;
-    private final View nextButton;
     private final View playButton;
     private final View pauseButton;
-    private final View fastForwardButton;
-    private final View rewindButton;
-    private final TextView durationView;
-    private final TextView positionView;
     private final SeekBar progressBar;
     private final StringBuilder formatBuilder;
     private final Formatter formatter;
@@ -99,8 +89,6 @@ public class TubiPlaybackControlView extends FrameLayout {
 
     private boolean isAttachedToWindow;
     private boolean dragging;
-    private int rewindMs;
-    private int fastForwardMs;
     private int showTimeoutMs;
     private long hideAtMs;
 
@@ -130,19 +118,14 @@ public class TubiPlaybackControlView extends FrameLayout {
         super(context, attrs, defStyleAttr);
 
         int controllerLayoutId = R.layout.view_tubi_playback_control;
-        rewindMs = DEFAULT_REWIND_MS;
-        fastForwardMs = DEFAULT_FAST_FORWARD_MS;
         showTimeoutMs = DEFAULT_SHOW_TIMEOUT_MS;
         if (attrs != null) {
             TypedArray a = context.getTheme().obtainStyledAttributes(attrs,
-                    R.styleable.PlaybackControlView, 0, 0);
+                    R.styleable.TubiPlaybackControlView, 0, 0);
             try {
-                rewindMs = a.getInt(R.styleable.PlaybackControlView_rewind_increment, rewindMs);
-                fastForwardMs = a.getInt(R.styleable.PlaybackControlView_fastforward_increment,
-                        fastForwardMs);
-                showTimeoutMs = a.getInt(R.styleable.PlaybackControlView_show_timeout, showTimeoutMs);
-                controllerLayoutId = a.getResourceId(R.styleable.PlaybackControlView_controller_layout_id,
-                        controllerLayoutId);
+                showTimeoutMs = a.getInt(R.styleable.TubiPlaybackControlView_show_timeout_ms, showTimeoutMs);
+//                controllerLayoutId = a.getResourceId(R.styleable.PlaybackControlView_controller_layout_id,
+//                        controllerLayoutId);
             } finally {
                 a.recycle();
             }
@@ -156,8 +139,6 @@ public class TubiPlaybackControlView extends FrameLayout {
         LayoutInflater.from(context).inflate(controllerLayoutId, this);
         setDescendantFocusability(FOCUS_AFTER_DESCENDANTS);
 
-        durationView = (TextView) findViewById(R.id.exo_duration);
-        positionView = (TextView) findViewById(R.id.exo_position);
         progressBar = (SeekBar) findViewById(R.id.exo_progress);
         if (progressBar != null) {
             progressBar.setOnSeekBarChangeListener(componentListener);
@@ -171,22 +152,8 @@ public class TubiPlaybackControlView extends FrameLayout {
         if (pauseButton != null) {
             pauseButton.setOnClickListener(componentListener);
         }
-        previousButton = findViewById(R.id.exo_prev);
-        if (previousButton != null) {
-            previousButton.setOnClickListener(componentListener);
-        }
-        nextButton = findViewById(R.id.exo_next);
-        if (nextButton != null) {
-            nextButton.setOnClickListener(componentListener);
-        }
-        rewindButton = findViewById(R.id.exo_rew);
-        if (rewindButton != null) {
-            rewindButton.setOnClickListener(componentListener);
-        }
-        fastForwardButton = findViewById(R.id.exo_ffwd);
-        if (fastForwardButton != null) {
-            fastForwardButton.setOnClickListener(componentListener);
-        }
+
+        mPlayProgressTime = (TextView) findViewById(R.id.view_tubi_play_progress_time);
     }
 
     /**
@@ -232,28 +199,6 @@ public class TubiPlaybackControlView extends FrameLayout {
      */
     public void setSeekDispatcher(SeekDispatcher seekDispatcher) {
         this.seekDispatcher = seekDispatcher == null ? DEFAULT_SEEK_DISPATCHER : seekDispatcher;
-    }
-
-    /**
-     * Sets the rewind increment in milliseconds.
-     *
-     * @param rewindMs The rewind increment in milliseconds. A non-positive value will cause the
-     *     rewind button to be disabled.
-     */
-    public void setRewindIncrementMs(int rewindMs) {
-        this.rewindMs = rewindMs;
-        updateNavigation();
-    }
-
-    /**
-     * Sets the fast forward increment in milliseconds.
-     *
-     * @param fastForwardMs The fast forward increment in milliseconds. A non-positive value will
-     *     cause the fast forward button to be disabled.
-     */
-    public void setFastForwardIncrementMs(int fastForwardMs) {
-        this.fastForwardMs = fastForwardMs;
-        updateNavigation();
     }
 
     /**
@@ -367,14 +312,7 @@ public class TubiPlaybackControlView extends FrameLayout {
             int currentWindowIndex = player.getCurrentWindowIndex();
             currentTimeline.getWindow(currentWindowIndex, currentWindow);
             isSeekable = currentWindow.isSeekable;
-            enablePrevious = currentWindowIndex > 0 || isSeekable || !currentWindow.isDynamic;
-            enableNext = (currentWindowIndex < currentTimeline.getWindowCount() - 1)
-                    || currentWindow.isDynamic;
         }
-        setButtonEnabled(enablePrevious , previousButton);
-        setButtonEnabled(enableNext, nextButton);
-        setButtonEnabled(fastForwardMs > 0 && isSeekable, fastForwardButton);
-        setButtonEnabled(rewindMs > 0 && isSeekable, rewindButton);
         if (progressBar != null) {
             progressBar.setEnabled(isSeekable);
         }
@@ -386,12 +324,15 @@ public class TubiPlaybackControlView extends FrameLayout {
         }
         long duration = player == null ? 0 : player.getDuration();
         long position = player == null ? 0 : player.getCurrentPosition();
-        if (durationView != null) {
-            durationView.setText(stringForTime(duration));
+        if(mPlayProgressTime != null){
+            mPlayProgressTime.setText(progressBarValue(position) + "/" + stringForTime(duration));
         }
-        if (positionView != null && !dragging) {
-            positionView.setText(stringForTime(position));
-        }
+//        if (durationView != null) {
+//            durationView.setText(stringForTime(duration));
+//        }
+//        if (positionView != null && !dragging) {
+//            positionView.setText(stringForTime(position));
+//        }
 
         if (progressBar != null) {
             if (!dragging) {
@@ -469,48 +410,6 @@ public class TubiPlaybackControlView extends FrameLayout {
         return duration == C.TIME_UNSET ? 0 : ((duration * progress) / PROGRESS_BAR_MAX);
     }
 
-    private void previous() {
-        Timeline currentTimeline = player.getCurrentTimeline();
-        if (currentTimeline.isEmpty()) {
-            return;
-        }
-        int currentWindowIndex = player.getCurrentWindowIndex();
-        currentTimeline.getWindow(currentWindowIndex, currentWindow);
-        if (currentWindowIndex > 0 && (player.getCurrentPosition() <= MAX_POSITION_FOR_SEEK_TO_PREVIOUS
-                || (currentWindow.isDynamic && !currentWindow.isSeekable))) {
-            seekTo(currentWindowIndex - 1, C.TIME_UNSET);
-        } else {
-            seekTo(0);
-        }
-    }
-
-    private void next() {
-        Timeline currentTimeline = player.getCurrentTimeline();
-        if (currentTimeline.isEmpty()) {
-            return;
-        }
-        int currentWindowIndex = player.getCurrentWindowIndex();
-        if (currentWindowIndex < currentTimeline.getWindowCount() - 1) {
-            seekTo(currentWindowIndex + 1, C.TIME_UNSET);
-        } else if (currentTimeline.getWindow(currentWindowIndex, currentWindow, false).isDynamic) {
-            seekTo(currentWindowIndex, C.TIME_UNSET);
-        }
-    }
-
-    private void rewind() {
-        if (rewindMs <= 0) {
-            return;
-        }
-        seekTo(Math.max(player.getCurrentPosition() - rewindMs, 0));
-    }
-
-    private void fastForward() {
-        if (fastForwardMs <= 0) {
-            return;
-        }
-        seekTo(Math.min(player.getCurrentPosition() + fastForwardMs, player.getDuration()));
-    }
-
     private void seekTo(long positionMs) {
         seekTo(player.getCurrentWindowIndex(), positionMs);
     }
@@ -571,10 +470,8 @@ public class TubiPlaybackControlView extends FrameLayout {
         if (event.getAction() == KeyEvent.ACTION_DOWN) {
             switch (keyCode) {
                 case KeyEvent.KEYCODE_MEDIA_FAST_FORWARD:
-                    fastForward();
                     break;
                 case KeyEvent.KEYCODE_MEDIA_REWIND:
-                    rewind();
                     break;
                 case KeyEvent.KEYCODE_MEDIA_PLAY_PAUSE:
                     player.setPlayWhenReady(!player.getPlayWhenReady());
@@ -586,10 +483,8 @@ public class TubiPlaybackControlView extends FrameLayout {
                     player.setPlayWhenReady(false);
                     break;
                 case KeyEvent.KEYCODE_MEDIA_NEXT:
-                    next();
                     break;
                 case KeyEvent.KEYCODE_MEDIA_PREVIOUS:
-                    previous();
                     break;
                 default:
                     break;
@@ -622,8 +517,8 @@ public class TubiPlaybackControlView extends FrameLayout {
         public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
             if (fromUser) {
                 long position = positionValue(progress);
-                if (positionView != null) {
-                    positionView.setText(stringForTime(position));
+                if (mPlayProgressTime != null) {
+                    mPlayProgressTime.setText(stringForTime(position));
                 }
                 if (player != null && !dragging) {
                     seekTo(position);
@@ -676,15 +571,7 @@ public class TubiPlaybackControlView extends FrameLayout {
         @Override
         public void onClick(View view) {
             if (player != null) {
-                if (nextButton == view) {
-                    next();
-                } else if (previousButton == view) {
-                    previous();
-                } else if (fastForwardButton == view) {
-                    fastForward();
-                } else if (rewindButton == view) {
-                    rewind();
-                } else if (playButton == view) {
+                if (playButton == view) {
                     player.setPlayWhenReady(true);
                 } else if (pauseButton == view) {
                     player.setPlayWhenReady(false);
