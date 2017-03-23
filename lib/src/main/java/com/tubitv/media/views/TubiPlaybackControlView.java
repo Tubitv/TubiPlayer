@@ -102,7 +102,7 @@ public class TubiPlaybackControlView extends FrameLayout {
     private final Runnable hideAction = new Runnable() {
         @Override
         public void run() {
-            //hide();
+            hide();
         }
     };
 
@@ -124,8 +124,6 @@ public class TubiPlaybackControlView extends FrameLayout {
                     R.styleable.TubiPlaybackControlView, 0, 0);
             try {
                 showTimeoutMs = a.getInt(R.styleable.TubiPlaybackControlView_show_timeout_ms, showTimeoutMs);
-//                controllerLayoutId = a.getResourceId(R.styleable.PlaybackControlView_controller_layout_id,
-//                        controllerLayoutId);
             } finally {
                 a.recycle();
             }
@@ -230,7 +228,6 @@ public class TubiPlaybackControlView extends FrameLayout {
                 visibilityListener.onVisibilityChange(getVisibility());
             }
             updateAll();
-//            requestPlayPauseFocus();
         }
         // Call hideAfterTimeout even if already visible to reset the timeout.
         hideAfterTimeout();
