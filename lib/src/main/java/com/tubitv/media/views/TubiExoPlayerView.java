@@ -51,7 +51,7 @@ public class TubiExoPlayerView extends FrameLayout {
     private final View surfaceView;
     private final ImageView artworkView;
     private final SubtitleView subtitleView;
-    private final PlaybackControlView controller;
+    private final TubiPlaybackControlView controller;
     private final ComponentListener componentListener;
     private final FrameLayout overlayFrameLayout;
 
@@ -146,7 +146,7 @@ public class TubiExoPlayerView extends FrameLayout {
         if (controllerPlaceholder != null) {
             // Note: rewindMs and fastForwardMs are passed via attrs, so we don't need to make explicit
             // calls to set them.
-            this.controller = new PlaybackControlView(context, attrs);
+            this.controller = new TubiPlaybackControlView(context, attrs);
             controller.setLayoutParams(controllerPlaceholder.getLayoutParams());
             ViewGroup parent = ((ViewGroup) controllerPlaceholder.getParent());
             int controllerIndex = parent.indexOfChild(controllerPlaceholder);
@@ -343,7 +343,7 @@ public class TubiExoPlayerView extends FrameLayout {
      *
      * @param listener The listener to be notified about visibility changes.
      */
-    public void setControllerVisibilityListener(PlaybackControlView.VisibilityListener listener) {
+    public void setControllerVisibilityListener(TubiPlaybackControlView.VisibilityListener listener) {
         Assertions.checkState(controller != null);
         controller.setVisibilityListener(listener);
     }
@@ -354,7 +354,7 @@ public class TubiExoPlayerView extends FrameLayout {
      * @param seekDispatcher The {@link com.google.android.exoplayer2.ui.PlaybackControlView.SeekDispatcher}, or null to use
      *     {@link PlaybackControlView#DEFAULT_SEEK_DISPATCHER}.
      */
-    public void setSeekDispatcher(PlaybackControlView.SeekDispatcher seekDispatcher) {
+    public void setSeekDispatcher(TubiPlaybackControlView.SeekDispatcher seekDispatcher) {
         Assertions.checkState(controller != null);
         controller.setSeekDispatcher(seekDispatcher);
     }
