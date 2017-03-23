@@ -9,6 +9,7 @@ import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.FrameLayout;
+import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
@@ -76,9 +77,8 @@ public class TubiPlaybackControlView extends FrameLayout {
 
     private final TextView mPlayProgressTime;
     private final ComponentListener componentListener;
-    private final View playButton;
-    private final View pauseButton;
-    private final SeekBar progressBar;
+    private final ImageView mPlayToggleView;
+    private final SeekBar mProgressBar;
     private final StringBuilder formatBuilder;
     private final Formatter formatter;
     private final Timeline.Window currentWindow;
@@ -102,7 +102,7 @@ public class TubiPlaybackControlView extends FrameLayout {
     private final Runnable hideAction = new Runnable() {
         @Override
         public void run() {
-            hide();
+            //hide();
         }
     };
 
@@ -139,18 +139,14 @@ public class TubiPlaybackControlView extends FrameLayout {
         LayoutInflater.from(context).inflate(controllerLayoutId, this);
         setDescendantFocusability(FOCUS_AFTER_DESCENDANTS);
 
-        progressBar = (SeekBar) findViewById(R.id.exo_progress);
-        if (progressBar != null) {
-            progressBar.setOnSeekBarChangeListener(componentListener);
-            progressBar.setMax(PROGRESS_BAR_MAX);
+        mProgressBar = (SeekBar) findViewById(R.id.view_tubi_play_progress);
+        if (mProgressBar != null) {
+            mProgressBar.setOnSeekBarChangeListener(componentListener);
+            mProgressBar.setMax(PROGRESS_BAR_MAX);
         }
-        playButton = findViewById(R.id.exo_play);
-        if (playButton != null) {
-            playButton.setOnClickListener(componentListener);
-        }
-        pauseButton = findViewById(R.id.exo_pause);
-        if (pauseButton != null) {
-            pauseButton.setOnClickListener(componentListener);
+        mPlayToggleView = (ImageView) findViewById(R.id.view_tubi_play_toggle_control);
+        if (mPlayToggleView != null) {
+            mPlayToggleView.setOnClickListener(componentListener);
         }
 
         mPlayProgressTime = (TextView) findViewById(R.id.view_tubi_play_progress_time);
@@ -234,7 +230,7 @@ public class TubiPlaybackControlView extends FrameLayout {
                 visibilityListener.onVisibilityChange(getVisibility());
             }
             updateAll();
-            requestPlayPauseFocus();
+//            requestPlayPauseFocus();
         }
         // Call hideAfterTimeout even if already visible to reset the timeout.
         hideAfterTimeout();
@@ -284,18 +280,14 @@ public class TubiPlaybackControlView extends FrameLayout {
         if (!isVisible() || !isAttachedToWindow) {
             return;
         }
-        boolean requestPlayPauseFocus = false;
+//        boolean requestPlayPauseFocus = false;
         boolean playing = player != null && player.getPlayWhenReady();
-        if (playButton != null) {
-            requestPlayPauseFocus |= playing && playButton.isFocused();
-            playButton.setVisibility(playing ? View.GONE : View.VISIBLE);
-        }
-        if (pauseButton != null) {
-            requestPlayPauseFocus |= !playing && pauseButton.isFocused();
-            pauseButton.setVisibility(!playing ? View.GONE : View.VISIBLE);
-        }
-        if (requestPlayPauseFocus) {
-            requestPlayPauseFocus();
+        if (mPlayToggleView != null) {
+            if(playing){
+                mPlayToggleView.setImageResource(R.drawable.view_tubi_controler_pause_ic);
+            }else{
+                mPlayToggleView.setImageResource(R.drawable.view_tubi_controller_play_ic);
+            }
         }
     }
 
@@ -306,15 +298,13 @@ public class TubiPlaybackControlView extends FrameLayout {
         Timeline currentTimeline = player != null ? player.getCurrentTimeline() : null;
         boolean haveNonEmptyTimeline = currentTimeline != null && !currentTimeline.isEmpty();
         boolean isSeekable = false;
-        boolean enablePrevious = false;
-        boolean enableNext = false;
         if (haveNonEmptyTimeline) {
             int currentWindowIndex = player.getCurrentWindowIndex();
             currentTimeline.getWindow(currentWindowIndex, currentWindow);
             isSeekable = currentWindow.isSeekable;
         }
-        if (progressBar != null) {
-            progressBar.setEnabled(isSeekable);
+        if (mProgressBar != null) {
+            mProgressBar.setEnabled(isSeekable);
         }
     }
 
@@ -325,22 +315,15 @@ public class TubiPlaybackControlView extends FrameLayout {
         long duration = player == null ? 0 : player.getDuration();
         long position = player == null ? 0 : player.getCurrentPosition();
         if(mPlayProgressTime != null){
-            mPlayProgressTime.setText(progressBarValue(position) + "/" + stringForTime(duration));
+            mPlayProgressTime.setText(stringForTime(position) + "/" + stringForTime(duration));
         }
-//        if (durationView != null) {
-//            durationView.setText(stringForTime(duration));
-//        }
-//        if (positionView != null && !dragging) {
-//            positionView.setText(stringForTime(position));
-//        }
 
-        if (progressBar != null) {
+        if (mProgressBar != null) {
             if (!dragging) {
-                progressBar.setProgress(progressBarValue(position));
+                mProgressBar.setProgress(progressBarValue(position));
             }
             long bufferedPosition = player == null ? 0 : player.getBufferedPosition();
-            progressBar.setSecondaryProgress(progressBarValue(bufferedPosition));
-            // Remove scheduled updates.
+            mProgressBar.setSecondaryProgress(progressBarValue(bufferedPosition));
         }
         removeCallbacks(updateProgressAction);
         // Schedule an update if necessary.
@@ -356,15 +339,6 @@ public class TubiPlaybackControlView extends FrameLayout {
                 delayMs = 1000;
             }
             postDelayed(updateProgressAction, delayMs);
-        }
-    }
-
-    private void requestPlayPauseFocus() {
-        boolean playing = player != null && player.getPlayWhenReady();
-        if (!playing && playButton != null) {
-            playButton.requestFocus();
-        } else if (playing && pauseButton != null) {
-            pauseButton.requestFocus();
         }
     }
 
@@ -518,7 +492,8 @@ public class TubiPlaybackControlView extends FrameLayout {
             if (fromUser) {
                 long position = positionValue(progress);
                 if (mPlayProgressTime != null) {
-                    mPlayProgressTime.setText(stringForTime(position));
+                    long duration = player == null ? 0 : player.getDuration();
+                    mPlayProgressTime.setText(stringForTime(position) + "/" + stringForTime(duration));
                 }
                 if (player != null && !dragging) {
                     seekTo(position);
@@ -571,11 +546,8 @@ public class TubiPlaybackControlView extends FrameLayout {
         @Override
         public void onClick(View view) {
             if (player != null) {
-                if (playButton == view) {
-                    player.setPlayWhenReady(true);
-                } else if (pauseButton == view) {
-                    player.setPlayWhenReady(false);
-                }
+                boolean playing = player.getPlayWhenReady();
+                player.setPlayWhenReady(!playing);
             }
             hideAfterTimeout();
         }

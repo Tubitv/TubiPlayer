@@ -4,27 +4,27 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@android:color/black"
-    android:padding="25dp"
-    android:gravity="bottom">
+    android:layout_height="wrap_content"
+    android:layout_gravity="bottom"
+    android:background="@android:color/transparent"
+    android:padding="25dp">
 
 
     <ImageButton
-        android:id="@+id/view_tubi_play_control"
+        android:id="@+id/view_tubi_play_toggle_control"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:background="@android:color/transparent"
-        android:src="@drawable/view_tubi_play_icon"/>
+        android:src="@drawable/view_tubi_controller_play_ic"/>
 
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingLeft="10dp"
-        android:layout_alignBottom="@+id/view_tubi_play_control"
-        android:layout_alignTop="@+id/view_tubi_play_control"
-        android:layout_toRightOf="@+id/view_tubi_play_control"
+        android:layout_alignBottom="@+id/view_tubi_play_toggle_control"
+        android:layout_alignTop="@+id/view_tubi_play_toggle_control"
+        android:layout_toRightOf="@+id/view_tubi_play_toggle_control"
         android:gravity="center_vertical">
 
         <SeekBar
