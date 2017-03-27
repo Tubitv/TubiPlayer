@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="view_tubi_player_control_margin">32dp</dimen>
+    <dimen name="view_tubi_player_control_text_size">13sp</dimen>
+</resources>

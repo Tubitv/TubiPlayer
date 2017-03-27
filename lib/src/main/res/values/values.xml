@@ -13,7 +13,7 @@
         <attr name="controller_layout_id"/>
     </declare-styleable>
 
-    <declare-styleable name="TubiPlaybackControlView">
+    <declare-styleable name="TubiPlayerControlView">
         <attr name="show_timeout_ms" format="integer"/>
     </declare-styleable>
 </resources>

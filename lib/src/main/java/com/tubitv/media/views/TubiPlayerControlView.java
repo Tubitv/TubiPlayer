@@ -28,7 +28,7 @@ import java.util.Locale;
 /**
  * Created by stoyan on 3/23/17.
  */
-public class TubiPlaybackControlView extends FrameLayout {
+public class TubiPlayerControlView extends FrameLayout {
 
     /**
      * Listener to be notified about changes of the visibility of the UI control.
@@ -106,24 +106,24 @@ public class TubiPlaybackControlView extends FrameLayout {
         }
     };
 
-    public TubiPlaybackControlView(Context context) {
+    public TubiPlayerControlView(Context context) {
         this(context, null);
     }
 
-    public TubiPlaybackControlView(Context context, AttributeSet attrs) {
+    public TubiPlayerControlView(Context context, AttributeSet attrs) {
         this(context, attrs, 0);
     }
 
-    public TubiPlaybackControlView(Context context, AttributeSet attrs, int defStyleAttr) {
+    public TubiPlayerControlView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
 
-        int controllerLayoutId = R.layout.view_tubi_playback_control;
+        int controllerLayoutId = R.layout.view_tubi_player_control;
         showTimeoutMs = DEFAULT_SHOW_TIMEOUT_MS;
         if (attrs != null) {
             TypedArray a = context.getTheme().obtainStyledAttributes(attrs,
-                    R.styleable.TubiPlaybackControlView, 0, 0);
+                    R.styleable.TubiPlayerControlView, 0, 0);
             try {
-                showTimeoutMs = a.getInt(R.styleable.TubiPlaybackControlView_show_timeout_ms, showTimeoutMs);
+                showTimeoutMs = a.getInt(R.styleable.TubiPlayerControlView_show_timeout_ms, showTimeoutMs);
             } finally {
                 a.recycle();
             }
@@ -281,9 +281,9 @@ public class TubiPlaybackControlView extends FrameLayout {
         boolean playing = player != null && player.getPlayWhenReady();
         if (mPlayToggleView != null) {
             if(playing){
-                mPlayToggleView.setImageResource(R.drawable.view_tubi_controler_pause_ic);
+                mPlayToggleView.setImageResource(R.drawable.view_tubi_player_controller_pause_ic);
             }else{
-                mPlayToggleView.setImageResource(R.drawable.view_tubi_controller_play_ic);
+                mPlayToggleView.setImageResource(R.drawable.view_tubi_player_controller_play_ic);
             }
         }
     }

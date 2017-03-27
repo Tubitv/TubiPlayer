@@ -134,7 +134,7 @@ public class DemoActivity extends Activity {
         String[] extensions = new String[1];
 //        uris[0] = Uri.parse("http://www.youtube.com/api/manifest/dash/id/bf5bb2419360daf1/source/youtube?as=fmp4_audio_clear,fmp4_sd_hd_clear&sparams=ip,ipbits,expire,source,id,as&ip=0.0.0.0&ipbits=0&expire=19000000000&signature=51AF5F39AB0CEC3E5497CD9C900EBFEAECCCB5C7.8506521BFC350652163895D4C26DEE124209AA9E&key=ik0");
 //        uris[0] = Uri.parse("http://c11.adrise.tv/v2/sources/content-owners/marvista/342067/v201701141225-1280x714-,439,1099,1714,2062,2943,k.mp4.m3u8?csQ-b00i5q5qYJ0FgNlUslZ35UTdh4_GBHHAGq_-CMH04cDQXJQ76NFQK2pYpj87");
-        uris[0] = Uri.parse("http://c11.adrise.tv/v2/sources/content-owners/drg/339364/v201701060933-1280x714-,331,928,1499,1899,2793,k.mp4.m3u8?G6PKdkDvQo26ic-JCg5WXIwBqfC3TSq4XLE4e71q-7n1Aid-OX84rCvGOIhaPLjR");
+        uris[0] = Uri.parse("http://c11.adrise.tv/v2/sources/content-owners/mgm/302243/v1202121349-1280x716-HD-,465,1152,1593,2437,4182,k.mp4.m3u8?4Z4u2g-EeVvh9F44WWSjl5c8q_7aSCJ3S42Cd4_ivhYV0f_XSw2BK4eiUXkuxfhe");
 //        uris[0] = Uri.parse("http://c11.adrise.tv/v2/sources/content-owners/marvista/342067/v201701141225-1280x714-2943k.mp4.m3u8?csQ-b00i5q5qYJ0FgNlUslZ35UTdh4_GBHHAGq_-CMH04cDQXJQ76NFQK2pYpj87");
         extensions[0] = "m3u8";
 //        extensions[0] = C.TYPE_HLS;
