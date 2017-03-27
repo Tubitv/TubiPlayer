@@ -1,5 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <dimen name="view_tubi_player_control_margin">32dp</dimen>
-    <dimen name="view_tubi_player_control_text_size">13sp</dimen>
+    <dimen name="view_tubi_controller_margin">32dp</dimen>
+    <dimen name="view_tubi_controller_text_size">13sp</dimen>
+    <dimen name="view_tubi_controller_play_toggle_size">35dp</dimen>
+    <dimen name="view_tubi_controller_play_padding">5dp</dimen>
+    <dimen name="view_tubi_controller_seek_bar_layout_margin_left">10dp</dimen>
+    <dimen name="view_tubi_controller_seek_bar_layout_margin_right">5dp</dimen>
+    <dimen name="view_tubi_controller_seek_bar_padding_horizontal">9dp</dimen>
+    <dimen name="view_tubi_controller_seek_bar_padding_vertical">6dp</dimen>
+    <dimen name="view_tubi_controller_time_position_layout_margin_top">22dp</dimen>
+    <dimen name="view_tubi_controller_options_layout_margin_top">22dp</dimen>
+    <dimen name="view_tubi_controller_options_button_width">35dp</dimen>
+    <dimen name="view_tubi_controller_options_height">19dp</dimen>
+    <dimen name="view_tubi_controller_options_captions_button_margin_right">7dp</dimen>
+    <dimen name="view_tubi_controller_video_button_margin_left">10dp</dimen>
+    <dimen name="view_tubi_controller_video_button_margin_right">5dp</dimen>
+    <dimen name="view_tubi_controller_video_button_margin_top">10dp</dimen>
+    <dimen name="view_tubi_controller_height">54dp</dimen>
+    <dimen name="view_tubi_controller_time_position_layout_margin_left" >7.5dp</dimen>
+    <dimen name="view_tubi_controller_options_layout_margin_right">8.5dp</dimen>
+    <dimen name="view_tubi_controller_video_button_width">26.6dp</dimen>
+    <dimen name="view_tubi_controller_video_button_height">26.4dp</dimen>
+
 </resources>
