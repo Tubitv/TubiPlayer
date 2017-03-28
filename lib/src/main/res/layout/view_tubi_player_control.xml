@@ -40,17 +40,6 @@
             android:paddingRight="@dimen/view_tubi_controller_seek_bar_padding_horizontal"
             android:paddingTop="@dimen/view_tubi_controller_seek_bar_padding_vertical"/>
 
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"
-            android:layout_marginLeft="@dimen/view_tubi_controller_time_position_layout_margin_left"
-            android:layout_marginTop="@dimen/view_tubi_controller_time_position_layout_margin_top"
-            android:orientation="horizontal">
-
-
-        </LinearLayout>
-
         <TextView
             android:id="@+id/view_tubi_controller_play_progress_time"
             android:layout_width="wrap_content"

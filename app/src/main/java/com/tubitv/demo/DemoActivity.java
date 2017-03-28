@@ -2,17 +2,23 @@ package com.tubitv.demo;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.text.TextUtils;
 import android.view.View;
 
-import com.google.android.exoplayer2.*;
+import com.google.android.exoplayer2.C;
+import com.google.android.exoplayer2.DefaultLoadControl;
+import com.google.android.exoplayer2.Format;
+import com.google.android.exoplayer2.LoadControl;
 import com.google.android.exoplayer2.extractor.DefaultExtractorsFactory;
 import com.google.android.exoplayer2.source.ConcatenatingMediaSource;
 import com.google.android.exoplayer2.source.ExtractorMediaSource;
 import com.google.android.exoplayer2.source.MediaSource;
+import com.google.android.exoplayer2.source.MergingMediaSource;
+import com.google.android.exoplayer2.source.SingleSampleMediaSource;
 import com.google.android.exoplayer2.source.dash.DashMediaSource;
 import com.google.android.exoplayer2.source.dash.DefaultDashChunkSource;
 import com.google.android.exoplayer2.source.hls.HlsMediaSource;
@@ -25,6 +31,7 @@ import com.google.android.exoplayer2.trackselection.TrackSelection;
 import com.google.android.exoplayer2.trackselection.TrackSelector;
 import com.google.android.exoplayer2.upstream.DataSource;
 import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter;
+import com.google.android.exoplayer2.util.MimeTypes;
 import com.google.android.exoplayer2.util.Util;
 import com.tubitv.media.MediaHelper;
 import com.tubitv.media.TubiExoPlayer;
@@ -41,6 +48,12 @@ public class DemoActivity extends Activity {
     private static final DefaultBandwidthMeter BANDWIDTH_METER = new DefaultBandwidthMeter();
 
     private boolean shouldAutoPlay;
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        hideSystemUI();
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -142,7 +155,21 @@ public class DemoActivity extends Activity {
         mediaSources[0] = buildMediaSource(uris[0], extensions[0]);
         MediaSource mediaSource = mediaSources.length == 1 ? mediaSources[0]
                 : new ConcatenatingMediaSource(mediaSources);
-        mTubiExoPlayer.prepare(mediaSource, true, false);
+
+
+        MediaSource subtitleSource = new SingleSampleMediaSource(
+                Uri.parse("http://s.adrise.tv/fa1c1b15-bcaa-4c7a-8258-1b59d22d3cb6.ttml"),
+                buildDataSourceFactory(false),
+                Format.createTextSampleFormat(null, MimeTypes.APPLICATION_TTML, null, Format.NO_VALUE, C.SELECTION_FLAG_DEFAULT, "en", null, 0),
+                10000);
+// Plays the video with the sideloaded subtitle.
+        MergingMediaSource mergedSource =
+                new MergingMediaSource(mediaSource, subtitleSource);
+
+
+
+
+        mTubiExoPlayer.prepare(mergedSource, true, false);
     }
 
     private void releasePlayer() {
