@@ -158,10 +158,10 @@ public class DemoActivity extends Activity {
 
 
         MediaSource subtitleSource = new SingleSampleMediaSource(
-                Uri.parse("http://s.adrise.tv/fa1c1b15-bcaa-4c7a-8258-1b59d22d3cb6.ttml"),
+                Uri.parse("http://s.adrise.tv/fa1c1b15-bcaa-4c7a-8258-1b59d22d3cb6.srt"),
                 buildDataSourceFactory(false),
-                Format.createTextSampleFormat(null, MimeTypes.APPLICATION_TTML, null, Format.NO_VALUE, C.SELECTION_FLAG_DEFAULT, "en", null, 0),
-                10000);
+                Format.createTextSampleFormat(null, MimeTypes.APPLICATION_SUBRIP, null, Format.NO_VALUE, C.SELECTION_FLAG_DEFAULT, "en", null, 0),
+                0);
 // Plays the video with the sideloaded subtitle.
         MergingMediaSource mergedSource =
                 new MergingMediaSource(mediaSource, subtitleSource);
