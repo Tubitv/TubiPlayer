@@ -15,7 +15,7 @@
     <dimen name="view_tubi_controller_video_button_margin_left">10dp</dimen>
     <dimen name="view_tubi_controller_video_button_margin_right">5dp</dimen>
     <dimen name="view_tubi_controller_height">54dp</dimen>
-    <dimen name="view_tubi_controller_time_position_layout_margin_left" >7.5dp</dimen>
+    <dimen name="view_tubi_controller_time_position_layout_margin_left">15dp</dimen>
     <dimen name="view_tubi_controller_options_layout_margin_right">8.5dp</dimen>
     <dimen name="view_tubi_controller_video_button_width">26.6dp</dimen>
     <dimen name="view_tubi_controller_video_button_height">26.4dp</dimen>
