@@ -311,7 +311,7 @@ public class TubiPlayerControlView extends FrameLayout {
         }
         long duration = player == null ? 0 : player.getDuration();
         long position = player == null ? 0 : player.getCurrentPosition();
-        if(mPlayProgressTime != null){
+        if(mPlayProgressTime != null && !dragging){
             mPlayProgressTime.setText(stringForTime(position) + "/" + stringForTime(duration));
         }
 

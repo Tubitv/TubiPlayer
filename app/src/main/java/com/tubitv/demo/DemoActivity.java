@@ -36,8 +36,9 @@ import com.google.android.exoplayer2.util.Util;
 import com.tubitv.media.MediaHelper;
 import com.tubitv.media.TubiExoPlayer;
 import com.tubitv.media.views.TubiExoPlayerView;
+import com.tubitv.media.views.TubiPlayerControlView;
 
-public class DemoActivity extends Activity {
+public class DemoActivity extends Activity implements TubiPlayerControlView.VisibilityListener {
     private TubiExoPlayer mTubiExoPlayer;
     private Handler mMainHandler;
     private TubiExoPlayerView mTubiPlayerView;
@@ -139,18 +140,14 @@ public class DemoActivity extends Activity {
         mTubiExoPlayer.setMetadataOutput(mEventLogger);
 
         mTubiPlayerView.setPlayer(mTubiExoPlayer);
-//        mTubiPlayerView.setControllerVisibilityListener(this);
+        mTubiPlayerView.setControllerVisibilityListener(this);
         mTubiExoPlayer.setPlayWhenReady(shouldAutoPlay);
 
         //fake media
         Uri[] uris = new Uri[1];
         String[] extensions = new String[1];
-//        uris[0] = Uri.parse("http://www.youtube.com/api/manifest/dash/id/bf5bb2419360daf1/source/youtube?as=fmp4_audio_clear,fmp4_sd_hd_clear&sparams=ip,ipbits,expire,source,id,as&ip=0.0.0.0&ipbits=0&expire=19000000000&signature=51AF5F39AB0CEC3E5497CD9C900EBFEAECCCB5C7.8506521BFC350652163895D4C26DEE124209AA9E&key=ik0");
-//        uris[0] = Uri.parse("http://c11.adrise.tv/v2/sources/content-owners/marvista/342067/v201701141225-1280x714-,439,1099,1714,2062,2943,k.mp4.m3u8?csQ-b00i5q5qYJ0FgNlUslZ35UTdh4_GBHHAGq_-CMH04cDQXJQ76NFQK2pYpj87");
-        uris[0] = Uri.parse("http://c11.adrise.tv/v2/sources/content-owners/mgm/302243/v1202121349-1280x716-HD-,465,1152,1593,2437,4182,k.mp4.m3u8?4Z4u2g-EeVvh9F44WWSjl5c8q_7aSCJ3S42Cd4_ivhYV0f_XSw2BK4eiUXkuxfhe");
-//        uris[0] = Uri.parse("http://c11.adrise.tv/v2/sources/content-owners/marvista/342067/v201701141225-1280x714-2943k.mp4.m3u8?csQ-b00i5q5qYJ0FgNlUslZ35UTdh4_GBHHAGq_-CMH04cDQXJQ76NFQK2pYpj87");
+        uris[0] = Uri.parse("http://c11.adrise.tv/v2/sources/content-owners/lionsgate/348932/v201703040118-,225,447,725,1157,1398,k.mp4.m3u8?uzXcPxCOS-hNU8u8jbF8LQaVSwcBoCHqqI4RIOuxJy0ywOhBqQRiXAS3TzaxiGq0");
         extensions[0] = "m3u8";
-//        extensions[0] = C.TYPE_HLS;
         MediaSource[] mediaSources = new MediaSource[uris.length];
         mediaSources[0] = buildMediaSource(uris[0], extensions[0]);
         MediaSource mediaSource = mediaSources.length == 1 ? mediaSources[0]
@@ -158,15 +155,13 @@ public class DemoActivity extends Activity {
 
 
         MediaSource subtitleSource = new SingleSampleMediaSource(
-                Uri.parse("http://s.adrise.tv/fa1c1b15-bcaa-4c7a-8258-1b59d22d3cb6.srt"),
+                Uri.parse("http://s.adrise.tv/f89566c4-64e9-4f54-8808-717864bcca64.srt"),
                 buildDataSourceFactory(false),
                 Format.createTextSampleFormat(null, MimeTypes.APPLICATION_SUBRIP, null, Format.NO_VALUE, C.SELECTION_FLAG_DEFAULT, "en", null, 0),
                 0);
-// Plays the video with the sideloaded subtitle.
+        // Plays the video with the sideloaded subtitle.
         MergingMediaSource mergedSource =
                 new MergingMediaSource(mediaSource, subtitleSource);
-
-
 
 
         mTubiExoPlayer.prepare(mergedSource, true, false);
@@ -203,7 +198,7 @@ public class DemoActivity extends Activity {
     }
 
     /**
-     * Returns a new DataSource factory.
+     * Returns a new DataSource factory.MainActivity
      *
      * @param useBandwidthMeter Whether to set {@link #BANDWIDTH_METER} as a listener to the new
      *                          DataSource factory.
@@ -227,16 +222,16 @@ public class DemoActivity extends Activity {
         if (Util.SDK_INT > 18) {
             uiState |= View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
                     | View.SYSTEM_UI_FLAG_IMMERSIVE;
-        }else{
+        } else {
             final Handler handler = new Handler();
             decorView.setOnSystemUiVisibilityChangeListener(new View.OnSystemUiVisibilityChangeListener() {
                 @Override
                 public void onSystemUiVisibilityChange(int visibility) {
-                    if(visibility == View.VISIBLE){
+                    if (visibility == View.VISIBLE) {
                         Runnable runnable = new Runnable() {
                             @Override
                             public void run() {
-                               hideSystemUI();
+                                hideSystemUI();
                             }
                         };
                         handler.postDelayed(runnable, 5000);
@@ -245,5 +240,10 @@ public class DemoActivity extends Activity {
             });
         }
         decorView.setSystemUiVisibility(uiState);
+    }
+
+    @Override
+    public void onVisibilityChange(int visibility) {
+
     }
 }
