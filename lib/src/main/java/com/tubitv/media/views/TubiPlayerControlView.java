@@ -50,10 +50,10 @@ public class TubiPlayerControlView extends FrameLayout {
     public interface SeekDispatcher {
 
         /**
-         * @param player The player to seek.
+         * @param player      The player to seek.
          * @param windowIndex The index of the window.
-         * @param positionMs The seek position in the specified window, or {@link C#TIME_UNSET} to seek
-         *     to the window's default position.
+         * @param positionMs  The seek position in the specified window, or {@link C#TIME_UNSET} to seek
+         *                    to the window's default position.
          * @return True if the seek was dispatched. False otherwise.
          */
         boolean dispatchSeek(ExoPlayer player, int windowIndex, long positionMs);
@@ -75,7 +75,8 @@ public class TubiPlayerControlView extends FrameLayout {
     public static final int DEFAULT_SHOW_TIMEOUT_MS = 5000;
     private static final int PROGRESS_BAR_MAX = 1000;
 
-    private final TextView mPlayProgressTime;
+    private final TextView mElapsedTime;
+    private final TextView mRemainingTime;
     private final ComponentListener componentListener;
     private final ImageView mPlayToggleView;
     private final SeekBar mProgressBar;
@@ -147,7 +148,8 @@ public class TubiPlayerControlView extends FrameLayout {
             mPlayToggleView.setOnClickListener(componentListener);
         }
 
-        mPlayProgressTime = (TextView) findViewById(R.id.view_tubi_controller_play_progress_time);
+        mElapsedTime = (TextView) findViewById(R.id.view_tubi_controller_elapsed_time);
+        mRemainingTime = (TextView) findViewById(R.id.view_tubi_controller_remaining_time);
     }
 
     /**
@@ -189,7 +191,7 @@ public class TubiPlayerControlView extends FrameLayout {
      * Sets the {@link SeekDispatcher}.
      *
      * @param seekDispatcher The {@link SeekDispatcher}, or null to use
-     *     {@link #DEFAULT_SEEK_DISPATCHER}.
+     *                       {@link #DEFAULT_SEEK_DISPATCHER}.
      */
     public void setSeekDispatcher(SeekDispatcher seekDispatcher) {
         this.seekDispatcher = seekDispatcher == null ? DEFAULT_SEEK_DISPATCHER : seekDispatcher;
@@ -200,7 +202,7 @@ public class TubiPlayerControlView extends FrameLayout {
      * this duration of time has elapsed without user input.
      *
      * @return The duration in milliseconds. A non-positive value indicates that the controls will
-     *     remain visible indefinitely.
+     * remain visible indefinitely.
      */
     public int getShowTimeoutMs() {
         return showTimeoutMs;
@@ -211,7 +213,7 @@ public class TubiPlayerControlView extends FrameLayout {
      * duration of time has elapsed without user input.
      *
      * @param showTimeoutMs The duration in milliseconds. A non-positive value will cause the controls
-     *     to remain visible indefinitely.
+     *                      to remain visible indefinitely.
      */
     public void setShowTimeoutMs(int showTimeoutMs) {
         this.showTimeoutMs = showTimeoutMs;
@@ -280,9 +282,9 @@ public class TubiPlayerControlView extends FrameLayout {
 //        boolean requestPlayPauseFocus = false;
         boolean playing = player != null && player.getPlayWhenReady();
         if (mPlayToggleView != null) {
-            if(playing){
+            if (playing) {
                 mPlayToggleView.setImageResource(R.drawable.view_tubi_player_controller_pause_ic);
-            }else{
+            } else {
                 mPlayToggleView.setImageResource(R.drawable.view_tubi_player_controller_play_ic);
             }
         }
@@ -309,10 +311,10 @@ public class TubiPlayerControlView extends FrameLayout {
         if (!isVisible() || !isAttachedToWindow) {
             return;
         }
-        long duration = player == null ? 0 : player.getDuration();
         long position = player == null ? 0 : player.getCurrentPosition();
-        if(mPlayProgressTime != null && !dragging){
-            mPlayProgressTime.setText(stringForTime(position) + "/" + stringForTime(duration));
+        long duration = player == null ? 0 : player.getDuration();
+        if (!dragging) {
+            setProgressTime(position, duration);
         }
 
         if (mProgressBar != null) {
@@ -357,7 +359,17 @@ public class TubiPlayerControlView extends FrameLayout {
         view.setAlpha(alpha);
     }
 
-    private String stringForTime(long timeMs) {
+    private void setProgressTime(long position, long duration) {
+        if (mElapsedTime != null) {
+            mElapsedTime.setText(toProgressTime(position, false));
+        }
+
+        if (mRemainingTime != null) {
+            mRemainingTime.setText(toProgressTime(duration - position, true));
+        }
+    }
+
+    private String toProgressTime(long timeMs, boolean remaining) {
         if (timeMs == C.TIME_UNSET) {
             timeMs = 0;
         }
@@ -366,8 +378,9 @@ public class TubiPlayerControlView extends FrameLayout {
         long minutes = (totalSeconds / 60) % 60;
         long hours = totalSeconds / 3600;
         formatBuilder.setLength(0);
-        return hours > 0 ? formatter.format("%d:%02d:%02d", hours, minutes, seconds).toString()
+        String time = hours > 0 ? formatter.format("%d:%02d:%02d", hours, minutes, seconds).toString()
                 : formatter.format("%02d:%02d", minutes, seconds).toString();
+        return remaining && timeMs != 0 ? "-" + time : time;
     }
 
     private int progressBarValue(long position) {
@@ -488,10 +501,8 @@ public class TubiPlayerControlView extends FrameLayout {
         public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
             if (fromUser) {
                 long position = positionValue(progress);
-                if (mPlayProgressTime != null) {
-                    long duration = player == null ? 0 : player.getDuration();
-                    mPlayProgressTime.setText(stringForTime(position) + "/" + stringForTime(duration));
-                }
+                long duration = player == null ? 0 : player.getDuration();
+                setProgressTime(position, duration);
                 if (player != null && !dragging) {
                     seekTo(position);
                 }
