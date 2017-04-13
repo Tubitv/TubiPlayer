@@ -1,156 +1,170 @@
 <?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/tubi_tv_player_controls_overlay"
+    android:orientation="vertical">
 
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="352dp"
+        android:layout_height="24dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"
+        android:layout_marginTop="8dp"
+        android:gravity="center_vertical"
+        android:text="The Frozen Ground"
+        android:textColor="@android:color/white"
+        android:textSize="18sp"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintLeft_toLeftOf="@+id/guideline2"
+        app:layout_constraintRight_toLeftOf="@+id/imageView3"
+        app:layout_constraintTop_toTopOf="@+id/guideline"/>
 
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-             android:layout_width="match_parent"
-             android:layout_height="match_parent">
+    <ImageView
+        android:id="@+id/imageView3"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:layout_marginRight="16dp"
+        android:layout_marginTop="8dp"
+        android:background="@drawable/tubi_tv_subtitles_off"
+        app:layout_constraintRight_toLeftOf="@+id/imageView2"
+        app:layout_constraintTop_toTopOf="@+id/guideline"/>
 
+    <ImageView
+        android:id="@+id/imageView2"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:layout_marginRight="16dp"
+        android:layout_marginTop="8dp"
+        android:background="@drawable/tubi_tv_quality_off"
+        app:layout_constraintRight_toLeftOf="@+id/imageView"
+        app:layout_constraintTop_toTopOf="@+id/guideline"/>
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="20dp"
-        android:layout_marginTop="23dp"
-        android:orientation="horizontal">
+    <ImageView
+        android:id="@+id/imageView"
+        android:layout_width="24dp"
+        android:layout_height="24dp"
+        android:layout_marginRight="8dp"
+        android:layout_marginTop="8dp"
+        android:background="@drawable/tubi_tv_chromecast"
+        app:layout_constraintRight_toLeftOf="@+id/guideline3"
+        app:layout_constraintTop_toTopOf="@+id/guideline"/>
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textSize="18sp"
-            android:text="The Frozen Ground"/>
-        
-        
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:gravity="right"
-            android:layout_marginRight="20dp"
-            android:orientation="horizontal"
-            android:layout_height="wrap_content">
+    <ImageView
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:scaleType="fitCenter"
+        android:background="@drawable/tubi_tv_rew_15"
+        app:layout_constraintTop_toTopOf="@+id/view_tubi_controller_play_toggle_control"
+        android:layout_marginTop="0dp"
+        app:layout_constraintRight_toLeftOf="@+id/view_tubi_controller_play_toggle_control"
+        android:layout_marginRight="24dp"/>
 
-            <ImageView
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:background="@drawable/tubi_tv_subtitles_off"/>
-            <ImageView
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:layout_marginLeft="20dp"
-                android:layout_marginRight="20dp"
-                android:background="@drawable/tubi_tv_quality_off"/>
-            <ImageView
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:background="@drawable/tubi_tv_chromecast"/>
+    <ImageView
+        android:id="@+id/view_tubi_controller_play_toggle_control"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:scaleType="fitCenter"
+        android:background="@drawable/tubi_tv_pause_large"
+        app:layout_constraintRight_toLeftOf="@+id/guideline3"
+        android:layout_marginRight="8dp"
+        android:layout_marginLeft="8dp"
+        app:layout_constraintLeft_toLeftOf="@+id/guideline2"
+        android:layout_marginBottom="8dp"
+        app:layout_constraintBottom_toTopOf="@+id/guideline4"
+        app:layout_constraintTop_toTopOf="@+id/guideline"
+        android:layout_marginTop="8dp"/>
 
-        </LinearLayout>
-    </LinearLayout>
+    <ImageView
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:scaleType="fitCenter"
+        android:background="@drawable/tubi_tv_fwd_15"
+        app:layout_constraintLeft_toRightOf="@+id/view_tubi_controller_play_toggle_control"
+        android:layout_marginLeft="24dp"
+        app:layout_constraintBottom_toBottomOf="@+id/view_tubi_controller_play_toggle_control"
+        android:layout_marginBottom="0dp"
+        app:layout_constraintTop_toTopOf="@+id/view_tubi_controller_play_toggle_control"
+        android:layout_marginTop="0dp"
+        app:layout_constraintVertical_bias="0.0"/>
 
-    <LinearLayout
+    <TextView
+        android:id="@+id/view_tubi_controller_elapsed_time"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"
+        android:includeFontPadding="false"
+        android:text="@string/view_tubi_controller_time_position_text_default"
+        android:textColor="@android:color/white"
+        android:textSize="@dimen/view_tubi_controller_text_size"
+        app:layout_constraintRight_toLeftOf="@+id/view_tubi_controller_seek_bar"
+        android:layout_marginRight="8dp"
+        app:layout_constraintBottom_toBottomOf="@+id/view_tubi_controller_seek_bar"
+        android:layout_marginBottom="0dp"
+        app:layout_constraintTop_toTopOf="@+id/view_tubi_controller_seek_bar"
+        android:layout_marginTop="8dp"
+        app:layout_constraintVertical_bias="0.25"/>
+
+
+    <SeekBar
+        android:id="@+id/view_tubi_controller_seek_bar"
+        style="@style/TubiSeekBar"
+        android:layout_width="500dp"
+        android:layout_height="wrap_content"
+        android:max="100"
+        android:paddingBottom="@dimen/view_tubi_controller_seek_bar_padding_vertical"
+        android:paddingLeft="@dimen/view_tubi_controller_seek_bar_padding_horizontal"
+        android:paddingRight="@dimen/view_tubi_controller_seek_bar_padding_horizontal"
+        android:paddingTop="@dimen/view_tubi_controller_seek_bar_padding_vertical"
+        android:progress="50"
+        app:layout_constraintRight_toLeftOf="@+id/guideline3"
+        android:layout_marginRight="8dp"
+        android:layout_marginLeft="8dp"
+        app:layout_constraintLeft_toLeftOf="@+id/guideline2"
+        android:layout_marginBottom="8dp"
+        app:layout_constraintBottom_toTopOf="@+id/guideline4"/>
+
+    <TextView
+        android:id="@+id/view_tubi_controller_remaining_time"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:includeFontPadding="false"
+        android:text="@string/view_tubi_controller_time_position_text_default"
+        android:textColor="@android:color/white"
+        android:textSize="@dimen/view_tubi_controller_text_size"
+        app:layout_constraintLeft_toRightOf="@+id/view_tubi_controller_seek_bar"
+        android:layout_marginLeft="8dp"
+        app:layout_constraintBaseline_toBaselineOf="@+id/view_tubi_controller_elapsed_time"/>
+
+    <android.support.constraint.Guideline
+        android:id="@+id/guideline"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:gravity="center">
+        app:layout_constraintGuide_begin="20dp"/>
 
+    <android.support.constraint.Guideline
+        android:id="@+id/guideline2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_begin="20dp"/>
 
-        <ImageView
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:scaleType="fitCenter"
-            android:background="@drawable/tubi_tv_rew_15"/>
+    <android.support.constraint.Guideline
+        android:id="@+id/guideline3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintGuide_end="20dp"/>
 
-        <ImageView
-            android:id="@+id/view_tubi_controller_play_toggle_control"
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:scaleType="fitCenter"
-            android:layout_marginLeft="28dp"
-            android:layout_marginRight="28dp"
-            android:background="@drawable/tubi_tv_pause_large"/>
-
-        <ImageView
-            android:layout_width="40dp"
-            android:layout_height="40dp"
-            android:scaleType="fitCenter"
-            android:background="@drawable/tubi_tv_fwd_15"/>
-
-
-
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_alignParentBottom="true"
-        android:layout_gravity="bottom"
-        android:gravity="bottom|center_vertical"
+    <android.support.constraint.Guideline
+        android:id="@+id/guideline4"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:paddingLeft="@dimen/view_tubi_controller_margin"
-        android:paddingRight="@dimen/view_tubi_controller_margin"
-        android:visibility="visible">
+        app:layout_constraintGuide_end="20dp"/>
 
-
-        <!--<ImageButton-->
-        <!--android:id="@+id/view_tubi_controller_play_toggle_control"-->
-        <!--android:layout_width="@dimen/view_tubi_controller_play_toggle_size"-->
-        <!--android:layout_height="@dimen/view_tubi_controller_play_toggle_size"-->
-        <!--android:layout_alignParentBottom="true"-->
-        <!--android:background="@android:color/transparent"-->
-        <!--android:padding="@dimen/view_tubi_controller_play_padding"-->
-        <!--android:scaleType="fitCenter"-->
-        <!--android:src="@drawable/view_tubi_player_controller_play_ic"/>-->
-
-
-        <!--<RelativeLayout-->
-        <!--android:layout_width="0dp"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:layout_marginLeft="@dimen/view_tubi_controller_seek_bar_layout_margin_left"-->
-        <!--android:layout_marginTop="@dimen/view_tubi_controller_seek_bar_layout_margin_right"-->
-        <!--android:layout_weight="1">-->
-
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center_vertical"
-            android:layout_marginBottom="26dp"
-            android:orientation="horizontal">
-
-
-            <TextView android:id="@+id/view_tubi_controller_elapsed_time"
-                android:layout_width="42dp"
-                android:layout_height="16dp"
-                android:includeFontPadding="false"
-                android:text="@string/view_tubi_controller_time_position_text_default"
-                android:textColor="@android:color/white"
-                android:textSize="@dimen/view_tubi_controller_text_size"/>
-
-
-            <SeekBar
-                android:id="@+id/view_tubi_controller_seek_bar"
-                style="@style/TubiSeekBar"
-                android:layout_width="501dp"
-                android:layout_height="wrap_content"
-                android:max="100"
-                android:paddingBottom="@dimen/view_tubi_controller_seek_bar_padding_vertical"
-                android:paddingLeft="@dimen/view_tubi_controller_seek_bar_padding_horizontal"
-                android:paddingRight="@dimen/view_tubi_controller_seek_bar_padding_horizontal"
-                android:paddingTop="@dimen/view_tubi_controller_seek_bar_padding_vertical"
-                android:progress="50"/>
-
-            <TextView
-                android:id="@+id/view_tubi_controller_remaining_time"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:includeFontPadding="false"
-                android:text="@string/view_tubi_controller_time_position_text_default"
-                android:textColor="@android:color/white"
-                android:textSize="@dimen/view_tubi_controller_text_size"/>
-
-        </LinearLayout>
-
-
-    </LinearLayout>
-
-</FrameLayout>
-
+</android.support.constraint.ConstraintLayout>
