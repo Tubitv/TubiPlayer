@@ -138,7 +138,7 @@ public class TubiPlayerControlView extends FrameLayout {
         LayoutInflater.from(context).inflate(controllerLayoutId, this);
         setDescendantFocusability(FOCUS_AFTER_DESCENDANTS);
 
-        mProgressBar = (SeekBar) findViewById(R.id.view_tubi_controller_play_progress);
+        mProgressBar = (SeekBar) findViewById(R.id.view_tubi_controller_seek_bar);
         if (mProgressBar != null) {
             mProgressBar.setOnSeekBarChangeListener(componentListener);
             mProgressBar.setMax(PROGRESS_BAR_MAX);
@@ -283,9 +283,9 @@ public class TubiPlayerControlView extends FrameLayout {
         boolean playing = player != null && player.getPlayWhenReady();
         if (mPlayToggleView != null) {
             if (playing) {
-                mPlayToggleView.setImageResource(R.drawable.view_tubi_player_controller_pause_ic);
+                mPlayToggleView.setImageResource(R.drawable.tubi_tv_pause_large);
             } else {
-                mPlayToggleView.setImageResource(R.drawable.view_tubi_player_controller_play_ic);
+                mPlayToggleView.setImageResource(R.drawable.tubi_tv_play_large);
             }
         }
     }

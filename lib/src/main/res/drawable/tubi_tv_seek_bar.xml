@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layer-list xmlns:android="http://schemas.android.com/apk/res/android">
     <item android:id="@android:id/background"
-        android:drawable="@drawable/view_tubi_player_controller_seek_bar_bg" />
+        android:drawable="@drawable/tubi_tv_seek_bar_bg" />
     <item android:id="@android:id/progress">
-        <clip android:drawable="@drawable/view_tubi_player_controller_seek_bar_progress" />
+        <clip android:drawable="@drawable/tubi_tv_seek_bar_progress" />
     </item>
 </layer-list>

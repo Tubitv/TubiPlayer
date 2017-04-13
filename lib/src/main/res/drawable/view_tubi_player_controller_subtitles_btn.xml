@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
-    <item android:drawable="@drawable/view_tubi_player_controller_captions_checked_ic"
+    <item android:drawable="@drawable/tubi_tv_subtitles_on"
         android:state_checked="true" />
-    <item android:drawable="@drawable/view_tubi_player_controller_captions_unchecked_ic"
+    <item android:drawable="@drawable/tubi_tv_subtitles_off"
         android:state_checked="false"/>
 
 </selector>

@@ -21,5 +21,7 @@
     <dimen name="view_tubi_controller_options_layout_margin_right">8.5dp</dimen>
     <dimen name="view_tubi_controller_video_button_width">26.6dp</dimen>
     <dimen name="view_tubi_controller_video_button_height">26.4dp</dimen>
+    <dimen name="tubi_tv_scrubber_outside_diameter">28dp</dimen>
+    <dimen name="tubi_tv_scrubber_inside_diameter">18dp</dimen>
 
 </resources>

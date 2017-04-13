@@ -30,17 +30,17 @@
             <ImageView
                 android:layout_width="24dp"
                 android:layout_height="24dp"
-                android:background="@drawable/subtitles_off"/>
+                android:background="@drawable/tubi_tv_subtitles_off"/>
             <ImageView
                 android:layout_width="24dp"
                 android:layout_height="24dp"
                 android:layout_marginLeft="20dp"
                 android:layout_marginRight="20dp"
-                android:background="@drawable/quality_off"/>
+                android:background="@drawable/tubi_tv_quality_off"/>
             <ImageView
                 android:layout_width="24dp"
                 android:layout_height="24dp"
-                android:background="@drawable/chromecast"/>
+                android:background="@drawable/tubi_tv_chromecast"/>
 
         </LinearLayout>
     </LinearLayout>
@@ -57,7 +57,7 @@
             android:layout_width="40dp"
             android:layout_height="40dp"
             android:scaleType="fitCenter"
-            android:background="@drawable/rew_15"/>
+            android:background="@drawable/tubi_tv_rew_15"/>
 
         <ImageView
             android:id="@+id/view_tubi_controller_play_toggle_control"
@@ -66,13 +66,13 @@
             android:scaleType="fitCenter"
             android:layout_marginLeft="28dp"
             android:layout_marginRight="28dp"
-            android:background="@drawable/pause_large"/>
+            android:background="@drawable/tubi_tv_pause_large"/>
 
         <ImageView
             android:layout_width="40dp"
             android:layout_height="40dp"
             android:scaleType="fitCenter"
-            android:background="@drawable/fwd_15"/>
+            android:background="@drawable/tubi_tv_fwd_15"/>
 
 
 
@@ -83,7 +83,6 @@
         android:layout_height="match_parent"
         android:layout_alignParentBottom="true"
         android:layout_gravity="bottom"
-        android:background="@drawable/view_tubi_player_controller_bar_bg"
         android:gravity="bottom|center_vertical"
         android:orientation="horizontal"
         android:paddingLeft="@dimen/view_tubi_controller_margin"
@@ -128,7 +127,7 @@
 
 
             <SeekBar
-                android:id="@+id/view_tubi_controller_play_progress"
+                android:id="@+id/view_tubi_controller_seek_bar"
                 style="@style/TubiSeekBar"
                 android:layout_width="501dp"
                 android:layout_height="wrap_content"
@@ -150,49 +149,6 @@
 
         </LinearLayout>
 
-
-        <!--<TextView-->
-        <!--android:layout_width="wrap_content"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:includeFontPadding="false"-->
-        <!--android:text="@string/view_tubi_controller_time_position_text_default"-->
-        <!--android:textColor="@android:color/white"-->
-        <!--android:textSize="@dimen/view_tubi_controller_text_size"/>-->
-
-
-        <!--<LinearLayout-->
-        <!--android:layout_width="wrap_content"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:layout_alignParentRight="true"-->
-        <!--android:layout_marginRight="@dimen/view_tubi_controller_options_layout_margin_right"-->
-        <!--android:layout_marginTop="@dimen/view_tubi_controller_options_layout_margin_top"-->
-        <!--android:orientation="horizontal">-->
-
-        <!--<ToggleButton-->
-        <!--android:id="@+id/view_tubi_controller_captions_button"-->
-        <!--style="@style/TubiEmptyToggleButton"-->
-        <!--android:layout_marginRight="@dimen/view_tubi_controller_options_captions_button_margin_right"-->
-        <!--android:background="@drawable/view_tubi_player_controller_captions_btn"-->
-        <!--android:visibility="visible"/>-->
-
-        <!--<ToggleButton-->
-        <!--android:id="@+id/view_tubi_controller_video_quality_button"-->
-        <!--style="@style/TubiEmptyToggleButton"-->
-        <!--android:background="@drawable/view_tubi_player_controller_hd_ic"/>-->
-
-        <!--</LinearLayout>-->
-
-        <!--</RelativeLayout>-->
-
-        <!--<ImageView-->
-        <!--android:id="@+id/audio_button"-->
-        <!--style="@style/TubiVideoButton"-->
-        <!--android:src="@drawable/view_tubi_player_controller_mute_ic"/>-->
-
-        <!--<ImageView-->
-        <!--android:id="@+id/information_button"-->
-        <!--style="@style/TubiVideoButton"-->
-        <!--android:src="@drawable/view_tubi_player_controller_information_ic"/>-->
 
     </LinearLayout>
 
