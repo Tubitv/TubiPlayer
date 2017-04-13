@@ -2,15 +2,9 @@
 <layer-list
     xmlns:android="http://schemas.android.com/apk/res/android">
     <item
+        android:drawable="@drawable/tubi_tv_scrubber_pressed"
         android:gravity="center">
-        <shape
-            android:shape="oval">
-            <solid android:color="@android:color/white"/>
-            <size
-                android:width="@dimen/tubi_tv_scrubber_outside_diameter"
-                android:height="@dimen/tubi_tv_scrubber_outside_diameter"
-                />
-        </shape>
+
     </item>
     <item
         android:gravity="center">
@@ -22,4 +16,5 @@
                 android:height="@dimen/tubi_tv_scrubber_inside_diameter"/>
         </shape>
     </item>
+
 </layer-list>
