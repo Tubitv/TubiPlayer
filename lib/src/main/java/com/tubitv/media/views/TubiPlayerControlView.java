@@ -143,7 +143,7 @@ public class TubiPlayerControlView extends FrameLayout {
             mProgressBar.setOnSeekBarChangeListener(componentListener);
             mProgressBar.setMax(PROGRESS_BAR_MAX);
         }
-        mPlayToggleView = (ImageView) findViewById(R.id.view_tubi_controller_play_toggle_control);
+        mPlayToggleView = (ImageView) findViewById(R.id.view_tubi_controller_play_toggle_ib);
         if (mPlayToggleView != null) {
             mPlayToggleView.setOnClickListener(componentListener);
         }
@@ -283,9 +283,9 @@ public class TubiPlayerControlView extends FrameLayout {
         boolean playing = player != null && player.getPlayWhenReady();
         if (mPlayToggleView != null) {
             if (playing) {
-                mPlayToggleView.setImageResource(R.drawable.tubi_tv_pause_large);
+                mPlayToggleView.setBackgroundResource(R.drawable.tubi_tv_pause_large);
             } else {
-                mPlayToggleView.setImageResource(R.drawable.tubi_tv_play_large);
+                mPlayToggleView.setBackgroundResource(R.drawable.tubi_tv_play_large);
             }
         }
     }
@@ -511,6 +511,8 @@ public class TubiPlayerControlView extends FrameLayout {
 
         @Override
         public void onStopTrackingTouch(SeekBar seekBar) {
+            //Reset thumb, or smaller unpressed drawable will get blown up
+            seekBar.setThumb(getResources().getDrawable(R.drawable.tubi_tv_scrubber_selector));
             dragging = false;
             if (player != null) {
                 seekTo(positionValue(seekBar.getProgress()));
