@@ -512,7 +512,7 @@ public class TubiPlayerControlView extends FrameLayout {
         @Override
         public void onStopTrackingTouch(SeekBar seekBar) {
             //Reset thumb, or smaller unpressed drawable will get blown up
-            seekBar.setThumb(getResources().getDrawable(R.drawable.tubi_tv_scrubber_selector));
+            seekBar.setThumb(getResources().getDrawable(R.drawable.tubi_tv_drawable_scrubber_selector));
             dragging = false;
             if (player != null) {
                 seekTo(positionValue(seekBar.getProgress()));

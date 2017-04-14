@@ -11,7 +11,7 @@
 
     <style name="TubiSeekBar" parent="@android:style/Widget.SeekBar">
         <item name="android:progressDrawable">@drawable/tubi_tv_seek_bar</item>
-        <item name="android:thumb">@drawable/tubi_tv_scrubber_selector</item>
+        <item name="android:thumb">@drawable/tubi_tv_drawable_scrubber_selector</item>
         <item name="android:minHeight">2dp</item>
         <item name="android:maxHeight">2dp</item>
     </style>

@@ -32,7 +32,7 @@
         android:layout_height="24dp"
         android:layout_marginRight="16dp"
         android:layout_marginTop="8dp"
-        android:background="@drawable/tubi_tv_subtitles_off"
+        android:background="@drawable/tubi_tv_drawable_subtitles_selector"
         app:layout_constraintRight_toLeftOf="@+id/view_tubi_controller_quality_ib"
         app:layout_constraintTop_toTopOf="@+id/tubi_tv_controller_guideline_top"/>
 
@@ -42,7 +42,7 @@
         android:layout_height="24dp"
         android:layout_marginRight="16dp"
         android:layout_marginTop="8dp"
-        android:background="@drawable/tubi_tv_quality_off"
+        android:background="@drawable/tubi_tv_drawable_quality_selector"
         app:layout_constraintRight_toLeftOf="@+id/view_tubi_controller_chromecast"
         app:layout_constraintTop_toTopOf="@+id/tubi_tv_controller_guideline_top"/>
 
@@ -52,7 +52,7 @@
         android:layout_height="24dp"
         android:layout_marginRight="8dp"
         android:layout_marginTop="8dp"
-        android:background="@drawable/tubi_tv_chromecast"
+        android:background="@drawable/tubi_tv_drawable_chromecast_selector"
         app:layout_constraintRight_toLeftOf="@+id/tubi_tv_controller_guideline_right"
         app:layout_constraintTop_toTopOf="@+id/tubi_tv_controller_guideline_top"/>
 

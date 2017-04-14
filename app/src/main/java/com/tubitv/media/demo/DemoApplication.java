@@ -1,4 +1,4 @@
-package com.tubitv.demo;
+package com.tubitv.media.demo;
 
 import android.app.Application;
 

@@ -3,7 +3,7 @@
           package="com.tubitv.demo">
     <uses-permission android:name="android.permission.INTERNET"/>
     <application
-        android:name=".DemoApplication"
+        android:name="com.tubitv.media.demo.DemoApplication"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
@@ -12,7 +12,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name="com.tubitv.demo.DemoActivity"
+            android:name="com.tubitv.media.demo.DemoActivity"
             android:configChanges="keyboard|keyboardHidden|orientation|screenSize|screenLayout|smallestScreenSize|uiMode"
             android:launchMode="singleTop"
             android:theme="@style/TubiPlayerTheme">

@@ -1,4 +1,4 @@
-package com.tubitv.demo;
+package com.tubitv.media.demo;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -33,6 +33,7 @@ import com.google.android.exoplayer2.upstream.DataSource;
 import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter;
 import com.google.android.exoplayer2.util.MimeTypes;
 import com.google.android.exoplayer2.util.Util;
+import com.tubitv.demo.R;
 import com.tubitv.media.MediaHelper;
 import com.tubitv.media.TubiExoPlayer;
 import com.tubitv.media.views.TubiExoPlayerView;
