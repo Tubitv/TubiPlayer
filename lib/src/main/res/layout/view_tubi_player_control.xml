@@ -75,7 +75,7 @@
         android:layout_marginLeft="8dp"
         android:layout_marginRight="8dp"
         android:layout_marginTop="8dp"
-        android:background="@drawable/tubi_tv_pause_large"
+        android:background="@drawable/tubi_tv_drawable_play_toggle_selector"
         android:scaleType="fitCenter"
         app:layout_constraintBottom_toTopOf="@+id/tubi_tv_controller_guideline_bottom"
         app:layout_constraintLeft_toLeftOf="@+id/tubi_tv_controller_guideline_left"
