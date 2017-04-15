@@ -6,7 +6,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/tubi_tv_player_controls_overlay"
-
     android:orientation="vertical">
 
 
@@ -18,7 +17,7 @@
         android:layout_marginRight="8dp"
         android:layout_marginTop="8dp"
         android:gravity="center_vertical"
-        android:text="The Frozen Ground"
+        android:text="Escape Plan"
         android:textColor="@android:color/white"
         android:textSize="18sp"
         app:layout_constraintHorizontal_bias="0.0"
@@ -28,8 +27,8 @@
 
     <ImageButton
         android:id="@+id/view_tubi_controller_subtitles_ib"
-        android:layout_width="24dp"
-        android:layout_height="24dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_marginRight="16dp"
         android:layout_marginTop="8dp"
         android:background="@drawable/tubi_tv_drawable_subtitles_selector"
@@ -38,8 +37,8 @@
 
     <ImageButton
         android:id="@+id/view_tubi_controller_quality_ib"
-        android:layout_width="24dp"
-        android:layout_height="24dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_marginRight="16dp"
         android:layout_marginTop="8dp"
         android:background="@drawable/tubi_tv_drawable_quality_selector"
@@ -48,8 +47,8 @@
 
     <ImageButton
         android:id="@+id/view_tubi_controller_chromecast"
-        android:layout_width="24dp"
-        android:layout_height="24dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_marginRight="8dp"
         android:layout_marginTop="8dp"
         android:background="@drawable/tubi_tv_drawable_chromecast_selector"
@@ -58,19 +57,21 @@
 
     <ImageButton
         android:id="@+id/view_tubi_controller_rewind_ib"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_marginRight="24dp"
-        android:layout_marginTop="0dp"
         android:background="@drawable/tubi_tv_rew_15"
         android:scaleType="fitCenter"
         app:layout_constraintRight_toLeftOf="@+id/view_tubi_controller_play_toggle_ib"
-        app:layout_constraintTop_toTopOf="@+id/view_tubi_controller_play_toggle_ib"/>
+        app:layout_constraintTop_toTopOf="@+id/view_tubi_controller_play_toggle_ib"
+        android:layout_marginTop="8dp"
+        app:layout_constraintBottom_toBottomOf="@+id/view_tubi_controller_play_toggle_ib"
+        android:layout_marginBottom="8dp"/>
 
     <ImageButton
         android:id="@+id/view_tubi_controller_play_toggle_ib"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_marginBottom="8dp"
         android:layout_marginLeft="8dp"
         android:layout_marginRight="8dp"
@@ -80,12 +81,13 @@
         app:layout_constraintBottom_toTopOf="@+id/tubi_tv_controller_guideline_bottom"
         app:layout_constraintLeft_toLeftOf="@+id/tubi_tv_controller_guideline_left"
         app:layout_constraintRight_toLeftOf="@+id/tubi_tv_controller_guideline_right"
-        app:layout_constraintTop_toTopOf="@+id/tubi_tv_controller_guideline_top"/>
+        app:layout_constraintTop_toTopOf="@+id/tubi_tv_controller_guideline_top"
+        app:layout_constraintVertical_bias="0.5"/>
 
     <ImageButton
         android:id="@+id/view_tubi_controller_forward_ib"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         android:layout_marginBottom="0dp"
         android:layout_marginLeft="24dp"
         android:layout_marginTop="0dp"
@@ -94,7 +96,7 @@
         app:layout_constraintBottom_toBottomOf="@+id/view_tubi_controller_play_toggle_ib"
         app:layout_constraintLeft_toRightOf="@+id/view_tubi_controller_play_toggle_ib"
         app:layout_constraintTop_toTopOf="@+id/view_tubi_controller_play_toggle_ib"
-        app:layout_constraintVertical_bias="0.0"/>
+        app:layout_constraintVertical_bias="0.5"/>
 
     <TextView
         android:id="@+id/view_tubi_controller_elapsed_time"
