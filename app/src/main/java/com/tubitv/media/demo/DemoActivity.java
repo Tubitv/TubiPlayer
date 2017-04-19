@@ -147,7 +147,7 @@ public class DemoActivity extends Activity implements TubiPlayerControlView.Visi
         //fake media
         Uri[] uris = new Uri[1];
         String[] extensions = new String[1];
-        uris[0] = Uri.parse("http://c11.adrise.tv/v2/sources/content-owners/lionsgate/348932/v201703040118-,225,447,725,1157,1398,k.mp4.m3u8?uzXcPxCOS-hNU8u8jbF8LQaVSwcBoCHqqI4RIOuxJy0ywOhBqQRiXAS3TzaxiGq0");
+        uris[0] = Uri.parse("http://c11.adrise.tv/v2/sources/content-owners/lionsgate/348932/v201703040118-,225,447,725,1157,1398,k.mp4.m3u8?xDxJULHHdS2pYW3OFr7KJYmJzyhAyCOxp0V6PBdOUGV3D3iu7xO5voZnm-3wT9qI");
         extensions[0] = "m3u8";
         MediaSource[] mediaSources = new MediaSource[uris.length];
         mediaSources[0] = buildMediaSource(uris[0], extensions[0]);
