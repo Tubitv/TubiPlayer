@@ -2,5 +2,6 @@
 <resources>
     <color name="tubi_tv_orange">#FF9933</color>
     <color name="tubi_tv_player_controls_overlay">#4c26262d</color>
+    <color name="tubi_tv_player_controls_subtitles_background">#4c191919</color>
     <color name="tubi_tv_player_controls_progress_background">#19000000</color>
 </resources>

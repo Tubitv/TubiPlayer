@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.util.AttributeSet;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -24,6 +25,7 @@ import com.google.android.exoplayer2.Timeline;
 import com.google.android.exoplayer2.metadata.Metadata;
 import com.google.android.exoplayer2.metadata.id3.ApicFrame;
 import com.google.android.exoplayer2.source.TrackGroupArray;
+import com.google.android.exoplayer2.text.CaptionStyleCompat;
 import com.google.android.exoplayer2.text.Cue;
 import com.google.android.exoplayer2.text.TextRenderer;
 import com.google.android.exoplayer2.trackselection.TrackSelection;
@@ -137,7 +139,13 @@ public class TubiExoPlayerView extends FrameLayout {
         // Subtitle view.
         subtitleView = (SubtitleView) findViewById(R.id.exo_subtitles);
         if (subtitleView != null) {
-            subtitleView.setUserDefaultStyle();
+            subtitleView.setStyle(new CaptionStyleCompat(
+                    Color.WHITE,
+                    getResources().getColor(R.color.tubi_tv_player_controls_subtitles_background),
+                    Color.TRANSPARENT,
+                    CaptionStyleCompat.EDGE_TYPE_NONE,
+                    Color.WHITE,
+                    null));
             subtitleView.setUserDefaultTextSize();
         }
 
