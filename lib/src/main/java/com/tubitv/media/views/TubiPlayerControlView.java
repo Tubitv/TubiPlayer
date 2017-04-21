@@ -7,8 +7,10 @@ import android.os.SystemClock;
 import android.util.AttributeSet;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.FrameLayout;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.TextView;
@@ -29,6 +31,10 @@ import java.util.Locale;
  * Created by stoyan on 3/23/17.
  */
 public class TubiPlayerControlView extends FrameLayout {
+    /**
+     * Simple tag for logging
+     */
+    private static final String TAG = TubiPlayerControlView.class.getSimpleName();
 
     /**
      * Listener to be notified about changes of the visibility of the UI control.
@@ -74,12 +80,16 @@ public class TubiPlayerControlView extends FrameLayout {
     };
     public static final int DEFAULT_SHOW_TIMEOUT_MS = 5000;
     private static final int PROGRESS_BAR_MAX = 1000;
+    private static final int DEFAULT_FAST_FORWARD_MS = 15000;
+    private static final int DEFAULT_UPDATE_FAST_FORWARD_MS = 333;
 
-    private final TextView mElapsedTime;
-    private final TextView mRemainingTime;
+    private TextView mElapsedTime;
+    private TextView mRemainingTime;
     private final ComponentListener componentListener;
-    private final ImageView mPlayToggleView;
-    private final SeekBar mProgressBar;
+    private ImageView mPlayToggleView;
+    private ImageButton mFastForward;
+    private ImageButton mRewind;
+    private SeekBar mProgressBar;
     private final StringBuilder formatBuilder;
     private final Formatter formatter;
     private final Timeline.Window currentWindow;
@@ -92,7 +102,8 @@ public class TubiPlayerControlView extends FrameLayout {
     private boolean dragging;
     private int showTimeoutMs;
     private long hideAtMs;
-
+    boolean ffPressed = false;
+    boolean rwPressed = false;
     private final Runnable updateProgressAction = new Runnable() {
         @Override
         public void run() {
@@ -135,9 +146,13 @@ public class TubiPlayerControlView extends FrameLayout {
         componentListener = new ComponentListener();
         seekDispatcher = DEFAULT_SEEK_DISPATCHER;
 
-        LayoutInflater.from(context).inflate(controllerLayoutId, this);
-        setDescendantFocusability(FOCUS_AFTER_DESCENDANTS);
 
+        initLayout(controllerLayoutId);
+    }
+
+    private void initLayout(int controllerLayoutId) {
+        LayoutInflater.from(getContext()).inflate(controllerLayoutId, this);
+        setDescendantFocusability(FOCUS_AFTER_DESCENDANTS);
         mProgressBar = (SeekBar) findViewById(R.id.view_tubi_controller_seek_bar);
         if (mProgressBar != null) {
             mProgressBar.setOnSeekBarChangeListener(componentListener);
@@ -147,9 +162,78 @@ public class TubiPlayerControlView extends FrameLayout {
         if (mPlayToggleView != null) {
             mPlayToggleView.setOnClickListener(componentListener);
         }
+        mFastForward = (ImageButton) findViewById(R.id.view_tubi_controller_forward_ib);
+
+
+        if (mFastForward != null) {
+            mFastForward.setOnTouchListener(new OnTouchListener() {
+                @Override
+                public boolean onTouch(View v, MotionEvent event) {
+
+                    switch (event.getAction()) {
+                        case MotionEvent.ACTION_DOWN:
+                            // PRESSED
+                            ffPressed = true;
+                            removeCallbacks(hideAction);
+                            seekBy(DEFAULT_FAST_FORWARD_MS);
+                            pressedSeekBy();
+                            return true;
+                        case MotionEvent.ACTION_UP:
+                            // RELEASED
+                            ffPressed = false;
+                            getHandler().removeCallbacks(mFastForwardRunnable);
+                            hideAfterTimeout();
+                            return true;
+                    }
+                    return false;
+                }
+            });
+        }
+        mRewind = (ImageButton) findViewById(R.id.view_tubi_controller_rewind_ib);
+        if (mRewind != null) {
+            mRewind.setOnTouchListener(new OnTouchListener() {
+                @Override
+                public boolean onTouch(View v, MotionEvent event) {
+
+                    switch (event.getAction()) {
+                        case MotionEvent.ACTION_DOWN:
+                            // PRESSED
+                            rwPressed = true;
+                            removeCallbacks(hideAction);
+                            seekBy(-DEFAULT_FAST_FORWARD_MS);
+                            pressedSeekBy();
+                            return true;
+                        case MotionEvent.ACTION_UP:
+                            // RELEASED
+                            rwPressed = false;
+                            getHandler().removeCallbacks(mFastForwardRunnable);
+                            hideAfterTimeout();
+                            return true;
+                    }
+                    return false;
+                }
+            });
+        }
 
         mElapsedTime = (TextView) findViewById(R.id.view_tubi_controller_elapsed_time);
         mRemainingTime = (TextView) findViewById(R.id.view_tubi_controller_remaining_time);
+    }
+
+    Runnable mFastForwardRunnable = new Runnable() {
+        @Override
+        public void run() {
+            if (ffPressed == rwPressed) {
+                return;
+            }
+            seekBy(ffPressed ? DEFAULT_FAST_FORWARD_MS : -DEFAULT_FAST_FORWARD_MS);
+            pressedSeekBy();
+        }
+    };
+
+    private void pressedSeekBy() {
+        if (ffPressed != rwPressed) {
+            postDelayed(mFastForwardRunnable, DEFAULT_UPDATE_FAST_FORWARD_MS);
+        }
     }
 
     /**
@@ -392,6 +476,16 @@ public class TubiPlayerControlView extends FrameLayout {
     private long positionValue(int progress) {
         long duration = player == null ? C.TIME_UNSET : player.getDuration();
         return duration == C.TIME_UNSET ? 0 : ((duration * progress) / PROGRESS_BAR_MAX);
+    }
+
+    private void seekBy(long timeMillis) {
+        long position = player.getCurrentPosition();
+        long place = position + timeMillis;
+        //lower bound
+        place = place < 0 ? 0 : place;
+        //upper bound
+        place = place > player.getDuration() ? player.getDuration() : place;
+        seekTo(place);
     }
 
     private void seekTo(long positionMs) {
