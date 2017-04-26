@@ -35,6 +35,7 @@ import com.google.android.exoplayer2.ui.PlaybackControlView;
 import com.google.android.exoplayer2.ui.SubtitleView;
 import com.google.android.exoplayer2.util.Assertions;
 import com.tubitv.media.R;
+import com.tubitv.ui.TubiLoadingView;
 
 import java.util.List;
 
@@ -56,7 +57,7 @@ public class TubiExoPlayerView extends FrameLayout {
     private final TubiPlayerControlView controller;
     private final ComponentListener componentListener;
     private final FrameLayout overlayFrameLayout;
-
+    private TubiLoadingView tubiLoadingView;
     private SimpleExoPlayer player;
     private boolean useController;
     private boolean useArtwork;

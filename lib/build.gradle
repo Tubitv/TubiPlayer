@@ -1,8 +1,8 @@
 apply plugin: 'com.android.library'
 
-repositories {
-    maven { url 'https://maven.fabric.io/public' }
-}
+//repositories {
+//    maven { url 'https://maven.fabric.io/public' }
+//}
 
 android {
     compileSdkVersion 25
@@ -28,6 +28,8 @@ android {
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
 
+    compile 'com.tubitv.ui:tubi-loading-view:0.0.3@aar'
+
     compile 'com.google.android.exoplayer:exoplayer:r2.3.0'
     compile 'com.android.support:appcompat-v7:25.3.1'
     compile 'com.android.support.constraint:constraint-layout:1.0.1'
@@ -36,8 +38,8 @@ dependencies {
     androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
-    compile('com.crashlytics.sdk.android:crashlytics:2.6.7@aar') {
-        transitive = true;
-    }
+//    compile('com.crashlytics.sdk.android:crashlytics:2.6.7@aar') {
+//        transitive = true;
+//    }
     testCompile 'junit:junit:4.12'
 }
