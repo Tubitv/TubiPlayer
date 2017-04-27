@@ -7,17 +7,8 @@
     android:layout_height="match_parent"
     android:background="@color/tubi_tv_player_controls_overlay"
     android:orientation="vertical">
-    <com.tubitv.ui.TubiLoadingView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:layout_constraintRight_toLeftOf="@+id/tubi_tv_controller_guideline_right"
-        android:layout_marginRight="8dp"
-        android:layout_marginLeft="8dp"
-        app:layout_constraintLeft_toLeftOf="@+id/tubi_tv_controller_guideline_left"
-        app:layout_constraintBottom_toBottomOf="@+id/view_tubi_controller_seek_bar"
-        android:layout_marginBottom="8dp"
-        app:layout_constraintTop_toTopOf="@+id/tubi_tv_controller_guideline_top"
-        android:layout_marginTop="8dp"/>
+
+
     <TextView
         android:id="@+id/textView"
         android:layout_width="454dp"
@@ -64,51 +55,18 @@
         app:layout_constraintRight_toLeftOf="@+id/tubi_tv_controller_guideline_right"
         app:layout_constraintTop_toTopOf="@+id/tubi_tv_controller_guideline_top"/>
 
-    <ImageButton
-        android:id="@+id/view_tubi_controller_rewind_ib"
+    <com.tubitv.media.views.TubiPlaybackControlView
+        android:id="@+id/view_tubi_controller_playback_control"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
-        android:layout_marginRight="24dp"
-        android:layout_marginTop="8dp"
-        android:background="@drawable/tubi_tv_rew_15"
-        android:scaleType="fitCenter"
-        android:tag="view_tubi_controller_rewind_ib"
-        app:layout_constraintBottom_toBottomOf="@+id/view_tubi_controller_play_toggle_ib"
-        app:layout_constraintRight_toLeftOf="@+id/view_tubi_controller_play_toggle_ib"
-        app:layout_constraintTop_toTopOf="@+id/view_tubi_controller_play_toggle_ib"/>
-
-    <ImageButton
-        android:id="@+id/view_tubi_controller_play_toggle_ib"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
         android:layout_marginLeft="8dp"
-        android:layout_marginRight="8dp"
-        android:layout_marginTop="8dp"
-        android:background="@drawable/tubi_tv_drawable_play_toggle_selector"
-        android:scaleType="fitCenter"
-        android:tag="view_tubi_controller_play_toggle_ib"
-        app:layout_constraintBottom_toTopOf="@+id/tubi_tv_controller_guideline_bottom"
         app:layout_constraintLeft_toLeftOf="@+id/tubi_tv_controller_guideline_left"
         app:layout_constraintRight_toLeftOf="@+id/tubi_tv_controller_guideline_right"
+        android:layout_marginRight="8dp"
+        android:layout_marginBottom="8dp"
+        app:layout_constraintBottom_toTopOf="@+id/view_tubi_controller_seek_bar"
         app:layout_constraintTop_toTopOf="@+id/tubi_tv_controller_guideline_top"
-        app:layout_constraintVertical_bias="0.5"/>
-
-    <ImageButton
-        android:id="@+id/view_tubi_controller_forward_ib"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="0dp"
-        android:layout_marginLeft="24dp"
-        android:layout_marginTop="0dp"
-        android:background="@drawable/tubi_tv_fwd_15"
-        android:scaleType="fitCenter"
-        android:tag="view_tubi_controller_forward_ib"
-        app:layout_constraintBottom_toBottomOf="@+id/view_tubi_controller_play_toggle_ib"
-        app:layout_constraintLeft_toRightOf="@+id/view_tubi_controller_play_toggle_ib"
-        app:layout_constraintTop_toTopOf="@+id/view_tubi_controller_play_toggle_ib"
-        app:layout_constraintVertical_bias="0.5"/>
+        android:layout_marginTop="8dp"/>
 
     <TextView
         android:id="@+id/view_tubi_controller_elapsed_time"
@@ -129,22 +87,22 @@
         app:layout_constraintVertical_bias="0.214"/>
 
     <!--<TextView-->
-        <!--android:id="@+id/view_tubi_controller_subtitles_tv"-->
-        <!--android:layout_width="wrap_content"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:background="@color/tubi_tv_player_controls_subtitles_background"-->
-        <!--android:text="Subtitles will go here. They will not extend further than 60% of-->
-<!--the total width of the screen. Two lines max."-->
-        <!--android:textAlignment="center"-->
-        <!--android:textColor="@android:color/white"-->
-        <!--android:maxLines="2"-->
-        <!--android:maxWidth="450dp"-->
-        <!--android:layout_marginBottom="8dp"-->
-        <!--app:layout_constraintBottom_toTopOf="@+id/view_tubi_controller_seek_bar"-->
-        <!--android:layout_marginLeft="16dp"-->
-        <!--app:layout_constraintLeft_toLeftOf="@+id/view_tubi_controller_seek_bar"-->
-        <!--android:layout_marginRight="16dp"-->
-        <!--app:layout_constraintRight_toRightOf="@+id/view_tubi_controller_seek_bar"/>-->
+    <!--android:id="@+id/view_tubi_controller_subtitles_tv"-->
+    <!--android:layout_width="wrap_content"-->
+    <!--android:layout_height="wrap_content"-->
+    <!--android:background="@color/tubi_tv_player_controls_subtitles_background"-->
+    <!--android:text="Subtitles will go here. They will not extend further than 60% of-->
+    <!--the total width of the screen. Two lines max."-->
+    <!--android:textAlignment="center"-->
+    <!--android:textColor="@android:color/white"-->
+    <!--android:maxLines="2"-->
+    <!--android:maxWidth="450dp"-->
+    <!--android:layout_marginBottom="8dp"-->
+    <!--app:layout_constraintBottom_toTopOf="@+id/view_tubi_controller_seek_bar"-->
+    <!--android:layout_marginLeft="16dp"-->
+    <!--app:layout_constraintLeft_toLeftOf="@+id/view_tubi_controller_seek_bar"-->
+    <!--android:layout_marginRight="16dp"-->
+    <!--app:layout_constraintRight_toRightOf="@+id/view_tubi_controller_seek_bar"/>-->
 
     <SeekBar
         android:id="@+id/view_tubi_controller_seek_bar"

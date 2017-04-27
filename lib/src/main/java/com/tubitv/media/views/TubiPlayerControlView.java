@@ -23,9 +23,15 @@ import com.google.android.exoplayer2.source.TrackGroupArray;
 import com.google.android.exoplayer2.trackselection.TrackSelectionArray;
 import com.google.android.exoplayer2.util.Util;
 import com.tubitv.media.R;
+import com.tubitv.ui.TubiLoadingView;
 
 import java.util.Formatter;
 import java.util.Locale;
+
+import static com.google.android.exoplayer2.ExoPlayer.STATE_BUFFERING;
+import static com.google.android.exoplayer2.ExoPlayer.STATE_ENDED;
+import static com.google.android.exoplayer2.ExoPlayer.STATE_IDLE;
+import static com.google.android.exoplayer2.ExoPlayer.STATE_READY;
 
 /**
  * Created by stoyan on 3/23/17.
@@ -86,9 +92,7 @@ public class TubiPlayerControlView extends FrameLayout {
     private TextView mElapsedTime;
     private TextView mRemainingTime;
     private final ComponentListener componentListener;
-    private ImageView mPlayToggleView;
-    private ImageButton mFastForward;
-    private ImageButton mRewind;
+
     private SeekBar mProgressBar;
     private final StringBuilder formatBuilder;
     private final Formatter formatter;
@@ -214,6 +218,8 @@ public class TubiPlayerControlView extends FrameLayout {
                 }
             });
         }
+
+        mLoadingSpinner = (TubiLoadingView) findViewById(R.id.view_tubi_controller_loading);
 
         mElapsedTime = (TextView) findViewById(R.id.view_tubi_controller_elapsed_time);
         mRemainingTime = (TextView) findViewById(R.id.view_tubi_controller_remaining_time);
@@ -365,12 +371,23 @@ public class TubiPlayerControlView extends FrameLayout {
         }
 //        boolean requestPlayPauseFocus = false;
         boolean playing = player != null && player.getPlayWhenReady();
-        if (mPlayToggleView != null) {
-            if (playing) {
-                mPlayToggleView.setBackgroundResource(R.drawable.tubi_tv_pause_large);
-            } else {
-                mPlayToggleView.setBackgroundResource(R.drawable.tubi_tv_play_large);
-            }
+        int playbackState = player == null ? ExoPlayer.STATE_IDLE : player.getPlaybackState();
+        switch (playbackState){
+            case STATE_READY:
+                if (mPlayToggleView != null) {
+                    mPlayToggleView.setVisibility(View.VISIBLE);
+                    if (playing) {
+                        mPlayToggleView.setBackgroundResource(R.drawable.tubi_tv_pause_large);
+                    } else {
+                        mPlayToggleView.setBackgroundResource(R.drawable.tubi_tv_play_large);
+                    }
+                }
+                break;
+            case STATE_BUFFERING:
+                break;
+            case STATE_IDLE:  //nothing to play
+            case STATE_ENDED: //stream ended
+                break;
         }
     }
 
@@ -413,7 +430,7 @@ public class TubiPlayerControlView extends FrameLayout {
         int playbackState = player == null ? ExoPlayer.STATE_IDLE : player.getPlaybackState();
         if (playbackState != ExoPlayer.STATE_IDLE && playbackState != ExoPlayer.STATE_ENDED) {
             long delayMs;
-            if (player.getPlayWhenReady() && playbackState == ExoPlayer.STATE_READY) {
+            if (player.getPlayWhenReady() && playbackState == STATE_READY) {
                 delayMs = 1000 - (position % 1000);
                 if (delayMs < 200) {
                     delayMs += 1000;
@@ -634,7 +651,7 @@ public class TubiPlayerControlView extends FrameLayout {
 
         @Override
         public void onLoadingChanged(boolean isLoading) {
-            // Do nothing.
+
         }
 
         @Override
