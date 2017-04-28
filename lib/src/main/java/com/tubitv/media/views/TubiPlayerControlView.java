@@ -7,11 +7,8 @@ import android.os.SystemClock;
 import android.util.AttributeSet;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.widget.FrameLayout;
-import android.widget.ImageButton;
-import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
@@ -23,14 +20,10 @@ import com.google.android.exoplayer2.source.TrackGroupArray;
 import com.google.android.exoplayer2.trackselection.TrackSelectionArray;
 import com.google.android.exoplayer2.util.Util;
 import com.tubitv.media.R;
-import com.tubitv.ui.TubiLoadingView;
 
 import java.util.Formatter;
 import java.util.Locale;
 
-import static com.google.android.exoplayer2.ExoPlayer.STATE_BUFFERING;
-import static com.google.android.exoplayer2.ExoPlayer.STATE_ENDED;
-import static com.google.android.exoplayer2.ExoPlayer.STATE_IDLE;
 import static com.google.android.exoplayer2.ExoPlayer.STATE_READY;
 
 /**
@@ -162,64 +155,64 @@ public class TubiPlayerControlView extends FrameLayout {
             mProgressBar.setOnSeekBarChangeListener(componentListener);
             mProgressBar.setMax(PROGRESS_BAR_MAX);
         }
-        mPlayToggleView = (ImageView) findViewById(R.id.view_tubi_controller_play_toggle_ib);
-        if (mPlayToggleView != null) {
-            mPlayToggleView.setOnClickListener(componentListener);
-        }
-        mFastForward = (ImageButton) findViewById(R.id.view_tubi_controller_forward_ib);
-
-
-        if (mFastForward != null) {
-            mFastForward.setOnTouchListener(new OnTouchListener() {
-                @Override
-                public boolean onTouch(View v, MotionEvent event) {
-
-                    switch (event.getAction()) {
-                        case MotionEvent.ACTION_DOWN:
-                            // PRESSED
-                            ffPressed = true;
-                            removeCallbacks(hideAction);
-                            seekBy(DEFAULT_FAST_FORWARD_MS);
-                            pressedSeekBy();
-                            return true;
-                        case MotionEvent.ACTION_UP:
-                            // RELEASED
-                            ffPressed = false;
-                            getHandler().removeCallbacks(mFastForwardRunnable);
-                            hideAfterTimeout();
-                            return true;
-                    }
-                    return false;
-                }
-            });
-        }
-        mRewind = (ImageButton) findViewById(R.id.view_tubi_controller_rewind_ib);
-        if (mRewind != null) {
-            mRewind.setOnTouchListener(new OnTouchListener() {
-                @Override
-                public boolean onTouch(View v, MotionEvent event) {
-
-                    switch (event.getAction()) {
-                        case MotionEvent.ACTION_DOWN:
-                            // PRESSED
-                            rwPressed = true;
-                            removeCallbacks(hideAction);
-                            seekBy(-DEFAULT_FAST_FORWARD_MS);
-                            pressedSeekBy();
-                            return true;
-                        case MotionEvent.ACTION_UP:
-                            // RELEASED
-                            rwPressed = false;
-                            getHandler().removeCallbacks(mFastForwardRunnable);
-                            hideAfterTimeout();
-                            return true;
-                    }
-                    return false;
-                }
-            });
-        }
-
-        mLoadingSpinner = (TubiLoadingView) findViewById(R.id.view_tubi_controller_loading);
+//        mPlayToggleView = (ImageView) findViewById(R.id.view_tubi_controller_play_toggle_ib);
+//        if (mPlayToggleView != null) {
+//            mPlayToggleView.setOnClickListener(componentListener);
+//        }
+//        mFastForward = (ImageButton) findViewById(R.id.view_tubi_controller_forward_ib);
+//
+//
+//        if (mFastForward != null) {
+//            mFastForward.setOnTouchListener(new OnTouchListener() {
+//                @Override
+//                public boolean onTouch(View v, MotionEvent event) {
+//
+//                    switch (event.getAction()) {
+//                        case MotionEvent.ACTION_DOWN:
+//                            // PRESSED
+//                            ffPressed = true;
+//                            removeCallbacks(hideAction);
+//                            seekBy(DEFAULT_FAST_FORWARD_MS);
+//                            pressedSeekBy();
+//                            return true;
+//                        case MotionEvent.ACTION_UP:
+//                            // RELEASED
+//                            ffPressed = false;
+//                            getHandler().removeCallbacks(mFastForwardRunnable);
+//                            hideAfterTimeout();
+//                            return true;
+//                    }
+//                    return false;
+//                }
+//            });
+//        }
+//        mRewind = (ImageButton) findViewById(R.id.view_tubi_controller_rewind_ib);
+//        if (mRewind != null) {
+//            mRewind.setOnTouchListener(new OnTouchListener() {
+//                @Override
+//                public boolean onTouch(View v, MotionEvent event) {
+//
+//                    switch (event.getAction()) {
+//                        case MotionEvent.ACTION_DOWN:
+//                            // PRESSED
+//                            rwPressed = true;
+//                            removeCallbacks(hideAction);
+//                            seekBy(-DEFAULT_FAST_FORWARD_MS);
+//                            pressedSeekBy();
+//                            return true;
+//                        case MotionEvent.ACTION_UP:
+//                            // RELEASED
+//                            rwPressed = false;
+//                            getHandler().removeCallbacks(mFastForwardRunnable);
+//                            hideAfterTimeout();
+//                            return true;
+//                    }
+//                    return false;
+//                }
+//            });
+//        }
+//
+//        mLoadingSpinner = (TubiLoadingView) findViewById(R.id.view_tubi_controller_loading);
 
         mElapsedTime = (TextView) findViewById(R.id.view_tubi_controller_elapsed_time);
         mRemainingTime = (TextView) findViewById(R.id.view_tubi_controller_remaining_time);
@@ -366,29 +359,29 @@ public class TubiPlayerControlView extends FrameLayout {
     }
 
     private void updatePlayPauseButton() {
-        if (!isVisible() || !isAttachedToWindow) {
-            return;
-        }
-//        boolean requestPlayPauseFocus = false;
-        boolean playing = player != null && player.getPlayWhenReady();
-        int playbackState = player == null ? ExoPlayer.STATE_IDLE : player.getPlaybackState();
-        switch (playbackState){
-            case STATE_READY:
-                if (mPlayToggleView != null) {
-                    mPlayToggleView.setVisibility(View.VISIBLE);
-                    if (playing) {
-                        mPlayToggleView.setBackgroundResource(R.drawable.tubi_tv_pause_large);
-                    } else {
-                        mPlayToggleView.setBackgroundResource(R.drawable.tubi_tv_play_large);
-                    }
-                }
-                break;
-            case STATE_BUFFERING:
-                break;
-            case STATE_IDLE:  //nothing to play
-            case STATE_ENDED: //stream ended
-                break;
-        }
+//        if (!isVisible() || !isAttachedToWindow) {
+//            return;
+//        }
+////        boolean requestPlayPauseFocus = false;
+//        boolean playing = player != null && player.getPlayWhenReady();
+//        int playbackState = player == null ? ExoPlayer.STATE_IDLE : player.getPlaybackState();
+//        switch (playbackState){
+//            case STATE_READY:
+//                if (mPlayToggleView != null) {
+//                    mPlayToggleView.setVisibility(View.VISIBLE);
+//                    if (playing) {
+//                        mPlayToggleView.setBackgroundResource(R.drawable.tubi_tv_pause_large);
+//                    } else {
+//                        mPlayToggleView.setBackgroundResource(R.drawable.tubi_tv_play_large);
+//                    }
+//                }
+//                break;
+//            case STATE_BUFFERING:
+//                break;
+//            case STATE_IDLE:  //nothing to play
+//            case STATE_ENDED: //stream ended
+//                break;
+//        }
     }
 
     private void updateNavigation() {
