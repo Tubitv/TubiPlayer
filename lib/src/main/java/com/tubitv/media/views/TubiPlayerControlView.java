@@ -91,30 +91,57 @@ public class TubiPlayerControlView extends FrameLayout {
      * The view we toggle between play and pause depending on {@link com.google.android.exoplayer2.ExoPlayer}
      * state
      */
-    private ImageView mPlayToggleView;
+    private ImageView mPlayToggleViewBtn;
 
     /**
      * The loading spinner that we toggle when {@link TubiPlayerControlView.ComponentListener#onLoadingChanged(boolean)}.
-     * When this view is visible, then the {@link #mPlayToggleView} should be invisible
+     * When this view is visible, then the {@link #mPlayToggleViewBtn} should be invisible
      */
     private TubiLoadingView mLoadingSpinner;
 
     /**
      * The rewind button that can be clicked or pressed
      */
-    private ImageButton mRewind;
+    private ImageButton mRewindBtn;
 
     /**
      * The fast forward button that can be clicked or pressed
      */
-    private ImageButton mFastForward;
+    private ImageButton mFastForwardBtn;
 
+    /**
+     * The toggle button for displaying the subtitles
+     */
+    private ImageButton mSubtitlesBtn;
 
+    /**
+     * The toggle button for displaying the quality selection dialog
+     */
+    private ImageButton mQualityBtn;
+
+    /**
+     * The toggle button for casting the content to an OTT device
+     */
+    private ImageButton mCastBtn;
+
+    /**
+     * The elapsed time of the media hh:mm:ss
+     */
     private TextView mElapsedTime;
+
+    /**
+     * The remaining time of the media hh:mm:ss
+     */
     private TextView mRemainingTime;
+
+    /**
+     * The current progress of the media
+     */
+    private SeekBar mProgressBar;
+
     private final ComponentListener componentListener;
 
-    private SeekBar mProgressBar;
+
     private final StringBuilder formatBuilder;
     private final Formatter formatter;
     private final Timeline.Window currentWindow;
@@ -184,16 +211,16 @@ public class TubiPlayerControlView extends FrameLayout {
             mProgressBar.setMax(PROGRESS_BAR_MAX);
         }
 
-        mRewind = (ImageButton) findViewById(R.id.view_tubi_controller_rewind_ib);
-        mFastForward = (ImageButton) findViewById(R.id.view_tubi_controller_forward_ib);
-        mPlayToggleView = (ImageView) findViewById(R.id.view_tubi_controller_play_toggle_ib);
-        if (mPlayToggleView != null) {
-            mPlayToggleView.setOnClickListener(componentListener);
+        mRewindBtn = (ImageButton) findViewById(R.id.view_tubi_controller_rewind_ib);
+        mFastForwardBtn = (ImageButton) findViewById(R.id.view_tubi_controller_forward_ib);
+        mPlayToggleViewBtn = (ImageView) findViewById(R.id.view_tubi_controller_play_toggle_ib);
+        if (mPlayToggleViewBtn != null) {
+            mPlayToggleViewBtn.setOnClickListener(componentListener);
         }
-        mFastForward = (ImageButton) findViewById(R.id.view_tubi_controller_forward_ib);
+        mFastForwardBtn = (ImageButton) findViewById(R.id.view_tubi_controller_forward_ib);
 
-        if (mFastForward != null) {
-            mFastForward.setOnTouchListener(new OnTouchListener() {
+        if (mFastForwardBtn != null) {
+            mFastForwardBtn.setOnTouchListener(new OnTouchListener() {
                 @Override
                 public boolean onTouch(View v, MotionEvent event) {
 
@@ -217,8 +244,8 @@ public class TubiPlayerControlView extends FrameLayout {
             });
         }
 
-        if (mRewind != null) {
-            mRewind.setOnTouchListener(new OnTouchListener() {
+        if (mRewindBtn != null) {
+            mRewindBtn.setOnTouchListener(new OnTouchListener() {
                 @Override
                 public boolean onTouch(View v, MotionEvent event) {
 
@@ -243,6 +270,16 @@ public class TubiPlayerControlView extends FrameLayout {
         }
 //
         mLoadingSpinner = (TubiLoadingView) findViewById(R.id.view_tubi_controller_loading);
+        mSubtitlesBtn = (ImageButton) findViewById(R.id.view_tubi_controller_subtitles_ib);
+        mQualityBtn = (ImageButton) findViewById(R.id.view_tubi_controller_quality_ib);
+        mCastBtn = (ImageButton) findViewById(R.id.view_tubi_controller_chromecast);
+
+        mSubtitlesBtn.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mSubtitlesBtn.setBackgroundResource(R.drawable.tubi_tv_subtitles_on);
+            }
+        });
 
         mElapsedTime = (TextView) findViewById(R.id.view_tubi_controller_elapsed_time);
         mRemainingTime = (TextView) findViewById(R.id.view_tubi_controller_remaining_time);
@@ -388,6 +425,10 @@ public class TubiPlayerControlView extends FrameLayout {
         updateProgress();
     }
 
+    /**
+     * Updates the playback controlls when the player state changes.
+     * ie. The play/pause and loading spinner
+     */
     public void onPlaybackState() {
         if (!isVisible() || !isAttachedToWindow) {
             return;
@@ -410,14 +451,15 @@ public class TubiPlayerControlView extends FrameLayout {
 
     /**
      * Toggles the views in this control when the player is
+     *
      * @param isLoaded
      * @param isPlaying
      */
     private void showLoading(boolean isLoaded, boolean isPlaying) {
         int vis = isLoaded ? View.VISIBLE : View.INVISIBLE;
-        mPlayToggleView.setVisibility(vis);
-        mFastForward.setVisibility(vis);
-        mRewind.setVisibility(vis);
+        mPlayToggleViewBtn.setVisibility(vis);
+        mFastForwardBtn.setVisibility(vis);
+        mRewindBtn.setVisibility(vis);
 
         if (isLoaded) {
             mLoadingSpinner.stop();
@@ -426,9 +468,9 @@ public class TubiPlayerControlView extends FrameLayout {
         }
 
         if (isPlaying) {
-            mPlayToggleView.setBackgroundResource(R.drawable.tubi_tv_pause_large);
+            mPlayToggleViewBtn.setBackgroundResource(R.drawable.tubi_tv_pause_large);
         } else {
-            mPlayToggleView.setBackgroundResource(R.drawable.tubi_tv_play_large);
+            mPlayToggleViewBtn.setBackgroundResource(R.drawable.tubi_tv_play_large);
         }
     }
 

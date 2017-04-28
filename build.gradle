@@ -17,6 +17,7 @@ allprojects {
         jcenter()
         mavenCentral()
         maven { url 'https://maven.fabric.io/public' }
+        maven { url "http://dl.bintray.com/tubitv/UI" } //TODO remove once jcenter hosts VaudTextView
     }
 }
 

@@ -3,15 +3,15 @@
     <item android:drawable="@drawable/tubi_tv_subtitles_on" android:state_checked="true"
           android:state_pressed="false">
     </item>
-    <item android:drawable="@drawable/tubi_tv_subtitles_on_faded" android:state_checked="true"
-          android:state_pressed="true">
-    </item>
+    <!--<item android:drawable="@drawable/tubi_tv_subtitles_on_faded" android:state_checked="true"-->
+          <!--android:state_pressed="true">-->
+    <!--</item>-->
     <item android:drawable="@drawable/tubi_tv_subtitles_off" android:state_checked="false"
           android:state_pressed="false">
     </item>
-    <item android:drawable="@drawable/tubi_tv_subtitles_off_faded" android:state_checked="false"
-          android:state_pressed="true">
-    </item>
+    <!--<item android:drawable="@drawable/tubi_tv_subtitles_off_faded" android:state_checked="false"-->
+          <!--android:state_pressed="true">-->
+    <!--</item>-->
     <item
         android:drawable="@drawable/tubi_tv_subtitles_off">
     </item>

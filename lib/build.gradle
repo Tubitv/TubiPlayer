@@ -29,6 +29,7 @@ dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
 
     compile 'com.tubitv.ui:tubi-loading-view:0.0.3@aar'
+    compile 'com.tubitv.ui:vaud-text-view:0.0.1'
 
     compile 'com.google.android.exoplayer:exoplayer:r2.3.0'
     compile 'com.android.support:appcompat-v7:25.3.1'
