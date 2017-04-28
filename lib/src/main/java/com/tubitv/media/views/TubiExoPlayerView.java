@@ -36,6 +36,8 @@ import com.google.android.exoplayer2.ui.SubtitleView;
 import com.google.android.exoplayer2.util.Assertions;
 import com.tubitv.media.R;
 import com.tubitv.ui.TubiLoadingView;
+import com.tubitv.ui.VaudTextView;
+import com.tubitv.ui.VaudType;
 
 import java.util.List;
 
@@ -146,7 +148,7 @@ public class TubiExoPlayerView extends FrameLayout {
                     Color.TRANSPARENT,
                     CaptionStyleCompat.EDGE_TYPE_NONE,
                     Color.WHITE,
-                    null));
+                    VaudTextView.getFont(context, VaudType.VAUD_REGULAR.getAssetFileName())));
             subtitleView.setUserDefaultTextSize();
         }
 
