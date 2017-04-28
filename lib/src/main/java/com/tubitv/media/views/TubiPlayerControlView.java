@@ -7,8 +7,11 @@ import android.os.SystemClock;
 import android.util.AttributeSet;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.FrameLayout;
+import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
@@ -20,10 +23,12 @@ import com.google.android.exoplayer2.source.TrackGroupArray;
 import com.google.android.exoplayer2.trackselection.TrackSelectionArray;
 import com.google.android.exoplayer2.util.Util;
 import com.tubitv.media.R;
+import com.tubitv.ui.TubiLoadingView;
 
 import java.util.Formatter;
 import java.util.Locale;
 
+import static com.google.android.exoplayer2.ExoPlayer.STATE_ENDED;
 import static com.google.android.exoplayer2.ExoPlayer.STATE_READY;
 
 /**
@@ -81,6 +86,29 @@ public class TubiPlayerControlView extends FrameLayout {
     private static final int PROGRESS_BAR_MAX = 1000;
     private static final int DEFAULT_FAST_FORWARD_MS = 15000;
     private static final int DEFAULT_UPDATE_FAST_FORWARD_MS = 333;
+
+    /**
+     * The view we toggle between play and pause depending on {@link com.google.android.exoplayer2.ExoPlayer}
+     * state
+     */
+    private ImageView mPlayToggleView;
+
+    /**
+     * The loading spinner that we toggle when {@link TubiPlayerControlView.ComponentListener#onLoadingChanged(boolean)}.
+     * When this view is visible, then the {@link #mPlayToggleView} should be invisible
+     */
+    private TubiLoadingView mLoadingSpinner;
+
+    /**
+     * The rewind button that can be clicked or pressed
+     */
+    private ImageButton mRewind;
+
+    /**
+     * The fast forward button that can be clicked or pressed
+     */
+    private ImageButton mFastForward;
+
 
     private TextView mElapsedTime;
     private TextView mRemainingTime;
@@ -155,64 +183,66 @@ public class TubiPlayerControlView extends FrameLayout {
             mProgressBar.setOnSeekBarChangeListener(componentListener);
             mProgressBar.setMax(PROGRESS_BAR_MAX);
         }
-//        mPlayToggleView = (ImageView) findViewById(R.id.view_tubi_controller_play_toggle_ib);
-//        if (mPlayToggleView != null) {
-//            mPlayToggleView.setOnClickListener(componentListener);
-//        }
-//        mFastForward = (ImageButton) findViewById(R.id.view_tubi_controller_forward_ib);
+
+        mRewind = (ImageButton) findViewById(R.id.view_tubi_controller_rewind_ib);
+        mFastForward = (ImageButton) findViewById(R.id.view_tubi_controller_forward_ib);
+        mPlayToggleView = (ImageView) findViewById(R.id.view_tubi_controller_play_toggle_ib);
+        if (mPlayToggleView != null) {
+            mPlayToggleView.setOnClickListener(componentListener);
+        }
+        mFastForward = (ImageButton) findViewById(R.id.view_tubi_controller_forward_ib);
+
+        if (mFastForward != null) {
+            mFastForward.setOnTouchListener(new OnTouchListener() {
+                @Override
+                public boolean onTouch(View v, MotionEvent event) {
+
+                    switch (event.getAction()) {
+                        case MotionEvent.ACTION_DOWN:
+                            // PRESSED
+                            ffPressed = true;
+                            removeCallbacks(hideAction);
+                            seekBy(DEFAULT_FAST_FORWARD_MS);
+                            pressedSeekBy();
+                            return true;
+                        case MotionEvent.ACTION_UP:
+                            // RELEASED
+                            ffPressed = false;
+                            getHandler().removeCallbacks(mFastForwardRunnable);
+                            hideAfterTimeout();
+                            return true;
+                    }
+                    return false;
+                }
+            });
+        }
+
+        if (mRewind != null) {
+            mRewind.setOnTouchListener(new OnTouchListener() {
+                @Override
+                public boolean onTouch(View v, MotionEvent event) {
+
+                    switch (event.getAction()) {
+                        case MotionEvent.ACTION_DOWN:
+                            // PRESSED
+                            rwPressed = true;
+                            removeCallbacks(hideAction);
+                            seekBy(-DEFAULT_FAST_FORWARD_MS);
+                            pressedSeekBy();
+                            return true;
+                        case MotionEvent.ACTION_UP:
+                            // RELEASED
+                            rwPressed = false;
+                            getHandler().removeCallbacks(mFastForwardRunnable);
+                            hideAfterTimeout();
+                            return true;
+                    }
+                    return false;
+                }
+            });
+        }
 //
-//
-//        if (mFastForward != null) {
-//            mFastForward.setOnTouchListener(new OnTouchListener() {
-//                @Override
-//                public boolean onTouch(View v, MotionEvent event) {
-//
-//                    switch (event.getAction()) {
-//                        case MotionEvent.ACTION_DOWN:
-//                            // PRESSED
-//                            ffPressed = true;
-//                            removeCallbacks(hideAction);
-//                            seekBy(DEFAULT_FAST_FORWARD_MS);
-//                            pressedSeekBy();
-//                            return true;
-//                        case MotionEvent.ACTION_UP:
-//                            // RELEASED
-//                            ffPressed = false;
-//                            getHandler().removeCallbacks(mFastForwardRunnable);
-//                            hideAfterTimeout();
-//                            return true;
-//                    }
-//                    return false;
-//                }
-//            });
-//        }
-//        mRewind = (ImageButton) findViewById(R.id.view_tubi_controller_rewind_ib);
-//        if (mRewind != null) {
-//            mRewind.setOnTouchListener(new OnTouchListener() {
-//                @Override
-//                public boolean onTouch(View v, MotionEvent event) {
-//
-//                    switch (event.getAction()) {
-//                        case MotionEvent.ACTION_DOWN:
-//                            // PRESSED
-//                            rwPressed = true;
-//                            removeCallbacks(hideAction);
-//                            seekBy(-DEFAULT_FAST_FORWARD_MS);
-//                            pressedSeekBy();
-//                            return true;
-//                        case MotionEvent.ACTION_UP:
-//                            // RELEASED
-//                            rwPressed = false;
-//                            getHandler().removeCallbacks(mFastForwardRunnable);
-//                            hideAfterTimeout();
-//                            return true;
-//                    }
-//                    return false;
-//                }
-//            });
-//        }
-//
-//        mLoadingSpinner = (TubiLoadingView) findViewById(R.id.view_tubi_controller_loading);
+        mLoadingSpinner = (TubiLoadingView) findViewById(R.id.view_tubi_controller_loading);
 
         mElapsedTime = (TextView) findViewById(R.id.view_tubi_controller_elapsed_time);
         mRemainingTime = (TextView) findViewById(R.id.view_tubi_controller_remaining_time);
@@ -353,35 +383,53 @@ public class TubiPlayerControlView extends FrameLayout {
     }
 
     private void updateAll() {
-        updatePlayPauseButton();
+        onPlaybackState();
         updateNavigation();
         updateProgress();
     }
 
-    private void updatePlayPauseButton() {
-//        if (!isVisible() || !isAttachedToWindow) {
-//            return;
-//        }
-////        boolean requestPlayPauseFocus = false;
-//        boolean playing = player != null && player.getPlayWhenReady();
-//        int playbackState = player == null ? ExoPlayer.STATE_IDLE : player.getPlaybackState();
-//        switch (playbackState){
-//            case STATE_READY:
-//                if (mPlayToggleView != null) {
-//                    mPlayToggleView.setVisibility(View.VISIBLE);
-//                    if (playing) {
-//                        mPlayToggleView.setBackgroundResource(R.drawable.tubi_tv_pause_large);
-//                    } else {
-//                        mPlayToggleView.setBackgroundResource(R.drawable.tubi_tv_play_large);
-//                    }
-//                }
-//                break;
-//            case STATE_BUFFERING:
-//                break;
-//            case STATE_IDLE:  //nothing to play
-//            case STATE_ENDED: //stream ended
-//                break;
-//        }
+    public void onPlaybackState() {
+        if (!isVisible() || !isAttachedToWindow) {
+            return;
+        }
+
+        boolean playing = player != null && player.getPlayWhenReady();
+        int playbackState = player == null ? ExoPlayer.STATE_IDLE : player.getPlaybackState();
+        switch (playbackState) {
+            case ExoPlayer.STATE_READY:
+                showLoading(true, playing);
+                break;
+            case ExoPlayer.STATE_BUFFERING:
+                showLoading(false, false);
+                break;
+            case ExoPlayer.STATE_IDLE:  //nothing to play
+            case ExoPlayer.STATE_ENDED: //stream ended
+                break;
+        }
+    }
+
+    /**
+     * Toggles the views in this control when the player is
+     * @param isLoaded
+     * @param isPlaying
+     */
+    private void showLoading(boolean isLoaded, boolean isPlaying) {
+        int vis = isLoaded ? View.VISIBLE : View.INVISIBLE;
+        mPlayToggleView.setVisibility(vis);
+        mFastForward.setVisibility(vis);
+        mRewind.setVisibility(vis);
+
+        if (isLoaded) {
+            mLoadingSpinner.stop();
+        } else {
+            mLoadingSpinner.start();
+        }
+
+        if (isPlaying) {
+            mPlayToggleView.setBackgroundResource(R.drawable.tubi_tv_pause_large);
+        } else {
+            mPlayToggleView.setBackgroundResource(R.drawable.tubi_tv_play_large);
+        }
     }
 
     private void updateNavigation() {
@@ -421,7 +469,7 @@ public class TubiPlayerControlView extends FrameLayout {
         removeCallbacks(updateProgressAction);
         // Schedule an update if necessary.
         int playbackState = player == null ? ExoPlayer.STATE_IDLE : player.getPlaybackState();
-        if (playbackState != ExoPlayer.STATE_IDLE && playbackState != ExoPlayer.STATE_ENDED) {
+        if (playbackState != ExoPlayer.STATE_IDLE && playbackState != STATE_ENDED) {
             long delayMs;
             if (player.getPlayWhenReady() && playbackState == STATE_READY) {
                 delayMs = 1000 - (position % 1000);
@@ -626,19 +674,21 @@ public class TubiPlayerControlView extends FrameLayout {
 
         @Override
         public void onPlayerStateChanged(boolean playWhenReady, int playbackState) {
-            updatePlayPauseButton();
+            onPlaybackState();
             updateProgress();
         }
 
         @Override
         public void onPositionDiscontinuity() {
             updateNavigation();
+            onPlaybackState();
             updateProgress();
         }
 
         @Override
         public void onTimelineChanged(Timeline timeline, Object manifest) {
             updateNavigation();
+            onPlaybackState();
             updateProgress();
         }
 
