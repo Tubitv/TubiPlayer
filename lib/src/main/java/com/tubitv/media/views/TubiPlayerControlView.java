@@ -7,7 +7,6 @@ import android.os.SystemClock;
 import android.util.AttributeSet;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
@@ -85,7 +84,6 @@ public class TubiPlayerControlView extends FrameLayout {
     public static final int DEFAULT_SHOW_TIMEOUT_MS = 5000;
     private static final int PROGRESS_BAR_MAX = 1000;
     private static final int DEFAULT_FAST_FORWARD_MS = 15000;
-    private static final int DEFAULT_UPDATE_FAST_FORWARD_MS = 333;
 
     /**
      * The view we toggle between play and pause depending on {@link com.google.android.exoplayer2.ExoPlayer}
@@ -154,8 +152,6 @@ public class TubiPlayerControlView extends FrameLayout {
     private boolean dragging;
     private int showTimeoutMs;
     private long hideAtMs;
-    boolean ffPressed = false;
-    boolean rwPressed = false;
     private final Runnable updateProgressAction = new Runnable() {
         @Override
         public void run() {
@@ -220,51 +216,19 @@ public class TubiPlayerControlView extends FrameLayout {
         mFastForwardBtn = (ImageButton) findViewById(R.id.view_tubi_controller_forward_ib);
 
         if (mFastForwardBtn != null) {
-            mFastForwardBtn.setOnTouchListener(new OnTouchListener() {
+            mFastForwardBtn.setOnClickListener(new OnClickListener() {
                 @Override
-                public boolean onTouch(View v, MotionEvent event) {
-
-                    switch (event.getAction()) {
-                        case MotionEvent.ACTION_DOWN:
-                            // PRESSED
-                            ffPressed = true;
-                            removeCallbacks(hideAction);
-                            seekBy(DEFAULT_FAST_FORWARD_MS);
-                            pressedSeekBy();
-                            return true;
-                        case MotionEvent.ACTION_UP:
-                            // RELEASED
-                            ffPressed = false;
-                            getHandler().removeCallbacks(mFastForwardRunnable);
-                            hideAfterTimeout();
-                            return true;
-                    }
-                    return false;
+                public void onClick(View v) {
+                    seekBy(DEFAULT_FAST_FORWARD_MS);
                 }
             });
         }
 
         if (mRewindBtn != null) {
-            mRewindBtn.setOnTouchListener(new OnTouchListener() {
+            mRewindBtn.setOnClickListener(new OnClickListener() {
                 @Override
-                public boolean onTouch(View v, MotionEvent event) {
-
-                    switch (event.getAction()) {
-                        case MotionEvent.ACTION_DOWN:
-                            // PRESSED
-                            rwPressed = true;
-                            removeCallbacks(hideAction);
-                            seekBy(-DEFAULT_FAST_FORWARD_MS);
-                            pressedSeekBy();
-                            return true;
-                        case MotionEvent.ACTION_UP:
-                            // RELEASED
-                            rwPressed = false;
-                            getHandler().removeCallbacks(mFastForwardRunnable);
-                            hideAfterTimeout();
-                            return true;
-                    }
-                    return false;
+                public void onClick(View v) {
+                    seekBy(-DEFAULT_FAST_FORWARD_MS);
                 }
             });
         }
@@ -283,23 +247,6 @@ public class TubiPlayerControlView extends FrameLayout {
 
         mElapsedTime = (TextView) findViewById(R.id.view_tubi_controller_elapsed_time);
         mRemainingTime = (TextView) findViewById(R.id.view_tubi_controller_remaining_time);
-    }
-
-    Runnable mFastForwardRunnable = new Runnable() {
-        @Override
-        public void run() {
-            if (ffPressed == rwPressed) {
-                return;
-            }
-            seekBy(ffPressed ? DEFAULT_FAST_FORWARD_MS : -DEFAULT_FAST_FORWARD_MS);
-            pressedSeekBy();
-        }
-    };
-
-    private void pressedSeekBy() {
-        if (ffPressed != rwPressed) {
-            postDelayed(mFastForwardRunnable, DEFAULT_UPDATE_FAST_FORWARD_MS);
-        }
     }
 
     /**
@@ -458,8 +405,6 @@ public class TubiPlayerControlView extends FrameLayout {
     private void showLoading(boolean isLoaded, boolean isPlaying) {
         int vis = isLoaded ? View.VISIBLE : View.INVISIBLE;
         mPlayToggleViewBtn.setVisibility(vis);
-        mFastForwardBtn.setVisibility(vis);
-        mRewindBtn.setVisibility(vis);
 
         if (isLoaded) {
             mLoadingSpinner.stop();
