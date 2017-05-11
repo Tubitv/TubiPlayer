@@ -62,8 +62,8 @@ public class StateImageButton extends ImageButton implements View.OnClickListene
             TypedArray a = getContext().getTheme().obtainStyledAttributes(attrs,
                     R.styleable.StateImageButton, 0, 0);
             try {
-                mStateCheckedDrawableId = a.getInt(R.styleable.StateImageButton_state_not_checked, R.drawable.tubi_tv_drawable_subtitles_on_selector);
-                mStateNotCheckedDrawableId = a.getInt(R.styleable.StateImageButton_state_not_checked, R.drawable.tubi_tv_drawable_subtitles_off_selector);
+                mStateCheckedDrawableId = a.getResourceId(R.styleable.StateImageButton_state_checked, R.drawable.tubi_tv_drawable_subtitles_on_selector);
+                mStateNotCheckedDrawableId = a.getResourceId(R.styleable.StateImageButton_state_not_checked, R.drawable.tubi_tv_drawable_subtitles_off_selector);
             } finally {
                 a.recycle();
             }

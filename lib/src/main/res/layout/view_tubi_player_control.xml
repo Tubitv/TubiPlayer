@@ -34,27 +34,33 @@
         android:layout_marginTop="8dp"
         android:background="@drawable/tubi_tv_subtitles_off"
         app:layout_constraintRight_toLeftOf="@+id/view_tubi_controller_quality_ib"
-        app:layout_constraintTop_toTopOf="@+id/tubi_tv_controller_guideline_top"/>
+        app:layout_constraintTop_toTopOf="@+id/tubi_tv_controller_guideline_top"
+        app:state_not_checked="@drawable/tubi_tv_drawable_subtitles_on_selector"
+        app:state_checked="@drawable/tubi_tv_drawable_subtitles_off_selector"/>
 
-    <ImageButton
+    <com.tubitv.media.views.StateImageButton
         android:id="@+id/view_tubi_controller_quality_ib"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginRight="16dp"
         android:layout_marginTop="8dp"
-        android:background="@drawable/tubi_tv_drawable_quality_selector"
+        android:background="@drawable/tubi_tv_drawable_quality_off_selector"
         app:layout_constraintRight_toLeftOf="@+id/view_tubi_controller_chromecast"
-        app:layout_constraintTop_toTopOf="@+id/tubi_tv_controller_guideline_top"/>
+        app:layout_constraintTop_toTopOf="@+id/tubi_tv_controller_guideline_top"
+        app:state_not_checked="@drawable/tubi_tv_drawable_quality_off_selector"
+        app:state_checked="@drawable/tubi_tv_drawable_quality_on_selector"/>
 
-    <ImageButton
+    <com.tubitv.media.views.StateImageButton
         android:id="@+id/view_tubi_controller_chromecast"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginRight="8dp"
         android:layout_marginTop="8dp"
-        android:background="@drawable/tubi_tv_drawable_chromecast_selector"
+        android:background="@drawable/tubi_tv_drawable_chromecast_off_selector"
         app:layout_constraintRight_toLeftOf="@+id/tubi_tv_controller_guideline_right"
-        app:layout_constraintTop_toTopOf="@+id/tubi_tv_controller_guideline_top"/>
+        app:layout_constraintTop_toTopOf="@+id/tubi_tv_controller_guideline_top"
+        app:state_not_checked="@drawable/tubi_tv_drawable_chromecast_off_selector"
+        app:state_checked="@drawable/tubi_tv_drawable_chromecast_on_selector"/>
 
     <com.tubitv.ui.TubiLoadingView
         android:id="@+id/view_tubi_controller_loading"
