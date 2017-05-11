@@ -370,26 +370,6 @@ public class TubiExoPlayerView extends FrameLayout {
         controller.setSeekDispatcher(seekDispatcher);
     }
 
-//    /**
-//     * Sets the rewind increment in milliseconds.
-//     *
-//     * @param rewindMs The rewind increment in milliseconds.
-//     */
-//    public void setRewindIncrementMs(int rewindMs) {
-//        Assertions.checkState(controller != null);
-//        controller.setRewindIncrementMs(rewindMs);
-//    }
-
-//    /**
-//     * Sets the fast forward increment in milliseconds.
-//     *
-//     * @param fastForwardMs The fast forward increment in milliseconds.
-//     */
-//    public void setFastForwardIncrementMs(int fastForwardMs) {
-//        Assertions.checkState(controller != null);
-////        controlleller.setFastForwardIncrementMs(fastForwardMs);
-//    }
-
     /**
      * Gets the view onto which video is rendered. This is either a {@link SurfaceView} (default)
      * or a {@link TextureView} if the {@code use_texture_view} view attribute has been set to true.

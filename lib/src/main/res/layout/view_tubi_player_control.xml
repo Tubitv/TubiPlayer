@@ -26,15 +26,13 @@
         app:layout_constraintTop_toTopOf="@+id/tubi_tv_controller_guideline_top"
         app:vaud_typeface="vaud_regular"/>
 
-    <ImageButton
+    <com.tubitv.media.views.StateImageButton
         android:id="@+id/view_tubi_controller_subtitles_ib"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginRight="16dp"
         android:layout_marginTop="8dp"
-        android:background="@drawable/tubi_tv_drawable_subtitles_selector"
-        android:textOff=""
-        android:textOn=""
+        android:background="@drawable/tubi_tv_subtitles_off"
         app:layout_constraintRight_toLeftOf="@+id/view_tubi_controller_quality_ib"
         app:layout_constraintTop_toTopOf="@+id/tubi_tv_controller_guideline_top"/>
 

@@ -147,7 +147,7 @@ public class DemoActivity extends Activity implements TubiPlayerControlView.Visi
         //fake media
         Uri[] uris = new Uri[1];
         String[] extensions = new String[1];
-        uris[0] = Uri.parse("http://c11.adrise.tv/v2/sources/content-owners/lionsgate/348932/v201703040118-,225,447,725,1157,1398,k.mp4.m3u8?E5EbI8Bi9XArFsKGvbclx_jKPZ69_sP5XDYOD8UquF3rHsgJgH1kct26QAJGXxmy");
+        uris[0] = Uri.parse("http://c11.adrise.tv/v2/sources/content-owners/paramount/312926/v201604161517-1024x436-,434,981,1533,2097,k.mp4.m3u8?Lq1mN1Kd2rX8Hf90xfcMVeOX9P_a8KExTh5M25fi5uFG_rs_x6XmALbXwaLb_AzF");
         extensions[0] = "m3u8";
         MediaSource[] mediaSources = new MediaSource[uris.length];
         mediaSources[0] = buildMediaSource(uris[0], extensions[0]);
@@ -156,7 +156,7 @@ public class DemoActivity extends Activity implements TubiPlayerControlView.Visi
 
 
         MediaSource subtitleSource = new SingleSampleMediaSource(
-                Uri.parse("http://s.adrise.tv/f89566c4-64e9-4f54-8808-717864bcca64.srt"),
+                Uri.parse("http://s.adrise.tv/94335ae6-c5d3-414d-8ff2-177c955441c6.srt"),
                 buildDataSourceFactory(false),
                 Format.createTextSampleFormat(null, MimeTypes.APPLICATION_SUBRIP, null, Format.NO_VALUE, C.SELECTION_FLAG_DEFAULT, "en", null, 0),
                 0);

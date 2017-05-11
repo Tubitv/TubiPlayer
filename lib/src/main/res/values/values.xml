@@ -16,4 +16,9 @@
     <declare-styleable name="TubiPlayerControlView">
         <attr name="show_timeout_ms" format="integer"/>
     </declare-styleable>
+
+    <declare-styleable name="StateImageButton">
+        <attr name="state_checked" format="reference"/>
+        <attr name="state_not_checked" format="reference"/>
+    </declare-styleable>
 </resources>

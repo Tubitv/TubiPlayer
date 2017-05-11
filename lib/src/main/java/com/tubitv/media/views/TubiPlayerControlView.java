@@ -238,12 +238,12 @@ public class TubiPlayerControlView extends FrameLayout {
         mQualityBtn = (ImageButton) findViewById(R.id.view_tubi_controller_quality_ib);
         mCastBtn = (ImageButton) findViewById(R.id.view_tubi_controller_chromecast);
 
-        mSubtitlesBtn.setOnClickListener(new OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                mSubtitlesBtn.setBackgroundResource(R.drawable.tubi_tv_subtitles_on);
-            }
-        });
+//        mSubtitlesBtn.setOnClickListener(new OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                mSubtitlesBtn.setBackgroundResource(R.drawable.tubi_tv_subtitles_on);
+//            }
+//        });
 
         mElapsedTime = (TextView) findViewById(R.id.view_tubi_controller_elapsed_time);
         mRemainingTime = (TextView) findViewById(R.id.view_tubi_controller_remaining_time);
