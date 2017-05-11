@@ -12,7 +12,7 @@ import com.google.android.exoplayer2.trackselection.TrackSelector;
 import static com.google.android.exoplayer2.ExoPlayerFactory.DEFAULT_ALLOWED_VIDEO_JOINING_TIME_MS;
 
 /**
- * Created by stoyan on 3/22/17.
+ * Created by stoyan tubi_tv_quality_on 3/22/17.
  */
 public class TubiExoPlayer extends SimpleExoPlayer {
     protected TubiExoPlayer(Context context, TrackSelector trackSelector, LoadControl loadControl, DrmSessionManager<FrameworkMediaCrypto> drmSessionManager, int extensionRendererMode, long allowedVideoJoiningTimeMs) {

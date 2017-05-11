@@ -10,7 +10,7 @@ import com.google.android.exoplayer2.upstream.HttpDataSource;
 import com.google.android.exoplayer2.util.Util;
 
 /**
- * Created by stoyan on 3/21/17.
+ * Created by stoyan tubi_tv_quality_on 3/21/17.
  */
 public class DemoApplication extends Application {
 

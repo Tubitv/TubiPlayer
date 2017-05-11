@@ -42,7 +42,7 @@ import com.tubitv.ui.VaudType;
 import java.util.List;
 
 /**
- * Created by stoyan on 3/22/17.
+ * Created by stoyan tubi_tv_quality_on 3/22/17.
  */
 @TargetApi(16)
 public class TubiExoPlayerView extends FrameLayout {
@@ -172,7 +172,7 @@ public class TubiExoPlayerView extends FrameLayout {
     }
 
     /**
-     * Returns the player currently set on this view, or null if no player is set.
+     * Returns the player currently set tubi_tv_quality_on this view, or null if no player is set.
      */
     public SimpleExoPlayer getPlayer() {
         return player;
@@ -381,7 +381,7 @@ public class TubiExoPlayerView extends FrameLayout {
     }
 
     /**
-     * Gets the overlay {@link FrameLayout}, which can be populated with UI elements to show on top of
+     * Gets the overlay {@link FrameLayout}, which can be populated with UI elements to show tubi_tv_quality_on top of
      * the player.
      *
      * @return The overlay {@link FrameLayout}, or {@code null} if the layout has been customized and

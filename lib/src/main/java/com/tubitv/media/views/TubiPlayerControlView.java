@@ -31,7 +31,7 @@ import static com.google.android.exoplayer2.ExoPlayer.STATE_ENDED;
 import static com.google.android.exoplayer2.ExoPlayer.STATE_READY;
 
 /**
- * Created by stoyan on 3/23/17.
+ * Created by stoyan tubi_tv_quality_on 3/23/17.
  */
 public class TubiPlayerControlView extends FrameLayout {
     /**
@@ -86,7 +86,7 @@ public class TubiPlayerControlView extends FrameLayout {
     private static final int DEFAULT_FAST_FORWARD_MS = 15000;
 
     /**
-     * The view we toggle between play and pause depending on {@link com.google.android.exoplayer2.ExoPlayer}
+     * The view we toggle between play and pause depending tubi_tv_quality_on {@link com.google.android.exoplayer2.ExoPlayer}
      * state
      */
     private ImageView mPlayToggleViewBtn;
@@ -98,12 +98,12 @@ public class TubiPlayerControlView extends FrameLayout {
     private TubiLoadingView mLoadingSpinner;
 
     /**
-     * The rewind button that can be clicked or pressed
+     * The rewind button that can be clicked or tubi_tv_fwd_15_pressed
      */
     private ImageButton mRewindBtn;
 
     /**
-     * The fast forward button that can be clicked or pressed
+     * The fast forward button that can be clicked or tubi_tv_fwd_15_pressed
      */
     private ImageButton mFastForwardBtn;
 
@@ -238,12 +238,6 @@ public class TubiPlayerControlView extends FrameLayout {
         mQualityBtn = (ImageButton) findViewById(R.id.view_tubi_controller_quality_ib);
         mCastBtn = (ImageButton) findViewById(R.id.view_tubi_controller_chromecast);
 
-//        mSubtitlesBtn.setOnClickListener(new OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                mSubtitlesBtn.setBackgroundResource(R.drawable.tubi_tv_subtitles_on);
-//            }
-//        });
 
         mElapsedTime = (TextView) findViewById(R.id.view_tubi_controller_elapsed_time);
         mRemainingTime = (TextView) findViewById(R.id.view_tubi_controller_remaining_time);

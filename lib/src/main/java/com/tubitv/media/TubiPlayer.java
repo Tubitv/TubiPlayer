@@ -9,7 +9,7 @@ import com.google.android.exoplayer2.drm.FrameworkMediaCrypto;
 import com.google.android.exoplayer2.trackselection.TrackSelector;
 
 /**
- * Created by stoyan on 3/20/17.
+ * Created by stoyan tubi_tv_quality_on 3/20/17.
  */
 public class TubiPlayer extends SimpleExoPlayer {
 

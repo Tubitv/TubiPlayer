@@ -12,7 +12,7 @@ import android.widget.ImageButton;
 import com.tubitv.media.R;
 
 /**
- * Created by stoyan on 5/1/17.
+ * Created by stoyan tubi_tv_quality_on 5/1/17.
  */
 @SuppressLint("AppCompatCustomView")
 public class StateImageButton extends ImageButton implements View.OnClickListener {

@@ -3,7 +3,7 @@
     <item android:drawable="@drawable/tubi_tv_chromecast_on"
           android:state_pressed="false">
     </item>
-    <item android:drawable="@drawable/tubi_tv_chromecast_on_faded"
+    <item android:drawable="@drawable/tubi_tv_chromecast_on_pressed"
           android:state_pressed="true">
     </item>
     <!-- default -->
