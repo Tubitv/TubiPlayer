@@ -91,7 +91,7 @@
         app:layout_constraintRight_toLeftOf="@+id/view_tubi_controller_play_toggle_ib"
         app:layout_constraintTop_toTopOf="@+id/view_tubi_controller_play_toggle_ib"/>
 
-    <ImageButton
+    <com.tubitv.media.views.StateImageButton
         android:id="@+id/view_tubi_controller_play_toggle_ib"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -99,14 +99,16 @@
         android:layout_marginLeft="8dp"
         android:layout_marginRight="8dp"
         android:layout_marginTop="8dp"
-        android:background="@drawable/tubi_tv_drawable_play_toggle_selector"
+        tools:background="@drawable/tubi_tv_drawable_play_selector"
         android:scaleType="fitCenter"
         android:tag="view_tubi_controller_play_toggle_ib"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.5"/>
+        app:layout_constraintVertical_bias="0.5"
+        app:state_not_checked="@drawable/tubi_tv_drawable_play_selector"
+        app:state_checked="@drawable/tubi_tv_drawable_pause_selector"/>
 
     <ImageButton
         android:id="@+id/view_tubi_controller_forward_ib"

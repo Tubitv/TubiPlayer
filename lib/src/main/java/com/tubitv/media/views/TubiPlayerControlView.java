@@ -10,7 +10,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.ImageButton;
-import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.TextView;
 
@@ -89,7 +88,7 @@ public class TubiPlayerControlView extends FrameLayout {
      * The view we toggle between play and pause depending tubi_tv_quality_on {@link com.google.android.exoplayer2.ExoPlayer}
      * state
      */
-    private ImageView mPlayToggleViewBtn;
+    private StateImageButton mPlayToggleViewBtn;
 
     /**
      * The loading spinner that we toggle when {@link TubiPlayerControlView.ComponentListener#onLoadingChanged(boolean)}.
@@ -209,9 +208,9 @@ public class TubiPlayerControlView extends FrameLayout {
 
         mRewindBtn = (ImageButton) findViewById(R.id.view_tubi_controller_rewind_ib);
         mFastForwardBtn = (ImageButton) findViewById(R.id.view_tubi_controller_forward_ib);
-        mPlayToggleViewBtn = (ImageView) findViewById(R.id.view_tubi_controller_play_toggle_ib);
+        mPlayToggleViewBtn = (StateImageButton) findViewById(R.id.view_tubi_controller_play_toggle_ib);
         if (mPlayToggleViewBtn != null) {
-            mPlayToggleViewBtn.setOnClickListener(componentListener);
+            mPlayToggleViewBtn.addClickListener(componentListener);
         }
         mFastForwardBtn = (ImageButton) findViewById(R.id.view_tubi_controller_forward_ib);
 
@@ -406,11 +405,7 @@ public class TubiPlayerControlView extends FrameLayout {
             mLoadingSpinner.start();
         }
 
-        if (isPlaying) {
-            mPlayToggleViewBtn.setBackgroundResource(R.drawable.tubi_tv_pause_large);
-        } else {
-            mPlayToggleViewBtn.setBackgroundResource(R.drawable.tubi_tv_play_large);
-        }
+        mPlayToggleViewBtn.setChecked(isPlaying);
     }
 
     private void updateNavigation() {
