@@ -35,7 +35,7 @@ import com.google.android.exoplayer2.ui.PlaybackControlView;
 import com.google.android.exoplayer2.ui.SubtitleView;
 import com.google.android.exoplayer2.util.Assertions;
 import com.tubitv.media.R;
-import com.tubitv.ui.TubiLoadingView;
+import com.tubitv.media.interfaces.TubiPlaybackControlInterface;
 import com.tubitv.ui.VaudTextView;
 import com.tubitv.ui.VaudType;
 
@@ -45,7 +45,7 @@ import java.util.List;
  * Created by stoyan tubi_tv_quality_on 3/22/17.
  */
 @TargetApi(16)
-public class TubiExoPlayerView extends FrameLayout {
+public class TubiExoPlayerView extends FrameLayout implements TubiPlaybackControlInterface{
 
     private static final int SURFACE_TYPE_NONE = 0;
     private static final int SURFACE_TYPE_SURFACE_VIEW = 1;
@@ -59,7 +59,6 @@ public class TubiExoPlayerView extends FrameLayout {
     private final TubiPlayerControlView controller;
     private final ComponentListener componentListener;
     private final FrameLayout overlayFrameLayout;
-    private TubiLoadingView tubiLoadingView;
     private SimpleExoPlayer player;
     private boolean useController;
     private boolean useArtwork;
@@ -158,6 +157,7 @@ public class TubiExoPlayerView extends FrameLayout {
             // Note: rewindMs and fastForwardMs are passed via attrs, so we don't need to make explicit
             // calls to set them.
             this.controller = new TubiPlayerControlView(context, attrs);
+            controller.setTubiControllerInterface(this);
             controller.setLayoutParams(controllerPlaceholder.getLayoutParams());
             ViewGroup parent = ((ViewGroup) controllerPlaceholder.getParent());
             int controllerIndex = parent.indexOfChild(controllerPlaceholder);
@@ -514,6 +514,11 @@ public class TubiExoPlayerView extends FrameLayout {
     private static void setResizeModeRaw(AspectRatioFrameLayout aspectRatioFrame, int resizeMode) {
         aspectRatioFrame.setResizeMode(resizeMode);
     }
+    private boolean mSubtitlesEnabled = false;
+    @Override
+    public void onSubtitlesToggle(boolean enabled) {
+        mSubtitlesEnabled = enabled;
+    }
 
     private final class ComponentListener implements SimpleExoPlayer.VideoListener,
             TextRenderer.Output, ExoPlayer.EventListener {
@@ -522,7 +527,7 @@ public class TubiExoPlayerView extends FrameLayout {
 
         @Override
         public void onCues(List<Cue> cues) {
-            if (subtitleView != null) {
+            if (mSubtitlesEnabled && subtitleView != null) {
                 subtitleView.onCues(cues);
             }
         }

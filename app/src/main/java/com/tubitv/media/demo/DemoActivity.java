@@ -28,7 +28,6 @@ import com.google.android.exoplayer2.trackselection.AdaptiveTrackSelection;
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
 import com.google.android.exoplayer2.trackselection.MappingTrackSelector;
 import com.google.android.exoplayer2.trackselection.TrackSelection;
-import com.google.android.exoplayer2.trackselection.TrackSelector;
 import com.google.android.exoplayer2.upstream.DataSource;
 import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter;
 import com.google.android.exoplayer2.util.MimeTypes;
@@ -36,6 +35,7 @@ import com.google.android.exoplayer2.util.Util;
 import com.tubitv.demo.R;
 import com.tubitv.media.MediaHelper;
 import com.tubitv.media.TubiExoPlayer;
+import com.tubitv.media.helpers.TrackSelectionHelper;
 import com.tubitv.media.views.TubiExoPlayerView;
 import com.tubitv.media.views.TubiPlayerControlView;
 
@@ -44,8 +44,9 @@ public class DemoActivity extends Activity implements TubiPlayerControlView.Visi
     private Handler mMainHandler;
     private TubiExoPlayerView mTubiPlayerView;
     private DataSource.Factory mMediaDataSourceFactory;
-    private TrackSelector mTrackSelector;
+    private DefaultTrackSelector mTrackSelector;
     private EventLogger mEventLogger;
+    private TrackSelectionHelper mTrackSelectionHelper;
 
     private static final DefaultBandwidthMeter BANDWIDTH_METER = new DefaultBandwidthMeter();
 
@@ -126,6 +127,7 @@ public class DemoActivity extends Activity implements TubiPlayerControlView.Visi
                 new AdaptiveTrackSelection.Factory(BANDWIDTH_METER);
         mTrackSelector =
                 new DefaultTrackSelector(videoTrackSelectionFactory);
+        mTrackSelectionHelper = new TrackSelectionHelper(mTrackSelector, videoTrackSelectionFactory);
 
         // 2. Create a default LoadControl
         LoadControl loadControl = new DefaultLoadControl();
@@ -134,7 +136,7 @@ public class DemoActivity extends Activity implements TubiPlayerControlView.Visi
         mTubiExoPlayer =
                 TubiExoPlayer.newInstance(this, mTrackSelector, loadControl);
 
-        mEventLogger = new EventLogger((MappingTrackSelector) mTrackSelector);
+        mEventLogger = new EventLogger(mTrackSelector);
         mTubiExoPlayer.addListener(mEventLogger);
         mTubiExoPlayer.setAudioDebugListener(mEventLogger);
         mTubiExoPlayer.setVideoDebugListener(mEventLogger);
@@ -166,6 +168,12 @@ public class DemoActivity extends Activity implements TubiPlayerControlView.Visi
 
 
         mTubiExoPlayer.prepare(mergedSource, true, false);
+//        mTubiExoPlayer.prepare(new ConcatenatingMediaSource(mediaSource, subtitleSource), true, false);
+
+        MappingTrackSelector.MappedTrackInfo mappedTrackInfo = mTrackSelector.getCurrentMappedTrackInfo();
+        if (mappedTrackInfo == null) {
+            return;
+        }
     }
 
     private void releasePlayer() {

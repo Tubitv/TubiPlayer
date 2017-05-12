@@ -3,7 +3,9 @@ package com.tubitv.media.views;
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.res.TypedArray;
+import android.databinding.DataBindingUtil;
 import android.os.SystemClock;
+import android.support.annotation.NonNull;
 import android.util.AttributeSet;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -21,6 +23,8 @@ import com.google.android.exoplayer2.source.TrackGroupArray;
 import com.google.android.exoplayer2.trackselection.TrackSelectionArray;
 import com.google.android.exoplayer2.util.Util;
 import com.tubitv.media.R;
+import com.tubitv.media.databinding.ViewTubiPlayerControlBinding;
+import com.tubitv.media.interfaces.TubiPlaybackControlInterface;
 import com.tubitv.ui.TubiLoadingView;
 
 import java.util.Formatter;
@@ -37,6 +41,7 @@ public class TubiPlayerControlView extends FrameLayout {
      * Simple tag for logging
      */
     private static final String TAG = TubiPlayerControlView.class.getSimpleName();
+    private TubiPlaybackControlInterface mTubiControllerInterface;
 
     /**
      * Listener to be notified about changes of the visibility of the UI control.
@@ -83,6 +88,12 @@ public class TubiPlayerControlView extends FrameLayout {
     public static final int DEFAULT_SHOW_TIMEOUT_MS = 5000;
     private static final int PROGRESS_BAR_MAX = 1000;
     private static final int DEFAULT_FAST_FORWARD_MS = 15000;
+
+    /**
+     * The time in milliseconds that we skip by in {@link com.tubitv.media.databinding.ViewTubiPlayerControlBinding#viewTubiControllerRewindIb}
+     * and {@link com.tubitv.media.databinding.ViewTubiPlayerControlBinding#viewTubiControllerForwardIb}
+     */
+    private int mSkipBy = DEFAULT_FAST_FORWARD_MS;
 
     /**
      * The view we toggle between play and pause depending tubi_tv_quality_on {@link com.google.android.exoplayer2.ExoPlayer}
@@ -135,6 +146,8 @@ public class TubiPlayerControlView extends FrameLayout {
      * The current progress of the media
      */
     private SeekBar mProgressBar;
+
+    private ViewTubiPlayerControlBinding mBinding;
 
     private final ComponentListener componentListener;
 
@@ -198,48 +211,55 @@ public class TubiPlayerControlView extends FrameLayout {
     }
 
     private void initLayout(int controllerLayoutId) {
-        LayoutInflater.from(getContext()).inflate(controllerLayoutId, this);
-        setDescendantFocusability(FOCUS_AFTER_DESCENDANTS);
-        mProgressBar = (SeekBar) findViewById(R.id.view_tubi_controller_seek_bar);
-        if (mProgressBar != null) {
-            mProgressBar.setOnSeekBarChangeListener(componentListener);
-            mProgressBar.setMax(PROGRESS_BAR_MAX);
-        }
-
-        mRewindBtn = (ImageButton) findViewById(R.id.view_tubi_controller_rewind_ib);
-        mFastForwardBtn = (ImageButton) findViewById(R.id.view_tubi_controller_forward_ib);
-        mPlayToggleViewBtn = (StateImageButton) findViewById(R.id.view_tubi_controller_play_toggle_ib);
-        if (mPlayToggleViewBtn != null) {
-            mPlayToggleViewBtn.addClickListener(componentListener);
-        }
-        mFastForwardBtn = (ImageButton) findViewById(R.id.view_tubi_controller_forward_ib);
-
-        if (mFastForwardBtn != null) {
-            mFastForwardBtn.setOnClickListener(new OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    seekBy(DEFAULT_FAST_FORWARD_MS);
-                }
-            });
-        }
-
-        if (mRewindBtn != null) {
-            mRewindBtn.setOnClickListener(new OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    seekBy(-DEFAULT_FAST_FORWARD_MS);
-                }
-            });
-        }
+        LayoutInflater inflater = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+        mBinding = DataBindingUtil.inflate(inflater, controllerLayoutId, this, true);
+        mBinding.setController(this);
+//        LayoutInflater.from(getContext()).inflate(controllerLayoutId, this);
+//        setDescendantFocusability(FOCUS_AFTER_DESCENDANTS);
+//        mProgressBar = (SeekBar) findViewById(R.id.view_tubi_controller_seek_bar);
+//        if (mProgressBar != null) {
+//            mProgressBar.setOnSeekBarChangeListener(componentListener);
+//            mProgressBar.setMax(PROGRESS_BAR_MAX);
+//        }
 //
-        mLoadingSpinner = (TubiLoadingView) findViewById(R.id.view_tubi_controller_loading);
-        mSubtitlesBtn = (ImageButton) findViewById(R.id.view_tubi_controller_subtitles_ib);
-        mQualityBtn = (ImageButton) findViewById(R.id.view_tubi_controller_quality_ib);
-        mCastBtn = (ImageButton) findViewById(R.id.view_tubi_controller_chromecast);
+//        mRewindBtn = (ImageButton) findViewById(R.id.view_tubi_controller_rewind_ib);
+//        mFastForwardBtn = (ImageButton) findViewById(R.id.view_tubi_controller_forward_ib);
+//        mPlayToggleViewBtn = (StateImageButton) findViewById(R.id.view_tubi_controller_play_toggle_ib);
+//        if (mPlayToggleViewBtn != null) {
+//            mPlayToggleViewBtn.addClickListener(componentListener);
+//        }
+//        mFastForwardBtn = (ImageButton) findViewById(R.id.view_tubi_controller_forward_ib);
+//
+//        if (mFastForwardBtn != null) {
+//            mFastForwardBtn.setOnClickListener(new OnClickListener() {
+//                @Override
+//                public void onClick(View v) {
+//                    seekBy(DEFAULT_FAST_FORWARD_MS);
+//                }
+//            });
+//        }
+//
+//        if (mRewindBtn != null) {
+//            mRewindBtn.setOnClickListener(new OnClickListener() {
+//                @Override
+//                public void onClick(View v) {
+//                    seekBy(-DEFAULT_FAST_FORWARD_MS);
+//                }
+//            });
+//        }
+////
+//        mLoadingSpinner = (TubiLoadingView) findViewById(R.id.view_tubi_controller_loading);
+//        mSubtitlesBtn = (ImageButton) findViewById(R.id.view_tubi_controller_subtitles_ib);
+//        mQualityBtn = (ImageButton) findViewById(R.id.view_tubi_controller_quality_ib);
+//        mCastBtn = (ImageButton) findViewById(R.id.view_tubi_controller_chromecast_ib);
+//
+//
+//        mElapsedTime = (TextView) findViewById(R.id.view_tubi_controller_elapsed_time);
+//        mRemainingTime = (TextView) findViewById(R.id.view_tubi_controller_remaining_time);
+    }
 
-
-        mElapsedTime = (TextView) findViewById(R.id.view_tubi_controller_elapsed_time);
-        mRemainingTime = (TextView) findViewById(R.id.view_tubi_controller_remaining_time);
+    public void setTubiControllerInterface(@NonNull TubiExoPlayerView tubiControllerInterface) {
+        this.mTubiControllerInterface = tubiControllerInterface;
     }
 
     /**
@@ -397,15 +417,15 @@ public class TubiPlayerControlView extends FrameLayout {
      */
     private void showLoading(boolean isLoaded, boolean isPlaying) {
         int vis = isLoaded ? View.VISIBLE : View.INVISIBLE;
-        mPlayToggleViewBtn.setVisibility(vis);
+        mBinding.viewTubiControllerPlayToggleIb.setVisibility(vis);
 
         if (isLoaded) {
-            mLoadingSpinner.stop();
+            mBinding.viewTubiControllerLoading.stop();
         } else {
-            mLoadingSpinner.start();
+            mBinding.viewTubiControllerLoading.start();
         }
 
-        mPlayToggleViewBtn.setChecked(isPlaying);
+        mBinding.viewTubiControllerPlayToggleIb.setChecked(isPlaying);
     }
 
     private void updateNavigation() {
@@ -420,8 +440,8 @@ public class TubiPlayerControlView extends FrameLayout {
             currentTimeline.getWindow(currentWindowIndex, currentWindow);
             isSeekable = currentWindow.isSeekable;
         }
-        if (mProgressBar != null) {
-            mProgressBar.setEnabled(isSeekable);
+        if (mBinding.viewTubiControllerSeekBar != null) {
+            mBinding.viewTubiControllerSeekBar.setEnabled(isSeekable);
         }
     }
 
@@ -435,12 +455,12 @@ public class TubiPlayerControlView extends FrameLayout {
             setProgressTime(position, duration);
         }
 
-        if (mProgressBar != null) {
+        if (mBinding.viewTubiControllerSeekBar != null) {
             if (!dragging) {
-                mProgressBar.setProgress(progressBarValue(position));
+                mBinding.viewTubiControllerSeekBar.setProgress(progressBarValue(position));
             }
             long bufferedPosition = player == null ? 0 : player.getBufferedPosition();
-            mProgressBar.setSecondaryProgress(progressBarValue(bufferedPosition));
+            mBinding.viewTubiControllerSeekBar.setSecondaryProgress(progressBarValue(bufferedPosition));
         }
         removeCallbacks(updateProgressAction);
         // Schedule an update if necessary.
@@ -478,12 +498,12 @@ public class TubiPlayerControlView extends FrameLayout {
     }
 
     private void setProgressTime(long position, long duration) {
-        if (mElapsedTime != null) {
-            mElapsedTime.setText(toProgressTime(position, false));
+        if (mBinding.viewTubiControllerElapsedTime != null) {
+            mBinding.viewTubiControllerElapsedTime.setText(toProgressTime(position, false));
         }
 
-        if (mRemainingTime != null) {
-            mRemainingTime.setText(toProgressTime(duration - position, true));
+        if (mBinding.viewTubiControllerRemainingTime != null) {
+            mBinding.viewTubiControllerRemainingTime.setText(toProgressTime(duration - position, true));
         }
     }
 
@@ -512,7 +532,7 @@ public class TubiPlayerControlView extends FrameLayout {
         return duration == C.TIME_UNSET ? 0 : ((duration * progress) / PROGRESS_BAR_MAX);
     }
 
-    private void seekBy(long timeMillis) {
+    public void seekBy(long timeMillis) {
         long position = player.getCurrentPosition();
         long place = position + timeMillis;
         //lower bound
@@ -615,6 +635,12 @@ public class TubiPlayerControlView extends FrameLayout {
                 || keyCode == KeyEvent.KEYCODE_MEDIA_NEXT
                 || keyCode == KeyEvent.KEYCODE_MEDIA_PREVIOUS;
     }
+
+
+    public int getSkipBy() {
+        return mSkipBy;
+    }
+
 
     private final class ComponentListener implements ExoPlayer.EventListener,
             SeekBar.OnSeekBarChangeListener, View.OnClickListener {
