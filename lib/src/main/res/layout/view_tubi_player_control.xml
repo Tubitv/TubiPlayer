@@ -94,6 +94,7 @@
             android:background="@drawable/tubi_tv_rew_15_selector"
             android:scaleType="fitCenter"
             android:tag="view_tubi_controller_rewind_ib"
+            android:onClick="@{() -> controller.seekBy(-1*controller.mSkipBy)}"
             app:layout_constraintBottom_toBottomOf="@+id/view_tubi_controller_play_toggle_ib"
             app:layout_constraintRight_toLeftOf="@+id/view_tubi_controller_play_toggle_ib"
             app:layout_constraintTop_toTopOf="@+id/view_tubi_controller_play_toggle_ib"/>
@@ -127,6 +128,7 @@
             android:background="@drawable/tubi_tv_fwd_15_selector"
             android:scaleType="fitCenter"
             android:tag="view_tubi_controller_forward_ib"
+            android:onClick="@{() -> controller.seekBy(controller.mSkipBy)}"
             app:layout_constraintBottom_toBottomOf="@+id/view_tubi_controller_play_toggle_ib"
             app:layout_constraintLeft_toRightOf="@+id/view_tubi_controller_play_toggle_ib"
             app:layout_constraintTop_toTopOf="@+id/view_tubi_controller_play_toggle_ib"
@@ -184,7 +186,7 @@
             android:paddingLeft="@dimen/view_tubi_controller_seek_bar_padding_horizontal"
             android:paddingRight="@dimen/view_tubi_controller_seek_bar_padding_horizontal"
             android:paddingTop="@dimen/view_tubi_controller_seek_bar_padding_vertical"
-            android:progress="50"
+            tools:progress="50"
             app:layout_constraintBottom_toTopOf="@+id/tubi_tv_controller_guideline_bottom"
             app:layout_constraintLeft_toLeftOf="@+id/tubi_tv_controller_guideline_seek_left"
             app:layout_constraintRight_toLeftOf="@+id/tubi_tv_controller_guideline_seek_right"/>

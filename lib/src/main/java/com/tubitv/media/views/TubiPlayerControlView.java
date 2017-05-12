@@ -1,6 +1,5 @@
 package com.tubitv.media.views;
 
-import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.databinding.DataBindingUtil;
@@ -11,9 +10,7 @@ import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.FrameLayout;
-import android.widget.ImageButton;
 import android.widget.SeekBar;
-import android.widget.TextView;
 
 import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.ExoPlaybackException;
@@ -21,11 +18,9 @@ import com.google.android.exoplayer2.ExoPlayer;
 import com.google.android.exoplayer2.Timeline;
 import com.google.android.exoplayer2.source.TrackGroupArray;
 import com.google.android.exoplayer2.trackselection.TrackSelectionArray;
-import com.google.android.exoplayer2.util.Util;
 import com.tubitv.media.R;
 import com.tubitv.media.databinding.ViewTubiPlayerControlBinding;
 import com.tubitv.media.interfaces.TubiPlaybackControlInterface;
-import com.tubitv.ui.TubiLoadingView;
 
 import java.util.Formatter;
 import java.util.Locale;
@@ -93,59 +88,7 @@ public class TubiPlayerControlView extends FrameLayout {
      * The time in milliseconds that we skip by in {@link com.tubitv.media.databinding.ViewTubiPlayerControlBinding#viewTubiControllerRewindIb}
      * and {@link com.tubitv.media.databinding.ViewTubiPlayerControlBinding#viewTubiControllerForwardIb}
      */
-    private int mSkipBy = DEFAULT_FAST_FORWARD_MS;
-
-    /**
-     * The view we toggle between play and pause depending tubi_tv_quality_on {@link com.google.android.exoplayer2.ExoPlayer}
-     * state
-     */
-    private StateImageButton mPlayToggleViewBtn;
-
-    /**
-     * The loading spinner that we toggle when {@link TubiPlayerControlView.ComponentListener#onLoadingChanged(boolean)}.
-     * When this view is visible, then the {@link #mPlayToggleViewBtn} should be invisible
-     */
-    private TubiLoadingView mLoadingSpinner;
-
-    /**
-     * The rewind button that can be clicked or tubi_tv_fwd_15_pressed
-     */
-    private ImageButton mRewindBtn;
-
-    /**
-     * The fast forward button that can be clicked or tubi_tv_fwd_15_pressed
-     */
-    private ImageButton mFastForwardBtn;
-
-    /**
-     * The toggle button for displaying the subtitles
-     */
-    private ImageButton mSubtitlesBtn;
-
-    /**
-     * The toggle button for displaying the quality selection dialog
-     */
-    private ImageButton mQualityBtn;
-
-    /**
-     * The toggle button for casting the content to an OTT device
-     */
-    private ImageButton mCastBtn;
-
-    /**
-     * The elapsed time of the media hh:mm:ss
-     */
-    private TextView mElapsedTime;
-
-    /**
-     * The remaining time of the media hh:mm:ss
-     */
-    private TextView mRemainingTime;
-
-    /**
-     * The current progress of the media
-     */
-    private SeekBar mProgressBar;
+    public int mSkipBy = DEFAULT_FAST_FORWARD_MS;
 
     private ViewTubiPlayerControlBinding mBinding;
 
@@ -213,49 +156,11 @@ public class TubiPlayerControlView extends FrameLayout {
     private void initLayout(int controllerLayoutId) {
         LayoutInflater inflater = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         mBinding = DataBindingUtil.inflate(inflater, controllerLayoutId, this, true);
+        setDescendantFocusability(FOCUS_AFTER_DESCENDANTS);
         mBinding.setController(this);
-//        LayoutInflater.from(getContext()).inflate(controllerLayoutId, this);
-//        setDescendantFocusability(FOCUS_AFTER_DESCENDANTS);
-//        mProgressBar = (SeekBar) findViewById(R.id.view_tubi_controller_seek_bar);
-//        if (mProgressBar != null) {
-//            mProgressBar.setOnSeekBarChangeListener(componentListener);
-//            mProgressBar.setMax(PROGRESS_BAR_MAX);
-//        }
-//
-//        mRewindBtn = (ImageButton) findViewById(R.id.view_tubi_controller_rewind_ib);
-//        mFastForwardBtn = (ImageButton) findViewById(R.id.view_tubi_controller_forward_ib);
-//        mPlayToggleViewBtn = (StateImageButton) findViewById(R.id.view_tubi_controller_play_toggle_ib);
-//        if (mPlayToggleViewBtn != null) {
-//            mPlayToggleViewBtn.addClickListener(componentListener);
-//        }
-//        mFastForwardBtn = (ImageButton) findViewById(R.id.view_tubi_controller_forward_ib);
-//
-//        if (mFastForwardBtn != null) {
-//            mFastForwardBtn.setOnClickListener(new OnClickListener() {
-//                @Override
-//                public void onClick(View v) {
-//                    seekBy(DEFAULT_FAST_FORWARD_MS);
-//                }
-//            });
-//        }
-//
-//        if (mRewindBtn != null) {
-//            mRewindBtn.setOnClickListener(new OnClickListener() {
-//                @Override
-//                public void onClick(View v) {
-//                    seekBy(-DEFAULT_FAST_FORWARD_MS);
-//                }
-//            });
-//        }
-////
-//        mLoadingSpinner = (TubiLoadingView) findViewById(R.id.view_tubi_controller_loading);
-//        mSubtitlesBtn = (ImageButton) findViewById(R.id.view_tubi_controller_subtitles_ib);
-//        mQualityBtn = (ImageButton) findViewById(R.id.view_tubi_controller_quality_ib);
-//        mCastBtn = (ImageButton) findViewById(R.id.view_tubi_controller_chromecast_ib);
-//
-//
-//        mElapsedTime = (TextView) findViewById(R.id.view_tubi_controller_elapsed_time);
-//        mRemainingTime = (TextView) findViewById(R.id.view_tubi_controller_remaining_time);
+        mBinding.viewTubiControllerSeekBar.setOnSeekBarChangeListener(componentListener);
+        mBinding.viewTubiControllerSeekBar.setMax(PROGRESS_BAR_MAX);
+        mBinding.viewTubiControllerPlayToggleIb.addClickListener(componentListener);
     }
 
     public void setTubiControllerInterface(@NonNull TubiExoPlayerView tubiControllerInterface) {
@@ -477,24 +382,6 @@ public class TubiPlayerControlView extends FrameLayout {
             }
             postDelayed(updateProgressAction, delayMs);
         }
-    }
-
-    private void setButtonEnabled(boolean enabled, View view) {
-        if (view == null) {
-            return;
-        }
-        view.setEnabled(enabled);
-        if (Util.SDK_INT >= 11) {
-            setViewAlphaV11(view, enabled ? 1f : 0.3f);
-            view.setVisibility(VISIBLE);
-        } else {
-            view.setVisibility(enabled ? VISIBLE : INVISIBLE);
-        }
-    }
-
-    @TargetApi(11)
-    private void setViewAlphaV11(View view, float alpha) {
-        view.setAlpha(alpha);
     }
 
     private void setProgressTime(long position, long duration) {
