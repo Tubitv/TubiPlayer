@@ -4,6 +4,7 @@ import android.databinding.BaseObservable;
 import android.databinding.Bindable;
 import android.support.annotation.NonNull;
 
+import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.tubitv.media.BR;
 
 /**
@@ -46,6 +47,11 @@ public class TubiObservable extends BaseObservable {
      * false if the quality is on auto
      */
     private boolean mQualityEnabled;
+
+    /**
+     * The exo player that this controller is for
+     */
+    private SimpleExoPlayer mPlayer;
 
     @Bindable
     @NonNull
