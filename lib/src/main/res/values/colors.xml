@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="tubi_tv_golden_gate">#ff501a</color>
+    <color name="tubi_tv_player_controls_overlay">#b226262d</color>
+    <color name="tubi_tv_player_controls_subtitles_background">#4c191919</color>
+    <color name="tubi_tv_player_controls_progress_background">#33ffffff</color>
+</resources>

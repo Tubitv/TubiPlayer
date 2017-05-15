@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="TubiPlayerTheme" parent="android:Theme.Holo">
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowBackground">@android:color/black</item>
+        <item name="android:keepScreenOn">true</item>
+        <item name="android:windowFullscreen">true</item>
+        <item name="android:windowContentOverlay">@null</item>
+    </style>
+
+    <style name="TubiSeekBar" parent="@android:style/Widget.SeekBar">
+        <item name="android:progressDrawable">@drawable/tubi_tv_seek_bar</item>
+        <item name="android:thumb">@drawable/tubi_tv_drawable_scrubber_selector</item>
+        <item name="android:minHeight">2dp</item>
+        <item name="android:maxHeight">2dp</item>
+    </style>
+
+    <style name="TubiEmptyToggleButton">
+        <item name="android:layout_width">@dimen/view_tubi_controller_options_button_width</item>
+        <item name="android:layout_height">@dimen/view_tubi_controller_options_height</item>
+        <item name="android:text">""</item>
+        <item name="android:textOff">""</item>
+        <item name="android:textOn">""</item>
+    </style>
+
+    <style name="TubiVideoButton">
+        <item name="android:layout_width">@dimen/view_tubi_controller_video_button_width</item>
+        <item name="android:layout_height">@dimen/view_tubi_controller_video_button_height</item>
+        <item name="android:layout_marginLeft">
+            @dimen/view_tubi_controller_video_button_margin_left
+        </item>
+        <item name="android:layout_marginRight">
+            @dimen/view_tubi_controller_video_button_margin_right
+        </item>
+        <item name="android:layout_marginTop">@dimen/view_tubi_controller_video_button_margin_top
+        </item>
+        <item name="android:background">?android:attr/selectableItemBackground</item>
+        <item name="android:scaleType">fitXY</item>
+        <item name="android:visibility">gone</item>
+    </style>
+
+</resources>
