@@ -56,7 +56,7 @@ public class TubiExoPlayerView extends FrameLayout implements TubiPlaybackContro
     private final View surfaceView;
     private final ImageView artworkView;
     private final SubtitleView subtitleView;
-    private final TubiPlayerControlView controller;
+    private final TubiPlayerControlViewOld controller;
     private final ComponentListener componentListener;
     private final FrameLayout overlayFrameLayout;
     private SimpleExoPlayer player;
@@ -156,7 +156,7 @@ public class TubiExoPlayerView extends FrameLayout implements TubiPlaybackContro
         if (controllerPlaceholder != null) {
             // Note: rewindMs and fastForwardMs are passed via attrs, so we don't need to make explicit
             // calls to set them.
-            this.controller = new TubiPlayerControlView(context, attrs);
+            this.controller = new TubiPlayerControlViewOld(context, attrs);
             controller.setTubiControllerInterface(this);
             controller.setLayoutParams(controllerPlaceholder.getLayoutParams());
             ViewGroup parent = ((ViewGroup) controllerPlaceholder.getParent());
@@ -354,7 +354,7 @@ public class TubiExoPlayerView extends FrameLayout implements TubiPlaybackContro
      *
      * @param listener The listener to be notified about visibility changes.
      */
-    public void setControllerVisibilityListener(TubiPlayerControlView.VisibilityListener listener) {
+    public void setControllerVisibilityListener(TubiPlayerControlViewOld.VisibilityListener listener) {
         Assertions.checkState(controller != null);
         controller.setVisibilityListener(listener);
     }
@@ -365,7 +365,7 @@ public class TubiExoPlayerView extends FrameLayout implements TubiPlaybackContro
      * @param seekDispatcher The {@link com.google.android.exoplayer2.ui.PlaybackControlView.SeekDispatcher}, or null to use
      *     {@link PlaybackControlView#DEFAULT_SEEK_DISPATCHER}.
      */
-    public void setSeekDispatcher(TubiPlayerControlView.SeekDispatcher seekDispatcher) {
+    public void setSeekDispatcher(TubiPlayerControlViewOld.SeekDispatcher seekDispatcher) {
         Assertions.checkState(controller != null);
         controller.setSeekDispatcher(seekDispatcher);
     }

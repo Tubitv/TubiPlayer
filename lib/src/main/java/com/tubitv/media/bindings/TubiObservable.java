@@ -8,7 +8,7 @@ import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.tubitv.media.BR;
 
 /**
- * The observable class for the {@link com.tubitv.media.views.TubiPlayerControlView}
+ * The observable class for the {@link com.tubitv.media.views.TubiPlayerControlViewOld}
  * <p>
  * Created by stoyan on 5/12/17.
  */

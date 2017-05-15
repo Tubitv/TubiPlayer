@@ -37,9 +37,9 @@ import com.tubitv.media.MediaHelper;
 import com.tubitv.media.TubiExoPlayer;
 import com.tubitv.media.helpers.TrackSelectionHelper;
 import com.tubitv.media.views.TubiExoPlayerView;
-import com.tubitv.media.views.TubiPlayerControlView;
+import com.tubitv.media.views.TubiPlayerControlViewOld;
 
-public class DemoActivity extends Activity implements TubiPlayerControlView.VisibilityListener {
+public class DemoActivity extends Activity implements TubiPlayerControlViewOld.VisibilityListener {
     private TubiExoPlayer mTubiExoPlayer;
     private Handler mMainHandler;
     private TubiExoPlayerView mTubiPlayerView;

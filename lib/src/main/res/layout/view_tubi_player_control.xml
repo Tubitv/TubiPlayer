@@ -94,11 +94,11 @@
             android:background="@drawable/tubi_tv_rew_15_selector"
             android:scaleType="fitCenter"
             android:tag="view_tubi_controller_rewind_ib"
-            android:onClick="@{() -> controller.seekBy(-1*controller.mSkipBy)}"
+
             app:layout_constraintBottom_toBottomOf="@+id/view_tubi_controller_play_toggle_ib"
             app:layout_constraintRight_toLeftOf="@+id/view_tubi_controller_play_toggle_ib"
             app:layout_constraintTop_toTopOf="@+id/view_tubi_controller_play_toggle_ib"/>
-
+        <!--android:onClick="@{() -> controller.seekBy(-1*controller.mSkipBy)}"-->
         <com.tubitv.media.views.StateImageButton
             android:id="@+id/view_tubi_controller_play_toggle_ib"
             android:layout_width="wrap_content"
@@ -128,12 +128,12 @@
             android:background="@drawable/tubi_tv_fwd_15_selector"
             android:scaleType="fitCenter"
             android:tag="view_tubi_controller_forward_ib"
-            android:onClick="@{() -> controller.seekBy(controller.mSkipBy)}"
+
             app:layout_constraintBottom_toBottomOf="@+id/view_tubi_controller_play_toggle_ib"
             app:layout_constraintLeft_toRightOf="@+id/view_tubi_controller_play_toggle_ib"
             app:layout_constraintTop_toTopOf="@+id/view_tubi_controller_play_toggle_ib"
             app:layout_constraintVertical_bias="0.5"/>
-
+        <!--android:onClick="@{() -> controller.seekBy(controller.mSkipBy)}"-->
         <com.tubitv.ui.VaudTextView
             android:id="@+id/view_tubi_controller_elapsed_time"
             android:layout_width="wrap_content"
