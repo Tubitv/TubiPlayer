@@ -1,18 +1,37 @@
 package com.tubitv.media.bindings;
 
+import android.content.Context;
 import android.databinding.BaseObservable;
 import android.databinding.Bindable;
 import android.support.annotation.NonNull;
+import android.util.Log;
+import android.widget.SeekBar;
 
 import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.tubitv.media.BR;
+import com.tubitv.media.R;
 
 /**
  * The observable class for the {@link com.tubitv.media.views.TubiPlayerControlViewOld}
  * <p>
  * Created by stoyan on 5/12/17.
  */
-public class TubiObservable extends BaseObservable {
+public class TubiObservable extends BaseObservable implements SeekBar.OnSeekBarChangeListener{
+    /**
+     * Tag for logging
+     */
+    private static final String TAG = TubiObservable.class.getSimpleName();
+
+    /**
+     * The max progress bar value
+     */
+    private static final int DEFAULT_PROGRESS_MAX = 1000;
+
+    /**
+     * The context from {@link com.tubitv.media.views.TubiPlayerControlView}
+     */
+    @NonNull
+    private final Context context;
 
     /**
      * The title of the movie being played
@@ -49,9 +68,50 @@ public class TubiObservable extends BaseObservable {
     private boolean qualityEnabled;
 
     /**
+     * The max for the progress bar
+     */
+    private int progressBarMax = DEFAULT_PROGRESS_MAX;
+
+    /**
      * The exo player that this controller is for
      */
     private SimpleExoPlayer player;
+
+    public TubiObservable(@NonNull final Context context) {
+        this.context = context;
+    }
+
+    @Override
+    public void onStartTrackingTouch(SeekBar seekBar) {
+        Log.d(TAG, "onStartTrackingTouch");
+//        removeCallbacks(hideAction);
+//        dragging = true;
+    }
+
+    @Override
+    public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+        Log.d(TAG, "onProgressChanged");
+//        if (fromUser) {
+//            long position = positionValue(progress);
+//            long duration = player == null ? 0 : player.getDuration();
+//            setProgressTime(position, duration);
+//            if (player != null && !dragging) {
+//                seekTo(position);
+//            }
+//        }
+    }
+
+    @Override
+    public void onStopTrackingTouch(SeekBar seekBar) {
+        Log.d(TAG, "onStopTrackingTouch");
+        //Reset thumb, or smaller unpressed drawable will get blown up
+        seekBar.setThumb(context.getResources().getDrawable(R.drawable.tubi_tv_drawable_scrubber_selector));
+//        dragging = false;
+        if (player != null) {
+//            seekTo(positionValue(seekBar.getProgress()));
+        }
+//        hideAfterTimeout();
+    }
 
     @Bindable
     @NonNull
@@ -113,6 +173,16 @@ public class TubiObservable extends BaseObservable {
     public void setQualityEnabled(boolean qualityEnabled) {
         this.qualityEnabled = qualityEnabled;
         notifyPropertyChanged(BR.qualityEnabled);
+    }
+
+    @Bindable
+    public int getProgressBarMax() {
+        return progressBarMax;
+    }
+
+    public void setProgressBarMax(int progressBarMax) {
+        this.progressBarMax = progressBarMax;
+        notifyPropertyChanged(BR.progressBarMax);
     }
 
 }
