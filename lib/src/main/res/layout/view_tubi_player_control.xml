@@ -7,6 +7,9 @@
         <variable
             name="controller"
             type="com.tubitv.media.views.TubiPlayerControlView"/>
+        <variable
+            name="playMedia"
+            type="com.tubitv.media.bindings.TubiObservable"/>
     </data>
 
     <android.support.constraint.ConstraintLayout
@@ -26,6 +29,7 @@
             android:gravity="center_vertical"
             android:textColor="@android:color/white"
             android:textSize="18sp"
+            android:text='@{playMedia.title}'
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintLeft_toLeftOf="@+id/tubi_tv_controller_guideline_left"
             app:layout_constraintRight_toLeftOf="@+id/view_tubi_controller_subtitles_ib"
@@ -143,7 +147,8 @@
             android:layout_marginRight="8dp"
             android:layout_marginTop="8dp"
             android:includeFontPadding="false"
-            android:text="@string/view_tubi_controller_time_position_text_default"
+            android:text="@{playMedia.elapsedTime ?? @string/view_tubi_controller_time_position_text_default}"
+            tools:text="@string/view_tubi_controller_time_position_text_default"
             android:textColor="@android:color/white"
             android:textSize="@dimen/view_tubi_controller_text_size"
             app:layout_constraintBottom_toTopOf="@+id/tubi_tv_controller_guideline_bottom"
@@ -152,24 +157,6 @@
             app:layout_constraintTop_toTopOf="@+id/view_tubi_controller_seek_bar"
             app:layout_constraintVertical_bias="0.214"
             app:vaud_typeface="vaud_regular"/>
-
-        <!--<TextView-->
-        <!--android:id="@+id/view_tubi_controller_subtitles_tv"-->
-        <!--android:layout_width="wrap_content"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:background="@color/tubi_tv_player_controls_subtitles_background"-->
-        <!--android:text="Subtitles will go here. They will not extend further than 60% of-->
-        <!--the total width of the screen. Two lines max."-->
-        <!--android:textAlignment="center"-->
-        <!--android:textColor="@android:color/white"-->
-        <!--android:maxLines="2"-->
-        <!--android:maxWidth="450dp"-->
-        <!--android:layout_marginBottom="8dp"-->
-        <!--app:layout_constraintBottom_toTopOf="@+id/view_tubi_controller_seek_bar"-->
-        <!--android:layout_marginLeft="16dp"-->
-        <!--app:layout_constraintLeft_toLeftOf="@+id/view_tubi_controller_seek_bar"-->
-        <!--android:layout_marginRight="16dp"-->
-        <!--app:layout_constraintRight_toRightOf="@+id/view_tubi_controller_seek_bar"/>-->
 
         <SeekBar
             android:id="@+id/view_tubi_controller_seek_bar"
@@ -197,7 +184,8 @@
             android:layout_height="wrap_content"
             android:layout_marginRight="8dp"
             android:includeFontPadding="false"
-            android:text="@string/view_tubi_controller_time_position_text_default"
+            android:text="@{playMedia.remainingTime ?? @string/view_tubi_controller_time_position_text_default}"
+            tools:text="@string/view_tubi_controller_time_position_text_default"
             android:textColor="@android:color/white"
             android:textSize="@dimen/view_tubi_controller_text_size"
             app:layout_constraintBaseline_toBaselineOf="@+id/view_tubi_controller_elapsed_time"

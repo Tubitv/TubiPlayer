@@ -18,100 +18,100 @@ public class TubiObservable extends BaseObservable {
      * The title of the movie being played
      */
     @NonNull
-    private String mTitle;
+    public String title = "Stoyan the Great";
 
     /**
      * The remaining time of the movie in hh:mm:ss
      */
     @NonNull
-    private String mRemainingTime;
+    private String remainingTime;
 
     /**
      * The elapsed time of the movie in hh:mm:ss
      */
     @NonNull
-    private String mElapsedTime;
+    private String elapsedTime;
 
     /**
      * The play state of the video
      */
-    private boolean mIsPlaying;
+    private boolean isPlaying;
 
     /**
      * The state of the subtitles, true if they have been enabled in any language
      */
-    private boolean mSubtitlesEnabled;
+    private boolean subtitlesEnabled;
 
     /**
      * The state of the quality settings, true if user has defined a quality;
      * false if the quality is on auto
      */
-    private boolean mQualityEnabled;
+    private boolean qualityEnabled;
 
     /**
      * The exo player that this controller is for
      */
-    private SimpleExoPlayer mPlayer;
+    private SimpleExoPlayer player;
 
     @Bindable
     @NonNull
     public String getTitle() {
-        return mTitle;
+        return title;
     }
 
     public void setTitle(@NonNull String title) {
-        this.mTitle = title;
+        this.title = title;
         notifyPropertyChanged(BR.title);
     }
 
     @Bindable
     @NonNull
     public String getRemainingTime() {
-        return mRemainingTime;
+        return remainingTime;
     }
 
     public void setRemainingTime(@NonNull String remainingTime) {
-        this.mRemainingTime = remainingTime;
+        this.remainingTime = remainingTime;
         notifyPropertyChanged(BR.remainingTime);
     }
 
     @Bindable
     @NonNull
     public String getElapsedTime() {
-        return mElapsedTime;
+        return elapsedTime;
     }
 
     public void setElapsedTime(@NonNull String elapsedTime) {
-        this.mElapsedTime = elapsedTime;
+        this.elapsedTime = elapsedTime;
         notifyPropertyChanged(BR.elapsedTime);
     }
 
     @Bindable
     public boolean isIsPlaying() {
-        return mIsPlaying;
+        return isPlaying;
     }
 
     public void setIsPlaying(boolean isPlaying) {
-        this.mIsPlaying = isPlaying;
+        this.isPlaying = isPlaying;
         notifyPropertyChanged(BR.isPlaying);
     }
 
     @Bindable
     public boolean isSubtitlesEnabled() {
-        return mSubtitlesEnabled;
+        return subtitlesEnabled;
     }
 
     public void setSubtitlesEnabled(boolean subtitlesEnabled) {
-        this.mSubtitlesEnabled = subtitlesEnabled;
+        this.subtitlesEnabled = subtitlesEnabled;
         notifyPropertyChanged(BR.subtitlesEnabled);
     }
     @Bindable
     public boolean isQualityEnabled() {
-        return mQualityEnabled;
+        return qualityEnabled;
     }
 
     public void setQualityEnabled(boolean qualityEnabled) {
-        this.mQualityEnabled = qualityEnabled;
+        this.qualityEnabled = qualityEnabled;
         notifyPropertyChanged(BR.qualityEnabled);
     }
 
