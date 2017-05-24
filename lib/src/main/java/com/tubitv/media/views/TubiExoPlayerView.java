@@ -158,7 +158,7 @@ public class TubiExoPlayerView extends FrameLayout implements TubiPlaybackContro
             // Note: rewindMs and fastForwardMs are passed via attrs, so we don't need to make explicit
             // calls to set them.
             this.controller = new TubiPlayerControlView(context, attrs);
-            controller.setTubiControllerInterface(this);
+//            controller.setTubiControllerInterface(this);
             controller.setLayoutParams(controllerPlaceholder.getLayoutParams());
             ViewGroup parent = ((ViewGroup) controllerPlaceholder.getParent());
             int controllerIndex = parent.indexOfChild(controllerPlaceholder);
@@ -360,16 +360,16 @@ public class TubiExoPlayerView extends FrameLayout implements TubiPlaybackContro
         controller.setVisibilityListener(listener);
     }
 
-    /**
-     * Sets the {@link com.google.android.exoplayer2.ui.PlaybackControlView.SeekDispatcher}.
-     *
-     * @param seekDispatcher The {@link com.google.android.exoplayer2.ui.PlaybackControlView.SeekDispatcher}, or null to use
-     *     {@link PlaybackControlView#DEFAULT_SEEK_DISPATCHER}.
-     */
-    public void setSeekDispatcher(TubiPlayerControlViewOld.SeekDispatcher seekDispatcher) {
-        Assertions.checkState(controller != null);
-        controller.setSeekDispatcher(seekDispatcher);
-    }
+//    /**
+//     * Sets the {@link com.google.android.exoplayer2.ui.PlaybackControlView.SeekDispatcher}.
+//     *
+//     * @param seekDispatcher The {@link com.google.android.exoplayer2.ui.PlaybackControlView.SeekDispatcher}, or null to use
+//     *     {@link PlaybackControlView#DEFAULT_SEEK_DISPATCHER}.
+//     */
+//    public void setSeekDispatcher(TubiPlayerControlViewOld.SeekDispatcher seekDispatcher) {
+//        Assertions.checkState(controller != null);
+////        controller.setSeekDispatcher(seekDispatcher);
+//    }
 
     /**
      * Gets the view onto which video is rendered. This is either a {@link SurfaceView} (default)
@@ -529,6 +529,11 @@ public class TubiExoPlayerView extends FrameLayout implements TubiPlaybackContro
 
     @Override
     public void postRunnable(@NonNull Runnable runnable, long millisDelay) {
+
+    }
+
+    @Override
+    public void hideAfterTimeout() {
 
     }
 

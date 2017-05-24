@@ -3,12 +3,14 @@ package com.tubitv.media.views;
 import android.content.Context;
 import android.databinding.BindingAdapter;
 import android.databinding.DataBindingUtil;
+import android.os.SystemClock;
 import android.support.annotation.NonNull;
 import android.support.constraint.ConstraintLayout;
 import android.util.AttributeSet;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 
+import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.tubitv.media.R;
 import com.tubitv.media.bindings.TubiObservable;
@@ -24,18 +26,28 @@ public class TubiPlayerControlView extends ConstraintLayout implements TubiPlayb
      */
     private static final int DEFAULT_HIDE_TIMEOUT_MS = 5000;
 
+
+    private ViewTubiPlayerControlBinding mBinding;
+    private TubiPlayerControlViewOld.VisibilityListener visibilityListener;
+
+    private boolean isAttachedToWindow;
+
     /**
      * The time out time for the view to be hidden if the user is not interacting with it
      */
-    private int mHideTimeoutMs = DEFAULT_HIDE_TIMEOUT_MS;
+    private int showTimeoutMs= DEFAULT_HIDE_TIMEOUT_MS;
 
-    private ViewTubiPlayerControlBinding mBinding;
-    private TubiExoPlayerView tubiControllerInterface;
-    private SimpleExoPlayer player;
-    private TubiPlayerControlViewOld.VisibilityListener visibilityListener;
-    private TubiPlayerControlViewOld.SeekDispatcher seekDispatcher;
-    private boolean visible;
-    private int showTimeoutMs;
+    /**
+     * The time out time for the view to be hidden if the user is not interacting with it
+     */
+    private long hideAtMs;
+
+    private final Runnable hideAction = new Runnable() {
+        @Override
+        public void run() {
+            hide();
+        }
+    };
 
     public TubiPlayerControlView(Context context) {
         this(context, null);
@@ -54,6 +66,38 @@ public class TubiPlayerControlView extends ConstraintLayout implements TubiPlayb
         }
 
         initLayout();
+    }
+
+    @Override
+    public void onAttachedToWindow() {
+        super.onAttachedToWindow();
+        isAttachedToWindow = true;
+        if (hideAtMs != C.TIME_UNSET) {
+            long delayMs = hideAtMs - SystemClock.uptimeMillis();
+            if (delayMs <= 0) {
+                hide();
+            } else {
+                postDelayed(hideAction, delayMs);
+            }
+        }
+//        updateAll();
+    }
+
+    @Override
+    public void onDetachedFromWindow() {
+        super.onDetachedFromWindow();
+        isAttachedToWindow = false;
+//        removeCallbacks(updateProgressAction);
+        removeCallbacks(hideAction);
+    }
+
+    @Override
+    public boolean dispatchKeyEvent(KeyEvent event) {
+        boolean handled = dispatchMediaKeyEvent(event) || super.dispatchKeyEvent(event);
+        if (handled) {
+            show();
+        }
+        return handled;
     }
 
     @Override
@@ -88,21 +132,53 @@ public class TubiPlayerControlView extends ConstraintLayout implements TubiPlayb
     }
 
     public void setHideTimeoutMs(int hideTimeoutMs) {
-        this.mHideTimeoutMs = hideTimeoutMs;
+        this.hideAtMs = hideTimeoutMs;
     }
 
-    public void setTubiControllerInterface(TubiExoPlayerView tubiControllerInterface) {
-        this.tubiControllerInterface = tubiControllerInterface;
-    }
 
     public void setPlayer(SimpleExoPlayer player) {
-        this.player = player;
         TubiObservable media = new TubiObservable(this, player);
         mBinding.setPlayMedia(media);
     }
 
-    public void hide() {
+    /**
+     * Shows the playback controls. If {@link #getShowTimeoutMs()} is positive then the controls will
+     * be automatically hidden after this duration of time has elapsed without user input.
+     */
+    public void show() {
+        if (!isVisible()) {
+            setVisibility(VISIBLE);
+            if (visibilityListener != null) {
+                visibilityListener.onVisibilityChange(getVisibility());
+            }
+//            updateAll();
+        }
+        // Call hideAfterTimeout even if already visible to reset the timeout.
+        hideAfterTimeout();
+    }
 
+    public void hide() {
+        if (isVisible()) {
+            setVisibility(GONE);
+            if (visibilityListener != null) {
+                visibilityListener.onVisibilityChange(getVisibility());
+            }
+//            removeCallbacks(updateProgressAction);
+            removeCallbacks(hideAction);
+            hideAtMs = C.TIME_UNSET;
+        }
+    }
+
+    public void hideAfterTimeout() {
+        removeCallbacks(hideAction);
+        if (showTimeoutMs > 0) {
+            hideAtMs = SystemClock.uptimeMillis() + showTimeoutMs;
+            if (isAttachedToWindow) {
+                postDelayed(hideAction, showTimeoutMs);
+            }
+        } else {
+            hideAtMs = C.TIME_UNSET;
+        }
     }
 
     public boolean dispatchMediaKeyEvent(KeyEvent event) {
@@ -113,12 +189,11 @@ public class TubiPlayerControlView extends ConstraintLayout implements TubiPlayb
         this.visibilityListener = visibilityListener;
     }
 
-    public void setSeekDispatcher(TubiPlayerControlViewOld.SeekDispatcher seekDispatcher) {
-        this.seekDispatcher = seekDispatcher;
-    }
-
+    /**
+     * Returns whether the controller is currently visible.
+     */
     public boolean isVisible() {
-        return visible;
+        return getVisibility() == VISIBLE;
     }
 
     public int getShowTimeoutMs() {
@@ -129,7 +204,4 @@ public class TubiPlayerControlView extends ConstraintLayout implements TubiPlayb
 
     }
 
-    public void show() {
-
-    }
 }

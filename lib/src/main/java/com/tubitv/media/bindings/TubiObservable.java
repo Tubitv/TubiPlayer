@@ -200,47 +200,13 @@ public class TubiObservable extends BaseObservable implements ExoPlayer.EventLis
         }
     }
 
-    private void updateProgress() {
-        long position = player == null ? 0 : player.getCurrentPosition();
-        long duration = player == null ? 0 : player.getDuration();
-        setProgressBarMax((int) duration);
-        if (!draggingSeekBar) {
-            setProgressSeekTime(position, duration);
-            setProgressBarValue(position);
-        }
-        long bufferedPosition = player == null ? 0 : player.getBufferedPosition();
-        setSecondaryProgressBarValue(bufferedPosition);
-
-
-        playbackControlInterface.cancelRunnable(updateProgressAction);
-        // Schedule an update if necessary.
-        int playbackState = player == null ? ExoPlayer.STATE_IDLE : player.getPlaybackState();
-        if (playbackState != ExoPlayer.STATE_IDLE && playbackState != STATE_ENDED) {
-            long delayMs;
-            if (player.getPlayWhenReady() && playbackState == STATE_READY) {
-                delayMs = 1000 - (position % 1000);
-                if (delayMs < 200) {
-                    delayMs += 1000;
-                }
-            } else {
-                delayMs = 1000;
-            }
-            playbackControlInterface.postRunnable(updateProgressAction, delayMs);
-        }
-    }
-
-    private void setProgressSeekTime(long position, long duration) {
-        setElapsedTime(Utils.getProgressTime(position, false));
-        setRemainingTime(Utils.getProgressTime(duration - position, true));
-    }
-
     @Override
     public void onStopTrackingTouch(SeekBar seekBar) {
         Log.d(TAG, "onStopTrackingTouch");
         if (player != null) {
             seekTo(Utils.progressToMilli(player.getDuration(), seekBar));
         }
-//        hideAfterTimeout();
+        playbackControlInterface.hideAfterTimeout();
     }
 
     @Override
@@ -250,7 +216,7 @@ public class TubiObservable extends BaseObservable implements ExoPlayer.EventLis
             player.setPlayWhenReady(!playing);
         }
         setIsPlaying();
-//        hideAfterTimeout();
+        playbackControlInterface.hideAfterTimeout();
     }
 
     public void setPlayer(SimpleExoPlayer player) {
@@ -300,6 +266,40 @@ public class TubiObservable extends BaseObservable implements ExoPlayer.EventLis
             setProgressSeekTime(place, duration);
             setProgressBarValue(position);
         }
+    }
+
+    private void updateProgress() {
+        long position = player == null ? 0 : player.getCurrentPosition();
+        long duration = player == null ? 0 : player.getDuration();
+        setProgressBarMax((int) duration);
+        if (!draggingSeekBar) {
+            setProgressSeekTime(position, duration);
+            setProgressBarValue(position);
+        }
+        long bufferedPosition = player == null ? 0 : player.getBufferedPosition();
+        setSecondaryProgressBarValue(bufferedPosition);
+
+
+        playbackControlInterface.cancelRunnable(updateProgressAction);
+        // Schedule an update if necessary.
+        int playbackState = player == null ? ExoPlayer.STATE_IDLE : player.getPlaybackState();
+        if (playbackState != ExoPlayer.STATE_IDLE && playbackState != STATE_ENDED) {
+            long delayMs;
+            if (player.getPlayWhenReady() && playbackState == STATE_READY) {
+                delayMs = 1000 - (position % 1000);
+                if (delayMs < 200) {
+                    delayMs += 1000;
+                }
+            } else {
+                delayMs = 1000;
+            }
+            playbackControlInterface.postRunnable(updateProgressAction, delayMs);
+        }
+    }
+
+    private void setProgressSeekTime(long position, long duration) {
+        setElapsedTime(Utils.getProgressTime(position, false));
+        setRemainingTime(Utils.getProgressTime(duration - position, true));
     }
 
     private final Runnable updateProgressAction = new Runnable() {

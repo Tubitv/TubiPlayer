@@ -12,4 +12,6 @@ public interface TubiPlaybackControlInterface {
     void cancelRunnable(@NonNull Runnable runnable);
 
     void postRunnable(@NonNull Runnable runnable, long millisDelay);
+
+    void hideAfterTimeout();
 }
