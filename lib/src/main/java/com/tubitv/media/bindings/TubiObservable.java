@@ -35,6 +35,12 @@ public class TubiObservable extends BaseObservable implements ExoPlayer.EventLis
     private static final int DEFAULT_PROGRESS_MAX = 1000;
 
     /**
+     * The default time to skip in {@link com.tubitv.media.databinding.ViewTubiPlayerControlBinding#viewTubiControllerForwardIb}
+     * and {@link com.tubitv.media.databinding.ViewTubiPlayerControlBinding#viewTubiControllerRewindIb}
+     */
+    private static final int DEFAULT_FAST_FORWARD_MS = 15000;
+
+    /**
      * The context from {@link com.tubitv.media.views.TubiPlayerControlView}
      */
     @NonNull
@@ -80,10 +86,16 @@ public class TubiObservable extends BaseObservable implements ExoPlayer.EventLis
     private int progressBarMax = DEFAULT_PROGRESS_MAX;
 
     /**
+     * The time in milliseconds that we skip by in {@link com.tubitv.media.databinding.ViewTubiPlayerControlBinding#viewTubiControllerRewindIb}
+     * and {@link com.tubitv.media.databinding.ViewTubiPlayerControlBinding#viewTubiControllerForwardIb}
+     */
+    public int skipBy = DEFAULT_FAST_FORWARD_MS;
+
+    /**
      * The dragging state of the {@link com.tubitv.media.databinding.ViewTubiPlayerControlBinding#viewTubiControllerSeekBar},
      * true when the user is dragging the thumbnail through the video duration
      */
-    private boolean draggingSeekBar = false;
+    private boolean displayForwardRewind = false;
 
     /**
      * The playback state of the {@link #player}
@@ -162,7 +174,7 @@ public class TubiObservable extends BaseObservable implements ExoPlayer.EventLis
     public void onStartTrackingTouch(SeekBar seekBar) {
         Log.d(TAG, "onStartTrackingTouch");
 //        removeCallbacks(hideAction);
-        draggingSeekBar = true;
+        setDisplayForwardRewind(false);
     }
 
     @Override
@@ -173,16 +185,12 @@ public class TubiObservable extends BaseObservable implements ExoPlayer.EventLis
             long duration = player == null ? 0 : player.getDuration();
             setElapsedTime(Utils.getProgressTime(position, false));
             setRemainingTime(Utils.getProgressTime(duration - position, true));
-            if (player != null && !draggingSeekBar) {
-                seekTo(position);
-            }
         }
     }
 
     @Override
     public void onStopTrackingTouch(SeekBar seekBar) {
         Log.d(TAG, "onStopTrackingTouch");
-        draggingSeekBar = false;
         if (player != null) {
             seekTo(Utils.progressToMilli(player.getDuration(), seekBar));
         }
@@ -218,11 +226,28 @@ public class TubiObservable extends BaseObservable implements ExoPlayer.EventLis
     }
 
     private void seekTo(long positionMs) {
-        seekTo(player.getCurrentWindowIndex(), positionMs);
+        if (player != null) {
+            seekTo(player.getCurrentWindowIndex(), positionMs);
+        }
     }
 
     private void seekTo(int windowIndex, long positionMs) {
-        player.seekTo(windowIndex, positionMs);
+        if (player != null) {
+            player.seekTo(windowIndex, positionMs);
+        }
+    }
+
+    public void seekBy(long timeMillis) {
+        if (player != null) {
+            long position = player.getCurrentPosition();
+            long place = position + timeMillis;
+            //lower bound
+            place = place < 0 ? 0 : place;
+            //upper bound
+            place = place > player.getDuration() ? player.getDuration() : place;
+            seekTo(place);
+            setDisplayForwardRewind(true);
+        }
     }
 
     private void setIsPlaying() {
@@ -312,10 +337,30 @@ public class TubiObservable extends BaseObservable implements ExoPlayer.EventLis
 
     public void setPlaybackState(int playbackState) {
         this.playbackState = playbackState;
+        switch (playbackState) {
+            case ExoPlayer.STATE_READY:
+                setDisplayForwardRewind(false);
+                break;
+            case ExoPlayer.STATE_BUFFERING:
+            case ExoPlayer.STATE_IDLE:  //nothing to play
+            case ExoPlayer.STATE_ENDED: //stream ended
+                break;
+        }
+
         notifyPropertyChanged(BR.playbackState);
     }
 
     private void setPlaybackState() {
         setPlaybackState(player == null ? ExoPlayer.STATE_IDLE : player.getPlaybackState());
+    }
+    @Bindable
+    public boolean isDisplayForwardRewind() {
+        return displayForwardRewind;
+    }
+
+    public void setDisplayForwardRewind(boolean displayForwardRewind) {
+        //(playMedia.playbackState == ExoPlayer.STATE_READY || (playMedia.playbackState == ExoPlayer.STATE_BUFFERING &amp;&amp; playMedia.draggingSeekBar)) ? View.VISIBLE : View.INVISIBLE
+        this.displayForwardRewind = displayForwardRewind;
+        notifyPropertyChanged(BR.displayForwardRewind);
     }
 }

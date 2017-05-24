@@ -149,7 +149,7 @@ public class DemoActivity extends Activity implements TubiPlayerControlViewOld.V
         //fake media
         Uri[] uris = new Uri[1];
         String[] extensions = new String[1];
-        uris[0] = Uri.parse("http://c13.adrise.tv/v2/sources/content-owners/paramount/312926/v201604161517-1024x436-,434,981,1533,2097,k.mp4.m3u8?oxhSrvWM6FtjZnNEMz0PhNqjEZyl0n70GAJnDy2Om1t6C9gJcppy_KbwIvGFn7cm");
+        uris[0] = Uri.parse("http://c13.adrise.tv/v2/sources/content-owners/paramount/312926/v201604161517-1024x436-,434,981,1533,2097,k.mp4.m3u8?n6tgowphDKfd-Rg24ARiE4prl0zW_DFYUqne3A1JQOHB_oyzTIHRw7zaOdIBhzIQ");
         extensions[0] = "m3u8";
         MediaSource[] mediaSources = new MediaSource[uris.length];
         mediaSources[0] = buildMediaSource(uris[0], extensions[0]);
