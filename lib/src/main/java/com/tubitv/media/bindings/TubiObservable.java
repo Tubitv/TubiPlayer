@@ -120,10 +120,7 @@ public class TubiObservable extends BaseObservable implements ExoPlayer.EventLis
     @Override
     public void onPlayerStateChanged(boolean playWhenReady, int playbackState) {
         setPlaybackState(playbackState);
-        if (player != null) {
-            boolean playing = player.getPlayWhenReady();
-            setIsPlaying(playing);
-        }
+        setIsPlaying();
 //        updateProgress();
     }
 
@@ -197,17 +194,9 @@ public class TubiObservable extends BaseObservable implements ExoPlayer.EventLis
         if (player != null) {
             boolean playing = player.getPlayWhenReady();
             player.setPlayWhenReady(!playing);
-            setIsPlaying(!playing);
         }
+        setIsPlaying();
 //        hideAfterTimeout();
-    }
-
-    private void seekTo(long positionMs) {
-        seekTo(player.getCurrentWindowIndex(), positionMs);
-    }
-
-    private void seekTo(int windowIndex, long positionMs) {
-        player.seekTo(windowIndex, positionMs);
     }
 
     public void setPlayer(SimpleExoPlayer player) {
@@ -226,6 +215,21 @@ public class TubiObservable extends BaseObservable implements ExoPlayer.EventLis
         }
 
 //        updateAll();
+    }
+
+    private void seekTo(long positionMs) {
+        seekTo(player.getCurrentWindowIndex(), positionMs);
+    }
+
+    private void seekTo(int windowIndex, long positionMs) {
+        player.seekTo(windowIndex, positionMs);
+    }
+
+    private void setIsPlaying() {
+        if (player != null) {
+            boolean playing = player.getPlayWhenReady();
+            setIsPlaying(playing);
+        }
     }
 
     @Bindable
