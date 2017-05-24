@@ -1,5 +1,7 @@
 package com.tubitv.media.utilities;
 
+import android.widget.SeekBar;
+
 import com.google.android.exoplayer2.C;
 
 import java.util.Formatter;
@@ -26,5 +28,10 @@ public class Utils {
         String time = hours > 0 ? formatter.format(FORMAT_HOURS, hours, minutes, seconds).toString()
                 : formatter.format(FORMAT_MINUTES, minutes, seconds).toString();
         return remaining && timeMs != 0 ? "-" + time : time;
+    }
+
+    public static long progressToMilli(long playerDurationMs, SeekBar seekBar) {
+        long duration = playerDurationMs < 1 ? C.TIME_UNSET : playerDurationMs;
+        return duration == C.TIME_UNSET ? 0 : ((duration * seekBar.getProgress()) / seekBar.getMax());
     }
 }

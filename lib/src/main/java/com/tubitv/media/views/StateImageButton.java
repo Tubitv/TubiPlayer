@@ -3,6 +3,7 @@ package com.tubitv.media.views;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.res.TypedArray;
+import android.databinding.BindingAdapter;
 import android.support.annotation.DrawableRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -65,6 +66,23 @@ public class StateImageButton extends ImageButton implements View.OnClickListene
         for(OnClickListener listener : mOnClickListeners){
             listener.onClick(v);
         }
+    }
+
+    /**
+     * Binding adapter to add a {@link android.view.View.OnClickListener} to this views
+     * {@link #mOnClickListeners}
+     *
+     * @param imageButton The view
+     * @param listener The listener to add
+     */
+    @BindingAdapter("bind:onClickStateImage")
+    public static void onClickStateImage(StateImageButton imageButton, OnClickListener listener){
+        imageButton.addClickListener(listener);
+    }
+
+    @BindingAdapter("bind:tubi_state_set_checked")
+    public static void onStateChanged(StateImageButton imageButton, boolean checked){
+        imageButton.setChecked(checked);
     }
 
     /**

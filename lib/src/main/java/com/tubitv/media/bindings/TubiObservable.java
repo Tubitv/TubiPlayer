@@ -5,18 +5,25 @@ import android.databinding.BaseObservable;
 import android.databinding.Bindable;
 import android.support.annotation.NonNull;
 import android.util.Log;
+import android.view.View;
 import android.widget.SeekBar;
 
+import com.google.android.exoplayer2.ExoPlaybackException;
+import com.google.android.exoplayer2.ExoPlayer;
 import com.google.android.exoplayer2.SimpleExoPlayer;
+import com.google.android.exoplayer2.Timeline;
+import com.google.android.exoplayer2.source.TrackGroupArray;
+import com.google.android.exoplayer2.trackselection.TrackSelectionArray;
 import com.tubitv.media.BR;
-import com.tubitv.media.R;
+import com.tubitv.media.utilities.Utils;
+
 
 /**
  * The observable class for the {@link com.tubitv.media.views.TubiPlayerControlViewOld}
  * <p>
  * Created by stoyan on 5/12/17.
  */
-public class TubiObservable extends BaseObservable implements SeekBar.OnSeekBarChangeListener{
+public class TubiObservable extends BaseObservable implements ExoPlayer.EventListener, SeekBar.OnSeekBarChangeListener, View.OnClickListener {
     /**
      * Tag for logging
      */
@@ -73,44 +80,152 @@ public class TubiObservable extends BaseObservable implements SeekBar.OnSeekBarC
     private int progressBarMax = DEFAULT_PROGRESS_MAX;
 
     /**
+     * The dragging state of the {@link com.tubitv.media.databinding.ViewTubiPlayerControlBinding#viewTubiControllerSeekBar},
+     * true when the user is dragging the thumbnail through the video duration
+     */
+    private boolean draggingSeekBar = false;
+
+    /**
+     * The playback state of the {@link #player}
+     */
+    private int playbackState = ExoPlayer.STATE_IDLE;
+
+    /**
      * The exo player that this controller is for
      */
     private SimpleExoPlayer player;
 
-    public TubiObservable(@NonNull final Context context) {
+    public TubiObservable(@NonNull final Context context, @NonNull SimpleExoPlayer player) {
         this.context = context;
+        setPlayer(player);
+
+    }
+
+    @Override
+    public void onTracksChanged(TrackGroupArray trackGroups, TrackSelectionArray trackSelections) {
+
+    }
+
+    @Override
+    public void onLoadingChanged(boolean isLoading) {
+
+    }
+
+
+    @Override
+    public void onPlayerError(ExoPlaybackException error) {
+
+    }
+
+    @Override
+    public void onPlayerStateChanged(boolean playWhenReady, int playbackState) {
+        setPlaybackState(playbackState);
+        if (player != null) {
+            boolean playing = player.getPlayWhenReady();
+            setIsPlaying(playing);
+        }
+//        updateProgress();
+    }
+
+    @Override
+    public void onPositionDiscontinuity() {
+//        updateNavigation();
+        setPlaybackState();
+//        updateProgress();
+    }
+
+    @Override
+    public void onTimelineChanged(Timeline timeline, Object manifest) {
+//        updateNavigation();
+        setPlaybackState();
+//        updateProgress();
+    }
+
+    /**
+     * Updates the playback controlls when the player state changes.
+     * ie. The play/pause and loading spinner
+     */
+    public void onPlaybackState() {
+//        boolean playing = player != null && player.getPlayWhenReady();
+//        int playbackState = player == null ? ExoPlayer.STATE_IDLE : player.getPlaybackState();
+//        switch (playbackState) {
+//            case ExoPlayer.STATE_READY:
+//
+//                break;
+//            case ExoPlayer.STATE_BUFFERING:
+//                showLoading(false, false);
+//                break;
+//            case ExoPlayer.STATE_IDLE:  //nothing to play
+//            case ExoPlayer.STATE_ENDED: //stream ended
+//                break;
+//        }
     }
 
     @Override
     public void onStartTrackingTouch(SeekBar seekBar) {
         Log.d(TAG, "onStartTrackingTouch");
 //        removeCallbacks(hideAction);
-//        dragging = true;
+        draggingSeekBar = true;
     }
 
     @Override
     public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
         Log.d(TAG, "onProgressChanged");
-//        if (fromUser) {
-//            long position = positionValue(progress);
-//            long duration = player == null ? 0 : player.getDuration();
-//            setProgressTime(position, duration);
-//            if (player != null && !dragging) {
-//                seekTo(position);
-//            }
-//        }
+        if (fromUser) {
+            long position = Utils.progressToMilli(player.getDuration(), seekBar);
+            long duration = player == null ? 0 : player.getDuration();
+            setElapsedTime(Utils.getProgressTime(position, false));
+            setRemainingTime(Utils.getProgressTime(duration - position, true));
+            if (player != null && !draggingSeekBar) {
+                seekTo(position);
+            }
+        }
     }
 
     @Override
     public void onStopTrackingTouch(SeekBar seekBar) {
         Log.d(TAG, "onStopTrackingTouch");
-        //Reset thumb, or smaller unpressed drawable will get blown up
-        seekBar.setThumb(context.getResources().getDrawable(R.drawable.tubi_tv_drawable_scrubber_selector));
-//        dragging = false;
+        draggingSeekBar = false;
         if (player != null) {
-//            seekTo(positionValue(seekBar.getProgress()));
+            seekTo(Utils.progressToMilli(player.getDuration(), seekBar));
         }
 //        hideAfterTimeout();
+    }
+
+    @Override
+    public void onClick(View v) {
+        if (player != null) {
+            boolean playing = player.getPlayWhenReady();
+            player.setPlayWhenReady(!playing);
+            setIsPlaying(!playing);
+        }
+//        hideAfterTimeout();
+    }
+
+    private void seekTo(long positionMs) {
+        seekTo(player.getCurrentWindowIndex(), positionMs);
+    }
+
+    private void seekTo(int windowIndex, long positionMs) {
+        player.seekTo(windowIndex, positionMs);
+    }
+
+    public void setPlayer(SimpleExoPlayer player) {
+        if (this.player == player) {
+            return;
+        }
+        if (this.player != null) {
+            this.player.removeListener(this);
+        }
+        this.player = player;
+        if (player != null) {
+            player.addListener(this);
+
+            boolean playing = player.getPlayWhenReady();
+            setIsPlaying(playing);
+        }
+
+//        updateAll();
     }
 
     @Bindable
@@ -165,6 +280,7 @@ public class TubiObservable extends BaseObservable implements SeekBar.OnSeekBarC
         this.subtitlesEnabled = subtitlesEnabled;
         notifyPropertyChanged(BR.subtitlesEnabled);
     }
+
     @Bindable
     public boolean isQualityEnabled() {
         return qualityEnabled;
@@ -185,4 +301,17 @@ public class TubiObservable extends BaseObservable implements SeekBar.OnSeekBarC
         notifyPropertyChanged(BR.progressBarMax);
     }
 
+    @Bindable
+    public int getPlaybackState() {
+        return playbackState;
+    }
+
+    public void setPlaybackState(int playbackState) {
+        this.playbackState = playbackState;
+        notifyPropertyChanged(BR.playbackState);
+    }
+
+    private void setPlaybackState() {
+        setPlaybackState(player == null ? ExoPlayer.STATE_IDLE : player.getPlaybackState());
+    }
 }

@@ -59,8 +59,7 @@ public class TubiPlayerControlView extends ConstraintLayout {
         mBinding = DataBindingUtil.inflate(inflater, R.layout.view_tubi_player_control, this, true);
         setDescendantFocusability(FOCUS_AFTER_DESCENDANTS);
         mBinding.setController(this);
-        TubiObservable media = new TubiObservable(getContext());
-        mBinding.setPlayMedia(media);
+
 //        mBinding.viewTubiControllerSeekBar.setOnSeekBarChangeListener(componentListener);
 //        mBinding.viewTubiControllerSeekBar.setMax(PROGRESS_BAR_MAX);
 //        mBinding.viewTubiControllerPlayToggleIb.addClickListener(componentListener);
@@ -81,6 +80,8 @@ public class TubiPlayerControlView extends ConstraintLayout {
 
     public void setPlayer(SimpleExoPlayer player) {
         this.player = player;
+        TubiObservable media = new TubiObservable(getContext(), player);
+        mBinding.setPlayMedia(media);
     }
 
     public void hide() {
