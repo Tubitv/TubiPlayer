@@ -6,6 +6,7 @@ import android.content.res.TypedArray;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.support.annotation.NonNull;
 import android.util.AttributeSet;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -515,9 +516,20 @@ public class TubiExoPlayerView extends FrameLayout implements TubiPlaybackContro
         aspectRatioFrame.setResizeMode(resizeMode);
     }
     private boolean mSubtitlesEnabled = false;
+
     @Override
     public void onSubtitlesToggle(boolean enabled) {
         mSubtitlesEnabled = enabled;
+    }
+
+    @Override
+    public void cancelRunnable(@NonNull Runnable runnable) {
+
+    }
+
+    @Override
+    public void postRunnable(@NonNull Runnable runnable, long millisDelay) {
+
     }
 
     private final class ComponentListener implements SimpleExoPlayer.VideoListener,

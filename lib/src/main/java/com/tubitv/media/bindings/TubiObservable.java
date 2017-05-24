@@ -1,6 +1,5 @@
 package com.tubitv.media.bindings;
 
-import android.content.Context;
 import android.databinding.BaseObservable;
 import android.databinding.Bindable;
 import android.support.annotation.NonNull;
@@ -15,7 +14,11 @@ import com.google.android.exoplayer2.Timeline;
 import com.google.android.exoplayer2.source.TrackGroupArray;
 import com.google.android.exoplayer2.trackselection.TrackSelectionArray;
 import com.tubitv.media.BR;
+import com.tubitv.media.interfaces.TubiPlaybackControlInterface;
 import com.tubitv.media.utilities.Utils;
+
+import static com.google.android.exoplayer2.ExoPlayer.STATE_ENDED;
+import static com.google.android.exoplayer2.ExoPlayer.STATE_READY;
 
 
 /**
@@ -41,10 +44,10 @@ public class TubiObservable extends BaseObservable implements ExoPlayer.EventLis
     private static final int DEFAULT_FAST_FORWARD_MS = 15000;
 
     /**
-     * The context from {@link com.tubitv.media.views.TubiPlayerControlView}
+     * The interface from {@link com.tubitv.media.views.TubiPlayerControlView}
      */
     @NonNull
-    private final Context context;
+    private final TubiPlaybackControlInterface playbackControlInterface;
 
     /**
      * The title of the movie being played
@@ -95,7 +98,17 @@ public class TubiObservable extends BaseObservable implements ExoPlayer.EventLis
      * The dragging state of the {@link com.tubitv.media.databinding.ViewTubiPlayerControlBinding#viewTubiControllerSeekBar},
      * true when the user is dragging the thumbnail through the video duration
      */
-    private boolean displayForwardRewind = false;
+    private boolean draggingSeekBar = false;
+
+    /**
+     * The value of the progress bar {@link com.tubitv.media.databinding.ViewTubiPlayerControlBinding#viewTubiControllerSeekBar}
+     */
+    private long progressBarValue;
+
+    /**
+     * The secondary value of the progress bar {@link com.tubitv.media.databinding.ViewTubiPlayerControlBinding#viewTubiControllerSeekBar}
+     */
+    private long secondaryProgressBarValue;
 
     /**
      * The playback state of the {@link #player}
@@ -107,8 +120,8 @@ public class TubiObservable extends BaseObservable implements ExoPlayer.EventLis
      */
     private SimpleExoPlayer player;
 
-    public TubiObservable(@NonNull final Context context, @NonNull SimpleExoPlayer player) {
-        this.context = context;
+    public TubiObservable(@NonNull final TubiPlaybackControlInterface playbackControlInterface, @NonNull SimpleExoPlayer player) {
+        this.playbackControlInterface = playbackControlInterface;
         setPlayer(player);
 
     }
@@ -133,21 +146,21 @@ public class TubiObservable extends BaseObservable implements ExoPlayer.EventLis
     public void onPlayerStateChanged(boolean playWhenReady, int playbackState) {
         setPlaybackState(playbackState);
         setIsPlaying();
-//        updateProgress();
+        updateProgress();
     }
 
     @Override
     public void onPositionDiscontinuity() {
 //        updateNavigation();
         setPlaybackState();
-//        updateProgress();
+        updateProgress();
     }
 
     @Override
     public void onTimelineChanged(Timeline timeline, Object manifest) {
 //        updateNavigation();
         setPlaybackState();
-//        updateProgress();
+        updateProgress();
     }
 
     /**
@@ -174,7 +187,7 @@ public class TubiObservable extends BaseObservable implements ExoPlayer.EventLis
     public void onStartTrackingTouch(SeekBar seekBar) {
         Log.d(TAG, "onStartTrackingTouch");
 //        removeCallbacks(hideAction);
-        setDisplayForwardRewind(false);
+        setDraggingSeekBar(false);
     }
 
     @Override
@@ -183,9 +196,42 @@ public class TubiObservable extends BaseObservable implements ExoPlayer.EventLis
         if (fromUser) {
             long position = Utils.progressToMilli(player.getDuration(), seekBar);
             long duration = player == null ? 0 : player.getDuration();
-            setElapsedTime(Utils.getProgressTime(position, false));
-            setRemainingTime(Utils.getProgressTime(duration - position, true));
+            setProgressSeekTime(position, duration);
         }
+    }
+
+    private void updateProgress() {
+        long position = player == null ? 0 : player.getCurrentPosition();
+        long duration = player == null ? 0 : player.getDuration();
+        setProgressBarMax((int) duration);
+        if (!draggingSeekBar) {
+            setProgressSeekTime(position, duration);
+            setProgressBarValue(position);
+        }
+        long bufferedPosition = player == null ? 0 : player.getBufferedPosition();
+        setSecondaryProgressBarValue(bufferedPosition);
+
+
+        playbackControlInterface.cancelRunnable(updateProgressAction);
+        // Schedule an update if necessary.
+        int playbackState = player == null ? ExoPlayer.STATE_IDLE : player.getPlaybackState();
+        if (playbackState != ExoPlayer.STATE_IDLE && playbackState != STATE_ENDED) {
+            long delayMs;
+            if (player.getPlayWhenReady() && playbackState == STATE_READY) {
+                delayMs = 1000 - (position % 1000);
+                if (delayMs < 200) {
+                    delayMs += 1000;
+                }
+            } else {
+                delayMs = 1000;
+            }
+            playbackControlInterface.postRunnable(updateProgressAction, delayMs);
+        }
+    }
+
+    private void setProgressSeekTime(long position, long duration) {
+        setElapsedTime(Utils.getProgressTime(position, false));
+        setRemainingTime(Utils.getProgressTime(duration - position, true));
     }
 
     @Override
@@ -246,9 +292,22 @@ public class TubiObservable extends BaseObservable implements ExoPlayer.EventLis
             //upper bound
             place = place > player.getDuration() ? player.getDuration() : place;
             seekTo(place);
-            setDisplayForwardRewind(true);
+            setDraggingSeekBar(true);
+
+            //Set the progress bar and text to the new position
+            long duration = player == null ? 0 : player.getDuration();
+            setProgressBarMax((int) duration);
+            setProgressSeekTime(place, duration);
+            setProgressBarValue(position);
         }
     }
+
+    private final Runnable updateProgressAction = new Runnable() {
+        @Override
+        public void run() {
+            updateProgress();
+        }
+    };
 
     private void setIsPlaying() {
         if (player != null) {
@@ -338,12 +397,12 @@ public class TubiObservable extends BaseObservable implements ExoPlayer.EventLis
     public void setPlaybackState(int playbackState) {
         this.playbackState = playbackState;
         switch (playbackState) {
-            case ExoPlayer.STATE_READY:
-                setDisplayForwardRewind(false);
+            case STATE_READY:
+                setDraggingSeekBar(false);
                 break;
             case ExoPlayer.STATE_BUFFERING:
             case ExoPlayer.STATE_IDLE:  //nothing to play
-            case ExoPlayer.STATE_ENDED: //stream ended
+            case STATE_ENDED: //stream ended
                 break;
         }
 
@@ -353,14 +412,35 @@ public class TubiObservable extends BaseObservable implements ExoPlayer.EventLis
     private void setPlaybackState() {
         setPlaybackState(player == null ? ExoPlayer.STATE_IDLE : player.getPlaybackState());
     }
+
     @Bindable
-    public boolean isDisplayForwardRewind() {
-        return displayForwardRewind;
+    public boolean isDraggingSeekBar() {
+        return draggingSeekBar;
     }
 
-    public void setDisplayForwardRewind(boolean displayForwardRewind) {
+    public void setDraggingSeekBar(boolean draggingSeekBar) {
         //(playMedia.playbackState == ExoPlayer.STATE_READY || (playMedia.playbackState == ExoPlayer.STATE_BUFFERING &amp;&amp; playMedia.draggingSeekBar)) ? View.VISIBLE : View.INVISIBLE
-        this.displayForwardRewind = displayForwardRewind;
-        notifyPropertyChanged(BR.displayForwardRewind);
+        this.draggingSeekBar = draggingSeekBar;
+        notifyPropertyChanged(BR.draggingSeekBar);
+    }
+
+    @Bindable
+    public long getProgressBarValue() {
+        return progressBarValue;
+    }
+
+    public void setProgressBarValue(long progressBarValue) {
+        this.progressBarValue = progressBarValue;
+        notifyPropertyChanged(BR.progressBarValue);
+    }
+
+    @Bindable
+    public long getSecondaryProgressBarValue() {
+        return secondaryProgressBarValue;
+    }
+
+    public void setSecondaryProgressBarValue(long secondaryProgressBarValue) {
+        this.secondaryProgressBarValue = secondaryProgressBarValue;
+        notifyPropertyChanged(BR.secondaryProgressBarValue);
     }
 }

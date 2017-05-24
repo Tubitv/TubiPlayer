@@ -3,6 +3,7 @@ package com.tubitv.media.views;
 import android.content.Context;
 import android.databinding.BindingAdapter;
 import android.databinding.DataBindingUtil;
+import android.support.annotation.NonNull;
 import android.support.constraint.ConstraintLayout;
 import android.util.AttributeSet;
 import android.view.KeyEvent;
@@ -12,11 +13,12 @@ import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.tubitv.media.R;
 import com.tubitv.media.bindings.TubiObservable;
 import com.tubitv.media.databinding.ViewTubiPlayerControlBinding;
+import com.tubitv.media.interfaces.TubiPlaybackControlInterface;
 
 /**
  * Created by stoyan on 5/15/17.
  */
-public class TubiPlayerControlView extends ConstraintLayout {
+public class TubiPlayerControlView extends ConstraintLayout implements TubiPlaybackControlInterface {
     /**
      * The default time to hide the this view if the user is not interacting with it
      */
@@ -54,6 +56,21 @@ public class TubiPlayerControlView extends ConstraintLayout {
         initLayout();
     }
 
+    @Override
+    public void onSubtitlesToggle(boolean enabled) {
+
+    }
+
+    @Override
+    public void cancelRunnable(@NonNull Runnable runnable) {
+        removeCallbacks(runnable);
+    }
+
+    @Override
+    public void postRunnable(@NonNull Runnable runnable, long millisDelay) {
+        postDelayed(runnable, millisDelay);
+    }
+
     private void initLayout() {
         LayoutInflater inflater = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         mBinding = DataBindingUtil.inflate(inflater, R.layout.view_tubi_player_control, this, true);
@@ -80,7 +97,7 @@ public class TubiPlayerControlView extends ConstraintLayout {
 
     public void setPlayer(SimpleExoPlayer player) {
         this.player = player;
-        TubiObservable media = new TubiObservable(getContext(), player);
+        TubiObservable media = new TubiObservable(this, player);
         mBinding.setPlayMedia(media);
     }
 
