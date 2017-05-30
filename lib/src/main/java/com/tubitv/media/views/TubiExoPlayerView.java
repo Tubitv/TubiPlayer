@@ -6,6 +6,7 @@ import android.content.res.TypedArray;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.support.annotation.NonNull;
 import android.util.AttributeSet;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -157,7 +158,7 @@ public class TubiExoPlayerView extends FrameLayout implements TubiPlaybackContro
             // Note: rewindMs and fastForwardMs are passed via attrs, so we don't need to make explicit
             // calls to set them.
             this.controller = new TubiPlayerControlView(context, attrs);
-            controller.setTubiControllerInterface(this);
+//            controller.setTubiControllerInterface(this);
             controller.setLayoutParams(controllerPlaceholder.getLayoutParams());
             ViewGroup parent = ((ViewGroup) controllerPlaceholder.getParent());
             int controllerIndex = parent.indexOfChild(controllerPlaceholder);
@@ -354,21 +355,21 @@ public class TubiExoPlayerView extends FrameLayout implements TubiPlaybackContro
      *
      * @param listener The listener to be notified about visibility changes.
      */
-    public void setControllerVisibilityListener(TubiPlayerControlView.VisibilityListener listener) {
+    public void setControllerVisibilityListener(TubiPlayerControlViewOld.VisibilityListener listener) {
         Assertions.checkState(controller != null);
         controller.setVisibilityListener(listener);
     }
 
-    /**
-     * Sets the {@link com.google.android.exoplayer2.ui.PlaybackControlView.SeekDispatcher}.
-     *
-     * @param seekDispatcher The {@link com.google.android.exoplayer2.ui.PlaybackControlView.SeekDispatcher}, or null to use
-     *     {@link PlaybackControlView#DEFAULT_SEEK_DISPATCHER}.
-     */
-    public void setSeekDispatcher(TubiPlayerControlView.SeekDispatcher seekDispatcher) {
-        Assertions.checkState(controller != null);
-        controller.setSeekDispatcher(seekDispatcher);
-    }
+//    /**
+//     * Sets the {@link com.google.android.exoplayer2.ui.PlaybackControlView.SeekDispatcher}.
+//     *
+//     * @param seekDispatcher The {@link com.google.android.exoplayer2.ui.PlaybackControlView.SeekDispatcher}, or null to use
+//     *     {@link PlaybackControlView#DEFAULT_SEEK_DISPATCHER}.
+//     */
+//    public void setSeekDispatcher(TubiPlayerControlViewOld.SeekDispatcher seekDispatcher) {
+//        Assertions.checkState(controller != null);
+////        controller.setSeekDispatcher(seekDispatcher);
+//    }
 
     /**
      * Gets the view onto which video is rendered. This is either a {@link SurfaceView} (default)
@@ -514,10 +515,26 @@ public class TubiExoPlayerView extends FrameLayout implements TubiPlaybackContro
     private static void setResizeModeRaw(AspectRatioFrameLayout aspectRatioFrame, int resizeMode) {
         aspectRatioFrame.setResizeMode(resizeMode);
     }
-    private boolean mSubtitlesEnabled = false;
+    private boolean mSubtitlesEnabled = true;
+
     @Override
     public void onSubtitlesToggle(boolean enabled) {
         mSubtitlesEnabled = enabled;
+    }
+
+    @Override
+    public void cancelRunnable(@NonNull Runnable runnable) {
+
+    }
+
+    @Override
+    public void postRunnable(@NonNull Runnable runnable, long millisDelay) {
+
+    }
+
+    @Override
+    public void hideAfterTimeout() {
+
     }
 
     private final class ComponentListener implements SimpleExoPlayer.VideoListener,

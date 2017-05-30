@@ -13,8 +13,12 @@
         <attr name="controller_layout_id"/>
     </declare-styleable>
 
-    <declare-styleable name="TubiPlayerControlView">
+    <declare-styleable name="TubiPlayerControlViewOld">
         <attr name="show_timeout_ms" format="integer"/>
+    </declare-styleable>
+
+    <declare-styleable name="TubiPlayerControlView">
+        <attr name="tubi_hide_timeout_ms" format="integer"/>
     </declare-styleable>
 
     <declare-styleable name="StateImageButton">
