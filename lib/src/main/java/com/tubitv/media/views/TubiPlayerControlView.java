@@ -35,12 +35,14 @@ public class TubiPlayerControlView extends ConstraintLayout implements TubiPlayb
     /**
      * The time out time for the view to be hidden if the user is not interacting with it
      */
-    private int showTimeoutMs= DEFAULT_HIDE_TIMEOUT_MS;
+    private int showTimeoutMs = DEFAULT_HIDE_TIMEOUT_MS;
 
     /**
      * The time out time for the view to be hidden if the user is not interacting with it
      */
     private long hideAtMs;
+
+    private TubiObservable media;
 
     private final Runnable hideAction = new Runnable() {
         @Override
@@ -137,7 +139,7 @@ public class TubiPlayerControlView extends ConstraintLayout implements TubiPlayb
 
 
     public void setPlayer(SimpleExoPlayer player) {
-        TubiObservable media = new TubiObservable(this, player);
+        media = new TubiObservable(this, player);
         mBinding.setPlayMedia(media);
     }
 

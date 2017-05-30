@@ -163,31 +163,11 @@ public class TubiObservable extends BaseObservable implements ExoPlayer.EventLis
         updateProgress();
     }
 
-    /**
-     * Updates the playback controlls when the player state changes.
-     * ie. The play/pause and loading spinner
-     */
-    public void onPlaybackState() {
-//        boolean playing = player != null && player.getPlayWhenReady();
-//        int playbackState = player == null ? ExoPlayer.STATE_IDLE : player.getPlaybackState();
-//        switch (playbackState) {
-//            case ExoPlayer.STATE_READY:
-//
-//                break;
-//            case ExoPlayer.STATE_BUFFERING:
-//                showLoading(false, false);
-//                break;
-//            case ExoPlayer.STATE_IDLE:  //nothing to play
-//            case ExoPlayer.STATE_ENDED: //stream ended
-//                break;
-//        }
-    }
-
     @Override
     public void onStartTrackingTouch(SeekBar seekBar) {
         Log.d(TAG, "onStartTrackingTouch");
 //        removeCallbacks(hideAction);
-        setDraggingSeekBar(false);
+        setDraggingSeekBar(true);
     }
 
     @Override
@@ -206,6 +186,7 @@ public class TubiObservable extends BaseObservable implements ExoPlayer.EventLis
         if (player != null) {
             seekTo(Utils.progressToMilli(player.getDuration(), seekBar));
         }
+        setDraggingSeekBar(true);
         playbackControlInterface.hideAfterTimeout();
     }
 

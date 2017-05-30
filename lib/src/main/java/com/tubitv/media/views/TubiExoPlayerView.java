@@ -515,7 +515,7 @@ public class TubiExoPlayerView extends FrameLayout implements TubiPlaybackContro
     private static void setResizeModeRaw(AspectRatioFrameLayout aspectRatioFrame, int resizeMode) {
         aspectRatioFrame.setResizeMode(resizeMode);
     }
-    private boolean mSubtitlesEnabled = false;
+    private boolean mSubtitlesEnabled = true;
 
     @Override
     public void onSubtitlesToggle(boolean enabled) {
