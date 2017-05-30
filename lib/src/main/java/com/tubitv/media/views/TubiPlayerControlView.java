@@ -161,13 +161,17 @@ public class TubiPlayerControlView extends ConstraintLayout implements TubiPlayb
 
     public void hide() {
         if (isVisible()) {
-            setVisibility(GONE);
-            if (visibilityListener != null) {
-                visibilityListener.onVisibilityChange(getVisibility());
-            }
+            if (media == null || !media.userInteracting()) {
+                setVisibility(GONE);
+                if (visibilityListener != null) {
+                    visibilityListener.onVisibilityChange(getVisibility());
+                }
 //            removeCallbacks(updateProgressAction);
-            removeCallbacks(hideAction);
-            hideAtMs = C.TIME_UNSET;
+                removeCallbacks(hideAction);
+                hideAtMs = C.TIME_UNSET;
+            }else{
+                hideAfterTimeout();
+            }
         }
     }
 

@@ -283,6 +283,10 @@ public class TubiObservable extends BaseObservable implements ExoPlayer.EventLis
         setRemainingTime(Utils.getProgressTime(duration - position, true));
     }
 
+    public boolean userInteracting() {
+        return draggingSeekBar;
+    }
+
     private final Runnable updateProgressAction = new Runnable() {
         @Override
         public void run() {
@@ -424,4 +428,5 @@ public class TubiObservable extends BaseObservable implements ExoPlayer.EventLis
         this.secondaryProgressBarValue = secondaryProgressBarValue;
         notifyPropertyChanged(BR.secondaryProgressBarValue);
     }
+
 }
