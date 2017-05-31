@@ -9,6 +9,7 @@ import android.support.constraint.ConstraintLayout;
 import android.util.AttributeSet;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
+import android.view.View;
 
 import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.SimpleExoPlayer;
@@ -112,7 +113,13 @@ public class TubiPlayerControlView extends ConstraintLayout implements TubiPlayb
 
     @Override
     public void onSubtitlesToggle(boolean enabled) {
-
+        if(getParent()!= null && getParent().getParent() != null){
+            View layout = (View) getParent().getParent();
+            View subtitles = layout.findViewById(R.id.exo_subtitles);
+            if(subtitles != null){
+                subtitles.setVisibility(enabled ? View.VISIBLE : View.INVISIBLE);
+            }
+        }
     }
 
     @Override

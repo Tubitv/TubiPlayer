@@ -140,6 +140,15 @@ public class StateImageButton extends ImageButton implements View.OnClickListene
     }
 
     /**
+     * Returns the checked state of the button
+     *
+     * @return True if checked, false otherwise
+     */
+    public boolean isChecked(){
+        return isChecked;
+    }
+
+    /**
      * Add listeners to this view, instead of using the {@link #setOnClickListener(OnClickListener)},
      * since we already set a listener
      *

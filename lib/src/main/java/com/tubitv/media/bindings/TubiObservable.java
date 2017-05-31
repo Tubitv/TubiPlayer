@@ -16,6 +16,7 @@ import com.google.android.exoplayer2.trackselection.TrackSelectionArray;
 import com.tubitv.media.BR;
 import com.tubitv.media.interfaces.TubiPlaybackControlInterface;
 import com.tubitv.media.utilities.Utils;
+import com.tubitv.media.views.StateImageButton;
 
 import static com.google.android.exoplayer2.ExoPlayer.STATE_ENDED;
 import static com.google.android.exoplayer2.ExoPlayer.STATE_READY;
@@ -201,8 +202,8 @@ public class TubiObservable extends BaseObservable implements ExoPlayer.EventLis
     }
 
     @Override
-    public void onClick(View v) {
-        switch((String)v.getTag()){
+    public void onClick(View view) {
+        switch((String)view.getTag()){
             case TUBI_PLAY_TOGGLE_TAG:
                 Log.d(TAG, "Play toggle pressed");
                 if (player != null) {
@@ -214,6 +215,7 @@ public class TubiObservable extends BaseObservable implements ExoPlayer.EventLis
                 break;
             case TUBI_SUBTITLES_TAG:
                 Log.d(TAG, "Subtitles toggle pressed");
+                playbackControlInterface.onSubtitlesToggle(((StateImageButton) view).isChecked()) ;
                 break;
         }
 

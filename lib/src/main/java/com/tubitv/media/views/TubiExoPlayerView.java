@@ -77,7 +77,7 @@ public class TubiExoPlayerView extends FrameLayout implements TubiPlaybackContro
     public TubiExoPlayerView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
 
-        int playerLayoutId = R.layout.exo_simple_player_view;
+        int playerLayoutId = R.layout.view_tubi_exo_player;
         boolean useArtwork = true;
         int defaultArtworkId = 0;
         boolean useController = true;
@@ -150,6 +150,7 @@ public class TubiExoPlayerView extends FrameLayout implements TubiPlaybackContro
                     Color.WHITE,
                     VaudTextView.getFont(context, VaudType.VAUD_REGULAR.getAssetFileName())));
             subtitleView.setUserDefaultTextSize();
+            subtitleView.setVisibility(View.INVISIBLE);
         }
 
         // Playback control view.
