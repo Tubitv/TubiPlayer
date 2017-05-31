@@ -43,7 +43,7 @@ public class StateImageButton extends ImageButton implements View.OnClickListene
     /**
      * A list of {@link android.view.View.OnClickListener} to call when this view is clicked
      */
-    public List<OnClickListener> mOnClickListeners = new ArrayList<>();
+    private List<OnClickListener> mOnClickListeners = new ArrayList<>();
 
     public StateImageButton(Context context) {
         super(context);
@@ -140,6 +140,15 @@ public class StateImageButton extends ImageButton implements View.OnClickListene
     }
 
     /**
+     * Returns the checked state of the button
+     *
+     * @return True if checked, false otherwise
+     */
+    public boolean isChecked(){
+        return isChecked;
+    }
+
+    /**
      * Add listeners to this view, instead of using the {@link #setOnClickListener(OnClickListener)},
      * since we already set a listener
      *
@@ -147,6 +156,13 @@ public class StateImageButton extends ImageButton implements View.OnClickListene
      */
     public void addClickListener(@NonNull OnClickListener listener){
         mOnClickListeners.add(listener);
+    }
+
+    /**
+     * Clears all the added listeners in {@link #mOnClickListeners}
+     */
+    public void clearClickListeners(){
+        mOnClickListeners.clear();
     }
 
 }

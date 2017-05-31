@@ -16,6 +16,7 @@ import com.google.android.exoplayer2.trackselection.TrackSelectionArray;
 import com.tubitv.media.BR;
 import com.tubitv.media.interfaces.TubiPlaybackControlInterface;
 import com.tubitv.media.utilities.Utils;
+import com.tubitv.media.views.StateImageButton;
 
 import static com.google.android.exoplayer2.ExoPlayer.STATE_ENDED;
 import static com.google.android.exoplayer2.ExoPlayer.STATE_READY;
@@ -42,6 +43,16 @@ public class TubiObservable extends BaseObservable implements ExoPlayer.EventLis
      * and {@link com.tubitv.media.databinding.ViewTubiPlayerControlBinding#viewTubiControllerRewindIb}
      */
     private static final int DEFAULT_FAST_FORWARD_MS = 15000;
+
+    /**
+     * Toggle tag for {@link com.tubitv.media.databinding.ViewTubiPlayerControlBinding#viewTubiControllerPlayToggleIb}
+     */
+    public static final String TUBI_PLAY_TOGGLE_TAG = "TUBI_PLAY_TOGGLE_TAG";
+
+    /**
+     * Subtitle tag for {@link com.tubitv.media.databinding.ViewTubiPlayerControlBinding#viewTubiControllerSubtitlesIb}
+     */
+    public static final String TUBI_SUBTITLES_TAG = "TUBI_SUBTITLES_TAG";
 
     /**
      * The interface from {@link com.tubitv.media.views.TubiPlayerControlView}
@@ -191,13 +202,23 @@ public class TubiObservable extends BaseObservable implements ExoPlayer.EventLis
     }
 
     @Override
-    public void onClick(View v) {
-        if (player != null) {
-            boolean playing = player.getPlayWhenReady();
-            player.setPlayWhenReady(!playing);
+    public void onClick(View view) {
+        switch((String)view.getTag()){
+            case TUBI_PLAY_TOGGLE_TAG:
+                Log.d(TAG, "Play toggle pressed");
+                if (player != null) {
+                    boolean playing = player.getPlayWhenReady();
+                    player.setPlayWhenReady(!playing);
+                }
+                setIsPlaying();
+                playbackControlInterface.hideAfterTimeout();
+                break;
+            case TUBI_SUBTITLES_TAG:
+                Log.d(TAG, "Subtitles toggle pressed");
+                playbackControlInterface.onSubtitlesToggle(((StateImageButton) view).isChecked()) ;
+                break;
         }
-        setIsPlaying();
-        playbackControlInterface.hideAfterTimeout();
+
     }
 
     public void setPlayer(SimpleExoPlayer player) {
@@ -215,7 +236,7 @@ public class TubiObservable extends BaseObservable implements ExoPlayer.EventLis
             setIsPlaying(playing);
         }
 
-//        updateAll();
+        updateAll();
     }
 
     private void seekTo(long positionMs) {
@@ -281,6 +302,12 @@ public class TubiObservable extends BaseObservable implements ExoPlayer.EventLis
     private void setProgressSeekTime(long position, long duration) {
         setElapsedTime(Utils.getProgressTime(position, false));
         setRemainingTime(Utils.getProgressTime(duration - position, true));
+    }
+
+    private void updateAll(){
+        setIsPlaying();
+        setPlaybackState();
+        updateProgress();
     }
 
     public boolean userInteracting() {

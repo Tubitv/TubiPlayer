@@ -13,6 +13,8 @@
             name="playMedia"
             type="com.tubitv.media.bindings.TubiObservable"/>
 
+        <import type="com.tubitv.media.bindings.TubiObservable"/>
+
         <import type="com.google.android.exoplayer2.ExoPlayer"/>
 
         <import type="android.view.View"/>
@@ -50,6 +52,8 @@
             android:layout_marginRight="16dp"
             android:layout_marginTop="8dp"
             android:background="@drawable/tubi_tv_subtitles_off"
+            android:tag="@{TubiObservable.TUBI_SUBTITLES_TAG}"
+            app:onClickStateImage="@{playMedia}"
             app:layout_constraintRight_toLeftOf="@+id/view_tubi_controller_quality_ib"
             app:layout_constraintTop_toTopOf="@+id/tubi_tv_controller_guideline_top"
             app:state_checked="@drawable/tubi_tv_drawable_subtitles_on_selector"
@@ -118,7 +122,7 @@
             android:layout_marginRight="8dp"
             android:layout_marginTop="8dp"
             android:scaleType="fitCenter"
-            android:tag="view_tubi_controller_play_toggle_ib"
+            android:tag="@{TubiObservable.TUBI_PLAY_TOGGLE_TAG}"
             android:visibility="@{playMedia.playbackState == ExoPlayer.STATE_READY ? View.VISIBLE : View.INVISIBLE}"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintLeft_toLeftOf="parent"
