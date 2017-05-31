@@ -5,6 +5,7 @@ import android.databinding.BindingAdapter;
 import android.databinding.DataBindingUtil;
 import android.os.SystemClock;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.constraint.ConstraintLayout;
 import android.util.AttributeSet;
 import android.view.KeyEvent;
@@ -113,12 +114,9 @@ public class TubiPlayerControlView extends ConstraintLayout implements TubiPlayb
 
     @Override
     public void onSubtitlesToggle(boolean enabled) {
-        if(getParent()!= null && getParent().getParent() != null){
-            View layout = (View) getParent().getParent();
-            View subtitles = layout.findViewById(R.id.exo_subtitles);
-            if(subtitles != null){
-                subtitles.setVisibility(enabled ? View.VISIBLE : View.INVISIBLE);
-            }
+        View subtitles = getSubtitlesView();
+        if (subtitles != null) {
+            subtitles.setVisibility(enabled ? View.VISIBLE : View.INVISIBLE);
         }
     }
 
@@ -137,10 +135,6 @@ public class TubiPlayerControlView extends ConstraintLayout implements TubiPlayb
         mBinding = DataBindingUtil.inflate(inflater, R.layout.view_tubi_player_control, this, true);
         setDescendantFocusability(FOCUS_AFTER_DESCENDANTS);
         mBinding.setController(this);
-
-//        mBinding.viewTubiControllerSeekBar.setOnSeekBarChangeListener(componentListener);
-//        mBinding.viewTubiControllerSeekBar.setMax(PROGRESS_BAR_MAX);
-//        mBinding.viewTubiControllerPlayToggleIb.addClickListener(componentListener);
     }
 
     @BindingAdapter("bind:tubi_hide_timeout_ms")
@@ -154,7 +148,7 @@ public class TubiPlayerControlView extends ConstraintLayout implements TubiPlayb
 
 
     public void setPlayer(SimpleExoPlayer player) {
-        if(this.mPlayer == null || this.mPlayer != player){
+        if (this.mPlayer == null || this.mPlayer != player) {
             media = new TubiObservable(this, player);
             //Controller doesn't get re-initialized TODO fix instance call
             mBinding.viewTubiControllerSubtitlesIb.clearClickListeners();
@@ -175,6 +169,7 @@ public class TubiPlayerControlView extends ConstraintLayout implements TubiPlayb
             if (visibilityListener != null) {
                 visibilityListener.onVisibilityChange(getVisibility());
             }
+            alignSubtitlesView(true);
 //            updateAll();
         }
         // Call hideAfterTimeout even if already visible to reset the timeout.
@@ -188,10 +183,11 @@ public class TubiPlayerControlView extends ConstraintLayout implements TubiPlayb
                 if (visibilityListener != null) {
                     visibilityListener.onVisibilityChange(getVisibility());
                 }
+                alignSubtitlesView(false);
 //            removeCallbacks(updateProgressAction);
                 removeCallbacks(hideAction);
                 hideAtMs = C.TIME_UNSET;
-            }else{
+            } else {
                 hideAfterTimeout();
             }
         }
@@ -215,6 +211,40 @@ public class TubiPlayerControlView extends ConstraintLayout implements TubiPlayb
 
     public void setVisibilityListener(TubiPlayerControlViewOld.VisibilityListener visibilityListener) {
         this.visibilityListener = visibilityListener;
+    }
+
+    /**
+     * Aligns the bottom of the subtitle view of the parent from {@link #getSubtitlesView()} with the top
+     * of {@link ViewTubiPlayerControlBinding#viewTubiControllerSeekBar} when this controller
+     * is visible to prevent overlap
+     *
+     * @param visible True if this controller is visible
+     */
+    private void alignSubtitlesView(boolean visible) {
+        View subtitles = getSubtitlesView(); //TODO show to design 5/31/17
+        if (subtitles != null) {
+            int seekBarTop = mBinding.viewTubiControllerSeekBar.getTop();
+
+            subtitles.setPadding(0,0,0, visible ? getHeight() - seekBarTop : 0);
+//            FrameLayout.LayoutParams lp = new FrameLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+//            lp.setMargins(0,0,0, visible ? getHeight() - seekBarTop : 0);
+//            subtitles.setLayoutParams(lp);
+        }
+    }
+
+    /**
+     * Searches the parent views for the subtitle view {@link com.google.android.exoplayer2.ui.SubtitleView}
+     *
+     * @return The subtitle view or null if not found
+     */
+    @Nullable
+    private View getSubtitlesView() {
+        View subtitles = null;
+        if (getParent() != null && getParent().getParent() != null) {
+            View layout = (View) getParent().getParent();
+            subtitles = layout.findViewById(R.id.exo_subtitles);
+        }
+        return subtitles;
     }
 
     /**
