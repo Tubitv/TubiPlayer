@@ -160,7 +160,7 @@ public class TubiPlayerControlViewOld extends FrameLayout {
         mBinding.setController(new TubiPlayerControlView(getContext()));
         mBinding.viewTubiControllerSeekBar.setOnSeekBarChangeListener(componentListener);
         mBinding.viewTubiControllerSeekBar.setMax(PROGRESS_BAR_MAX);
-        mBinding.viewTubiControllerPlayToggleIb.addClickListener(componentListener);
+//        mBinding.viewTubiControllerPlayToggleIb.addClickListener(componentListener);
     }
 
     public void setTubiControllerInterface(@NonNull TubiExoPlayerView tubiControllerInterface) {

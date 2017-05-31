@@ -42,7 +42,15 @@ public class TubiPlayerControlView extends ConstraintLayout implements TubiPlayb
      */
     private long hideAtMs;
 
+    /**
+     * The binding observable for the control views
+     */
     private TubiObservable media;
+
+    /**
+     * The exo player instance for this view
+     */
+    private SimpleExoPlayer mPlayer;
 
     private final Runnable hideAction = new Runnable() {
         @Override
@@ -139,8 +147,15 @@ public class TubiPlayerControlView extends ConstraintLayout implements TubiPlayb
 
 
     public void setPlayer(SimpleExoPlayer player) {
-        media = new TubiObservable(this, player);
-        mBinding.setPlayMedia(media);
+        if(this.mPlayer == null || this.mPlayer != player){
+            media = new TubiObservable(this, player);
+            //Controller doesn't get re-initialized TODO fix instance call
+            mBinding.viewTubiControllerSubtitlesIb.clearClickListeners();
+            mBinding.viewTubiControllerQualityIb.clearClickListeners();
+            mBinding.viewTubiControllerChromecastIb.clearClickListeners();
+            mBinding.viewTubiControllerPlayToggleIb.clearClickListeners();
+            mBinding.setPlayMedia(media);
+        }
     }
 
     /**
