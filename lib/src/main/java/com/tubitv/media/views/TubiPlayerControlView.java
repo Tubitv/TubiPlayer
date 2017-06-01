@@ -22,7 +22,7 @@ import com.tubitv.media.interfaces.TubiPlaybackControlInterface;
 /**
  * Created by stoyan on 5/15/17.
  */
-public class TubiPlayerControlView extends ConstraintLayout implements TubiPlaybackControlInterface {
+public class TubiPlayerControlView extends ConstraintLayout {
     /**
      * The default time to hide the this view if the user is not interacting with it
      */
@@ -43,6 +43,11 @@ public class TubiPlayerControlView extends ConstraintLayout implements TubiPlayb
      * The time out time for the view to be hidden if the user is not interacting with it
      */
     private long hideAtMs;
+
+    /**
+     * The interface for playback control of the media
+     */
+    private TubiPlaybackControlInterface playbackInterface;
 
     /**
      * The binding observable for the control views
@@ -112,24 +117,6 @@ public class TubiPlayerControlView extends ConstraintLayout implements TubiPlayb
         return handled;
     }
 
-    @Override
-    public void onSubtitlesToggle(boolean enabled) {
-        View subtitles = getSubtitlesView();
-        if (subtitles != null) {
-            subtitles.setVisibility(enabled ? View.VISIBLE : View.INVISIBLE);
-        }
-    }
-
-    @Override
-    public void cancelRunnable(@NonNull Runnable runnable) {
-        removeCallbacks(runnable);
-    }
-
-    @Override
-    public void postRunnable(@NonNull Runnable runnable, long millisDelay) {
-        postDelayed(runnable, millisDelay);
-    }
-
     private void initLayout() {
         LayoutInflater inflater = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         mBinding = DataBindingUtil.inflate(inflater, R.layout.view_tubi_player_control, this, true);
@@ -149,7 +136,7 @@ public class TubiPlayerControlView extends ConstraintLayout implements TubiPlayb
 
     public void setPlayer(SimpleExoPlayer player) {
         if (this.mPlayer == null || this.mPlayer != player) {
-            media = new TubiObservable(this, player);
+            media = new TubiObservable(player);
             //Controller doesn't get re-initialized TODO fix instance call
             mBinding.viewTubiControllerSubtitlesIb.clearClickListeners();
             mBinding.viewTubiControllerQualityIb.clearClickListeners();
@@ -262,4 +249,10 @@ public class TubiPlayerControlView extends ConstraintLayout implements TubiPlayb
 
     }
 
+    public void setPlaybackInterface(TubiPlaybackControlInterface playbackInterface) {
+        this.playbackInterface = playbackInterface;
+        if(media != null){
+            media.setPlaybackInterface(playbackInterface);
+        }
+    }
 }

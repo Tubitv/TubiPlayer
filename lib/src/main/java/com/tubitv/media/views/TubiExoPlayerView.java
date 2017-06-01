@@ -7,6 +7,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -36,6 +37,7 @@ import com.google.android.exoplayer2.ui.PlaybackControlView;
 import com.google.android.exoplayer2.ui.SubtitleView;
 import com.google.android.exoplayer2.util.Assertions;
 import com.tubitv.media.R;
+import com.tubitv.media.helpers.TrackSelectionHelper;
 import com.tubitv.media.interfaces.TubiPlaybackControlInterface;
 import com.tubitv.ui.VaudTextView;
 import com.tubitv.ui.VaudType;
@@ -65,6 +67,7 @@ public class TubiExoPlayerView extends FrameLayout implements TubiPlaybackContro
     private boolean useArtwork;
     private Bitmap defaultArtwork;
     private int controllerShowTimeoutMs;
+    private TrackSelectionHelper mTrackSelectionHelper;
 
     public TubiExoPlayerView(Context context) {
         this(context, null);
@@ -161,6 +164,7 @@ public class TubiExoPlayerView extends FrameLayout implements TubiPlaybackContro
             this.controller = new TubiPlayerControlView(context, attrs);
 //            controller.setTubiControllerInterface(this);
             controller.setLayoutParams(controllerPlaceholder.getLayoutParams());
+            controller.setPlaybackInterface(this);
             ViewGroup parent = ((ViewGroup) controllerPlaceholder.getParent());
             int controllerIndex = parent.indexOfChild(controllerPlaceholder);
             parent.removeView(controllerPlaceholder);
@@ -477,6 +481,10 @@ public class TubiExoPlayerView extends FrameLayout implements TubiPlaybackContro
         hideArtwork();
     }
 
+    public void setTrackSelectionHelper(@Nullable TrackSelectionHelper trackSelectionHelper) {
+        mTrackSelectionHelper = trackSelectionHelper;
+    }
+
     private boolean setArtworkFromMetadata(Metadata metadata) {
         for (int i = 0; i < metadata.length(); i++) {
             Metadata.Entry metadataEntry = metadata.get(i);
@@ -516,21 +524,28 @@ public class TubiExoPlayerView extends FrameLayout implements TubiPlaybackContro
     private static void setResizeModeRaw(AspectRatioFrameLayout aspectRatioFrame, int resizeMode) {
         aspectRatioFrame.setResizeMode(resizeMode);
     }
-    private boolean mSubtitlesEnabled = true;
 
     @Override
     public void onSubtitlesToggle(boolean enabled) {
-        mSubtitlesEnabled = enabled;
+        View subtitles = getSubtitleView();
+        if (subtitles != null) {
+            subtitles.setVisibility(enabled ? View.VISIBLE : View.INVISIBLE);
+        }
+    }
+
+    @Override
+    public void onQualityTrackToggle() {
+
     }
 
     @Override
     public void cancelRunnable(@NonNull Runnable runnable) {
-
+        removeCallbacks(runnable);
     }
 
     @Override
     public void postRunnable(@NonNull Runnable runnable, long millisDelay) {
-
+        postDelayed(runnable, millisDelay);
     }
 
     @Override
@@ -545,7 +560,7 @@ public class TubiExoPlayerView extends FrameLayout implements TubiPlaybackContro
 
         @Override
         public void onCues(List<Cue> cues) {
-            if (mSubtitlesEnabled && subtitleView != null) {
+            if (subtitleView != null) {
                 subtitleView.onCues(cues);
             }
         }
