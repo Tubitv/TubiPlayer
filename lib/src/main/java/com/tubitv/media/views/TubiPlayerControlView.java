@@ -134,9 +134,10 @@ public class TubiPlayerControlView extends ConstraintLayout {
     }
 
 
-    public void setPlayer(SimpleExoPlayer player) {
+    public void setPlayer(@NonNull SimpleExoPlayer player, @NonNull final TubiPlaybackControlInterface playbackControlInterface) {
         if (this.mPlayer == null || this.mPlayer != player) {
-            media = new TubiObservable(player);
+            media = new TubiObservable(player, playbackControlInterface);
+            setPlaybackInterface(playbackControlInterface);
             //Controller doesn't get re-initialized TODO fix instance call
             mBinding.viewTubiControllerSubtitlesIb.clearClickListeners();
             mBinding.viewTubiControllerQualityIb.clearClickListeners();

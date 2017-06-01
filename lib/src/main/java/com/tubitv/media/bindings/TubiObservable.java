@@ -131,7 +131,8 @@ public class TubiObservable extends BaseObservable implements ExoPlayer.EventLis
      */
     private SimpleExoPlayer player;
 
-    public TubiObservable(@NonNull SimpleExoPlayer player) {
+    public TubiObservable(@NonNull SimpleExoPlayer player, @NonNull final TubiPlaybackControlInterface playbackControlInterface) {
+        this.playbackControlInterface = playbackControlInterface;
         setPlayer(player);
 
     }
@@ -455,4 +456,7 @@ public class TubiObservable extends BaseObservable implements ExoPlayer.EventLis
         notifyPropertyChanged(BR.secondaryProgressBarValue);
     }
 
+    public void setPlaybackInterface(TubiPlaybackControlInterface playbackInterface) {
+
+    }
 }

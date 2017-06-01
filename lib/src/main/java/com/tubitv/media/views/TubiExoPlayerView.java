@@ -203,7 +203,7 @@ public class TubiExoPlayerView extends FrameLayout implements TubiPlaybackContro
         }
         this.player = player;
         if (useController) {
-            controller.setPlayer(player);
+            controller.setPlayer(player, this);
         }
         if (shutterView != null) {
             shutterView.setVisibility(VISIBLE);
@@ -288,17 +288,17 @@ public class TubiExoPlayerView extends FrameLayout implements TubiPlaybackContro
      *
      * @param useController Whether playback controls should be enabled.
      */
-    public void setUseController(boolean useController) {
+    public void setUseController(boolean useController) { //TODO // FIXME: 6/1/17 for ads
         Assertions.checkState(!useController || controller != null);
         if (this.useController == useController) {
             return;
         }
         this.useController = useController;
         if (useController) {
-            controller.setPlayer(player);
+            controller.setPlayer(player, this);
         } else if (controller != null) {
             controller.hide();
-            controller.setPlayer(null);
+            controller.setPlayer(null, this);
         }
     }
 
