@@ -39,6 +39,7 @@ import com.tubitv.media.R;
 import com.tubitv.media.TubiExoPlayer;
 import com.tubitv.media.helpers.TrackSelectionHelper;
 import com.tubitv.media.utilities.EventLogger;
+import com.tubitv.media.utilities.Utils;
 import com.tubitv.media.views.TubiExoPlayerView;
 import com.tubitv.media.views.TubiPlayerControlViewOld;
 
@@ -58,13 +59,13 @@ public class TubiPlayerActivity extends Activity implements TubiPlayerControlVie
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
-        hideSystemUI();
+        Utils.hideSystemUI(this, true);
     }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        hideSystemUI();
+        Utils.hideSystemUI(this, true);
         shouldAutoPlay = true;
         mMediaDataSourceFactory = buildDataSourceFactory(true);
         initLayout();
@@ -131,7 +132,7 @@ public class TubiPlayerActivity extends Activity implements TubiPlayerControlVie
                 new AdaptiveTrackSelection.Factory(BANDWIDTH_METER);
         mTrackSelector =
                 new DefaultTrackSelector(videoTrackSelectionFactory);
-        mTrackSelectionHelper = new TrackSelectionHelper(mTrackSelector, videoTrackSelectionFactory);
+        mTrackSelectionHelper = new TrackSelectionHelper(this, mTrackSelector, videoTrackSelectionFactory);
 
         // 2. Create a default LoadControl
         LoadControl loadControl = new DefaultLoadControl();
@@ -174,7 +175,7 @@ public class TubiPlayerActivity extends Activity implements TubiPlayerControlVie
 
         mTubiExoPlayer.prepare(mergedSource, true, false);
 //        mTubiExoPlayer.prepare(new ConcatenatingMediaSource(mediaSource, subtitleSource), true, false);
-        hideSystemUI();
+        Utils.hideSystemUI(this, true);
 
         MappingTrackSelector.MappedTrackInfo mappedTrackInfo = mTrackSelector.getCurrentMappedTrackInfo();
         if (mappedTrackInfo == null) {
@@ -223,40 +224,6 @@ public class TubiPlayerActivity extends Activity implements TubiPlayerControlVie
      */
     private DataSource.Factory buildDataSourceFactory(boolean useBandwidthMeter) {
         return MediaHelper.buildDataSourceFactory(this, useBandwidthMeter ? BANDWIDTH_METER : null);
-    }
-
-    // This snippet hides the system bars.
-    private void hideSystemUI() {
-        View decorView = getWindow().getDecorView();
-        // Set the IMMERSIVE flag.
-        // Set the content to appear under the system bars so that the content
-        // doesn't resize when the system bars hide and show.
-        int uiState = View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-                | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
-                | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-                | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION // hide nav bar
-                | View.SYSTEM_UI_FLAG_FULLSCREEN; // hide status bar
-        if (Util.SDK_INT > 18) {
-            uiState |= View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
-                    | View.SYSTEM_UI_FLAG_IMMERSIVE;
-        } else {
-            final Handler handler = new Handler();
-            decorView.setOnSystemUiVisibilityChangeListener(new View.OnSystemUiVisibilityChangeListener() {
-                @Override
-                public void onSystemUiVisibilityChange(int visibility) {
-                    if (visibility == View.VISIBLE) {
-                        Runnable runnable = new Runnable() {
-                            @Override
-                            public void run() {
-                                hideSystemUI();
-                            }
-                        };
-                        handler.postDelayed(runnable, 5000);
-                    }
-                }
-            });
-        }
-        decorView.setSystemUiVisibility(uiState);
     }
 
     @Override

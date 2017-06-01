@@ -1,8 +1,13 @@
 package com.tubitv.media.utilities;
 
+import android.app.Activity;
+import android.os.Handler;
+import android.support.annotation.NonNull;
+import android.view.View;
 import android.widget.SeekBar;
 
 import com.google.android.exoplayer2.C;
+import com.google.android.exoplayer2.util.Util;
 
 import java.util.Formatter;
 import java.util.Locale;
@@ -33,5 +38,43 @@ public class Utils {
     public static long progressToMilli(long playerDurationMs, SeekBar seekBar) {
         long duration = playerDurationMs < 1 ? C.TIME_UNSET : playerDurationMs;
         return duration == C.TIME_UNSET ? 0 : ((duration * seekBar.getProgress()) / seekBar.getMax());
+    }
+
+    // This snippet hides the system bars.
+    public static void hideSystemUI(@NonNull final Activity activity,final boolean immidiate) {
+        View decorView = activity.getWindow().getDecorView();
+        // Set the IMMERSIVE flag.
+        // Set the content to appear under the system bars so that the content
+        // doesn't resize when the system bars hide and show.
+        int uiState = View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION // hide nav bar
+                | View.SYSTEM_UI_FLAG_FULLSCREEN; // hide status bar
+        if (Util.SDK_INT > 18) {
+            uiState |= View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
+                    | View.SYSTEM_UI_FLAG_IMMERSIVE;
+        } else {
+            final Handler handler = new Handler();
+            decorView.setOnSystemUiVisibilityChangeListener(new View.OnSystemUiVisibilityChangeListener() {
+                @Override
+                public void onSystemUiVisibilityChange(int visibility) {
+                    if (visibility == View.VISIBLE) {
+                        Runnable runnable = new Runnable() {
+                            @Override
+                            public void run() {
+                                hideSystemUI(activity, false);
+                            }
+                        };
+                        if(immidiate){
+                            handler.post(runnable);
+                        }else{
+                            handler.postDelayed(runnable, 5000);
+                        }
+                    }
+                }
+            });
+        }
+        decorView.setSystemUiVisibility(uiState);
     }
 }

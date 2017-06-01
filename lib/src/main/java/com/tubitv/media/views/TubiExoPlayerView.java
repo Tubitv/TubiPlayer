@@ -545,7 +545,7 @@ public class TubiExoPlayerView extends FrameLayout implements TubiPlaybackContro
         if (mTrackSelectionHelper != null && mActivity != null) {
             MappingTrackSelector.MappedTrackInfo mappedTrackInfo = mTrackSelectionHelper.getSelector().getCurrentMappedTrackInfo();
             if (mappedTrackInfo != null) {
-                mTrackSelectionHelper.showSelectionDialog(mActivity, "Quality Text",
+                mTrackSelectionHelper.showSelectionDialog("Quality",
                         mTrackSelectionHelper.getSelector().getCurrentMappedTrackInfo(), 0);
             }
         }
