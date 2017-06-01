@@ -1,11 +1,11 @@
 package com.tubitv.media.helpers;
 
 import android.annotation.SuppressLint;
-import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.res.TypedArray;
-import android.support.v7.app.AlertDialog;
+import android.support.annotation.NonNull;
 import android.text.TextUtils;
 import android.util.Pair;
 import android.view.LayoutInflater;
@@ -56,7 +56,7 @@ public class TrackSelectionHelper implements View.OnClickListener,
      * @param adaptiveTrackSelectionFactory A factory for adaptive {@link TrackSelection}s, or null
      *     if the selection helper should not support adaptive tracks.
      */
-    public TrackSelectionHelper(MappingTrackSelector selector,
+    public TrackSelectionHelper(@NonNull MappingTrackSelector selector,
                                 TrackSelection.Factory adaptiveTrackSelectionFactory) {
         this.selector = selector;
         this.adaptiveTrackSelectionFactory = adaptiveTrackSelectionFactory;
@@ -65,12 +65,12 @@ public class TrackSelectionHelper implements View.OnClickListener,
     /**
      * Shows the selection dialog for a given renderer.
      *
-     * @param activity The parent activity.
+     * @param context The parent activity.
      * @param title The dialog's title.
      * @param trackInfo The current track information.
      * @param rendererIndex The index of the renderer.
      */
-    public void showSelectionDialog(Activity activity, CharSequence title, MappingTrackSelector.MappedTrackInfo trackInfo,
+    public void showSelectionDialog(Context context, CharSequence title, MappingTrackSelector.MappedTrackInfo trackInfo,
                                     int rendererIndex) {
         this.trackInfo = trackInfo;
         this.rendererIndex = rendererIndex;
@@ -86,7 +86,7 @@ public class TrackSelectionHelper implements View.OnClickListener,
         isDisabled = selector.getRendererDisabled(rendererIndex);
         override = selector.getSelectionOverride(rendererIndex, trackGroups);
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(activity);
+        AlertDialog.Builder builder = new AlertDialog.Builder(context);
         builder.setTitle(title)
                 .setView(buildView(builder.getContext()))
                 .setPositiveButton(android.R.string.ok, this)
@@ -333,6 +333,10 @@ public class TrackSelectionHelper implements View.OnClickListener,
 
     private static String buildSampleMimeTypeString(Format format) {
         return format.sampleMimeType == null ? "" : format.sampleMimeType;
+    }
+
+    public @NonNull MappingTrackSelector getSelector() {
+        return selector;
     }
 
 }

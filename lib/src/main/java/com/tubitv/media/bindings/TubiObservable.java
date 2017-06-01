@@ -55,6 +55,11 @@ public class TubiObservable extends BaseObservable implements ExoPlayer.EventLis
     public static final String TUBI_SUBTITLES_TAG = "TUBI_SUBTITLES_TAG";
 
     /**
+     * Subtitle tag for {@link com.tubitv.media.databinding.ViewTubiPlayerControlBinding#viewTubiControllerQualityIb}
+     */
+    public static final String TUBI_QUALITY_TAG = "TUBI_QUALITY_TAG";
+
+    /**
      * The interface from {@link com.tubitv.media.views.TubiPlayerControlView}
      */
     @NonNull
@@ -203,7 +208,7 @@ public class TubiObservable extends BaseObservable implements ExoPlayer.EventLis
 
     @Override
     public void onClick(View view) {
-        switch((String)view.getTag()){
+        switch ((String) view.getTag()) {
             case TUBI_PLAY_TOGGLE_TAG:
                 Log.d(TAG, "Play toggle pressed");
                 if (player != null) {
@@ -215,7 +220,10 @@ public class TubiObservable extends BaseObservable implements ExoPlayer.EventLis
                 break;
             case TUBI_SUBTITLES_TAG:
                 Log.d(TAG, "Subtitles toggle pressed");
-                playbackControlInterface.onSubtitlesToggle(((StateImageButton) view).isChecked()) ;
+                playbackControlInterface.onSubtitlesToggle(((StateImageButton) view).isChecked());
+                break;
+            case TUBI_QUALITY_TAG:
+                playbackControlInterface.onQualityTrackToggle(((StateImageButton) view).isChecked());
                 break;
         }
 
@@ -304,7 +312,7 @@ public class TubiObservable extends BaseObservable implements ExoPlayer.EventLis
         setRemainingTime(Utils.getProgressTime(duration - position, true));
     }
 
-    private void updateAll(){
+    private void updateAll() {
         setIsPlaying();
         setPlaybackState();
         updateProgress();

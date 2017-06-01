@@ -9,7 +9,7 @@ public interface TubiPlaybackControlInterface {
 
     void onSubtitlesToggle(boolean enabled);
 
-    void onQualityTrackToggle();
+    void onQualityTrackToggle(boolean enabled);
 
     void cancelRunnable(@NonNull Runnable runnable);
 

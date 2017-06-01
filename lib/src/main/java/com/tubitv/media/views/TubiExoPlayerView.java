@@ -1,6 +1,7 @@
 package com.tubitv.media.views;
 
 import android.annotation.TargetApi;
+import android.app.Activity;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.Bitmap;
@@ -30,6 +31,7 @@ import com.google.android.exoplayer2.source.TrackGroupArray;
 import com.google.android.exoplayer2.text.CaptionStyleCompat;
 import com.google.android.exoplayer2.text.Cue;
 import com.google.android.exoplayer2.text.TextRenderer;
+import com.google.android.exoplayer2.trackselection.MappingTrackSelector;
 import com.google.android.exoplayer2.trackselection.TrackSelection;
 import com.google.android.exoplayer2.trackselection.TrackSelectionArray;
 import com.google.android.exoplayer2.ui.AspectRatioFrameLayout;
@@ -48,7 +50,7 @@ import java.util.List;
  * Created by stoyan tubi_tv_quality_on 3/22/17.
  */
 @TargetApi(16)
-public class TubiExoPlayerView extends FrameLayout implements TubiPlaybackControlInterface{
+public class TubiExoPlayerView extends FrameLayout implements TubiPlaybackControlInterface {
 
     private static final int SURFACE_TYPE_NONE = 0;
     private static final int SURFACE_TYPE_SURFACE_VIEW = 1;
@@ -68,6 +70,7 @@ public class TubiExoPlayerView extends FrameLayout implements TubiPlaybackContro
     private Bitmap defaultArtwork;
     private int controllerShowTimeoutMs;
     private TrackSelectionHelper mTrackSelectionHelper;
+    private Activity mActivity;
 
     public TubiExoPlayerView(Context context) {
         this(context, null);
@@ -337,7 +340,7 @@ public class TubiExoPlayerView extends FrameLayout implements TubiPlaybackContro
      * progress.
      *
      * @return The timeout in milliseconds. A non-positive value will cause the controller to remain
-     *     visible indefinitely.
+     * visible indefinitely.
      */
     public int getControllerShowTimeoutMs() {
         return controllerShowTimeoutMs;
@@ -348,7 +351,7 @@ public class TubiExoPlayerView extends FrameLayout implements TubiPlaybackContro
      * duration of time has elapsed without user input and with playback or buffering in progress.
      *
      * @param controllerShowTimeoutMs The timeout in milliseconds. A non-positive value will cause
-     *     the controller to remain visible indefinitely.
+     *                                the controller to remain visible indefinitely.
      */
     public void setControllerShowTimeoutMs(int controllerShowTimeoutMs) {
         Assertions.checkState(controller != null);
@@ -391,7 +394,7 @@ public class TubiExoPlayerView extends FrameLayout implements TubiPlaybackContro
      * the player.
      *
      * @return The overlay {@link FrameLayout}, or {@code null} if the layout has been customized and
-     *     the overlay is not present.
+     * the overlay is not present.
      */
     public FrameLayout getOverlayFrameLayout() {
         return overlayFrameLayout;
@@ -401,7 +404,7 @@ public class TubiExoPlayerView extends FrameLayout implements TubiPlaybackContro
      * Gets the {@link SubtitleView}.
      *
      * @return The {@link SubtitleView}, or {@code null} if the layout has been customized and the
-     *     subtitle view is not present.
+     * subtitle view is not present.
      */
     public SubtitleView getSubtitleView() {
         return subtitleView;
@@ -485,6 +488,10 @@ public class TubiExoPlayerView extends FrameLayout implements TubiPlaybackContro
         mTrackSelectionHelper = trackSelectionHelper;
     }
 
+    public void setActivity(@NonNull Activity activity) {
+        this.mActivity = activity;
+    }
+
     private boolean setArtworkFromMetadata(Metadata metadata) {
         for (int i = 0; i < metadata.length(); i++) {
             Metadata.Entry metadataEntry = metadata.get(i);
@@ -534,8 +541,14 @@ public class TubiExoPlayerView extends FrameLayout implements TubiPlaybackContro
     }
 
     @Override
-    public void onQualityTrackToggle() {
-
+    public void onQualityTrackToggle(boolean enabled) {
+        if (mTrackSelectionHelper != null && mActivity != null) {
+            MappingTrackSelector.MappedTrackInfo mappedTrackInfo = mTrackSelectionHelper.getSelector().getCurrentMappedTrackInfo();
+            if (mappedTrackInfo != null) {
+                mTrackSelectionHelper.showSelectionDialog(mActivity, "Quality Text",
+                        mTrackSelectionHelper.getSelector().getCurrentMappedTrackInfo(), 0);
+            }
+        }
     }
 
     @Override
@@ -552,6 +565,8 @@ public class TubiExoPlayerView extends FrameLayout implements TubiPlaybackContro
     public void hideAfterTimeout() {
 
     }
+
+
 
     private final class ComponentListener implements SimpleExoPlayer.VideoListener,
             TextRenderer.Output, ExoPlayer.EventListener {

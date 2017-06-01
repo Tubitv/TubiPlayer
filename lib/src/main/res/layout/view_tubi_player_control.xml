@@ -66,6 +66,8 @@
             android:layout_marginRight="16dp"
             android:layout_marginTop="8dp"
             android:background="@drawable/tubi_tv_drawable_quality_off_selector"
+            android:tag="@{TubiObservable.TUBI_QUALITY_TAG}"
+            app:onClickStateImage="@{playMedia}"
             app:layout_constraintRight_toLeftOf="@+id/view_tubi_controller_chromecast_ib"
             app:layout_constraintTop_toTopOf="@+id/tubi_tv_controller_guideline_top"
             app:state_checked="@drawable/tubi_tv_drawable_quality_on_selector"
