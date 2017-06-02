@@ -3,6 +3,7 @@ package com.tubitv.media.utilities;
 import android.app.Activity;
 import android.os.Handler;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.view.View;
 import android.widget.SeekBar;
 
@@ -41,7 +42,12 @@ public class Utils {
     }
 
     // This snippet hides the system bars.
-    public static void hideSystemUI(@NonNull final Activity activity,final boolean immidiate) {
+    public static void hideSystemUI(@NonNull final Activity activity, final boolean immediate) {
+        hideSystemUI(activity, immediate, 5000);
+    }
+
+    // This snippet hides the system bars.
+    public static void hideSystemUI(@NonNull final Activity activity, final boolean immediate, final int delayMs) {
         View decorView = activity.getWindow().getDecorView();
         // Set the IMMERSIVE flag.
         // Set the content to appear under the system bars so that the content
@@ -66,15 +72,25 @@ public class Utils {
                                 hideSystemUI(activity, false);
                             }
                         };
-                        if(immidiate){
+                        if(immediate){
                             handler.post(runnable);
                         }else{
-                            handler.postDelayed(runnable, 5000);
+                            handler.postDelayed(runnable, delayMs);
                         }
                     }
                 }
             });
         }
         decorView.setSystemUiVisibility(uiState);
+    }
+
+    /**
+     * Checks if a string is empty
+     *
+     * @param text String to check
+     * @return True if string is null or ""
+     */
+    public static boolean isEmpty(@Nullable String text){
+        return text == null || text.equalsIgnoreCase("");
     }
 }

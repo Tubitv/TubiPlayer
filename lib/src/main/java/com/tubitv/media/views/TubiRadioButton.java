@@ -76,4 +76,13 @@ public class TubiRadioButton extends LinearLayout {
     public void setText(@NonNull String text) {
         mBinding.tubiRadioButtonText.setText(text);
     }
+
+    /**
+     * Checks the checked state of the radio button in this view {@link ViewTubiRadioButtonBinding#tubiRadioButton}
+     *
+     * @return True if it is checked
+     */
+    public boolean isChecked() {
+        return mBinding.tubiRadioButton.isChecked();
+    }
 }
