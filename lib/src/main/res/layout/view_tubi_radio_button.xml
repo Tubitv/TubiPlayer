@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools">
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="horizontal"
+        android:paddingBottom="14dp"
+        android:paddingLeft="29dp"
+        android:paddingTop="14dp">
+
+        <RadioButton android:id="@+id/tubi_radio_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:button="@drawable/tubi_radio_quality_selector"
+            tools:checked="true"/>
+
+        <com.tubitv.ui.VaudTextView android:id="@+id/tubi_radio_button_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingLeft="24dp"
+            tools:text="1080P"/>
+
+    </LinearLayout>
+</layout>

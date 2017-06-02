@@ -2,6 +2,8 @@
     <string name="app_name">lib</string>
     <string name="view_tubi_controller_time_position_text_default">00:00:00</string>
 
+    <string name="track_selector_alert_quality_title">Quality</string>
+    <string name="track_selector_alert_auto">Auto</string>
 
     <string name="selection_disabled">Disabled</string>
 

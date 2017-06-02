@@ -3,7 +3,6 @@ package com.tubitv.media.helpers;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
-import android.content.res.TypedArray;
 import android.support.annotation.NonNull;
 import android.text.TextUtils;
 import android.util.Pair;
@@ -25,6 +24,7 @@ import com.google.android.exoplayer2.trackselection.TrackSelection;
 import com.google.android.exoplayer2.util.MimeTypes;
 import com.tubitv.media.R;
 import com.tubitv.media.utilities.Utils;
+import com.tubitv.media.views.TubiRadioButton;
 
 import java.util.Arrays;
 import java.util.Locale;
@@ -47,10 +47,8 @@ public class TrackSelectionHelper implements View.OnClickListener, MaterialDialo
     private boolean isDisabled;
     private MappingTrackSelector.SelectionOverride override;
 
-    private CheckedTextView disableView;
-    private CheckedTextView defaultView;
-    private CheckedTextView enableRandomAdaptationView;
-    private CheckedTextView[][] trackViews;
+    private TubiRadioButton qualityAutoView;
+    private TubiRadioButton[][] trackViews;
 
     /**
      * The activity that launches this dialog
@@ -111,61 +109,42 @@ public class TrackSelectionHelper implements View.OnClickListener, MaterialDialo
                 .show();
     }
 
-    @SuppressLint("InflateParams")
-    private View buildView(Context context) {
+    private View buildView(Context context){
         LayoutInflater inflater = LayoutInflater.from(context);
         View view = inflater.inflate(R.layout.track_selection_dialog, null);
         ViewGroup root = (ViewGroup) view.findViewById(R.id.root);
 
-        TypedArray attributeArray = context.getTheme().obtainStyledAttributes(
-                new int[]{android.R.attr.selectableItemBackground});
-        int selectableItemBackgroundResourceId = attributeArray.getResourceId(0, 0);
-        attributeArray.recycle();
-
-        // View for disabling the renderer.
-        disableView = (CheckedTextView) inflater.inflate(
-                android.R.layout.simple_list_item_single_choice, root, false);
-        disableView.setBackgroundResource(selectableItemBackgroundResourceId);
-        disableView.setText(R.string.selection_disabled);
-        disableView.setFocusable(true);
-        disableView.setOnClickListener(this);
-        root.addView(disableView);
-
         // View for clearing the override to allow the selector to use its default selection logic.
-        defaultView = (CheckedTextView) inflater.inflate(
-                android.R.layout.simple_list_item_single_choice, root, false);
-        defaultView.setBackgroundResource(selectableItemBackgroundResourceId);
-        defaultView.setText(R.string.selection_default);
-        defaultView.setFocusable(true);
-        defaultView.setOnClickListener(this);
+        qualityAutoView = new TubiRadioButton(context);
+//        defaultView.setBackgroundResource(selectableItemBackgroundResourceId);
+        qualityAutoView.setText(R.string.track_selector_alert_auto);
+        qualityAutoView.setFocusable(true);
+        qualityAutoView.setOnClickListener(this);
         root.addView(inflater.inflate(R.layout.list_divider, root, false));
-        root.addView(defaultView);
+        root.addView(qualityAutoView);
 
         // Per-track views.
         boolean haveSupportedTracks = false;
         boolean haveAdaptiveTracks = false;
-        trackViews = new CheckedTextView[trackGroups.length][];
+        trackViews = new TubiRadioButton[trackGroups.length][];
         for (int groupIndex = 0; groupIndex < trackGroups.length; groupIndex++) {
             TrackGroup group = trackGroups.get(groupIndex);
             boolean groupIsAdaptive = trackGroupsAdaptive[groupIndex];
-            haveAdaptiveTracks |= groupIsAdaptive;
-            trackViews[groupIndex] = new CheckedTextView[group.length];
+//            haveAdaptiveTracks |= groupIsAdaptive;
+            trackViews[groupIndex] = new TubiRadioButton[group.length];
             for (int trackIndex = 0; trackIndex < group.length; trackIndex++) {
                 if (trackIndex == 0) {
                     root.addView(inflater.inflate(R.layout.list_divider, root, false));
                 }
-                int trackViewLayoutId = groupIsAdaptive ? android.R.layout.simple_list_item_multiple_choice
-                        : android.R.layout.simple_list_item_single_choice;
-                CheckedTextView trackView = (CheckedTextView) inflater.inflate(
-                        trackViewLayoutId, root, false);
-                trackView.setBackgroundResource(selectableItemBackgroundResourceId);
+                TubiRadioButton trackView =  new TubiRadioButton(context);
+//                trackView.setBackgroundResource(selectableItemBackgroundResourceId);
                 trackView.setText(buildTrackName(group.getFormat(trackIndex)));
                 if (trackInfo.getTrackFormatSupport(rendererIndex, groupIndex, trackIndex)
                         == RendererCapabilities.FORMAT_HANDLED) {
                     trackView.setFocusable(true);
                     trackView.setTag(Pair.create(groupIndex, trackIndex));
                     trackView.setOnClickListener(this);
-                    haveSupportedTracks = true;
+//                    haveSupportedTracks = true;
                 } else {
                     trackView.setFocusable(false);
                     trackView.setEnabled(false);
@@ -175,42 +154,110 @@ public class TrackSelectionHelper implements View.OnClickListener, MaterialDialo
             }
         }
 
-        if (!haveSupportedTracks) {
-            // Indicate that the default selection will be nothing.
-            defaultView.setText(R.string.selection_default_none);
-        } else if (haveAdaptiveTracks) {
-            // View for using random adaptation.
-            enableRandomAdaptationView = (CheckedTextView) inflater.inflate(
-                    android.R.layout.simple_list_item_multiple_choice, root, false);
-            enableRandomAdaptationView.setBackgroundResource(selectableItemBackgroundResourceId);
-            enableRandomAdaptationView.setText(R.string.enable_random_adaptation);
-            enableRandomAdaptationView.setOnClickListener(this);
-            root.addView(inflater.inflate(R.layout.list_divider, root, false));
-            root.addView(enableRandomAdaptationView);
-        }
+        updateViews();
+        return view;
+    }
+
+    @SuppressLint("InflateParams")
+    private View buildView1(Context context) {
+        LayoutInflater inflater = LayoutInflater.from(context);
+        View view = inflater.inflate(R.layout.track_selection_dialog, null);
+        ViewGroup root = (ViewGroup) view.findViewById(R.id.root);
+
+//        TypedArray attributeArray = context.getTheme().obtainStyledAttributes(
+//                new int[]{android.R.attr.selectableItemBackground});
+//        int selectableItemBackgroundResourceId = attributeArray.getResourceId(0, 0);
+//        attributeArray.recycle();
+//
+//        // View for disabling the renderer.
+//        disableView = (CheckedTextView) inflater.inflate(
+//                android.R.layout.simple_list_item_single_choice, root, false);
+//        disableView.setBackgroundResource(selectableItemBackgroundResourceId);
+//        disableView.setText(R.string.selection_disabled);
+//        disableView.setFocusable(true);
+//        disableView.setOnClickListener(this);
+//        root.addView(disableView);
+
+//        // View for clearing the override to allow the selector to use its default selection logic.
+//        defaultView = (CheckedTextView) inflater.inflate(
+//                android.R.layout.simple_list_item_single_choice, root, false);
+//        defaultView.setBackgroundResource(selectableItemBackgroundResourceId);
+//        defaultView.setText(R.string.selection_default);
+//        defaultView.setFocusable(true);
+//        defaultView.setOnClickListener(this);
+//        root.addView(inflater.inflate(R.layout.list_divider, root, false));
+//        root.addView(defaultView);
+
+        // Per-track views.
+//        boolean haveSupportedTracks = false;
+//        boolean haveAdaptiveTracks = false;
+//        trackViews = new CheckedTextView[trackGroups.length][];
+//        for (int groupIndex = 0; groupIndex < trackGroups.length; groupIndex++) {
+//            TrackGroup group = trackGroups.get(groupIndex);
+//            boolean groupIsAdaptive = trackGroupsAdaptive[groupIndex];
+////            haveAdaptiveTracks |= groupIsAdaptive;
+//            trackViews[groupIndex] = new CheckedTextView[group.length];
+//            for (int trackIndex = 0; trackIndex < group.length; trackIndex++) {
+//                if (trackIndex == 0) {
+//                    root.addView(inflater.inflate(R.layout.list_divider, root, false));
+//                }
+//                int trackViewLayoutId = groupIsAdaptive ? android.R.layout.simple_list_item_multiple_choice
+//                        : android.R.layout.simple_list_item_single_choice;
+//                CheckedTextView trackView = (CheckedTextView) inflater.inflate(
+//                        trackViewLayoutId, root, false);
+//                trackView.setBackgroundResource(selectableItemBackgroundResourceId);
+//                trackView.setText(buildTrackName(group.getFormat(trackIndex)));
+//                if (trackInfo.getTrackFormatSupport(rendererIndex, groupIndex, trackIndex)
+//                        == RendererCapabilities.FORMAT_HANDLED) {
+//                    trackView.setFocusable(true);
+//                    trackView.setTag(Pair.create(groupIndex, trackIndex));
+//                    trackView.setOnClickListener(this);
+////                    haveSupportedTracks = true;
+//                } else {
+//                    trackView.setFocusable(false);
+//                    trackView.setEnabled(false);
+//                }
+//                trackViews[groupIndex][trackIndex] = trackView;
+//                root.addView(trackView);
+//            }
+//        }
+//
+//        if (!haveSupportedTracks) {
+//            // Indicate that the default selection will be nothing.
+//            defaultView.setText(R.string.selection_default_none);
+//        } else if (haveAdaptiveTracks) {
+//            // View for using random adaptation.
+//            enableRandomAdaptationView = (CheckedTextView) inflater.inflate(
+//                    android.R.layout.simple_list_item_multiple_choice, root, false);
+//            enableRandomAdaptationView.setBackgroundResource(selectableItemBackgroundResourceId);
+//            enableRandomAdaptationView.setText(R.string.enable_random_adaptation);
+//            enableRandomAdaptationView.setOnClickListener(this);
+//            root.addView(inflater.inflate(R.layout.list_divider, root, false));
+//            root.addView(enableRandomAdaptationView);
+//        }
 
         updateViews();
         return view;
     }
 
     private void updateViews() {
-        disableView.setChecked(isDisabled);
-        defaultView.setChecked(!isDisabled && override == null);
-        for (int i = 0; i < trackViews.length; i++) {
-            for (int j = 0; j < trackViews[i].length; j++) {
-                trackViews[i][j].setChecked(override != null && override.groupIndex == i
-                        && override.containsTrack(j));
-            }
-        }
-        if (enableRandomAdaptationView != null) {
-            boolean enableView = !isDisabled && override != null && override.length > 1;
-            enableRandomAdaptationView.setEnabled(enableView);
-            enableRandomAdaptationView.setFocusable(enableView);
-            if (enableView) {
-                enableRandomAdaptationView.setChecked(!isDisabled
-                        && override.factory instanceof RandomTrackSelection.Factory);
-            }
-        }
+//        disableView.setChecked(isDisabled);
+//        defaultView.setChecked(!isDisabled && override == null);
+//        for (int i = 0; i < trackViews.length; i++) {
+//            for (int j = 0; j < trackViews[i].length; j++) {
+//                trackViews[i][j].setChecked(override != null && override.groupIndex == i
+//                        && override.containsTrack(j));
+//            }
+//        }
+//        if (enableRandomAdaptationView != null) {
+//            boolean enableView = !isDisabled && override != null && override.length > 1;
+//            enableRandomAdaptationView.setEnabled(enableView);
+//            enableRandomAdaptationView.setFocusable(enableView);
+//            if (enableView) {
+//                enableRandomAdaptationView.setChecked(!isDisabled
+//                        && override.factory instanceof RandomTrackSelection.Factory);
+//            }
+//        }
     }
 
     // DialogInterface.OnClickListener
@@ -229,15 +276,14 @@ public class TrackSelectionHelper implements View.OnClickListener, MaterialDialo
 
     @Override
     public void onClick(View view) {
-        if (view == disableView) {
-            isDisabled = true;
-            override = null;
-        } else if (view == defaultView) {
+        if (view == qualityAutoView) {
             isDisabled = false;
             override = null;
-        } else if (view == enableRandomAdaptationView) {
-            setOverride(override.groupIndex, override.tracks, !enableRandomAdaptationView.isChecked());
-        } else {
+        }
+//        else if (view == enableRandomAdaptationView) {
+//            setOverride(override.groupIndex, override.tracks, !enableRandomAdaptationView.isChecked());
+//        }
+        else {
             isDisabled = false;
             @SuppressWarnings("unchecked")
             Pair<Integer, Integer> tag = (Pair<Integer, Integer>) view.getTag();
@@ -257,13 +303,13 @@ public class TrackSelectionHelper implements View.OnClickListener, MaterialDialo
                         override = null;
                         isDisabled = true;
                     } else {
-                        setOverride(groupIndex, getTracksRemoving(override, trackIndex),
-                                enableRandomAdaptationView.isChecked());
+//                        setOverride(groupIndex, getTracksRemoving(override, trackIndex),
+//                                enableRandomAdaptationView.isChecked());
                     }
                 } else {
                     // Add the track to the override.
-                    setOverride(groupIndex, getTracksAdding(override, trackIndex),
-                            enableRandomAdaptationView.isChecked());
+//                    setOverride(groupIndex, getTracksAdding(override, trackIndex),
+//                            enableRandomAdaptationView.isChecked());
                 }
             }
         }

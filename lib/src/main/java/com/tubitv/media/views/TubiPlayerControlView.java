@@ -32,6 +32,9 @@ public class TubiPlayerControlView extends ConstraintLayout {
     private ViewTubiPlayerControlBinding mBinding;
     private TubiPlayerControlViewOld.VisibilityListener visibilityListener;
 
+    /**
+     * Attached state of this view
+     */
     private boolean isAttachedToWindow;
 
     /**
@@ -78,7 +81,7 @@ public class TubiPlayerControlView extends ConstraintLayout {
         super(context, attrs, defStyleAttr);
 
         // Skipping...
-        if (isInEditMode() || attrs == null) {
+        if (isInEditMode()) {
             return;
         }
 
