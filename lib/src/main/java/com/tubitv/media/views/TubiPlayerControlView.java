@@ -17,12 +17,13 @@ import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.tubitv.media.R;
 import com.tubitv.media.bindings.TubiObservable;
 import com.tubitv.media.databinding.ViewTubiPlayerControlBinding;
+import com.tubitv.media.interfaces.TrackSelectionHelperInterface;
 import com.tubitv.media.interfaces.TubiPlaybackControlInterface;
 
 /**
  * Created by stoyan on 5/15/17.
  */
-public class TubiPlayerControlView extends ConstraintLayout implements TubiPlaybackControlInterface {
+public class TubiPlayerControlView extends ConstraintLayout implements TrackSelectionHelperInterface {
     /**
      * The default time to hide the this view if the user is not interacting with it
      */
@@ -32,6 +33,9 @@ public class TubiPlayerControlView extends ConstraintLayout implements TubiPlayb
     private ViewTubiPlayerControlBinding mBinding;
     private TubiPlayerControlViewOld.VisibilityListener visibilityListener;
 
+    /**
+     * Attached state of this view
+     */
     private boolean isAttachedToWindow;
 
     /**
@@ -43,6 +47,11 @@ public class TubiPlayerControlView extends ConstraintLayout implements TubiPlayb
      * The time out time for the view to be hidden if the user is not interacting with it
      */
     private long hideAtMs;
+
+    /**
+     * The interface for playback control of the media
+     */
+    private TubiPlaybackControlInterface playbackInterface;
 
     /**
      * The binding observable for the control views
@@ -73,7 +82,7 @@ public class TubiPlayerControlView extends ConstraintLayout implements TubiPlayb
         super(context, attrs, defStyleAttr);
 
         // Skipping...
-        if (isInEditMode() || attrs == null) {
+        if (isInEditMode()) {
             return;
         }
 
@@ -113,21 +122,8 @@ public class TubiPlayerControlView extends ConstraintLayout implements TubiPlayb
     }
 
     @Override
-    public void onSubtitlesToggle(boolean enabled) {
-        View subtitles = getSubtitlesView();
-        if (subtitles != null) {
-            subtitles.setVisibility(enabled ? View.VISIBLE : View.INVISIBLE);
-        }
-    }
-
-    @Override
-    public void cancelRunnable(@NonNull Runnable runnable) {
-        removeCallbacks(runnable);
-    }
-
-    @Override
-    public void postRunnable(@NonNull Runnable runnable, long millisDelay) {
-        postDelayed(runnable, millisDelay);
+    public void onTrackSelected(boolean trackSelected) {
+        media.setQualityEnabled(trackSelected);
     }
 
     private void initLayout() {
@@ -147,9 +143,10 @@ public class TubiPlayerControlView extends ConstraintLayout implements TubiPlayb
     }
 
 
-    public void setPlayer(SimpleExoPlayer player) {
+    public void setPlayer(@NonNull SimpleExoPlayer player, @NonNull final TubiPlaybackControlInterface playbackControlInterface) {
         if (this.mPlayer == null || this.mPlayer != player) {
-            media = new TubiObservable(this, player);
+            media = new TubiObservable(player, playbackControlInterface);
+            setPlaybackInterface(playbackControlInterface);
             //Controller doesn't get re-initialized TODO fix instance call
             mBinding.viewTubiControllerSubtitlesIb.clearClickListeners();
             mBinding.viewTubiControllerQualityIb.clearClickListeners();
@@ -225,7 +222,7 @@ public class TubiPlayerControlView extends ConstraintLayout implements TubiPlayb
         if (subtitles != null) {
             int seekBarTop = mBinding.viewTubiControllerSeekBar.getTop();
 
-            subtitles.setPadding(0,0,0, visible ? getHeight() - seekBarTop : 0);
+            subtitles.setPadding(0, 0, 0, visible ? getHeight() - seekBarTop : 0);
 //            FrameLayout.LayoutParams lp = new FrameLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
 //            lp.setMargins(0,0,0, visible ? getHeight() - seekBarTop : 0);
 //            subtitles.setLayoutParams(lp);
@@ -262,4 +259,10 @@ public class TubiPlayerControlView extends ConstraintLayout implements TubiPlayb
 
     }
 
+    public void setPlaybackInterface(TubiPlaybackControlInterface playbackInterface) {
+        this.playbackInterface = playbackInterface;
+        if (media != null) {
+            media.setPlaybackInterface(playbackInterface);
+        }
+    }
 }
