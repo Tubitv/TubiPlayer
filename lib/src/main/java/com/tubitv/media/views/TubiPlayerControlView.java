@@ -17,12 +17,13 @@ import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.tubitv.media.R;
 import com.tubitv.media.bindings.TubiObservable;
 import com.tubitv.media.databinding.ViewTubiPlayerControlBinding;
+import com.tubitv.media.interfaces.TrackSelectionHelperInterface;
 import com.tubitv.media.interfaces.TubiPlaybackControlInterface;
 
 /**
  * Created by stoyan on 5/15/17.
  */
-public class TubiPlayerControlView extends ConstraintLayout {
+public class TubiPlayerControlView extends ConstraintLayout implements TrackSelectionHelperInterface {
     /**
      * The default time to hide the this view if the user is not interacting with it
      */
@@ -118,6 +119,11 @@ public class TubiPlayerControlView extends ConstraintLayout {
             show();
         }
         return handled;
+    }
+
+    @Override
+    public void onTrackSelected(boolean trackSelected) {
+        media.setQualityEnabled(trackSelected);
     }
 
     private void initLayout() {
@@ -216,7 +222,7 @@ public class TubiPlayerControlView extends ConstraintLayout {
         if (subtitles != null) {
             int seekBarTop = mBinding.viewTubiControllerSeekBar.getTop();
 
-            subtitles.setPadding(0,0,0, visible ? getHeight() - seekBarTop : 0);
+            subtitles.setPadding(0, 0, 0, visible ? getHeight() - seekBarTop : 0);
 //            FrameLayout.LayoutParams lp = new FrameLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
 //            lp.setMargins(0,0,0, visible ? getHeight() - seekBarTop : 0);
 //            subtitles.setLayoutParams(lp);
@@ -255,7 +261,7 @@ public class TubiPlayerControlView extends ConstraintLayout {
 
     public void setPlaybackInterface(TubiPlaybackControlInterface playbackInterface) {
         this.playbackInterface = playbackInterface;
-        if(media != null){
+        if (media != null) {
             media.setPlaybackInterface(playbackInterface);
         }
     }

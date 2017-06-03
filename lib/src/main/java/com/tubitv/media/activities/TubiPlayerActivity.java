@@ -132,7 +132,7 @@ public class TubiPlayerActivity extends Activity implements TubiPlayerControlVie
                 new AdaptiveTrackSelection.Factory(BANDWIDTH_METER);
         mTrackSelector =
                 new DefaultTrackSelector(videoTrackSelectionFactory);
-        mTrackSelectionHelper = new TrackSelectionHelper(this, mTrackSelector, videoTrackSelectionFactory);
+        mTrackSelectionHelper = new TrackSelectionHelper(this, mTrackSelector);
 
         // 2. Create a default LoadControl
         LoadControl loadControl = new DefaultLoadControl();

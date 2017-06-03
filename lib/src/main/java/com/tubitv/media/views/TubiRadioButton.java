@@ -6,9 +6,10 @@ import android.support.annotation.NonNull;
 import android.support.annotation.StringRes;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
+import android.view.View;
 import android.widget.LinearLayout;
-import com.tubitv.media.R;
 
+import com.tubitv.media.R;
 import com.tubitv.media.databinding.ViewTubiRadioButtonBinding;
 
 /**
@@ -56,7 +57,13 @@ public class TubiRadioButton extends LinearLayout {
     private void initLayout() {
         LayoutInflater inflater = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         mBinding = DataBindingUtil.inflate(inflater, R.layout.view_tubi_radio_button, this, true);
-        setDescendantFocusability(FOCUS_AFTER_DESCENDANTS);
+        mBinding.tubiRadioButton.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mBinding.tubiRadioButton.setChecked(!mBinding.tubiRadioButton.isChecked());
+                TubiRadioButton.this.callOnClick();
+            }
+        });
     }
 
     /**
@@ -84,5 +91,14 @@ public class TubiRadioButton extends LinearLayout {
      */
     public boolean isChecked() {
         return mBinding.tubiRadioButton.isChecked();
+    }
+
+    /**
+     * Sets the checked state of radio button in this view {@link ViewTubiRadioButtonBinding#tubiRadioButton}
+     *
+     * @param checked True if it should be checked, false otherwise
+     */
+    public void setChecked(boolean checked) {
+        mBinding.tubiRadioButton.setChecked(checked);
     }
 }

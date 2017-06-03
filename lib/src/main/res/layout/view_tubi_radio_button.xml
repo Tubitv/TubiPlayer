@@ -4,7 +4,7 @@
         xmlns:tools="http://schemas.android.com/tools">
 
 
-    <LinearLayout
+    <LinearLayout android:id="@+id/tubi_radio_button_root"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="horizontal"

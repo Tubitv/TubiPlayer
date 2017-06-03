@@ -40,6 +40,7 @@ import com.google.android.exoplayer2.ui.SubtitleView;
 import com.google.android.exoplayer2.util.Assertions;
 import com.tubitv.media.R;
 import com.tubitv.media.helpers.TrackSelectionHelper;
+import com.tubitv.media.interfaces.TrackSelectionHelperInterface;
 import com.tubitv.media.interfaces.TubiPlaybackControlInterface;
 import com.tubitv.ui.VaudTextView;
 import com.tubitv.ui.VaudType;
@@ -545,8 +546,7 @@ public class TubiExoPlayerView extends FrameLayout implements TubiPlaybackContro
         if (mTrackSelectionHelper != null && mActivity != null) {
             MappingTrackSelector.MappedTrackInfo mappedTrackInfo = mTrackSelectionHelper.getSelector().getCurrentMappedTrackInfo();
             if (mappedTrackInfo != null) {
-                mTrackSelectionHelper.showSelectionDialog("Quality",
-                        mTrackSelectionHelper.getSelector().getCurrentMappedTrackInfo(), 0);
+                mTrackSelectionHelper.showSelectionDialog(0, controller);
             }
         }
     }
@@ -565,8 +565,6 @@ public class TubiExoPlayerView extends FrameLayout implements TubiPlaybackContro
     public void hideAfterTimeout() {
 
     }
-
-
 
     private final class ComponentListener implements SimpleExoPlayer.VideoListener,
             TextRenderer.Output, ExoPlayer.EventListener {
