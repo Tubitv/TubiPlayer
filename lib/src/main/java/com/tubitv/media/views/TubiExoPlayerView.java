@@ -40,7 +40,6 @@ import com.google.android.exoplayer2.ui.SubtitleView;
 import com.google.android.exoplayer2.util.Assertions;
 import com.tubitv.media.R;
 import com.tubitv.media.helpers.TrackSelectionHelper;
-import com.tubitv.media.interfaces.TrackSelectionHelperInterface;
 import com.tubitv.media.interfaces.TubiPlaybackControlInterface;
 import com.tubitv.ui.VaudTextView;
 import com.tubitv.ui.VaudType;
@@ -368,17 +367,6 @@ public class TubiExoPlayerView extends FrameLayout implements TubiPlaybackContro
         Assertions.checkState(controller != null);
         controller.setVisibilityListener(listener);
     }
-
-//    /**
-//     * Sets the {@link com.google.android.exoplayer2.ui.PlaybackControlView.SeekDispatcher}.
-//     *
-//     * @param seekDispatcher The {@link com.google.android.exoplayer2.ui.PlaybackControlView.SeekDispatcher}, or null to use
-//     *     {@link PlaybackControlView#DEFAULT_SEEK_DISPATCHER}.
-//     */
-//    public void setSeekDispatcher(TubiPlayerControlViewOld.SeekDispatcher seekDispatcher) {
-//        Assertions.checkState(controller != null);
-////        controller.setSeekDispatcher(seekDispatcher);
-//    }
 
     /**
      * Gets the view onto which video is rendered. This is either a {@link SurfaceView} (default)

@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.content.DialogInterface;
 import android.support.annotation.NonNull;
 
-import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.google.android.exoplayer2.trackselection.MappingTrackSelector;
 import com.tubitv.media.R;
@@ -18,7 +17,7 @@ import com.tubitv.media.views.TubiQualityDialogView;
 public class TrackSelectionHelper implements DialogInterface.OnDismissListener {
 
     /**
-     *
+     * The track selector used to set the video quality
      */
     private final MappingTrackSelector selector;
 
