@@ -6,6 +6,7 @@ import android.content.res.Configuration;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.annotation.NonNull;
 import android.text.TextUtils;
 import android.view.View;
 
@@ -32,18 +33,22 @@ import com.google.android.exoplayer2.upstream.DataSource;
 import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter;
 import com.google.android.exoplayer2.upstream.DefaultHttpDataSourceFactory;
 import com.google.android.exoplayer2.upstream.HttpDataSource;
+import com.google.android.exoplayer2.util.Assertions;
 import com.google.android.exoplayer2.util.MimeTypes;
 import com.google.android.exoplayer2.util.Util;
 import com.tubitv.media.MediaHelper;
 import com.tubitv.media.R;
 import com.tubitv.media.TubiExoPlayer;
 import com.tubitv.media.helpers.TrackSelectionHelper;
+import com.tubitv.media.models.MediaModel;
 import com.tubitv.media.utilities.EventLogger;
 import com.tubitv.media.utilities.Utils;
 import com.tubitv.media.views.TubiExoPlayerView;
 import com.tubitv.media.views.TubiPlayerControlViewOld;
 
 public class TubiPlayerActivity extends Activity implements TubiPlayerControlViewOld.VisibilityListener {
+    public static String TUBI_MEDIA_KEY = "tubi_media_key";
+
     private TubiExoPlayer mTubiExoPlayer;
     private Handler mMainHandler;
     private TubiExoPlayerView mTubiPlayerView;
@@ -51,6 +56,9 @@ public class TubiPlayerActivity extends Activity implements TubiPlayerControlVie
     private DefaultTrackSelector mTrackSelector;
     private EventLogger mEventLogger;
     private TrackSelectionHelper mTrackSelectionHelper;
+
+    @NonNull
+    private MediaModel mediaModel;
 
     private static final DefaultBandwidthMeter BANDWIDTH_METER = new DefaultBandwidthMeter();
 
@@ -65,6 +73,7 @@ public class TubiPlayerActivity extends Activity implements TubiPlayerControlVie
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        parseIntent();
         Utils.hideSystemUI(this, true);
         shouldAutoPlay = true;
         mMediaDataSourceFactory = buildDataSourceFactory(true);
@@ -111,6 +120,16 @@ public class TubiPlayerActivity extends Activity implements TubiPlayerControlVie
         }
     }
 
+    @SuppressWarnings("ConstantConditions")
+    private void parseIntent() {
+        String errorNoMediaMessage = getResources().getString(R.string.activity_tubi_player_no_media_error_message);
+        Assertions.checkState(getIntent() != null && getIntent().getExtras() != null,
+                errorNoMediaMessage);
+        mediaModel = (MediaModel) getIntent().getExtras().getSerializable(TUBI_MEDIA_KEY);
+        Assertions.checkState(mediaModel != null,
+                errorNoMediaMessage);
+    }
+
     private void initLayout() {
         setContentView(R.layout.activity_tubi_player);
         mTubiPlayerView = (TubiExoPlayerView) findViewById(R.id.tubitv_player);
@@ -148,6 +167,7 @@ public class TubiPlayerActivity extends Activity implements TubiPlayerControlVie
         mTubiExoPlayer.setMetadataOutput(mEventLogger);
 
         mTubiPlayerView.setPlayer(mTubiExoPlayer);
+        mTubiPlayerView.setMediaModel(mediaModel);
         mTubiPlayerView.setTrackSelectionHelper(mTrackSelectionHelper);
         mTubiPlayerView.setControllerVisibilityListener(this);
         mTubiExoPlayer.setPlayWhenReady(shouldAutoPlay);
@@ -155,7 +175,7 @@ public class TubiPlayerActivity extends Activity implements TubiPlayerControlVie
         //fake media
         Uri[] uris = new Uri[1];
         String[] extensions = new String[1];
-        uris[0] = Uri.parse("http://c13.adrise.tv/v2/sources/content-owners/paramount/312926/v201604161517-1024x436-,434,981,1533,2097,k.mp4.m3u8?Ku-zvPPeC4amIvKktZuE4IU69WFe1z2sTp84yvomcFQOsMka6d0EyZy1tHl3VT6-");
+        uris[0] = mediaModel.getVideoUrl();
         extensions[0] = "m3u8";
         MediaSource[] mediaSources = new MediaSource[uris.length];
         mediaSources[0] = buildMediaSource(uris[0], extensions[0]);
@@ -164,7 +184,7 @@ public class TubiPlayerActivity extends Activity implements TubiPlayerControlVie
 
 
         MediaSource subtitleSource = new SingleSampleMediaSource(
-                Uri.parse("http://s.adrise.tv/94335ae6-c5d3-414d-8ff2-177c955441c6.srt"),
+                mediaModel.getSubtitlesUrl(),
                 buildDataSourceFactory(false),
                 Format.createTextSampleFormat(null, MimeTypes.APPLICATION_SUBRIP, null, Format.NO_VALUE, C.SELECTION_FLAG_DEFAULT, "en", null, 0),
                 0);

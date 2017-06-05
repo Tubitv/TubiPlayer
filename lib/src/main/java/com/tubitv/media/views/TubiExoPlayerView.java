@@ -38,9 +38,11 @@ import com.google.android.exoplayer2.ui.AspectRatioFrameLayout;
 import com.google.android.exoplayer2.ui.PlaybackControlView;
 import com.google.android.exoplayer2.ui.SubtitleView;
 import com.google.android.exoplayer2.util.Assertions;
+import com.squareup.picasso.Picasso;
 import com.tubitv.media.R;
 import com.tubitv.media.helpers.TrackSelectionHelper;
 import com.tubitv.media.interfaces.TubiPlaybackControlInterface;
+import com.tubitv.media.models.MediaModel;
 import com.tubitv.ui.VaudTextView;
 import com.tubitv.ui.VaudType;
 
@@ -71,6 +73,9 @@ public class TubiExoPlayerView extends FrameLayout implements TubiPlaybackContro
     private int controllerShowTimeoutMs;
     private TrackSelectionHelper mTrackSelectionHelper;
     private Activity mActivity;
+
+    @NonNull
+    private MediaModel mediaModel;
 
     public TubiExoPlayerView(Context context) {
         this(context, null);
@@ -552,6 +557,12 @@ public class TubiExoPlayerView extends FrameLayout implements TubiPlaybackContro
     @Override
     public void hideAfterTimeout() {
 
+    }
+
+    public void setMediaModel(@NonNull MediaModel mediaModel) {
+        this.mediaModel = mediaModel;
+        artworkView.setVisibility(View.VISIBLE);
+        Picasso.with(getContext()).load(mediaModel.getArtworkUrl()).into(artworkView);
     }
 
     private final class ComponentListener implements SimpleExoPlayer.VideoListener,
