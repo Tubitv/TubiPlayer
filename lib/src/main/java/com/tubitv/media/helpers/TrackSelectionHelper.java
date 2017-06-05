@@ -15,7 +15,7 @@ import com.tubitv.media.views.TubiQualityDialogView;
 /**
  * Created by stoyan on 5/12/17.
  */
-public class TrackSelectionHelper implements MaterialDialog.SingleButtonCallback, DialogInterface.OnDismissListener {
+public class TrackSelectionHelper implements DialogInterface.OnDismissListener {
 
     /**
      *
