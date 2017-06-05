@@ -563,6 +563,7 @@ public class TubiExoPlayerView extends FrameLayout implements TubiPlaybackContro
         this.mediaModel = mediaModel;
         artworkView.setVisibility(View.VISIBLE);
         Picasso.with(getContext()).load(mediaModel.getArtworkUrl()).into(artworkView);
+        controller.setMediaModel(mediaModel.getMediaName());
     }
 
     private final class ComponentListener implements SimpleExoPlayer.VideoListener,

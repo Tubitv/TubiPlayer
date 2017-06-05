@@ -265,4 +265,8 @@ public class TubiPlayerControlView extends ConstraintLayout implements TrackSele
             media.setPlaybackInterface(playbackInterface);
         }
     }
+
+    public void setMediaModel(@NonNull String title) {
+        this.media.setTitle(title);
+    }
 }
