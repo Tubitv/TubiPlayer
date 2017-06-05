@@ -1,6 +1,7 @@
 package com.tubitv.media.helpers;
 
 import android.app.Activity;
+import android.content.DialogInterface;
 import android.support.annotation.NonNull;
 
 import com.afollestad.materialdialogs.DialogAction;
@@ -14,8 +15,11 @@ import com.tubitv.media.views.TubiQualityDialogView;
 /**
  * Created by stoyan on 5/12/17.
  */
-public class TrackSelectionHelper implements MaterialDialog.SingleButtonCallback {
+public class TrackSelectionHelper implements MaterialDialog.SingleButtonCallback, DialogInterface.OnDismissListener {
 
+    /**
+     *
+     */
     private final MappingTrackSelector selector;
 
     /**
@@ -40,8 +44,8 @@ public class TrackSelectionHelper implements MaterialDialog.SingleButtonCallback
     /**
      * Constructor for the helper
      *
-     * @param activity                      The parent activity.
-     * @param selector                      The track selector.
+     * @param activity The parent activity.
+     * @param selector The track selector.
      */
     public TrackSelectionHelper(@NonNull Activity activity, @NonNull MappingTrackSelector selector) {
         this.mActivity = activity;
@@ -65,13 +69,13 @@ public class TrackSelectionHelper implements MaterialDialog.SingleButtonCallback
                 .backgroundColor(mActivity.getResources().getColor(R.color.tubi_tv_steel_grey))
                 .positiveText(android.R.string.ok)
                 .positiveColor(mActivity.getResources().getColor(R.color.tubi_tv_golden_gate))
-                .onPositive(this)
+                .dismissListener(this)
                 .show();
     }
 
-    // DialogInterface.OnClickListener
+    //Perform changes on the dismiss, no need for just ok click
     @Override
-    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+    public void onDismiss(DialogInterface dialog) {
         mCallbackInterface.onTrackSelected(qualityDialogView.onSelection());
         Utils.hideSystemUI(mActivity, false);
     }
