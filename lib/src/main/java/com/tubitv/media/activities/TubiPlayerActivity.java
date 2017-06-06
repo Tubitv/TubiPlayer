@@ -57,6 +57,10 @@ public class TubiPlayerActivity extends Activity implements TubiPlayerControlVie
     private EventLogger mEventLogger;
     private TrackSelectionHelper mTrackSelectionHelper;
 
+    private int resumeWindow;
+
+    private long resumePosition;
+
     @NonNull
     private MediaModel mediaModel;
 
@@ -73,6 +77,7 @@ public class TubiPlayerActivity extends Activity implements TubiPlayerControlVie
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        clearResumePosition();
         parseIntent();
         Utils.hideSystemUI(this, true);
         shouldAutoPlay = true;
@@ -83,8 +88,8 @@ public class TubiPlayerActivity extends Activity implements TubiPlayerControlVie
     @Override
     public void onNewIntent(Intent intent) {
         releasePlayer();
+        clearResumePosition();
         shouldAutoPlay = true;
-//        clearResumePosition();
         setIntent(intent);
     }
 
@@ -192,8 +197,12 @@ public class TubiPlayerActivity extends Activity implements TubiPlayerControlVie
         MergingMediaSource mergedSource =
                 new MergingMediaSource(mediaSource, subtitleSource);
 
-
-        mTubiExoPlayer.prepare(mergedSource, true, false);
+//        mTubiExoPlayer.getCurrentPosition()
+        boolean haveResumePosition = resumeWindow != C.INDEX_UNSET;
+        if (haveResumePosition) {
+            mTubiExoPlayer.seekTo(resumeWindow, resumePosition);
+        }
+        mTubiExoPlayer.prepare(mergedSource, !haveResumePosition, false);
 //        mTubiExoPlayer.prepare(new ConcatenatingMediaSource(mediaSource, subtitleSource), true, false);
         Utils.hideSystemUI(this, true);
 
@@ -208,6 +217,7 @@ public class TubiPlayerActivity extends Activity implements TubiPlayerControlVie
     private void releasePlayer() {
         if (mTubiExoPlayer != null) {
             shouldAutoPlay = mTubiExoPlayer.getPlayWhenReady();
+            updateResumePosition();
             mTubiExoPlayer.release();
             mTubiExoPlayer = null;
             mTrackSelector = null;
@@ -244,6 +254,19 @@ public class TubiPlayerActivity extends Activity implements TubiPlayerControlVie
      */
     private DataSource.Factory buildDataSourceFactory(boolean useBandwidthMeter) {
         return MediaHelper.buildDataSourceFactory(this, useBandwidthMeter ? BANDWIDTH_METER : null);
+    }
+
+    private void updateResumePosition() {
+        if (mTubiExoPlayer != null) {
+            resumeWindow = mTubiExoPlayer.getCurrentWindowIndex();
+            resumePosition = mTubiExoPlayer.isCurrentWindowSeekable() ? Math.max(0, mTubiExoPlayer.getCurrentPosition())
+                    : C.TIME_UNSET;
+        }
+    }
+
+    private void clearResumePosition() {
+        resumeWindow = C.INDEX_UNSET;
+        resumePosition = C.TIME_UNSET;
     }
 
     @Override

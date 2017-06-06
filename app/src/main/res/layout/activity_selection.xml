@@ -3,8 +3,12 @@
               android:orientation="vertical"
               android:layout_width="match_parent"
               android:layout_height="match_parent">
-    <Button android:id="@+id/activity_selection_play_hls"
+    <Button android:id="@+id/activity_selection_play_hls_1"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Play HLS"/>
+        android:text="Play HLS 1"/>
+    <Button android:id="@+id/activity_selection_play_hls_2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Play HLS 2"/>
 </LinearLayout>
