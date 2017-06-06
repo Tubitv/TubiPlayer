@@ -38,10 +38,11 @@ import com.google.android.exoplayer2.ui.AspectRatioFrameLayout;
 import com.google.android.exoplayer2.ui.PlaybackControlView;
 import com.google.android.exoplayer2.ui.SubtitleView;
 import com.google.android.exoplayer2.util.Assertions;
+import com.squareup.picasso.Picasso;
 import com.tubitv.media.R;
 import com.tubitv.media.helpers.TrackSelectionHelper;
-import com.tubitv.media.interfaces.TrackSelectionHelperInterface;
 import com.tubitv.media.interfaces.TubiPlaybackControlInterface;
+import com.tubitv.media.models.MediaModel;
 import com.tubitv.ui.VaudTextView;
 import com.tubitv.ui.VaudType;
 
@@ -72,6 +73,9 @@ public class TubiExoPlayerView extends FrameLayout implements TubiPlaybackContro
     private int controllerShowTimeoutMs;
     private TrackSelectionHelper mTrackSelectionHelper;
     private Activity mActivity;
+
+    @NonNull
+    private MediaModel mediaModel;
 
     public TubiExoPlayerView(Context context) {
         this(context, null);
@@ -369,17 +373,6 @@ public class TubiExoPlayerView extends FrameLayout implements TubiPlaybackContro
         controller.setVisibilityListener(listener);
     }
 
-//    /**
-//     * Sets the {@link com.google.android.exoplayer2.ui.PlaybackControlView.SeekDispatcher}.
-//     *
-//     * @param seekDispatcher The {@link com.google.android.exoplayer2.ui.PlaybackControlView.SeekDispatcher}, or null to use
-//     *     {@link PlaybackControlView#DEFAULT_SEEK_DISPATCHER}.
-//     */
-//    public void setSeekDispatcher(TubiPlayerControlViewOld.SeekDispatcher seekDispatcher) {
-//        Assertions.checkState(controller != null);
-////        controller.setSeekDispatcher(seekDispatcher);
-//    }
-
     /**
      * Gets the view onto which video is rendered. This is either a {@link SurfaceView} (default)
      * or a {@link TextureView} if the {@code use_texture_view} view attribute has been set to true.
@@ -564,6 +557,13 @@ public class TubiExoPlayerView extends FrameLayout implements TubiPlaybackContro
     @Override
     public void hideAfterTimeout() {
 
+    }
+
+    public void setMediaModel(@NonNull MediaModel mediaModel) {
+        this.mediaModel = mediaModel;
+        artworkView.setVisibility(View.VISIBLE);
+        Picasso.with(getContext()).load(mediaModel.getArtworkUrl()).into(artworkView);
+        controller.setMediaModel(mediaModel.getMediaName());
     }
 
     private final class ComponentListener implements SimpleExoPlayer.VideoListener,

@@ -12,8 +12,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity
-            android:name="com.tubitv.media.demo.DemoActivity"
-            android:configChanges="keyboard|keyboardHidden|orientation|screenSize|screenLayout|smallestScreenSize|uiMode"
+            android:name="com.tubitv.media.demo.SelectionActivity"
             android:launchMode="singleTop"
             android:theme="@style/TubiPlayerTheme">
             <intent-filter>
@@ -22,6 +21,10 @@
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
+        <activity android:name="com.tubitv.media.demo.DemoActivity"
+                  android:configChanges="keyboard|keyboardHidden|orientation|screenSize|screenLayout|smallestScreenSize|uiMode"
+                  android:launchMode="singleTop"
+                  android:theme="@style/TubiPlayerTheme"/>
     </application>
 
 </manifest>

@@ -27,6 +27,6 @@ public class MediaHelper {
     public static
     @NonNull
     HttpDataSource.Factory buildHttpDataSourceFactory(@NonNull Context context, @NonNull DefaultBandwidthMeter bandwidthMeter) {
-        return new DefaultHttpDataSourceFactory(Util.getUserAgent(context, "TubiPlayer"), bandwidthMeter);
+        return new DefaultHttpDataSourceFactory(Util.getUserAgent(context, "TubiExoPlayer"), bandwidthMeter);
     }
 }

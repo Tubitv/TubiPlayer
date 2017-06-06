@@ -69,7 +69,7 @@ public class TubiObservable extends BaseObservable implements ExoPlayer.EventLis
      * The title of the movie being played
      */
     @NonNull
-    public String title = "Stoyan the Great";
+    public String title;
 
     /**
      * The remaining time of the movie in hh:mm:ss
