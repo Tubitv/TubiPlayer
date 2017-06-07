@@ -1,8 +1,16 @@
 apply plugin: 'com.android.library'
+apply plugin: 'com.novoda.bintray-release' // must be applied after your artifact generating plugin (eg. java / com.android.library)
 
-//repositories {
-//    maven { url 'https://maven.fabric.io/public' }
-//}
+buildscript {
+    repositories {
+        jcenter()
+    }
+    dependencies {
+        classpath 'com.novoda:bintray-release:0.4.0'
+    }
+}
+
+def libVersion = "0.0.2-alpha"
 
 android {
     compileSdkVersion 25
@@ -16,7 +24,7 @@ android {
         minSdkVersion 16
         targetSdkVersion 25
         versionCode 1
-        versionName "1.0"
+        versionName libVersion
 
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
 
@@ -50,3 +58,47 @@ dependencies {
 //    }
     testCompile 'junit:junit:4.12'
 }
+
+Properties properties = new Properties()
+File propFile = "${System.properties['user.home']}${File.separator}.gradle${File.separator}bintray.properties" as File
+properties.load(propFile.newDataInputStream())
+publish {
+    userOrg = 'tubitv'
+    groupId = 'com.tubitv.media'
+    artifactId = 'tubi-player'
+    repoName = 'Media'
+    publishVersion = libVersion
+    desc = 'A media streaming video player based on ExoPlayer from google, with convenience methods for ad supported content'
+    website = 'https://github.com/Tubitv/TubiPlayer'
+
+//    dryRun = true
+    bintrayUser = properties.getProperty("bintray.user")
+    bintrayKey = properties.getProperty("bintray.apikey")
+}
+//ext {
+//    bintrayUser = properties.getProperty("bintray.user")
+//    bintrayKey = properties.getProperty("bintray.apikey")
+//
+//    bintrayRepo = 'Media'
+//    bintrayName = 'TubiPlayer'
+//    bintrayOrg = 'tubitv'
+//
+//    publishedGroupId = 'com.tubitv.media'
+//    libraryName = 'TubiPlayer'
+//    artifact = 'lib'
+//
+//    libraryDescription = 'A media streaming video player based on ExoPlayer from google, with convenience methods for ad supported content'
+//
+//    siteUrl = 'https://github.com/Tubitv/TubiPlayer'
+//    gitUrl = 'https://github.com/Tubitv/TubiPlayer.git'
+//
+//    libraryVersion = libVersion
+//
+//    developerId = 'StoyanD'
+//    developerName = 'Stoyan Dimitrov'
+//    developerEmail = 'support@tubitv.com'
+//
+//    licenseName = 'MIT'
+//    licenseUrl = 'https://github.com/Tubitv/TubiPlayer/blob/master/LICENSE'
+//    allLicenses = ["MIT"]
+//}
