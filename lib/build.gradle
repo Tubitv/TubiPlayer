@@ -10,7 +10,7 @@ buildscript {
     }
 }
 
-def libVersion = "0.0.2-alpha"
+def libVersion = "0.0.3-alpha"
 
 android {
     compileSdkVersion 25
@@ -64,10 +64,11 @@ File propFile = "${System.properties['user.home']}${File.separator}.gradle${File
 properties.load(propFile.newDataInputStream())
 publish {
     userOrg = 'tubitv'
+    repoName = 'Media'
     groupId = 'com.tubitv.media'
     artifactId = 'tubi-player'
-    repoName = 'Media'
     publishVersion = libVersion
+    licences = ['MIT']
     desc = 'A media streaming video player based on ExoPlayer from google, with convenience methods for ad supported content'
     website = 'https://github.com/Tubitv/TubiPlayer'
 

@@ -94,6 +94,11 @@ public class TubiObservable extends BaseObservable implements ExoPlayer.EventLis
     private boolean subtitlesEnabled;
 
     /**
+     * The state of the media source tracks, if there are no subtitle tracks, hide the view
+     */
+    private boolean subtitlesExist;
+
+    /**
      * The state of the quality settings, true if user has defined a quality;
      * false if the quality is on auto
      */
@@ -464,7 +469,13 @@ public class TubiObservable extends BaseObservable implements ExoPlayer.EventLis
         notifyPropertyChanged(BR.secondaryProgressBarValue);
     }
 
-    public void setPlaybackInterface(TubiPlaybackControlInterface playbackInterface) {
+    @Bindable
+    public boolean isSubtitlesExist() {
+        return subtitlesExist;
+    }
 
+    public void setSubtitlesExist(boolean subtitlesExist) {
+        this.subtitlesExist = subtitlesExist;
+        notifyPropertyChanged(BR.subtitlesExist);
     }
 }
