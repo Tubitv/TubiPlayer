@@ -186,14 +186,14 @@ public class TubiObservable extends BaseObservable implements ExoPlayer.EventLis
 
     @Override
     public void onStartTrackingTouch(SeekBar seekBar) {
-        Log.d(TAG, "onStartTrackingTouch");
+//        Log.d(TAG, "onStartTrackingTouch");
 //        removeCallbacks(hideAction);
         setDraggingSeekBar(true);
     }
 
     @Override
     public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-        Log.d(TAG, "onProgressChanged");
+//        Log.d(TAG, "onProgressChanged");
         if (fromUser) {
             long position = Utils.progressToMilli(player.getDuration(), seekBar);
             long duration = player == null ? 0 : player.getDuration();
@@ -203,7 +203,7 @@ public class TubiObservable extends BaseObservable implements ExoPlayer.EventLis
 
     @Override
     public void onStopTrackingTouch(SeekBar seekBar) {
-        Log.d(TAG, "onStopTrackingTouch");
+//        Log.d(TAG, "onStopTrackingTouch");
         if (player != null) {
             seekTo(Utils.progressToMilli(player.getDuration(), seekBar));
         }

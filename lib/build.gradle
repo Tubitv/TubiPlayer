@@ -75,31 +75,5 @@ publish {
 //    dryRun = true
     bintrayUser = properties.getProperty("bintray.user")
     bintrayKey = properties.getProperty("bintray.apikey")
+//  ./gradlew clean build bintrayUpload -PbintrayUser=user -PbintrayKey=key -PdryRun=false
 }
-//ext {
-//    bintrayUser = properties.getProperty("bintray.user")
-//    bintrayKey = properties.getProperty("bintray.apikey")
-//
-//    bintrayRepo = 'Media'
-//    bintrayName = 'TubiPlayer'
-//    bintrayOrg = 'tubitv'
-//
-//    publishedGroupId = 'com.tubitv.media'
-//    libraryName = 'TubiPlayer'
-//    artifact = 'lib'
-//
-//    libraryDescription = 'A media streaming video player based on ExoPlayer from google, with convenience methods for ad supported content'
-//
-//    siteUrl = 'https://github.com/Tubitv/TubiPlayer'
-//    gitUrl = 'https://github.com/Tubitv/TubiPlayer.git'
-//
-//    libraryVersion = libVersion
-//
-//    developerId = 'StoyanD'
-//    developerName = 'Stoyan Dimitrov'
-//    developerEmail = 'support@tubitv.com'
-//
-//    licenseName = 'MIT'
-//    licenseUrl = 'https://github.com/Tubitv/TubiPlayer/blob/master/LICENSE'
-//    allLicenses = ["MIT"]
-//}

@@ -451,7 +451,6 @@ public class TubiExoPlayerView extends FrameLayout implements TubiPlaybackContro
                 // onRenderedFirstFrame().
                 hideArtwork();
             }
-
         }
         // Video disabled so the shutter must be closed.
         if (shutterView != null) {
