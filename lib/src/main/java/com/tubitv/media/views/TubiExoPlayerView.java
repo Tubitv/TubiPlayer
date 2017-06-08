@@ -450,7 +450,6 @@ public class TubiExoPlayerView extends FrameLayout implements TubiPlaybackContro
                 // Video enabled so artwork must be hidden. If the shutter is closed, it will be opened in
                 // onRenderedFirstFrame().
                 hideArtwork();
-                return;
             }
         }
         // Video disabled so the shutter must be closed.
@@ -526,6 +525,13 @@ public class TubiExoPlayerView extends FrameLayout implements TubiPlaybackContro
         aspectRatioFrame.setResizeMode(resizeMode);
     }
 
+    public void setMediaModel(@NonNull MediaModel mediaModel) {
+        this.mediaModel = mediaModel;
+        artworkView.setVisibility(View.VISIBLE);
+        Picasso.with(getContext()).load(mediaModel.getArtworkUrl()).into(artworkView);
+        controller.setMediaModel(mediaModel);
+    }
+
     @Override
     public void onSubtitlesToggle(boolean enabled) {
         View subtitles = getSubtitleView();
@@ -557,13 +563,6 @@ public class TubiExoPlayerView extends FrameLayout implements TubiPlaybackContro
     @Override
     public void hideAfterTimeout() {
 
-    }
-
-    public void setMediaModel(@NonNull MediaModel mediaModel) {
-        this.mediaModel = mediaModel;
-        artworkView.setVisibility(View.VISIBLE);
-        Picasso.with(getContext()).load(mediaModel.getArtworkUrl()).into(artworkView);
-        controller.setMediaModel(mediaModel.getMediaName());
     }
 
     private final class ComponentListener implements SimpleExoPlayer.VideoListener,

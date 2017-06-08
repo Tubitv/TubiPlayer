@@ -42,13 +42,6 @@ public class MediaModel implements Serializable{
         this.subtitlesUrl = subtitlesUrl;
     }
 
-//    public MediaModel(@NonNull String mediaName, @NonNull Uri videoUrl, @NonNull Uri artworkUrl, @Nullable Uri subtitlesUrl) {
-//        this.mediaName = mediaName;
-//        this.videoUrl = videoUrl;
-//        this.artworkUrl = artworkUrl;
-//        this.subtitlesUrl = subtitlesUrl;
-//    }
-
     @NonNull
     public String getMediaName() {
         return mediaName;
@@ -66,6 +59,6 @@ public class MediaModel implements Serializable{
 
     @Nullable
     public Uri getSubtitlesUrl() {
-        return Uri.parse(subtitlesUrl);
+        return subtitlesUrl != null ? Uri.parse(subtitlesUrl) : null;
     }
 }

@@ -19,6 +19,7 @@ import com.tubitv.media.bindings.TubiObservable;
 import com.tubitv.media.databinding.ViewTubiPlayerControlBinding;
 import com.tubitv.media.interfaces.TrackSelectionHelperInterface;
 import com.tubitv.media.interfaces.TubiPlaybackControlInterface;
+import com.tubitv.media.models.MediaModel;
 
 /**
  * Created by stoyan on 5/15/17.
@@ -49,14 +50,20 @@ public class TubiPlayerControlView extends ConstraintLayout implements TrackSele
     private long hideAtMs;
 
     /**
-     * The interface for playback control of the media
+     * The interface for playback control of the tubiObservable
      */
     private TubiPlaybackControlInterface playbackInterface;
 
     /**
      * The binding observable for the control views
      */
-    private TubiObservable media;
+    private TubiObservable tubiObservable;
+
+    /**
+     * The media model the player is initialized with
+     */
+    @NonNull
+    private MediaModel mediaModel;
 
     /**
      * The exo player instance for this view
@@ -123,7 +130,7 @@ public class TubiPlayerControlView extends ConstraintLayout implements TrackSele
 
     @Override
     public void onTrackSelected(boolean trackSelected) {
-        media.setQualityEnabled(trackSelected);
+        tubiObservable.setQualityEnabled(trackSelected);
     }
 
     private void initLayout() {
@@ -145,14 +152,14 @@ public class TubiPlayerControlView extends ConstraintLayout implements TrackSele
 
     public void setPlayer(@NonNull SimpleExoPlayer player, @NonNull final TubiPlaybackControlInterface playbackControlInterface) {
         if (this.mPlayer == null || this.mPlayer != player) {
-            media = new TubiObservable(player, playbackControlInterface);
+            tubiObservable = new TubiObservable(player, playbackControlInterface);
             setPlaybackInterface(playbackControlInterface);
             //Controller doesn't get re-initialized TODO fix instance call
             mBinding.viewTubiControllerSubtitlesIb.clearClickListeners();
             mBinding.viewTubiControllerQualityIb.clearClickListeners();
             mBinding.viewTubiControllerChromecastIb.clearClickListeners();
             mBinding.viewTubiControllerPlayToggleIb.clearClickListeners();
-            mBinding.setPlayMedia(media);
+            mBinding.setPlayMedia(tubiObservable);
         }
     }
 
@@ -175,7 +182,7 @@ public class TubiPlayerControlView extends ConstraintLayout implements TrackSele
 
     public void hide() {
         if (isVisible()) {
-            if (media == null || !media.userInteracting()) {
+            if (tubiObservable == null || !tubiObservable.userInteracting()) {
                 setVisibility(GONE);
                 if (visibilityListener != null) {
                     visibilityListener.onVisibilityChange(getVisibility());
@@ -261,12 +268,11 @@ public class TubiPlayerControlView extends ConstraintLayout implements TrackSele
 
     public void setPlaybackInterface(TubiPlaybackControlInterface playbackInterface) {
         this.playbackInterface = playbackInterface;
-        if (media != null) {
-            media.setPlaybackInterface(playbackInterface);
-        }
     }
 
-    public void setMediaModel(@NonNull String title) {
-        this.media.setTitle(title);
+    public void setMediaModel(@NonNull MediaModel mediaModel) {
+        this.mediaModel = mediaModel;
+        this.tubiObservable.setTitle(mediaModel.getMediaName());
+        this.tubiObservable.setSubtitlesExist(mediaModel.getSubtitlesUrl() != null);
     }
 }

@@ -188,21 +188,24 @@ public class TubiPlayerActivity extends Activity implements TubiPlayerControlVie
                 : new ConcatenatingMediaSource(mediaSources);
 
 
-        MediaSource subtitleSource = new SingleSampleMediaSource(
-                mediaModel.getSubtitlesUrl(),
-                buildDataSourceFactory(false),
-                Format.createTextSampleFormat(null, MimeTypes.APPLICATION_SUBRIP, null, Format.NO_VALUE, C.SELECTION_FLAG_DEFAULT, "en", null, 0),
-                0);
-        // Plays the video with the sideloaded subtitle.
-        MergingMediaSource mergedSource =
-                new MergingMediaSource(mediaSource, subtitleSource);
+        if (mediaModel.getSubtitlesUrl() != null) {
+            MediaSource subtitleSource = new SingleSampleMediaSource(
+                    mediaModel.getSubtitlesUrl(),
+                    buildDataSourceFactory(false),
+                    Format.createTextSampleFormat(null, MimeTypes.APPLICATION_SUBRIP, null, Format.NO_VALUE, C.SELECTION_FLAG_DEFAULT, "en", null, 0),
+                    0);
+            // Plays the video with the sideloaded subtitle.
+            mediaSource =
+                    new MergingMediaSource(mediaSource, subtitleSource);
+        }
+
 
 //        mTubiExoPlayer.getCurrentPosition()
         boolean haveResumePosition = resumeWindow != C.INDEX_UNSET;
         if (haveResumePosition) {
             mTubiExoPlayer.seekTo(resumeWindow, resumePosition);
         }
-        mTubiExoPlayer.prepare(mergedSource, !haveResumePosition, false);
+        mTubiExoPlayer.prepare(mediaSource, !haveResumePosition, false);
 //        mTubiExoPlayer.prepare(new ConcatenatingMediaSource(mediaSource, subtitleSource), true, false);
         Utils.hideSystemUI(this, true);
 
