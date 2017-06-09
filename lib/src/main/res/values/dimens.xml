@@ -24,5 +24,6 @@
     <dimen name="tubi_tv_scrubber_outside_diameter">28dp</dimen>
     <dimen name="tubi_tv_scrubber_inside_diameter">18dp</dimen>
     <dimen name="view_tubi_exo_player_subtitle_text_size">16sp</dimen>
+    <dimen name="view_tubi_ad_learn_more_text_size">16sp</dimen>
 
 </resources>
