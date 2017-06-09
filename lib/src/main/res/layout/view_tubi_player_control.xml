@@ -70,8 +70,7 @@
             app:onClickStateImage="@{playMedia}"
             app:state_checked="@drawable/tubi_tv_drawable_quality_on_selector"
             app:state_not_checked="@drawable/tubi_tv_drawable_quality_off_selector"
-            app:tubi_state_set_checked="@{playMedia.qualityEnabled}"
-            />
+            app:tubi_state_set_checked="@{playMedia.qualityEnabled}"/>
 
         <com.tubitv.media.views.StateImageButton
             android:id="@+id/view_tubi_controller_chromecast_ib"
@@ -84,15 +83,17 @@
             app:state_checked="@drawable/tubi_tv_drawable_chromecast_on_selector"
             app:state_not_checked="@drawable/tubi_tv_drawable_chromecast_off_selector"/>
 
-        <com.tubitv.media.views.AdLearnMoreView
+        <include
             android:id="@+id/view_tubi_controller_ad_description"
+            layout="@layout/view_tubi_ad_learn_more"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginLeft="0dp"
+            android:layout_marginTop="8dp"
             app:layout_constraintLeft_toRightOf="@+id/tubi_tv_controller_guideline_left"
             app:layout_constraintRight_toLeftOf="@+id/tubi_tv_controller_guideline_right"
-            android:layout_marginTop="8dp"
-            app:layout_constraintTop_toBottomOf="@+id/view_tubi_controller_title"/>
+            app:layout_constraintTop_toBottomOf="@+id/view_tubi_controller_title"
+            app:playMedia="@{playMedia}"/>
 
         <com.tubitv.ui.TubiLoadingView
             android:id="@+id/view_tubi_controller_loading"

@@ -3,10 +3,16 @@
         xmlns:app="http://schemas.android.com/apk/res-auto"
         xmlns:tools="http://schemas.android.com/tools">
 
+    <data>
+
+        <variable
+            name="playMedia"
+            type="com.tubitv.media.bindings.TubiObservable"/>
+    </data>
+
     <android.support.constraint.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        tools:background="@color/tubi_tv_steel_grey">
+        android:layout_height="wrap_content">
 
         <com.tubitv.ui.VaudTextView
             android:id="@+id/view_tubi_ad_learn_more_ads_remaining"
@@ -15,13 +21,13 @@
             android:layout_marginBottom="8dp"
             android:layout_marginTop="8dp"
             android:maxLines="1"
+            android:text="@string/view_tubi_ad_learn_more_ads_remaining_text"
             android:textColor="@color/tubi_tv_golden_gate"
             android:textSize="@dimen/view_tubi_ad_learn_more_text_size"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintVertical_bias="0.0"
-            android:text="@string/view_tubi_ad_learn_more_ads_remaining_text"
             tools:text="Ad 1/4"/>
 
         <com.tubitv.ui.VaudTextView
@@ -29,27 +35,27 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginLeft="8dp"
+            android:layout_marginStart="8dp"
             android:maxLines="1"
+            android:text="@string/view_tubi_ad_learn_more_ads_resume_shortly_text"
             android:textColor="@android:color/white"
             android:textSize="@dimen/view_tubi_ad_learn_more_text_size"
             app:layout_constraintBottom_toBottomOf="@+id/view_tubi_ad_learn_more_ads_remaining"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintLeft_toRightOf="@+id/view_tubi_ad_learn_more_ads_remaining"
-            app:layout_constraintTop_toTopOf="@+id/view_tubi_ad_learn_more_ads_remaining"
-            android:text="@string/view_tubi_ad_learn_more_ads_resume_shortly_text"
-            android:layout_marginStart="8dp"/>
+            app:layout_constraintTop_toTopOf="@+id/view_tubi_ad_learn_more_ads_remaining"/>
 
         <android.support.constraint.ConstraintLayout
             android:id="@+id/view_tubi_ad_learn_more_ads_learn_ll"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginEnd="1dp"
             android:layout_marginRight="1dp"
             android:background="@color/tubi_tv_player_ad_learn_more_background"
             android:orientation="horizontal"
             app:layout_constraintBottom_toBottomOf="@+id/view_tubi_ad_learn_more_ads_resume_shortly"
             app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/view_tubi_ad_learn_more_ads_resume_shortly"
-            android:layout_marginEnd="1dp">
+            app:layout_constraintTop_toTopOf="@+id/view_tubi_ad_learn_more_ads_resume_shortly">
 
             <com.tubitv.ui.VaudTextView
                 android:id="@+id/view_tubi_ad_learn_more_ads_learn_more_text"
@@ -57,32 +63,32 @@
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="12dp"
                 android:layout_marginLeft="16dp"
+                android:layout_marginStart="16dp"
                 android:layout_marginTop="12dp"
+                android:text="@string/view_tubi_ad_learn_more_ads_learn_more_text"
                 android:textColor="@android:color/white"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintVertical_bias="0.0"
                 app:vaud_typeface="vaud_bold"
-                android:text="@string/view_tubi_ad_learn_more_ads_learn_more_text"
-                tools:text="@string/view_tubi_ad_learn_more_ads_learn_more_text"
-                android:layout_marginStart="16dp"/>
+                tools:text="@string/view_tubi_ad_learn_more_ads_learn_more_text"/>
 
             <ImageView
                 android:id="@+id/view_tubi_ad_learn_more_ads_learn_more_icon"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
                 android:layout_marginLeft="8dp"
                 android:layout_marginRight="8dp"
+                android:layout_marginStart="8dp"
                 android:src="@drawable/view_tubi_ad_learn_more_ads_learn_icon"
                 app:layout_constraintBottom_toBottomOf="@+id/view_tubi_ad_learn_more_ads_learn_more_text"
                 app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintLeft_toRightOf="@+id/view_tubi_ad_learn_more_ads_learn_more_text"
                 app:layout_constraintRight_toRightOf="parent"
                 app:layout_constraintTop_toTopOf="@+id/view_tubi_ad_learn_more_ads_learn_more_text"
-                app:layout_constraintVertical_bias="0.49"
-                android:layout_marginStart="8dp"
-                android:layout_marginEnd="8dp"/>
+                app:layout_constraintVertical_bias="0.49"/>
         </android.support.constraint.ConstraintLayout>
 
     </android.support.constraint.ConstraintLayout>
