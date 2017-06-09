@@ -60,6 +60,11 @@ public class TubiObservable extends BaseObservable implements ExoPlayer.EventLis
     public static final String TUBI_QUALITY_TAG = "TUBI_QUALITY_TAG";
 
     /**
+     * Subtitle tag for {@link com.tubitv.media.databinding.ViewTubiPlayerControlBinding#viewTubiControllerAdDescription}
+     */
+    public static final String TUBI_AD_LEARN_MORE_TAG = "TUBI_AD_LEARN_MORE_TAG";
+
+    /**
      * The interface from {@link com.tubitv.media.views.TubiPlayerControlView}
      */
     @NonNull
@@ -229,6 +234,8 @@ public class TubiObservable extends BaseObservable implements ExoPlayer.EventLis
                 break;
             case TUBI_QUALITY_TAG:
                 playbackControlInterface.onQualityTrackToggle(((StateImageButton) view).isChecked());
+                break;
+            case TUBI_AD_LEARN_MORE_TAG:
                 break;
         }
 

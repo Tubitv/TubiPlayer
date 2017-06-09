@@ -5,6 +5,8 @@
 
     <data>
 
+        <import type="com.tubitv.media.bindings.TubiObservable"/>
+
         <variable
             name="playMedia"
             type="com.tubitv.media.bindings.TubiObservable"/>
@@ -49,13 +51,13 @@
             android:id="@+id/view_tubi_ad_learn_more_ads_learn_ll"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="1dp"
-            android:layout_marginRight="1dp"
-            android:background="@color/tubi_tv_player_ad_learn_more_background"
+            android:background="@drawable/tubi_tv_player_ad_learn_more_background"
             android:orientation="horizontal"
+            android:tag="@{TubiObservable.TUBI_AD_LEARN_MORE_TAG}"
             app:layout_constraintBottom_toBottomOf="@+id/view_tubi_ad_learn_more_ads_resume_shortly"
             app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/view_tubi_ad_learn_more_ads_resume_shortly">
+            app:layout_constraintTop_toTopOf="@+id/view_tubi_ad_learn_more_ads_resume_shortly"
+            app:onClickListener="@{playMedia}">
 
             <com.tubitv.ui.VaudTextView
                 android:id="@+id/view_tubi_ad_learn_more_ads_learn_more_text"

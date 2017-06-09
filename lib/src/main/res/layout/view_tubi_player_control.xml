@@ -5,6 +5,12 @@
 
     <data>
 
+        <import type="com.tubitv.media.bindings.TubiObservable"/>
+
+        <import type="com.google.android.exoplayer2.ExoPlayer"/>
+
+        <import type="android.view.View"/>
+
         <variable
             name="controller"
             type="com.tubitv.media.views.TubiPlayerControlView"/>
@@ -13,11 +19,6 @@
             name="playMedia"
             type="com.tubitv.media.bindings.TubiObservable"/>
 
-        <import type="com.tubitv.media.bindings.TubiObservable"/>
-
-        <import type="com.google.android.exoplayer2.ExoPlayer"/>
-
-        <import type="android.view.View"/>
     </data>
 
     <android.support.constraint.ConstraintLayout

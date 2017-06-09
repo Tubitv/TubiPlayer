@@ -6,4 +6,5 @@
     <color name="tubi_tv_player_controls_subtitles_background">#b2191919</color>
     <color name="tubi_tv_player_controls_progress_background">#33ffffff</color>
     <color name="tubi_tv_player_ad_learn_more_background">#4c000000</color>
+    <color name="tubi_tv_player_ad_learn_more_background_pressed">#98000000</color>
 </resources>
