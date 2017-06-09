@@ -8,11 +8,15 @@ import android.util.AttributeSet;
 import android.view.LayoutInflater;
 
 import com.tubitv.media.R;
+import com.tubitv.media.databinding.ViewTubiAdLearnMoreBinding;
 
 /**
  * Created by stoyan on 6/9/17.
  */
 public class AdLearnMoreView extends ConstraintLayout {
+
+    ViewTubiAdLearnMoreBinding mBinding;
+
     public AdLearnMoreView(Context context) {
         this(context, null);
     }
@@ -23,6 +27,11 @@ public class AdLearnMoreView extends ConstraintLayout {
 
     public AdLearnMoreView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
+        // Skipping...
+        if (isInEditMode()) {
+            return;
+        }
+
         init(attrs);
     }
 
@@ -34,7 +43,8 @@ public class AdLearnMoreView extends ConstraintLayout {
     private void init(@Nullable AttributeSet attrs) {
         LayoutInflater inflater = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         mBinding = DataBindingUtil.inflate(inflater, R.layout.view_tubi_ad_learn_more, this, true);
-        setDescendantFocusability(FOCUS_AFTER_DESCENDANTS);
-        mBinding.setController(this);
+        String text =
+                getResources().getString(R.string.view_tubi_ad_learn_more_ads_remaining_text, 1, 4);
+        mBinding.viewTubiAdLearnMoreAdsRemaining.setText(text);
     }
 }
