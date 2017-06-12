@@ -23,7 +23,7 @@
             android:layout_marginBottom="8dp"
             android:layout_marginTop="8dp"
             android:maxLines="1"
-            android:text="@string/view_tubi_ad_learn_more_ads_remaining_text"
+            android:text="@{String.format(@string/view_tubi_ad_learn_more_ads_remaining_text, playMedia.adIndex, playMedia.adTotal)}"
             android:textColor="@color/tubi_tv_golden_gate"
             android:textSize="@dimen/view_tubi_ad_learn_more_text_size"
             app:layout_constraintBottom_toBottomOf="parent"

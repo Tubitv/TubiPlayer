@@ -142,6 +142,16 @@ public class TubiObservable extends BaseObservable implements ExoPlayer.EventLis
     private int playbackState = ExoPlayer.STATE_IDLE;
 
     /**
+     * The current ad index
+     */
+    private int adIndex = 1;
+
+    /**
+     * The total number of ads for this break
+     */
+    private int adTotal = 4;
+
+    /**
      * The exo player that this controller is for
      */
     private SimpleExoPlayer player;
@@ -484,5 +494,25 @@ public class TubiObservable extends BaseObservable implements ExoPlayer.EventLis
     public void setSubtitlesExist(boolean subtitlesExist) {
         this.subtitlesExist = subtitlesExist;
         notifyPropertyChanged(BR.subtitlesExist);
+    }
+
+    @Bindable
+    public int getAdIndex() {
+        return adIndex;
+    }
+
+    public void setAdIndex(int adIndex) {
+        this.adIndex = adIndex;
+        notifyPropertyChanged(BR.adIndex);
+    }
+
+    @Bindable
+    public int getAdTotal() {
+        return adTotal;
+    }
+
+    public void setAdTotal(int adTotal) {
+        this.adTotal = adTotal;
+        notifyPropertyChanged(BR.adTotal);
     }
 }
