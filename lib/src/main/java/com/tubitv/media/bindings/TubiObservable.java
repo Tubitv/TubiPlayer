@@ -4,6 +4,7 @@ import android.databinding.BaseObservable;
 import android.databinding.Bindable;
 import android.support.annotation.NonNull;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.SeekBar;
 
@@ -27,7 +28,7 @@ import static com.google.android.exoplayer2.ExoPlayer.STATE_READY;
  * <p>
  * Created by stoyan on 5/12/17.
  */
-public class TubiObservable extends BaseObservable implements ExoPlayer.EventListener, SeekBar.OnSeekBarChangeListener, View.OnClickListener {
+public class TubiObservable extends BaseObservable implements ExoPlayer.EventListener, SeekBar.OnSeekBarChangeListener, View.OnTouchListener, View.OnClickListener {
     /**
      * Tag for logging
      */
@@ -152,6 +153,11 @@ public class TubiObservable extends BaseObservable implements ExoPlayer.EventLis
     private int adTotal = 4;
 
     /**
+     * Whether the player is currently playing an ad
+     */
+    private boolean adPlaying;
+
+    /**
      * The exo player that this controller is for
      */
     private SimpleExoPlayer player;
@@ -159,7 +165,7 @@ public class TubiObservable extends BaseObservable implements ExoPlayer.EventLis
     public TubiObservable(@NonNull SimpleExoPlayer player, @NonNull final TubiPlaybackControlInterface playbackControlInterface) {
         this.playbackControlInterface = playbackControlInterface;
         setPlayer(player);
-
+        setAdPlaying(true);
     }
 
     @Override
@@ -224,6 +230,13 @@ public class TubiObservable extends BaseObservable implements ExoPlayer.EventLis
         }
         setDraggingSeekBar(true);
         playbackControlInterface.hideAfterTimeout();
+    }
+
+
+    @Override
+    public boolean onTouch(View v, MotionEvent event) {
+        Log.d(TAG, "onTouch");
+        return true;
     }
 
     @Override
@@ -461,7 +474,6 @@ public class TubiObservable extends BaseObservable implements ExoPlayer.EventLis
     }
 
     public void setDraggingSeekBar(boolean draggingSeekBar) {
-        //(playMedia.playbackState == ExoPlayer.STATE_READY || (playMedia.playbackState == ExoPlayer.STATE_BUFFERING &amp;&amp; playMedia.draggingSeekBar)) ? View.VISIBLE : View.INVISIBLE
         this.draggingSeekBar = draggingSeekBar;
         notifyPropertyChanged(BR.draggingSeekBar);
     }
@@ -515,4 +527,15 @@ public class TubiObservable extends BaseObservable implements ExoPlayer.EventLis
         this.adTotal = adTotal;
         notifyPropertyChanged(BR.adTotal);
     }
+
+    @Bindable
+    public boolean isAdPlaying() {
+        return adPlaying;
+    }
+
+    public void setAdPlaying(boolean adPlaying) {
+        this.adPlaying = adPlaying;
+        notifyPropertyChanged(BR.adPlaying);
+    }
 }
+

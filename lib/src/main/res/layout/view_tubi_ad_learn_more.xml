@@ -5,6 +5,8 @@
 
     <data>
 
+        <import type="android.view.View"/>
+
         <import type="com.tubitv.media.bindings.TubiObservable"/>
 
         <variable
@@ -14,7 +16,8 @@
 
     <android.support.constraint.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:visibility="@{playMedia.adPlaying ? View.VISIBLE : View.GONE }">
 
         <com.tubitv.ui.VaudTextView
             android:id="@+id/view_tubi_ad_learn_more_ads_remaining"

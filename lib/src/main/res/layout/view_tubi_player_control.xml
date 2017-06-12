@@ -125,7 +125,7 @@
             android:onClick="@{() -> playMedia.seekBy(-1 * playMedia.skipBy)}"
             android:scaleType="fitCenter"
             android:tag="view_tubi_controller_rewind_ib"
-            android:visibility="@{(playMedia.playbackState == ExoPlayer.STATE_READY || playMedia.draggingSeekBar) ? View.VISIBLE : View.INVISIBLE}"
+            android:visibility="@{(!playMedia.adPlaying &amp;&amp; (playMedia.playbackState == ExoPlayer.STATE_READY || playMedia.draggingSeekBar)) ? View.VISIBLE : View.INVISIBLE}"
             app:layout_constraintBottom_toBottomOf="@+id/view_tubi_controller_play_toggle_ib"
             app:layout_constraintRight_toLeftOf="@+id/view_tubi_controller_play_toggle_ib"
             app:layout_constraintTop_toTopOf="@+id/view_tubi_controller_play_toggle_ib"/>
@@ -163,7 +163,7 @@
             android:onClick="@{() -> playMedia.seekBy(playMedia.skipBy)}"
             android:scaleType="fitCenter"
             android:tag="view_tubi_controller_forward_ib"
-            android:visibility="@{(playMedia.playbackState == ExoPlayer.STATE_READY || playMedia.draggingSeekBar) ? View.VISIBLE : View.INVISIBLE}"
+            android:visibility="@{!playMedia.adPlaying &amp;&amp; ((playMedia.playbackState == ExoPlayer.STATE_READY || playMedia.draggingSeekBar)) ? View.VISIBLE : View.INVISIBLE}"
             app:layout_constraintBottom_toBottomOf="@+id/view_tubi_controller_play_toggle_ib"
             app:layout_constraintLeft_toRightOf="@+id/view_tubi_controller_play_toggle_ib"
             app:layout_constraintTop_toTopOf="@+id/view_tubi_controller_play_toggle_ib"/>
@@ -203,6 +203,7 @@
             android:onProgressChanged="@{playMedia::onProgressChanged}"
             android:onStartTrackingTouch="@{playMedia::onStartTrackingTouch}"
             android:onStopTrackingTouch="@{playMedia::onStopTrackingTouch}"
+            android:onTouch="@{playMedia.adPlaying ? playMedia::onTouch : null}"
             android:paddingBottom="@dimen/view_tubi_controller_seek_bar_padding_vertical"
             android:paddingLeft="@dimen/view_tubi_controller_seek_bar_padding_horizontal"
             android:paddingRight="@dimen/view_tubi_controller_seek_bar_padding_horizontal"
