@@ -24,6 +24,7 @@ import android.widget.ImageView;
 import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.ExoPlaybackException;
 import com.google.android.exoplayer2.ExoPlayer;
+import com.google.android.exoplayer2.PlaybackParameters;
 import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.Timeline;
 import com.google.android.exoplayer2.metadata.Metadata;
@@ -370,7 +371,7 @@ public class TubiExoPlayerView extends FrameLayout implements TubiPlaybackContro
      *
      * @param listener The listener to be notified about visibility changes.
      */
-    public void setControllerVisibilityListener(TubiPlayerControlViewOld.VisibilityListener listener) {
+    public void setControllerVisibilityListener(TubiPlayerControlView.VisibilityListener listener) {
         Assertions.checkState(controller != null);
         controller.setVisibilityListener(listener);
     }
@@ -622,6 +623,11 @@ public class TubiExoPlayerView extends FrameLayout implements TubiPlaybackContro
         @Override
         public void onPositionDiscontinuity() {
             // Do nothing.
+        }
+
+        @Override
+        public void onPlaybackParametersChanged(PlaybackParameters playbackParameters) {
+
         }
 
         @Override

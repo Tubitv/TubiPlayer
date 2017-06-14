@@ -44,9 +44,9 @@ import com.tubitv.media.models.MediaModel;
 import com.tubitv.media.utilities.EventLogger;
 import com.tubitv.media.utilities.Utils;
 import com.tubitv.media.views.TubiExoPlayerView;
-import com.tubitv.media.views.TubiPlayerControlViewOld;
+import com.tubitv.media.views.TubiPlayerControlView;
 
-public class TubiPlayerActivity extends Activity implements TubiPlayerControlViewOld.VisibilityListener {
+public class TubiPlayerActivity extends Activity implements TubiPlayerControlView.VisibilityListener {
     public static String TUBI_MEDIA_KEY = "tubi_media_key";
 
     private TubiExoPlayer mTubiExoPlayer;

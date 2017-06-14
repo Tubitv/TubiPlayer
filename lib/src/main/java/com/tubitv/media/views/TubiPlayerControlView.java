@@ -32,7 +32,21 @@ public class TubiPlayerControlView extends ConstraintLayout implements TrackSele
 
 
     private ViewTubiPlayerControlBinding mBinding;
-    private TubiPlayerControlViewOld.VisibilityListener visibilityListener;
+    private TubiPlayerControlView.VisibilityListener visibilityListener;
+
+    /**
+     * Listener to be notified about changes of the visibility of the UI control.
+     */
+    public interface VisibilityListener {
+
+        /**
+         * Called when the visibility changes.
+         *
+         * @param visibility The new visibility. Either {@link View#VISIBLE} or {@link View#GONE}.
+         */
+        void onVisibilityChange(int visibility);
+
+    }
 
     /**
      * Attached state of this view
@@ -213,7 +227,7 @@ public class TubiPlayerControlView extends ConstraintLayout implements TrackSele
         return false;
     }
 
-    public void setVisibilityListener(TubiPlayerControlViewOld.VisibilityListener visibilityListener) {
+    public void setVisibilityListener(VisibilityListener visibilityListener) {
         this.visibilityListener = visibilityListener;
     }
 

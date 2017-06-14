@@ -10,6 +10,7 @@ import android.widget.SeekBar;
 
 import com.google.android.exoplayer2.ExoPlaybackException;
 import com.google.android.exoplayer2.ExoPlayer;
+import com.google.android.exoplayer2.PlaybackParameters;
 import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.Timeline;
 import com.google.android.exoplayer2.source.TrackGroupArray;
@@ -24,7 +25,7 @@ import static com.google.android.exoplayer2.ExoPlayer.STATE_READY;
 
 
 /**
- * The observable class for the {@link com.tubitv.media.views.TubiPlayerControlViewOld}
+ * The observable class for the {@link com.tubitv.media.views.TubiPlayerControlView}
  * <p>
  * Created by stoyan on 5/12/17.
  */
@@ -196,6 +197,11 @@ public class TubiObservable extends BaseObservable implements ExoPlayer.EventLis
 //        updateNavigation();
         setPlaybackState();
         updateProgress();
+    }
+
+    @Override
+    public void onPlaybackParametersChanged(PlaybackParameters playbackParameters) {
+
     }
 
     @Override

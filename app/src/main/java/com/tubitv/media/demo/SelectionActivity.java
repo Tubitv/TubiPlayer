@@ -23,7 +23,7 @@ public class SelectionActivity extends Activity{
         playHls1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String url = "http://c13.adrise.tv/v2/sources/content-owners/paramount/312926/v201604161517-1024x436-,434,981,1533,2097,k.mp4.m3u8?-lLxsz03Q3-AGXyxib5oYdBWGCuA-XDAerU9rCntATnUsgRfb89ZeQjA5X5-x_MO";
+                String url = "http://c13.adrise.tv/v2/sources/content-owners/paramount/312926/v201604161517-1024x436-,434,981,1533,2097,k.mp4.m3u8?ad_AWMSZRFltJ341OsTExHnYTJIUtco4UtXnjMdJWziU8dpDQ4MtFL0m0ZmeJ0ut";
                 String subs = "http://s.adrise.tv/94335ae6-c5d3-414d-8ff2-177c955441c6.srt";
                 String artwork = "http://images.adrise.tv/J3cemMAwJC8aX_Eb4MzIaAcNJvY=/768x362/smart/img.adrise.tv/0c690475-ea32-4b91-b704-7d3fab94a48f.jpg";
                 String name = "Gladiator";
