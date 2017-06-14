@@ -11,9 +11,9 @@ import android.text.TextUtils;
 import android.view.View;
 
 import com.google.android.exoplayer2.C;
-import com.google.android.exoplayer2.DefaultLoadControl;
+import com.google.android.exoplayer2.ExoPlayerFactory;
 import com.google.android.exoplayer2.Format;
-import com.google.android.exoplayer2.LoadControl;
+import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.extractor.DefaultExtractorsFactory;
 import com.google.android.exoplayer2.source.ConcatenatingMediaSource;
 import com.google.android.exoplayer2.source.ExtractorMediaSource;
@@ -38,7 +38,6 @@ import com.google.android.exoplayer2.util.MimeTypes;
 import com.google.android.exoplayer2.util.Util;
 import com.tubitv.media.MediaHelper;
 import com.tubitv.media.R;
-import com.tubitv.media.TubiExoPlayer;
 import com.tubitv.media.helpers.TrackSelectionHelper;
 import com.tubitv.media.models.MediaModel;
 import com.tubitv.media.utilities.EventLogger;
@@ -49,7 +48,7 @@ import com.tubitv.media.views.TubiPlayerControlView;
 public class TubiPlayerActivity extends Activity implements TubiPlayerControlView.VisibilityListener {
     public static String TUBI_MEDIA_KEY = "tubi_media_key";
 
-    private TubiExoPlayer mTubiExoPlayer;
+    private SimpleExoPlayer mTubiExoPlayer;
     private Handler mMainHandler;
     private TubiExoPlayerView mTubiPlayerView;
     private DataSource.Factory mMediaDataSourceFactory;
@@ -158,12 +157,9 @@ public class TubiPlayerActivity extends Activity implements TubiPlayerControlVie
                 new DefaultTrackSelector(videoTrackSelectionFactory);
         mTrackSelectionHelper = new TrackSelectionHelper(this, mTrackSelector);
 
-        // 2. Create a default LoadControl
-        LoadControl loadControl = new DefaultLoadControl();
 
         // 3. Create the mTubiExoPlayer
-        mTubiExoPlayer =
-                TubiExoPlayer.newInstance(this, mTrackSelector, loadControl);
+        mTubiExoPlayer = ExoPlayerFactory.newSimpleInstance(this, mTrackSelector);
 
         mEventLogger = new EventLogger(mTrackSelector);
         mTubiExoPlayer.addListener(mEventLogger);

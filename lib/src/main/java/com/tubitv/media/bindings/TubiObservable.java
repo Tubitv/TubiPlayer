@@ -166,7 +166,7 @@ public class TubiObservable extends BaseObservable implements ExoPlayer.EventLis
     public TubiObservable(@NonNull SimpleExoPlayer player, @NonNull final TubiPlaybackControlInterface playbackControlInterface) {
         this.playbackControlInterface = playbackControlInterface;
         setPlayer(player);
-        setAdPlaying(true);
+//        setAdPlaying(true);
     }
 
     @Override
