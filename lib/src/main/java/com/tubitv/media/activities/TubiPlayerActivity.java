@@ -136,7 +136,7 @@ public class TubiPlayerActivity extends Activity implements TubiPlayerControlVie
     private void initLayout() {
         setContentView(R.layout.activity_tubi_player);
 //        mTubiPlayerView = (TubiExoPlayerView) findViewById(R.id.tubitv_player);
-        mTubiPlayerView = (SimpleExoPlayerView) findViewById(R.id.player_view_default);
+        mTubiPlayerView = (SimpleExoPlayerView) findViewById(R.id.player_view_default); //support custom player view
 //        mTubiPlayerView.setControllerVisibilityListener(this);
         mTubiPlayerView.requestFocus();
 //        mTubiPlayerView.setActivity(this);
@@ -203,7 +203,7 @@ public class TubiPlayerActivity extends Activity implements TubiPlayerControlVie
         }
 
         //ad
-        Uri adUri = Uri.parse("http://c13.adrise.tv/ads/transcodes/003123/1045789/v0614192031-640x360-SD-,396,526,k.mp4.m3u8");
+        Uri adUri = Uri.parse("http://c11.adrise.tv/ads/transcodes/003572/940826/v0329081907-1280x720-HD-,740,1285,1622,2138,3632,k.mp4.m3u8");
         MediaSource secondSource = buildMediaSource(adUri, extension);
         ConcatenatingMediaSource concatenatedSource =
                 new ConcatenatingMediaSource(secondSource, mediaSource);
