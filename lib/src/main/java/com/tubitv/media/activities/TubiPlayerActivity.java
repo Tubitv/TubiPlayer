@@ -28,7 +28,6 @@ import com.google.android.exoplayer2.source.smoothstreaming.SsMediaSource;
 import com.google.android.exoplayer2.trackselection.AdaptiveTrackSelection;
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
 import com.google.android.exoplayer2.trackselection.TrackSelection;
-import com.google.android.exoplayer2.ui.SimpleExoPlayerView;
 import com.google.android.exoplayer2.upstream.DataSource;
 import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter;
 import com.google.android.exoplayer2.upstream.DefaultHttpDataSourceFactory;
@@ -42,6 +41,7 @@ import com.tubitv.media.helpers.TrackSelectionHelper;
 import com.tubitv.media.models.MediaModel;
 import com.tubitv.media.utilities.EventLogger;
 import com.tubitv.media.utilities.Utils;
+import com.tubitv.media.views.TubiExoPlayerView;
 import com.tubitv.media.views.TubiPlayerControlView;
 
 public class TubiPlayerActivity extends Activity implements TubiPlayerControlView.VisibilityListener {
@@ -49,7 +49,7 @@ public class TubiPlayerActivity extends Activity implements TubiPlayerControlVie
 
     private SimpleExoPlayer mTubiExoPlayer;
     private Handler mMainHandler;
-    private SimpleExoPlayerView mTubiPlayerView;
+    private TubiExoPlayerView mTubiPlayerView;
     private DataSource.Factory mMediaDataSourceFactory;
     private DefaultTrackSelector mTrackSelector;
     private EventLogger mEventLogger;
@@ -135,11 +135,11 @@ public class TubiPlayerActivity extends Activity implements TubiPlayerControlVie
 
     private void initLayout() {
         setContentView(R.layout.activity_tubi_player);
-//        mTubiPlayerView = (TubiExoPlayerView) findViewById(R.id.tubitv_player);
-        mTubiPlayerView = (SimpleExoPlayerView) findViewById(R.id.player_view_default); //support custom player view
+        mTubiPlayerView = (TubiExoPlayerView) findViewById(R.id.tubitv_player);
+//        mTubiPlayerView = (SimpleExoPlayerView) findViewById(R.id.player_view_default); //support custom player view
 //        mTubiPlayerView.setControllerVisibilityListener(this);
         mTubiPlayerView.requestFocus();
-//        mTubiPlayerView.setActivity(this);
+        mTubiPlayerView.setActivity(this);
         mTubiPlayerView.addOnLayoutChangeListener(new View.OnLayoutChangeListener() {
             @Override
             public void onLayoutChange(View v, int left, int top, int right, int bottom, int oldLeft, int oldTop, int oldRight, int oldBottom) {
@@ -176,8 +176,8 @@ public class TubiPlayerActivity extends Activity implements TubiPlayerControlVie
         mTubiExoPlayer.setMetadataOutput(mEventLogger);
 
         mTubiPlayerView.setPlayer(mTubiExoPlayer);
-//        mTubiPlayerView.setMediaModel(mediaModel);
-//        mTubiPlayerView.setTrackSelectionHelper(mTrackSelectionHelper);
+        mTubiPlayerView.setMediaModel(mediaModel);
+        mTubiPlayerView.setTrackSelectionHelper(mTrackSelectionHelper);
 //        mTubiPlayerView.setControllerVisibilityListener(this);
         mTubiExoPlayer.setPlayWhenReady(shouldAutoPlay);
     }
