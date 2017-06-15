@@ -27,8 +27,8 @@ import com.google.android.exoplayer2.source.smoothstreaming.DefaultSsChunkSource
 import com.google.android.exoplayer2.source.smoothstreaming.SsMediaSource;
 import com.google.android.exoplayer2.trackselection.AdaptiveTrackSelection;
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
-import com.google.android.exoplayer2.trackselection.MappingTrackSelector;
 import com.google.android.exoplayer2.trackselection.TrackSelection;
+import com.google.android.exoplayer2.ui.SimpleExoPlayerView;
 import com.google.android.exoplayer2.upstream.DataSource;
 import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter;
 import com.google.android.exoplayer2.upstream.DefaultHttpDataSourceFactory;
@@ -42,7 +42,6 @@ import com.tubitv.media.helpers.TrackSelectionHelper;
 import com.tubitv.media.models.MediaModel;
 import com.tubitv.media.utilities.EventLogger;
 import com.tubitv.media.utilities.Utils;
-import com.tubitv.media.views.TubiExoPlayerView;
 import com.tubitv.media.views.TubiPlayerControlView;
 
 public class TubiPlayerActivity extends Activity implements TubiPlayerControlView.VisibilityListener {
@@ -50,7 +49,7 @@ public class TubiPlayerActivity extends Activity implements TubiPlayerControlVie
 
     private SimpleExoPlayer mTubiExoPlayer;
     private Handler mMainHandler;
-    private TubiExoPlayerView mTubiPlayerView;
+    private SimpleExoPlayerView mTubiPlayerView;
     private DataSource.Factory mMediaDataSourceFactory;
     private DefaultTrackSelector mTrackSelector;
     private EventLogger mEventLogger;
@@ -136,10 +135,11 @@ public class TubiPlayerActivity extends Activity implements TubiPlayerControlVie
 
     private void initLayout() {
         setContentView(R.layout.activity_tubi_player);
-        mTubiPlayerView = (TubiExoPlayerView) findViewById(R.id.tubitv_player);
+//        mTubiPlayerView = (TubiExoPlayerView) findViewById(R.id.tubitv_player);
+        mTubiPlayerView = (SimpleExoPlayerView) findViewById(R.id.player_view_default);
 //        mTubiPlayerView.setControllerVisibilityListener(this);
         mTubiPlayerView.requestFocus();
-        mTubiPlayerView.setActivity(this);
+//        mTubiPlayerView.setActivity(this);
         mTubiPlayerView.addOnLayoutChangeListener(new View.OnLayoutChangeListener() {
             @Override
             public void onLayoutChange(View v, int left, int top, int right, int bottom, int oldLeft, int oldTop, int oldRight, int oldBottom) {
@@ -149,6 +149,14 @@ public class TubiPlayerActivity extends Activity implements TubiPlayerControlVie
     }
 
     private void setupExo() {
+        initPlayer();
+
+        MediaSource mediaSource = createMediaSource();
+
+        playMedia(mediaSource);
+    }
+
+    private void initPlayer() {
         // 1. Create a default TrackSelector
         mMainHandler = new Handler();
         TrackSelection.Factory videoTrackSelectionFactory =
@@ -168,20 +176,19 @@ public class TubiPlayerActivity extends Activity implements TubiPlayerControlVie
         mTubiExoPlayer.setMetadataOutput(mEventLogger);
 
         mTubiPlayerView.setPlayer(mTubiExoPlayer);
-        mTubiPlayerView.setMediaModel(mediaModel);
-        mTubiPlayerView.setTrackSelectionHelper(mTrackSelectionHelper);
-        mTubiPlayerView.setControllerVisibilityListener(this);
+//        mTubiPlayerView.setMediaModel(mediaModel);
+//        mTubiPlayerView.setTrackSelectionHelper(mTrackSelectionHelper);
+//        mTubiPlayerView.setControllerVisibilityListener(this);
         mTubiExoPlayer.setPlayWhenReady(shouldAutoPlay);
+    }
 
+    private MediaSource createMediaSource() {
         //fake media
-        Uri[] uris = new Uri[1];
-        String[] extensions = new String[1];
-        uris[0] = mediaModel.getVideoUrl();
-        extensions[0] = "m3u8";
-        MediaSource[] mediaSources = new MediaSource[uris.length];
-        mediaSources[0] = buildMediaSource(uris[0], extensions[0]);
-        MediaSource mediaSource = mediaSources.length == 1 ? mediaSources[0]
-                : new ConcatenatingMediaSource(mediaSources);
+        Uri uri;
+        uri = mediaModel.getVideoUrl();
+        String extension = "m3u8";
+        MediaSource mediaSource;
+        mediaSource = buildMediaSource(uri, extension);
 
 
         if (mediaModel.getSubtitlesUrl() != null) {
@@ -195,22 +202,21 @@ public class TubiPlayerActivity extends Activity implements TubiPlayerControlVie
                     new MergingMediaSource(mediaSource, subtitleSource);
         }
 
+        //ad
+        Uri adUri = Uri.parse("http://c13.adrise.tv/ads/transcodes/003123/1045789/v0614192031-640x360-SD-,396,526,k.mp4.m3u8");
+        MediaSource secondSource = buildMediaSource(adUri, extension);
+        ConcatenatingMediaSource concatenatedSource =
+                new ConcatenatingMediaSource(secondSource, mediaSource);
+        return concatenatedSource;
+    }
 
-//        mTubiExoPlayer.getCurrentPosition()
+    private void playMedia(MediaSource mediaSource) {
         boolean haveResumePosition = resumeWindow != C.INDEX_UNSET;
         if (haveResumePosition) {
             mTubiExoPlayer.seekTo(resumeWindow, resumePosition);
         }
         mTubiExoPlayer.prepare(mediaSource, !haveResumePosition, false);
-//        mTubiExoPlayer.prepare(new ConcatenatingMediaSource(mediaSource, subtitleSource), true, false);
         Utils.hideSystemUI(this, true);
-
-        MappingTrackSelector.MappedTrackInfo mappedTrackInfo = mTrackSelector.getCurrentMappedTrackInfo();
-        if (mappedTrackInfo == null) {
-            return;
-        }
-
-
     }
 
     private void releasePlayer() {
