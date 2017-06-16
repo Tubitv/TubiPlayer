@@ -12,14 +12,12 @@ import android.view.View;
 
 import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.ExoPlayerFactory;
-import com.google.android.exoplayer2.Format;
 import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.extractor.DefaultExtractorsFactory;
+import com.google.android.exoplayer2.source.ClippingMediaSource;
 import com.google.android.exoplayer2.source.ConcatenatingMediaSource;
 import com.google.android.exoplayer2.source.ExtractorMediaSource;
 import com.google.android.exoplayer2.source.MediaSource;
-import com.google.android.exoplayer2.source.MergingMediaSource;
-import com.google.android.exoplayer2.source.SingleSampleMediaSource;
 import com.google.android.exoplayer2.source.dash.DashMediaSource;
 import com.google.android.exoplayer2.source.dash.DefaultDashChunkSource;
 import com.google.android.exoplayer2.source.hls.HlsMediaSource;
@@ -33,7 +31,6 @@ import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter;
 import com.google.android.exoplayer2.upstream.DefaultHttpDataSourceFactory;
 import com.google.android.exoplayer2.upstream.HttpDataSource;
 import com.google.android.exoplayer2.util.Assertions;
-import com.google.android.exoplayer2.util.MimeTypes;
 import com.google.android.exoplayer2.util.Util;
 import com.tubitv.media.MediaHelper;
 import com.tubitv.media.R;
@@ -136,8 +133,6 @@ public class TubiPlayerActivity extends Activity implements TubiPlayerControlVie
     private void initLayout() {
         setContentView(R.layout.activity_tubi_player);
         mTubiPlayerView = (TubiExoPlayerView) findViewById(R.id.tubitv_player);
-//        mTubiPlayerView = (SimpleExoPlayerView) findViewById(R.id.player_view_default); //support custom player view
-//        mTubiPlayerView.setControllerVisibilityListener(this);
         mTubiPlayerView.requestFocus();
         mTubiPlayerView.setActivity(this);
         mTubiPlayerView.addOnLayoutChangeListener(new View.OnLayoutChangeListener() {
@@ -178,7 +173,6 @@ public class TubiPlayerActivity extends Activity implements TubiPlayerControlVie
         mTubiPlayerView.setPlayer(mTubiExoPlayer);
         mTubiPlayerView.setMediaModel(mediaModel);
         mTubiPlayerView.setTrackSelectionHelper(mTrackSelectionHelper);
-//        mTubiPlayerView.setControllerVisibilityListener(this);
         mTubiExoPlayer.setPlayWhenReady(shouldAutoPlay);
     }
 
@@ -190,23 +184,30 @@ public class TubiPlayerActivity extends Activity implements TubiPlayerControlVie
         MediaSource mediaSource;
         mediaSource = buildMediaSource(uri, extension);
 
-
-        if (mediaModel.getSubtitlesUrl() != null) {
-            MediaSource subtitleSource = new SingleSampleMediaSource(
-                    mediaModel.getSubtitlesUrl(),
-                    buildDataSourceFactory(false),
-                    Format.createTextSampleFormat(null, MimeTypes.APPLICATION_SUBRIP, null, Format.NO_VALUE, C.SELECTION_FLAG_DEFAULT, "en", null, 0),
-                    0);
-            // Plays the video with the sideloaded subtitle.
-            mediaSource =
-                    new MergingMediaSource(mediaSource, subtitleSource);
-        }
+//        if (mediaModel.getSubtitlesUrl() != null) {
+//            MediaSource subtitleSource = new SingleSampleMediaSource(
+//                    mediaModel.getSubtitlesUrl(),
+//                    buildDataSourceFactory(false),
+//                    Format.createTextSampleFormat(null, MimeTypes.APPLICATION_SUBRIP, null, Format.NO_VALUE, C.SELECTION_FLAG_DEFAULT, "en", null, 0),
+//                    0);
+//            // Plays the video with the sideloaded subtitle.
+//            mediaSource =
+//                    new MergingMediaSource(mediaSource, subtitleSource);
+//        }
 
         //ad
         Uri adUri = Uri.parse("http://c11.adrise.tv/ads/transcodes/003572/940826/v0329081907-1280x720-HD-,740,1285,1622,2138,3632,k.mp4.m3u8");
-        MediaSource secondSource = buildMediaSource(adUri, extension);
+        MediaSource adOne = buildMediaSource(adUri, extension);
+        MediaSource adTwo = buildMediaSource(adUri, extension);
         ConcatenatingMediaSource concatenatedSource =
-                new ConcatenatingMediaSource(secondSource, mediaSource);
+//                new ConcatenatingMediaSource(mediaSource);
+//                new ConcatenatingMediaSource(adOne, adTwo, mediaSource);
+                new ConcatenatingMediaSource(
+                        adOne,
+//                        new ClippingMediaSource(mediaSource, 0, 30 * 1000000),
+//                        adTwo
+                        new ClippingMediaSource(mediaSource, 800 * 1000000, C.TIME_END_OF_SOURCE)
+        );
         return concatenatedSource;
     }
 
