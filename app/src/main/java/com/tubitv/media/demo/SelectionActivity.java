@@ -14,7 +14,7 @@ import com.tubitv.media.models.MediaModel;
 /**
  * Created by stoyan on 6/5/17.
  */
-public class SelectionActivity extends Activity{
+public class SelectionActivity extends Activity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -28,7 +28,7 @@ public class SelectionActivity extends Activity{
                 String artwork = "http://images.adrise.tv/J3cemMAwJC8aX_Eb4MzIaAcNJvY=/768x362/smart/img.adrise.tv/0c690475-ea32-4b91-b704-7d3fab94a48f.jpg";
                 String name = "Gladiator";
                 Intent intent = new Intent(SelectionActivity.this, DemoActivity.class);
-                intent.putExtra(TubiPlayerActivity.TUBI_MEDIA_KEY, new MediaModel(name, url, artwork, subs));
+                intent.putExtra(TubiPlayerActivity.TUBI_MEDIA_KEY, new MediaModel(name, url, artwork, subs, false));
                 startActivity(intent);
             }
         });
@@ -43,7 +43,7 @@ public class SelectionActivity extends Activity{
                 String artwork = "http://images.adrise.tv/7V6_jCHzkl0lQARtDgWCnOKUozs=/492x118:1909x905/768x362/smart/img.adrise.tv/1541c7d3-9a50-4c5c-9bf7-ba63e4018f36.jpg";
                 String name = "Wild Bill";
                 Intent intent = new Intent(SelectionActivity.this, DemoActivity.class);
-                intent.putExtra(TubiPlayerActivity.TUBI_MEDIA_KEY, new MediaModel(name, url, artwork, subs));
+                intent.putExtra(TubiPlayerActivity.TUBI_MEDIA_KEY, new MediaModel(name, url, artwork, subs, false));
                 startActivity(intent);
             }
         });
