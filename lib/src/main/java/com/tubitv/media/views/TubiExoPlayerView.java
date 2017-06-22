@@ -11,6 +11,7 @@ import android.graphics.Color;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -52,6 +53,8 @@ import com.tubitv.ui.VaudTextView;
 import com.tubitv.ui.VaudType;
 
 import java.util.List;
+
+import static android.content.ContentValues.TAG;
 
 /**
  * Created by stoyan tubi_tv_quality_on 3/22/17.
@@ -756,6 +759,8 @@ public class TubiExoPlayerView extends FrameLayout implements TubiPlaybackContro
         @Override
         public void onPositionDiscontinuity() {
             // Do nothing.
+            Log.e("TubiExoPlayerView", "onPositionDiscontinuity window index : " + player.getCurrentWindowIndex());
+            Log.e("TubiExoPlayerView", "onPositionDiscontinuity period index : " + player.getCurrentPeriodIndex());
         }
 
         @Override

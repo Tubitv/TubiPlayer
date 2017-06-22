@@ -3,7 +3,6 @@ package com.tubitv.media.activities;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.res.Configuration;
-import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
@@ -182,30 +181,19 @@ public class TubiPlayerActivity extends Activity implements TubiPlayerControlVie
 
 //       MediaHelper.
         //fake media
-        Uri uri;
-        uri = mediaModel.getVideoUrl();
-        String extension = "m3u8";
-        MediaSource mediaSource;
+//        Uri uri;
+//        uri = mediaModel.getVideoUrl();
+//        String extension = "m3u8";
+//        MediaSource mediaSource;
         mediaModel.setMediaSource(buildMediaSource(mediaModel));
 
         MediaModel ad1 = new MediaModel(null, "http://c11.adrise.tv/ads/transcodes/003572/940826/v0329081907-1280x720-HD-,740,1285,1622,2138,3632,k.mp4.m3u8",
                 null, null, true);
         ad1.setMediaSource(buildMediaSource(ad1));
-
-//        //ad
-//        Uri adUri = Uri.parse("http://c11.adrise.tv/ads/transcodes/003572/940826/v0329081907-1280x720-HD-,740,1285,1622,2138,3632,k.mp4.m3u8");
-//        MediaSource adOne = buildMediaSource(adUri, extension);
-//        MediaSource adTwo = buildMediaSource(adUri, extension);
-//        ConcatenatingMediaSource concatenatedSource =
-////                new ConcatenatingMediaSource(mediaSource);
-////                new ConcatenatingMediaSource(adOne, adTwo, mediaSource);
-//                new ConcatenatingMediaSource(
-//                        adOne,
-////                        new ClippingMediaSource(mediaSource, 0, 30 * 1000000),
-////                        adTwo
-//                        mediaSource
-//                );
-        return MediaHelper.create(ad1, mediaModel).getConcatenatedMedia();
+        MediaModel ad2 = new MediaModel(null, "http://c13.adrise.tv/ads/transcodes/004130/1050072/v0617070213-640x360-SD-,764,1057,k.mp4.m3u8",
+                null, null, true);
+        ad2.setMediaSource(buildMediaSource(ad2));
+        return MediaHelper.create(ad1, ad2, mediaModel).getConcatenatedMedia();
     }
 
     private void playMedia(MediaSource mediaSource) {

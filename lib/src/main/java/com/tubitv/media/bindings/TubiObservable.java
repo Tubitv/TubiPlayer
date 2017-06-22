@@ -166,7 +166,7 @@ public class TubiObservable extends BaseObservable implements ExoPlayer.EventLis
     public TubiObservable(@NonNull SimpleExoPlayer player, @NonNull final TubiPlaybackControlInterface playbackControlInterface) {
         this.playbackControlInterface = playbackControlInterface;
         setPlayer(player);
-//        setAdPlaying(true);
+        setAdPlaying(player.getCurrentWindowIndex() < 2);
     }
 
     @Override
@@ -197,6 +197,8 @@ public class TubiObservable extends BaseObservable implements ExoPlayer.EventLis
 //        updateNavigation();
         setPlaybackState();
         updateProgress();
+
+        setAdPlaying(player.getCurrentWindowIndex() < 2);
     }
 
     @Override
@@ -541,6 +543,7 @@ public class TubiObservable extends BaseObservable implements ExoPlayer.EventLis
 
     public void setAdPlaying(boolean adPlaying) {
         this.adPlaying = adPlaying;
+        setAdIndex(player.getCurrentWindowIndex() + 1);
         notifyPropertyChanged(BR.adPlaying);
     }
 }
