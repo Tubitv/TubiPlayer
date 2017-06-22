@@ -22,13 +22,13 @@ public class MediaModel implements Serializable{
     /**
      * The title of the media to display
      */
-    @NonNull
+    @Nullable
     private final String mediaName;
 
     /**
      * The url of the artwork to display while loading
      */
-    @NonNull
+    @Nullable
     private final String artworkUrl;
 
     /**
@@ -36,6 +36,13 @@ public class MediaModel implements Serializable{
      */
     @Nullable
     private final String subtitlesUrl;
+
+    /**
+     * The nullable click through url for this media if its an ad
+     * @see #isAd
+     */
+    @Nullable
+    private final String clickThroughUrl;
 
     /**
      * The media source representation of this model
@@ -47,15 +54,24 @@ public class MediaModel implements Serializable{
      */
     private boolean isAd;
 
-    public MediaModel(@NonNull String mediaName, @NonNull String videoUrl, @NonNull String artworkUrl, @Nullable String subtitlesUrl, boolean isAd) {
+    public static MediaModel video(@NonNull String mediaName, @NonNull String videoUrl, @NonNull String artworkUrl, @Nullable String subtitlesUrl){
+        return new MediaModel(mediaName, videoUrl, artworkUrl, subtitlesUrl, null, false);
+    }
+
+    public static MediaModel ad( @NonNull String videoUrl, @Nullable String subtitlesUrl, @Nullable String clickThroughUrl){
+        return new MediaModel(null, videoUrl, null, subtitlesUrl, clickThroughUrl, true);
+    }
+
+    private MediaModel(@Nullable String mediaName, @NonNull String videoUrl, @Nullable String artworkUrl, @Nullable String subtitlesUrl, @Nullable String clickThroughUrl, boolean isAd) {
         this.mediaName = mediaName;
         this.videoUrl = videoUrl;
         this.artworkUrl = artworkUrl;
         this.subtitlesUrl = subtitlesUrl;
+        this.clickThroughUrl = clickThroughUrl;
         this.isAd = isAd;
     }
 
-    @NonNull
+    @Nullable
     public String getMediaName() {
         return mediaName;
     }
@@ -65,7 +81,7 @@ public class MediaModel implements Serializable{
         return Uri.parse(videoUrl);
     }
 
-    @NonNull
+    @Nullable
     public Uri getArtworkUrl() {
         return Uri.parse(artworkUrl);
     }
@@ -73,6 +89,11 @@ public class MediaModel implements Serializable{
     @Nullable
     public Uri getSubtitlesUrl() {
         return subtitlesUrl != null ? Uri.parse(subtitlesUrl) : null;
+    }
+
+    @Nullable
+    public String getClickThroughUrl() {
+        return clickThroughUrl;
     }
 
     public boolean isAd() {
