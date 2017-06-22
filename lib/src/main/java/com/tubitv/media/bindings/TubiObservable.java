@@ -146,12 +146,12 @@ public class TubiObservable extends BaseObservable implements ExoPlayer.EventLis
     /**
      * The current ad index
      */
-    private int adIndex = 1;
+    private int adIndex = 0;
 
     /**
      * The total number of ads for this break
      */
-    private int adTotal = 4;
+    private int adTotal = 0;
 
     /**
      * Whether the player is currently playing an ad
@@ -166,7 +166,7 @@ public class TubiObservable extends BaseObservable implements ExoPlayer.EventLis
     public TubiObservable(@NonNull SimpleExoPlayer player, @NonNull final TubiPlaybackControlInterface playbackControlInterface) {
         this.playbackControlInterface = playbackControlInterface;
         setPlayer(player);
-        setAdPlaying(player.getCurrentWindowIndex() < 2);
+        setAdPlaying(false);
     }
 
     @Override
@@ -211,6 +211,8 @@ public class TubiObservable extends BaseObservable implements ExoPlayer.EventLis
 //        updateNavigation();
         setPlaybackState();
         updateProgress();
+
+        setAdPlaying(player.getCurrentWindowIndex() < 2);
     }
 
     @Override
@@ -544,6 +546,13 @@ public class TubiObservable extends BaseObservable implements ExoPlayer.EventLis
     public void setAdPlaying(boolean adPlaying) {
         this.adPlaying = adPlaying;
         setAdIndex(player.getCurrentWindowIndex() + 1);
+        if (player.getCurrentManifest() != null && player.getCurrentManifest().getClass().isArray()) {
+            Object[] manifestContainer = ((Object[])player.getCurrentManifest());
+            if(manifestContainer.length > 0 && manifestContainer[0].getClass().isArray()){
+                Object[] array = (Object[])manifestContainer[0];
+                setAdTotal(array.length - 1);
+            }
+        }
         notifyPropertyChanged(BR.adPlaying);
     }
 }
