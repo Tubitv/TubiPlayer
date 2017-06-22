@@ -53,12 +53,14 @@
             android:layout_marginRight="16dp"
             android:background="@drawable/tubi_tv_subtitles_off"
             android:tag="@{TubiObservable.TUBI_SUBTITLES_TAG}"
-            android:visibility="@{playMedia.subtitlesExist ? View.VISIBLE : View.GONE}"
+            android:visibility="@{playMedia.subtitlesExist &amp;&amp; !playMedia.adPlaying? View.VISIBLE : View.GONE}"
             app:layout_constraintRight_toLeftOf="@+id/view_tubi_controller_quality_ib"
             app:layout_constraintTop_toTopOf="@+id/tubi_tv_controller_guideline_top"
             app:onClickStateImage="@{playMedia}"
             app:state_checked="@drawable/tubi_tv_drawable_subtitles_on_selector"
-            app:state_not_checked="@drawable/tubi_tv_drawable_subtitles_off_selector"/>
+            app:state_not_checked="@drawable/tubi_tv_drawable_subtitles_off_selector"
+            android:layout_marginLeft="8dp"
+            app:layout_constraintLeft_toLeftOf="@+id/tubi_tv_controller_guideline_seek_right" />
 
         <com.tubitv.media.views.StateImageButton
             android:id="@+id/view_tubi_controller_quality_ib"
@@ -66,6 +68,7 @@
             android:layout_height="wrap_content"
             android:background="@drawable/tubi_tv_drawable_quality_off_selector"
             android:tag="@{TubiObservable.TUBI_QUALITY_TAG}"
+            android:visibility="@{playMedia.adPlaying? View.GONE : View.VISIBLE}"
             app:layout_constraintRight_toLeftOf="@+id/view_tubi_controller_chromecast_ib"
             app:layout_constraintTop_toTopOf="@+id/tubi_tv_controller_guideline_top"
             app:onClickStateImage="@{playMedia}"
