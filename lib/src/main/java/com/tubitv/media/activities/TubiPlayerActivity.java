@@ -3,7 +3,6 @@ package com.tubitv.media.activities;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.res.Configuration;
-import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
@@ -11,11 +10,10 @@ import android.text.TextUtils;
 import android.view.View;
 
 import com.google.android.exoplayer2.C;
-import com.google.android.exoplayer2.DefaultLoadControl;
+import com.google.android.exoplayer2.ExoPlayerFactory;
 import com.google.android.exoplayer2.Format;
-import com.google.android.exoplayer2.LoadControl;
+import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.extractor.DefaultExtractorsFactory;
-import com.google.android.exoplayer2.source.ConcatenatingMediaSource;
 import com.google.android.exoplayer2.source.ExtractorMediaSource;
 import com.google.android.exoplayer2.source.MediaSource;
 import com.google.android.exoplayer2.source.MergingMediaSource;
@@ -27,7 +25,6 @@ import com.google.android.exoplayer2.source.smoothstreaming.DefaultSsChunkSource
 import com.google.android.exoplayer2.source.smoothstreaming.SsMediaSource;
 import com.google.android.exoplayer2.trackselection.AdaptiveTrackSelection;
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
-import com.google.android.exoplayer2.trackselection.MappingTrackSelector;
 import com.google.android.exoplayer2.trackselection.TrackSelection;
 import com.google.android.exoplayer2.upstream.DataSource;
 import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter;
@@ -36,20 +33,19 @@ import com.google.android.exoplayer2.upstream.HttpDataSource;
 import com.google.android.exoplayer2.util.Assertions;
 import com.google.android.exoplayer2.util.MimeTypes;
 import com.google.android.exoplayer2.util.Util;
-import com.tubitv.media.MediaHelper;
 import com.tubitv.media.R;
-import com.tubitv.media.TubiExoPlayer;
+import com.tubitv.media.helpers.MediaHelper;
 import com.tubitv.media.helpers.TrackSelectionHelper;
 import com.tubitv.media.models.MediaModel;
 import com.tubitv.media.utilities.EventLogger;
 import com.tubitv.media.utilities.Utils;
 import com.tubitv.media.views.TubiExoPlayerView;
-import com.tubitv.media.views.TubiPlayerControlViewOld;
+import com.tubitv.media.views.TubiPlayerControlView;
 
-public class TubiPlayerActivity extends Activity implements TubiPlayerControlViewOld.VisibilityListener {
+public class TubiPlayerActivity extends Activity implements TubiPlayerControlView.VisibilityListener {
     public static String TUBI_MEDIA_KEY = "tubi_media_key";
 
-    private TubiExoPlayer mTubiExoPlayer;
+    private SimpleExoPlayer mTubiExoPlayer;
     private Handler mMainHandler;
     private TubiExoPlayerView mTubiPlayerView;
     private DataSource.Factory mMediaDataSourceFactory;
@@ -138,7 +134,6 @@ public class TubiPlayerActivity extends Activity implements TubiPlayerControlVie
     private void initLayout() {
         setContentView(R.layout.activity_tubi_player);
         mTubiPlayerView = (TubiExoPlayerView) findViewById(R.id.tubitv_player);
-//        mTubiPlayerView.setControllerVisibilityListener(this);
         mTubiPlayerView.requestFocus();
         mTubiPlayerView.setActivity(this);
         mTubiPlayerView.addOnLayoutChangeListener(new View.OnLayoutChangeListener() {
@@ -150,6 +145,14 @@ public class TubiPlayerActivity extends Activity implements TubiPlayerControlVie
     }
 
     private void setupExo() {
+        initPlayer();
+
+        MediaSource mediaSource = createMediaSource();
+
+        playMedia(mediaSource);
+    }
+
+    private void initPlayer() {
         // 1. Create a default TrackSelector
         mMainHandler = new Handler();
         TrackSelection.Factory videoTrackSelectionFactory =
@@ -158,12 +161,9 @@ public class TubiPlayerActivity extends Activity implements TubiPlayerControlVie
                 new DefaultTrackSelector(videoTrackSelectionFactory);
         mTrackSelectionHelper = new TrackSelectionHelper(this, mTrackSelector);
 
-        // 2. Create a default LoadControl
-        LoadControl loadControl = new DefaultLoadControl();
 
         // 3. Create the mTubiExoPlayer
-        mTubiExoPlayer =
-                TubiExoPlayer.newInstance(this, mTrackSelector, loadControl);
+        mTubiExoPlayer = ExoPlayerFactory.newSimpleInstance(this, mTrackSelector);
 
         mEventLogger = new EventLogger(mTrackSelector);
         mTubiExoPlayer.addListener(mEventLogger);
@@ -174,47 +174,35 @@ public class TubiPlayerActivity extends Activity implements TubiPlayerControlVie
         mTubiPlayerView.setPlayer(mTubiExoPlayer);
         mTubiPlayerView.setMediaModel(mediaModel);
         mTubiPlayerView.setTrackSelectionHelper(mTrackSelectionHelper);
-        mTubiPlayerView.setControllerVisibilityListener(this);
         mTubiExoPlayer.setPlayWhenReady(shouldAutoPlay);
+    }
 
+    private MediaSource createMediaSource() {
+
+//       MediaHelper.
         //fake media
-        Uri[] uris = new Uri[1];
-        String[] extensions = new String[1];
-        uris[0] = mediaModel.getVideoUrl();
-        extensions[0] = "m3u8";
-        MediaSource[] mediaSources = new MediaSource[uris.length];
-        mediaSources[0] = buildMediaSource(uris[0], extensions[0]);
-        MediaSource mediaSource = mediaSources.length == 1 ? mediaSources[0]
-                : new ConcatenatingMediaSource(mediaSources);
+//        Uri uri;
+//        uri = mediaModel.getVideoUrl();
+//        String extension = "m3u8";
+//        MediaSource mediaSource;
+        mediaModel.setMediaSource(buildMediaSource(mediaModel));
 
+        MediaModel ad1 = MediaModel.ad( "http://c11.adrise.tv/ads/transcodes/003572/940826/v0329081907-1280x720-HD-,740,1285,1622,2138,3632,k.mp4.m3u8",
+                null);
+        ad1.setMediaSource(buildMediaSource(ad1));
+        MediaModel ad2 = MediaModel.ad("http://c13.adrise.tv/ads/transcodes/004130/1050072/v0617070213-640x360-SD-,764,1057,k.mp4.m3u8",
+                "https://github.com/stoyand");
+        ad2.setMediaSource(buildMediaSource(ad2));
+        return MediaHelper.create(ad1, ad2, mediaModel).getConcatenatedMedia();
+    }
 
-        if (mediaModel.getSubtitlesUrl() != null) {
-            MediaSource subtitleSource = new SingleSampleMediaSource(
-                    mediaModel.getSubtitlesUrl(),
-                    buildDataSourceFactory(false),
-                    Format.createTextSampleFormat(null, MimeTypes.APPLICATION_SUBRIP, null, Format.NO_VALUE, C.SELECTION_FLAG_DEFAULT, "en", null, 0),
-                    0);
-            // Plays the video with the sideloaded subtitle.
-            mediaSource =
-                    new MergingMediaSource(mediaSource, subtitleSource);
-        }
-
-
-//        mTubiExoPlayer.getCurrentPosition()
+    private void playMedia(MediaSource mediaSource) {
         boolean haveResumePosition = resumeWindow != C.INDEX_UNSET;
         if (haveResumePosition) {
             mTubiExoPlayer.seekTo(resumeWindow, resumePosition);
         }
         mTubiExoPlayer.prepare(mediaSource, !haveResumePosition, false);
-//        mTubiExoPlayer.prepare(new ConcatenatingMediaSource(mediaSource, subtitleSource), true, false);
         Utils.hideSystemUI(this, true);
-
-        MappingTrackSelector.MappedTrackInfo mappedTrackInfo = mTrackSelector.getCurrentMappedTrackInfo();
-        if (mappedTrackInfo == null) {
-            return;
-        }
-
-
     }
 
     private void releasePlayer() {
@@ -227,25 +215,43 @@ public class TubiPlayerActivity extends Activity implements TubiPlayerControlVie
         }
     }
 
-    private MediaSource buildMediaSource(Uri uri, String overrideExtension) {
-        int type = TextUtils.isEmpty(overrideExtension) ? Util.inferContentType(uri)
-                : Util.inferContentType("." + overrideExtension);
+    private MediaSource buildMediaSource(MediaModel model) {
+        MediaSource mediaSource;
+        int type = TextUtils.isEmpty(model.getMediaExtension()) ? Util.inferContentType(model.getVideoUrl())
+                : Util.inferContentType("." + model.getMediaExtension());
         switch (type) {
             case C.TYPE_SS:
-                return new SsMediaSource(uri, buildDataSourceFactory(false),
+                mediaSource = new SsMediaSource(model.getVideoUrl(), buildDataSourceFactory(false),
                         new DefaultSsChunkSource.Factory(mMediaDataSourceFactory), mMainHandler, mEventLogger);
+                break;
             case C.TYPE_DASH:
-                return new DashMediaSource(uri, buildDataSourceFactory(false),
+                mediaSource = new DashMediaSource(model.getVideoUrl(), buildDataSourceFactory(false),
                         new DefaultDashChunkSource.Factory(mMediaDataSourceFactory), mMainHandler, mEventLogger);
+                break;
             case C.TYPE_HLS:
-                return new HlsMediaSource(uri, mMediaDataSourceFactory, mMainHandler, mEventLogger);
+                mediaSource = new HlsMediaSource(model.getVideoUrl(), mMediaDataSourceFactory, mMainHandler, mEventLogger);
+                break;
             case C.TYPE_OTHER:
-                return new ExtractorMediaSource(uri, mMediaDataSourceFactory, new DefaultExtractorsFactory(),
+                mediaSource = new ExtractorMediaSource(model.getVideoUrl(), mMediaDataSourceFactory, new DefaultExtractorsFactory(),
                         mMainHandler, mEventLogger);
+                break;
             default: {
                 throw new IllegalStateException("Unsupported type: " + type);
             }
         }
+
+        if (model.getSubtitlesUrl() != null) {
+            MediaSource subtitleSource = new SingleSampleMediaSource(
+                    model.getSubtitlesUrl(),
+                    buildDataSourceFactory(false),
+                    Format.createTextSampleFormat(null, MimeTypes.APPLICATION_SUBRIP, null, Format.NO_VALUE, C.SELECTION_FLAG_DEFAULT, "en", null, 0),
+                    0);
+            // Plays the video with the sideloaded subtitle.
+            mediaSource =
+                    new MergingMediaSource(mediaSource, subtitleSource);
+        }
+
+        return mediaSource;
     }
 
     /**

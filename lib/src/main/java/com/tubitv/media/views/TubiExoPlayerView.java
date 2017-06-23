@@ -3,13 +3,17 @@ package com.tubitv.media.views;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
+import android.content.res.Resources;
 import android.content.res.TypedArray;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -24,6 +28,7 @@ import android.widget.ImageView;
 import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.ExoPlaybackException;
 import com.google.android.exoplayer2.ExoPlayer;
+import com.google.android.exoplayer2.PlaybackParameters;
 import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.Timeline;
 import com.google.android.exoplayer2.metadata.Metadata;
@@ -37,8 +42,10 @@ import com.google.android.exoplayer2.trackselection.TrackSelection;
 import com.google.android.exoplayer2.trackselection.TrackSelectionArray;
 import com.google.android.exoplayer2.ui.AspectRatioFrameLayout;
 import com.google.android.exoplayer2.ui.PlaybackControlView;
+import com.google.android.exoplayer2.ui.SimpleExoPlayerView;
 import com.google.android.exoplayer2.ui.SubtitleView;
 import com.google.android.exoplayer2.util.Assertions;
+import com.google.android.exoplayer2.util.Util;
 import com.squareup.picasso.Picasso;
 import com.tubitv.media.R;
 import com.tubitv.media.helpers.TrackSelectionHelper;
@@ -67,11 +74,14 @@ public class TubiExoPlayerView extends FrameLayout implements TubiPlaybackContro
     private final TubiPlayerControlView controller;
     private final ComponentListener componentListener;
     private final FrameLayout overlayFrameLayout;
+
     private SimpleExoPlayer player;
     private boolean useController;
     private boolean useArtwork;
     private Bitmap defaultArtwork;
     private int controllerShowTimeoutMs;
+    private boolean controllerHideOnTouch;
+
     private TrackSelectionHelper mTrackSelectionHelper;
     private Activity mActivity;
 
@@ -89,28 +99,49 @@ public class TubiExoPlayerView extends FrameLayout implements TubiPlaybackContro
     public TubiExoPlayerView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
 
-        int playerLayoutId = R.layout.view_tubi_exo_player;
+        if (isInEditMode()) {
+            contentFrame = null;
+            shutterView = null;
+            surfaceView = null;
+            artworkView = null;
+            subtitleView = null;
+            controller = null;
+            componentListener = null;
+            overlayFrameLayout = null;
+            ImageView logo = new ImageView(context, attrs);
+            if (Util.SDK_INT >= 23) {
+                configureEditModeLogoV23(getResources(), logo);
+            } else {
+                configureEditModeLogo(getResources(), logo);
+            }
+            addView(logo);
+            return;
+        }
+
+        int playerLayoutId = R.layout.exo_simple_player_view;
         boolean useArtwork = true;
         int defaultArtworkId = 0;
         boolean useController = true;
         int surfaceType = SURFACE_TYPE_SURFACE_VIEW;
         int resizeMode = AspectRatioFrameLayout.RESIZE_MODE_FIT;
         int controllerShowTimeoutMs = PlaybackControlView.DEFAULT_SHOW_TIMEOUT_MS;
-
+        boolean controllerHideOnTouch = true;
         if (attrs != null) {
             TypedArray a = context.getTheme().obtainStyledAttributes(attrs,
-                    R.styleable.TubiExoPlayerView, 0, 0);
+                    R.styleable.SimpleExoPlayerView, 0, 0);
             try {
-                playerLayoutId = a.getResourceId(R.styleable.TubiExoPlayerView_player_layout_id,
+                playerLayoutId = a.getResourceId(R.styleable.SimpleExoPlayerView_player_layout_id,
                         playerLayoutId);
-                useArtwork = a.getBoolean(R.styleable.TubiExoPlayerView_use_artwork, useArtwork);
-                defaultArtworkId = a.getResourceId(R.styleable.TubiExoPlayerView_default_artwork,
+                useArtwork = a.getBoolean(R.styleable.SimpleExoPlayerView_use_artwork, useArtwork);
+                defaultArtworkId = a.getResourceId(R.styleable.SimpleExoPlayerView_default_artwork,
                         defaultArtworkId);
-                useController = a.getBoolean(R.styleable.TubiExoPlayerView_use_controller, useController);
-                surfaceType = a.getInt(R.styleable.TubiExoPlayerView_surface_type, surfaceType);
-                resizeMode = a.getInt(R.styleable.TubiExoPlayerView_resize_mode, resizeMode);
-                controllerShowTimeoutMs = a.getInt(R.styleable.TubiExoPlayerView_show_timeout,
+                useController = a.getBoolean(R.styleable.SimpleExoPlayerView_use_controller, useController);
+                surfaceType = a.getInt(R.styleable.SimpleExoPlayerView_surface_type, surfaceType);
+                resizeMode = a.getInt(R.styleable.SimpleExoPlayerView_resize_mode, resizeMode);
+                controllerShowTimeoutMs = a.getInt(R.styleable.SimpleExoPlayerView_show_timeout,
                         controllerShowTimeoutMs);
+                controllerHideOnTouch = a.getBoolean(R.styleable.SimpleExoPlayerView_hide_on_touch,
+                        controllerHideOnTouch);
             } finally {
                 a.recycle();
             }
@@ -172,7 +203,6 @@ public class TubiExoPlayerView extends FrameLayout implements TubiPlaybackContro
             // Note: rewindMs and fastForwardMs are passed via attrs, so we don't need to make explicit
             // calls to set them.
             this.controller = new TubiPlayerControlView(context, attrs);
-//            controller.setTubiControllerInterface(this);
             controller.setLayoutParams(controllerPlaceholder.getLayoutParams());
             controller.setPlaybackInterface(this);
             ViewGroup parent = ((ViewGroup) controllerPlaceholder.getParent());
@@ -183,12 +213,37 @@ public class TubiExoPlayerView extends FrameLayout implements TubiPlaybackContro
             this.controller = null;
         }
         this.controllerShowTimeoutMs = controller != null ? controllerShowTimeoutMs : 0;
+        this.controllerHideOnTouch = controllerHideOnTouch;
         this.useController = useController && controller != null;
         hideController();
     }
 
+//    /**
+//     * Switches the view targeted by a given {@link SimpleExoPlayer}.
+//     *
+//     * @param player The player whose target view is being switched.
+//     * @param oldPlayerView The old view to detach from the player.
+//     * @param newPlayerView The new view to attach to the player.
+//     */
+//    public  void switchTargetView(@NonNull SimpleExoPlayer player,
+//                                        @Nullable SimpleExoPlayerView oldPlayerView, @Nullable SimpleExoPlayerView newPlayerView) {
+//        if (oldPlayerView == newPlayerView) {
+//            return;
+//        }
+//        // We attach the new view before detaching the old one because this ordering allows the player
+//        // to swap directly from one surface to another, without transitioning through a state where no
+//        // surface is attached. This is significantly more efficient and achieves a more seamless
+//        // transition when using platform provided video decoders.
+//        if (newPlayerView != null) {
+//            newPlayerView.setPlayer(player, this);
+//        }
+//        if (oldPlayerView != null) {
+//            oldPlayerView.setPlayer(null, this);
+//        }
+//    }
+
     /**
-     * Returns the player currently set tubi_tv_quality_on this view, or null if no player is set.
+     * Returns the player currently set on this view, or null if no player is set.
      */
     public SimpleExoPlayer getPlayer() {
         return player;
@@ -198,6 +253,12 @@ public class TubiExoPlayerView extends FrameLayout implements TubiPlaybackContro
      * Set the {@link SimpleExoPlayer} to use. The {@link SimpleExoPlayer#setTextOutput} and
      * {@link SimpleExoPlayer#setVideoListener} method of the player will be called and previous
      * assignments are overridden.
+     * <p>
+     * To transition a {@link SimpleExoPlayer} from targeting one view to another, it's recommended to
+     * use {@link #switchTargetView(SimpleExoPlayer, SimpleExoPlayerView, SimpleExoPlayerView)} rather
+     * than this method. If you do wish to use this method directly, be sure to attach the player to
+     * the new view <em>before</em> calling {@code setPlayer(null)} to detach it from the old one.
+     * This ordering is significantly more efficient and may allow for more seamless transitions.
      *
      * @param player The {@link SimpleExoPlayer} to use.
      */
@@ -206,14 +267,18 @@ public class TubiExoPlayerView extends FrameLayout implements TubiPlaybackContro
             return;
         }
         if (this.player != null) {
-            this.player.setTextOutput(null);
-            this.player.setVideoListener(null);
             this.player.removeListener(componentListener);
-            this.player.setVideoSurface(null);
+            this.player.clearTextOutput(componentListener);
+            this.player.clearVideoListener(componentListener);
+            if (surfaceView instanceof TextureView) {
+                this.player.clearVideoTextureView((TextureView) surfaceView);
+            } else if (surfaceView instanceof SurfaceView) {
+                this.player.clearVideoSurfaceView((SurfaceView) surfaceView);
+            }
         }
         this.player = player;
         if (useController) {
-            controller.setPlayer(player, this);
+            controller.setPlayer(player,this);
         }
         if (shutterView != null) {
             shutterView.setVisibility(VISIBLE);
@@ -225,8 +290,8 @@ public class TubiExoPlayerView extends FrameLayout implements TubiPlaybackContro
                 player.setVideoSurfaceView((SurfaceView) surfaceView);
             }
             player.setVideoListener(componentListener);
-            player.addListener(componentListener);
             player.setTextOutput(componentListener);
+            player.addListener(componentListener);
             maybeShowController(false);
             updateForCurrentTrackSelections();
         } else {
@@ -286,19 +351,19 @@ public class TubiExoPlayerView extends FrameLayout implements TubiPlaybackContro
     }
 
     /**
-     * Returns whether the playback controls are enabled.
+     * Returns whether the playback controls can be shown.
      */
     public boolean getUseController() {
         return useController;
     }
 
     /**
-     * Sets whether playback controls are enabled. If set to {@code false} the playback controls are
-     * never visible and are disconnected from the player.
+     * Sets whether the playback controls can be shown. If set to {@code false} the playback controls
+     * are never visible and are disconnected from the player.
      *
-     * @param useController Whether playback controls should be enabled.
+     * @param useController Whether the playback controls can be shown.
      */
-    public void setUseController(boolean useController) { //TODO // FIXME: 6/1/17 for ads
+    public void setUseController(boolean useController) {
         Assertions.checkState(!useController || controller != null);
         if (this.useController == useController) {
             return;
@@ -347,7 +412,7 @@ public class TubiExoPlayerView extends FrameLayout implements TubiPlaybackContro
      * progress.
      *
      * @return The timeout in milliseconds. A non-positive value will cause the controller to remain
-     * visible indefinitely.
+     *     visible indefinitely.
      */
     public int getControllerShowTimeoutMs() {
         return controllerShowTimeoutMs;
@@ -358,7 +423,7 @@ public class TubiExoPlayerView extends FrameLayout implements TubiPlaybackContro
      * duration of time has elapsed without user input and with playback or buffering in progress.
      *
      * @param controllerShowTimeoutMs The timeout in milliseconds. A non-positive value will cause
-     *                                the controller to remain visible indefinitely.
+     *     the controller to remain visible indefinitely.
      */
     public void setControllerShowTimeoutMs(int controllerShowTimeoutMs) {
         Assertions.checkState(controller != null);
@@ -366,14 +431,72 @@ public class TubiExoPlayerView extends FrameLayout implements TubiPlaybackContro
     }
 
     /**
-     * Set the {@link PlaybackControlView.VisibilityListener}.
-     *
-     * @param listener The listener to be notified about visibility changes.
+     * Returns whether the playback controls are hidden by touch events.
      */
-    public void setControllerVisibilityListener(TubiPlayerControlViewOld.VisibilityListener listener) {
-        Assertions.checkState(controller != null);
-        controller.setVisibilityListener(listener);
+    public boolean getControllerHideOnTouch() {
+        return controllerHideOnTouch;
     }
+
+    /**
+     * Sets whether the playback controls are hidden by touch events.
+     *
+     * @param controllerHideOnTouch Whether the playback controls are hidden by touch events.
+     */
+    public void setControllerHideOnTouch(boolean controllerHideOnTouch) {
+        Assertions.checkState(controller != null);
+        this.controllerHideOnTouch = controllerHideOnTouch;
+    }
+
+//    /**
+//     * Set the {@link PlaybackControlView.VisibilityListener}.
+//     *
+//     * @param listener The listener to be notified about visibility changes.
+//     */
+//    public void setControllerVisibilityListener(PlaybackControlView.VisibilityListener listener) {
+//        Assertions.checkState(controller != null);
+//        controller.setVisibilityListener(listener);
+//    }
+
+//    /**
+//     * Sets the {@link com.google.android.exoplayer2.ui.PlaybackControlView.ControlDispatcher}.
+//     *
+//     * @param controlDispatcher The {@link com.google.android.exoplayer2.ui.PlaybackControlView.ControlDispatcher}, or null to use
+//     *     {@link PlaybackControlView#DEFAULT_CONTROL_DISPATCHER}.
+//     */
+//    public void setControlDispatcher(PlaybackControlView.ControlDispatcher controlDispatcher) {
+//        Assertions.checkState(controller != null);
+//        controller.setControlDispatcher(controlDispatcher);
+//    }
+//
+//    /**
+//     * Sets the rewind increment in milliseconds.
+//     *
+//     * @param rewindMs The rewind increment in milliseconds.
+//     */
+//    public void setRewindIncrementMs(int rewindMs) {
+//        Assertions.checkState(controller != null);
+//        controller.setRewindIncrementMs(rewindMs);
+//    }
+//
+//    /**
+//     * Sets the fast forward increment in milliseconds.
+//     *
+//     * @param fastForwardMs The fast forward increment in milliseconds.
+//     */
+//    public void setFastForwardIncrementMs(int fastForwardMs) {
+//        Assertions.checkState(controller != null);
+//        controller.setFastForwardIncrementMs(fastForwardMs);
+//    }
+//
+//    /**
+//     * Sets whether the time bar should show all windows, as opposed to just the current one.
+//     *
+//     * @param showMultiWindowTimeBar Whether to show all windows.
+//     */
+//    public void setShowMultiWindowTimeBar(boolean showMultiWindowTimeBar) {
+//        Assertions.checkState(controller != null);
+//        controller.setShowMultiWindowTimeBar(showMultiWindowTimeBar);
+//    }
 
     /**
      * Gets the view onto which video is rendered. This is either a {@link SurfaceView} (default)
@@ -386,11 +509,11 @@ public class TubiExoPlayerView extends FrameLayout implements TubiPlaybackContro
     }
 
     /**
-     * Gets the overlay {@link FrameLayout}, which can be populated with UI elements to show tubi_tv_quality_on top of
+     * Gets the overlay {@link FrameLayout}, which can be populated with UI elements to show on top of
      * the player.
      *
      * @return The overlay {@link FrameLayout}, or {@code null} if the layout has been customized and
-     * the overlay is not present.
+     *     the overlay is not present.
      */
     public FrameLayout getOverlayFrameLayout() {
         return overlayFrameLayout;
@@ -400,7 +523,7 @@ public class TubiExoPlayerView extends FrameLayout implements TubiPlaybackContro
      * Gets the {@link SubtitleView}.
      *
      * @return The {@link SubtitleView}, or {@code null} if the layout has been customized and the
-     * subtitle view is not present.
+     *     subtitle view is not present.
      */
     public SubtitleView getSubtitleView() {
         return subtitleView;
@@ -411,10 +534,10 @@ public class TubiExoPlayerView extends FrameLayout implements TubiPlaybackContro
         if (!useController || player == null || ev.getActionMasked() != MotionEvent.ACTION_DOWN) {
             return false;
         }
-        if (controller.isVisible()) {
-            controller.hide();
-        } else {
+        if (!controller.isVisible()) {
             maybeShowController(true);
+        } else if (controllerHideOnTouch) {
+            controller.hide();
         }
         return true;
     }
@@ -452,6 +575,7 @@ public class TubiExoPlayerView extends FrameLayout implements TubiPlaybackContro
                 // Video enabled so artwork must be hidden. If the shutter is closed, it will be opened in
                 // onRenderedFirstFrame().
                 hideArtwork();
+                return;
             }
         }
         // Video disabled so the shutter must be closed.
@@ -522,6 +646,19 @@ public class TubiExoPlayerView extends FrameLayout implements TubiPlaybackContro
         }
     }
 
+    @TargetApi(23)
+    private static void configureEditModeLogoV23(Resources resources, ImageView logo) {
+        logo.setImageDrawable(resources.getDrawable(R.drawable.exo_edit_mode_logo, null));
+        logo.setBackgroundColor(resources.getColor(R.color.exo_edit_mode_background_color, null));
+    }
+
+    @SuppressWarnings("deprecation")
+    private static void configureEditModeLogo(Resources resources, ImageView logo) {
+        logo.setImageDrawable(resources.getDrawable(R.drawable.exo_edit_mode_logo));
+        logo.setBackgroundColor(resources.getColor(R.color.exo_edit_mode_background_color));
+    }
+
+
     @SuppressWarnings("ResourceType")
     private static void setResizeModeRaw(AspectRatioFrameLayout aspectRatioFrame, int resizeMode) {
         aspectRatioFrame.setResizeMode(resizeMode);
@@ -549,6 +686,14 @@ public class TubiExoPlayerView extends FrameLayout implements TubiPlaybackContro
             if (mappedTrackInfo != null) {
                 mTrackSelectionHelper.showSelectionDialog(0, controller);
             }
+        }
+    }
+
+    @Override
+    public void onLearnMoreClick(@NonNull MediaModel mediaModel) {
+        if(mActivity != null && mediaModel.getClickThroughUrl() != null){
+            Intent intent= new Intent(Intent.ACTION_VIEW, Uri.parse(mediaModel.getClickThroughUrl()));
+            mActivity.startActivity(intent);
         }
     }
 
@@ -621,6 +766,13 @@ public class TubiExoPlayerView extends FrameLayout implements TubiPlaybackContro
 
         @Override
         public void onPositionDiscontinuity() {
+            // Do nothing.
+            Log.e("TubiExoPlayerView", "onPositionDiscontinuity window index : " + player.getCurrentWindowIndex());
+            Log.e("TubiExoPlayerView", "onPositionDiscontinuity period index : " + player.getCurrentPeriodIndex());
+        }
+
+        @Override
+        public void onPlaybackParametersChanged(PlaybackParameters playbackParameters) {
             // Do nothing.
         }
 

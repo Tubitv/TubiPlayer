@@ -45,9 +45,9 @@ dependencies {
     compile 'com.afollestad.material-dialogs:core:0.9.4.5'
     compile 'com.squareup.picasso:picasso:2.5.2'
 
-    compile 'com.google.android.exoplayer:exoplayer:r2.3.0'
+    compile 'com.google.android.exoplayer:exoplayer:r2.4.2'
     compile 'com.android.support:appcompat-v7:25.3.1'
-    compile 'com.android.support.constraint:constraint-layout:1.0.1'
+    compile 'com.android.support.constraint:constraint-layout:1.0.2'
     compile 'com.android.support:design:25.3.1'
 
     androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
@@ -59,9 +59,9 @@ dependencies {
     testCompile 'junit:junit:4.12'
 }
 
-Properties properties = new Properties()
-File propFile = "${System.properties['user.home']}${File.separator}.gradle${File.separator}bintray.properties" as File
-properties.load(propFile.newDataInputStream())
+//Properties properties = new Properties()
+//File propFile = "${System.properties['user.home']}${File.separator}.gradle${File.separator}bintray.properties" as File
+//properties.load(propFile.newDataInputStream())
 publish {
     userOrg = 'tubitv'
     repoName = 'Media'
@@ -73,7 +73,7 @@ publish {
     website = 'https://github.com/Tubitv/TubiPlayer'
 
 //    dryRun = true
-    bintrayUser = properties.getProperty("bintray.user")
-    bintrayKey = properties.getProperty("bintray.apikey")
+//    bintrayUser = properties.getProperty("bintray.user")
+//    bintrayKey = properties.getProperty("bintray.apikey")
 //  ./gradlew clean build bintrayUpload -PbintrayUser=user -PbintrayKey=key -PdryRun=false
 }

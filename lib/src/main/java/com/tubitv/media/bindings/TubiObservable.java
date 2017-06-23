@@ -3,18 +3,23 @@ package com.tubitv.media.bindings;
 import android.databinding.BaseObservable;
 import android.databinding.Bindable;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.SeekBar;
 
 import com.google.android.exoplayer2.ExoPlaybackException;
 import com.google.android.exoplayer2.ExoPlayer;
+import com.google.android.exoplayer2.PlaybackParameters;
 import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.Timeline;
 import com.google.android.exoplayer2.source.TrackGroupArray;
 import com.google.android.exoplayer2.trackselection.TrackSelectionArray;
 import com.tubitv.media.BR;
+import com.tubitv.media.helpers.MediaHelper;
 import com.tubitv.media.interfaces.TubiPlaybackControlInterface;
+import com.tubitv.media.models.MediaModel;
 import com.tubitv.media.utilities.Utils;
 import com.tubitv.media.views.StateImageButton;
 
@@ -23,11 +28,11 @@ import static com.google.android.exoplayer2.ExoPlayer.STATE_READY;
 
 
 /**
- * The observable class for the {@link com.tubitv.media.views.TubiPlayerControlViewOld}
+ * The observable class for the {@link com.tubitv.media.views.TubiPlayerControlView}
  * <p>
  * Created by stoyan on 5/12/17.
  */
-public class TubiObservable extends BaseObservable implements ExoPlayer.EventListener, SeekBar.OnSeekBarChangeListener, View.OnClickListener {
+public class TubiObservable extends BaseObservable implements ExoPlayer.EventListener, SeekBar.OnSeekBarChangeListener, View.OnTouchListener, View.OnClickListener {
     /**
      * Tag for logging
      */
@@ -58,6 +63,11 @@ public class TubiObservable extends BaseObservable implements ExoPlayer.EventLis
      * Subtitle tag for {@link com.tubitv.media.databinding.ViewTubiPlayerControlBinding#viewTubiControllerQualityIb}
      */
     public static final String TUBI_QUALITY_TAG = "TUBI_QUALITY_TAG";
+
+    /**
+     * Subtitle tag for {@link com.tubitv.media.databinding.ViewTubiPlayerControlBinding#viewTubiControllerAdDescription}
+     */
+    public static final String TUBI_AD_LEARN_MORE_TAG = "TUBI_AD_LEARN_MORE_TAG";
 
     /**
      * The interface from {@link com.tubitv.media.views.TubiPlayerControlView}
@@ -137,6 +147,27 @@ public class TubiObservable extends BaseObservable implements ExoPlayer.EventLis
     private int playbackState = ExoPlayer.STATE_IDLE;
 
     /**
+     * The current ad index
+     */
+    private int adIndex = 0;
+
+    /**
+     * The total number of ads for this break
+     */
+    private int adTotal = 0;
+
+    /**
+     * Whether the player is currently playing an ad
+     */
+    private boolean adPlaying;
+
+    /**
+     * The currently playing media model
+     */
+    @Nullable
+    private MediaModel mediaModel;
+
+    /**
      * The exo player that this controller is for
      */
     private SimpleExoPlayer player;
@@ -144,7 +175,8 @@ public class TubiObservable extends BaseObservable implements ExoPlayer.EventLis
     public TubiObservable(@NonNull SimpleExoPlayer player, @NonNull final TubiPlaybackControlInterface playbackControlInterface) {
         this.playbackControlInterface = playbackControlInterface;
         setPlayer(player);
-
+        setAdPlaying(false);
+//        bind media models to views
     }
 
     @Override
@@ -175,6 +207,12 @@ public class TubiObservable extends BaseObservable implements ExoPlayer.EventLis
 //        updateNavigation();
         setPlaybackState();
         updateProgress();
+        updateMedia();
+    }
+
+    @Override
+    public void onPlaybackParametersChanged(PlaybackParameters playbackParameters) {
+
     }
 
     @Override
@@ -182,6 +220,7 @@ public class TubiObservable extends BaseObservable implements ExoPlayer.EventLis
 //        updateNavigation();
         setPlaybackState();
         updateProgress();
+        updateMedia();
     }
 
     @Override
@@ -211,6 +250,13 @@ public class TubiObservable extends BaseObservable implements ExoPlayer.EventLis
         playbackControlInterface.hideAfterTimeout();
     }
 
+
+    @Override
+    public boolean onTouch(View v, MotionEvent event) {
+        Log.d(TAG, "onTouch");
+        return true;
+    }
+
     @Override
     public void onClick(View view) {
         switch ((String) view.getTag()) {
@@ -229,6 +275,11 @@ public class TubiObservable extends BaseObservable implements ExoPlayer.EventLis
                 break;
             case TUBI_QUALITY_TAG:
                 playbackControlInterface.onQualityTrackToggle(((StateImageButton) view).isChecked());
+                break;
+            case TUBI_AD_LEARN_MORE_TAG:
+                if (mediaModel != null) {
+                    playbackControlInterface.onLearnMoreClick(mediaModel);
+                }
                 break;
         }
 
@@ -321,6 +372,13 @@ public class TubiObservable extends BaseObservable implements ExoPlayer.EventLis
         setIsPlaying();
         setPlaybackState();
         updateProgress();
+        updateMedia();
+    }
+
+
+    private void updateMedia() {
+//        setAdPlaying(player.getCurrentWindowIndex() < 2);
+        setMediaModel(MediaHelper.getMediaByIndex(player.getCurrentWindowIndex()));
     }
 
     public boolean userInteracting() {
@@ -444,7 +502,6 @@ public class TubiObservable extends BaseObservable implements ExoPlayer.EventLis
     }
 
     public void setDraggingSeekBar(boolean draggingSeekBar) {
-        //(playMedia.playbackState == ExoPlayer.STATE_READY || (playMedia.playbackState == ExoPlayer.STATE_BUFFERING &amp;&amp; playMedia.draggingSeekBar)) ? View.VISIBLE : View.INVISIBLE
         this.draggingSeekBar = draggingSeekBar;
         notifyPropertyChanged(BR.draggingSeekBar);
     }
@@ -478,4 +535,57 @@ public class TubiObservable extends BaseObservable implements ExoPlayer.EventLis
         this.subtitlesExist = subtitlesExist;
         notifyPropertyChanged(BR.subtitlesExist);
     }
+
+    @Bindable
+    public int getAdIndex() {
+        return adIndex;
+    }
+
+    public void setAdIndex(int adIndex) {
+        this.adIndex = adIndex;
+        notifyPropertyChanged(BR.adIndex);
+    }
+
+    @Bindable
+    public int getAdTotal() {
+        return adTotal;
+    }
+
+    public void setAdTotal(int adTotal) {
+        this.adTotal = adTotal;
+        notifyPropertyChanged(BR.adTotal);
+    }
+
+    @Bindable
+    public MediaModel getMediaModel() {
+        return mediaModel;
+    }
+
+    public void setMediaModel(MediaModel mediaModel) {
+        this.mediaModel = mediaModel;
+        notifyPropertyChanged(BR.mediaModel);
+
+        if (mediaModel != null) {
+            setAdPlaying(mediaModel.isAd());
+        }
+    }
+
+    @Bindable
+    public boolean isAdPlaying() {
+        return adPlaying;
+    }
+
+    public void setAdPlaying(boolean adPlaying) {
+        this.adPlaying = adPlaying;
+        setAdIndex(player.getCurrentWindowIndex() + 1);
+        if (player.getCurrentManifest() != null && player.getCurrentManifest().getClass().isArray()) {
+            Object[] manifestContainer = ((Object[]) player.getCurrentManifest());
+            if (manifestContainer.length > 0 && manifestContainer[0].getClass().isArray()) {
+                Object[] array = (Object[]) manifestContainer[0];
+                setAdTotal(array.length - 1);
+            }
+        }
+        notifyPropertyChanged(BR.adPlaying);
+    }
 }
+

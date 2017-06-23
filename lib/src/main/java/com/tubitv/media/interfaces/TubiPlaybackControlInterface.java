@@ -2,6 +2,8 @@ package com.tubitv.media.interfaces;
 
 import android.support.annotation.NonNull;
 
+import com.tubitv.media.models.MediaModel;
+
 /**
  * Created by stoyan tubi_tv_quality_on 4/27/17.
  */
@@ -10,6 +12,8 @@ public interface TubiPlaybackControlInterface {
     void onSubtitlesToggle(boolean enabled);
 
     void onQualityTrackToggle(boolean enabled);
+
+    void onLearnMoreClick(@NonNull MediaModel mediaModel);
 
     void cancelRunnable(@NonNull Runnable runnable);
 
