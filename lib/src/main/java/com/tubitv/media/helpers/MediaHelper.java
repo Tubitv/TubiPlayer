@@ -54,6 +54,14 @@ public class MediaHelper {
         return new ConcatenatingMediaSource(mediaSources);
     }
 
+    @Nullable
+    public static MediaModel getMediaByIndex(int index) {
+        if (linkedList == null || linkedList.size() <= index) {
+            return null;
+        }
+        return linkedList.get(index);
+    }
+
     public static
     @NonNull
     DataSource.Factory buildDataSourceFactory(@NonNull Context context, @Nullable DefaultBandwidthMeter bandwidthMeter) {

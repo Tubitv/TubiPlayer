@@ -3,6 +3,7 @@ package com.tubitv.media.bindings;
 import android.databinding.BaseObservable;
 import android.databinding.Bindable;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
@@ -16,7 +17,9 @@ import com.google.android.exoplayer2.Timeline;
 import com.google.android.exoplayer2.source.TrackGroupArray;
 import com.google.android.exoplayer2.trackselection.TrackSelectionArray;
 import com.tubitv.media.BR;
+import com.tubitv.media.helpers.MediaHelper;
 import com.tubitv.media.interfaces.TubiPlaybackControlInterface;
+import com.tubitv.media.models.MediaModel;
 import com.tubitv.media.utilities.Utils;
 import com.tubitv.media.views.StateImageButton;
 
@@ -159,6 +162,12 @@ public class TubiObservable extends BaseObservable implements ExoPlayer.EventLis
     private boolean adPlaying;
 
     /**
+     * The currently playing media model
+     */
+    @Nullable
+    private MediaModel mediaModel;
+
+    /**
      * The exo player that this controller is for
      */
     private SimpleExoPlayer player;
@@ -167,6 +176,7 @@ public class TubiObservable extends BaseObservable implements ExoPlayer.EventLis
         this.playbackControlInterface = playbackControlInterface;
         setPlayer(player);
         setAdPlaying(false);
+//        bind media models to views
     }
 
     @Override
@@ -197,8 +207,7 @@ public class TubiObservable extends BaseObservable implements ExoPlayer.EventLis
 //        updateNavigation();
         setPlaybackState();
         updateProgress();
-
-        setAdPlaying(player.getCurrentWindowIndex() < 2);
+        updateMedia();
     }
 
     @Override
@@ -211,8 +220,7 @@ public class TubiObservable extends BaseObservable implements ExoPlayer.EventLis
 //        updateNavigation();
         setPlaybackState();
         updateProgress();
-
-        setAdPlaying(player.getCurrentWindowIndex() < 2);
+        updateMedia();
     }
 
     @Override
@@ -361,6 +369,13 @@ public class TubiObservable extends BaseObservable implements ExoPlayer.EventLis
         setIsPlaying();
         setPlaybackState();
         updateProgress();
+        updateMedia();
+    }
+
+
+    private void updateMedia() {
+//        setAdPlaying(player.getCurrentWindowIndex() < 2);
+        setMediaModel(MediaHelper.getMediaByIndex(player.getCurrentWindowIndex()));
     }
 
     public boolean userInteracting() {
@@ -539,6 +554,20 @@ public class TubiObservable extends BaseObservable implements ExoPlayer.EventLis
     }
 
     @Bindable
+    public MediaModel getMediaModel() {
+        return mediaModel;
+    }
+
+    public void setMediaModel(MediaModel mediaModel) {
+        this.mediaModel = mediaModel;
+        notifyPropertyChanged(BR.mediaModel);
+
+        if (mediaModel != null) {
+            setAdPlaying(mediaModel.isAd());
+        }
+    }
+
+    @Bindable
     public boolean isAdPlaying() {
         return adPlaying;
     }
@@ -547,9 +576,9 @@ public class TubiObservable extends BaseObservable implements ExoPlayer.EventLis
         this.adPlaying = adPlaying;
         setAdIndex(player.getCurrentWindowIndex() + 1);
         if (player.getCurrentManifest() != null && player.getCurrentManifest().getClass().isArray()) {
-            Object[] manifestContainer = ((Object[])player.getCurrentManifest());
-            if(manifestContainer.length > 0 && manifestContainer[0].getClass().isArray()){
-                Object[] array = (Object[])manifestContainer[0];
+            Object[] manifestContainer = ((Object[]) player.getCurrentManifest());
+            if (manifestContainer.length > 0 && manifestContainer[0].getClass().isArray()) {
+                Object[] array = (Object[]) manifestContainer[0];
                 setAdTotal(array.length - 1);
             }
         }

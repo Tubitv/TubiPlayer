@@ -11,7 +11,7 @@ import java.io.Serializable;
 /**
  * Created by stoyan on 6/5/17.
  */
-public class MediaModel implements Serializable{
+public class MediaModel implements Serializable {
 
     /**
      * The url of the media
@@ -39,6 +39,7 @@ public class MediaModel implements Serializable{
 
     /**
      * The nullable click through url for this media if its an ad
+     *
      * @see #isAd
      */
     @Nullable
@@ -54,12 +55,12 @@ public class MediaModel implements Serializable{
      */
     private boolean isAd;
 
-    public static MediaModel video(@NonNull String mediaName, @NonNull String videoUrl, @NonNull String artworkUrl, @Nullable String subtitlesUrl){
+    public static MediaModel video(@NonNull String mediaName, @NonNull String videoUrl, @NonNull String artworkUrl, @Nullable String subtitlesUrl) {
         return new MediaModel(mediaName, videoUrl, artworkUrl, subtitlesUrl, null, false);
     }
 
-    public static MediaModel ad( @NonNull String videoUrl, @Nullable String subtitlesUrl, @Nullable String clickThroughUrl){
-        return new MediaModel(null, videoUrl, null, subtitlesUrl, clickThroughUrl, true);
+    public static MediaModel ad(@NonNull String videoUrl, @Nullable String clickThroughUrl) {
+        return new MediaModel(null, videoUrl, null, null, clickThroughUrl, true);
     }
 
     private MediaModel(@Nullable String mediaName, @NonNull String videoUrl, @Nullable String artworkUrl, @Nullable String subtitlesUrl, @Nullable String clickThroughUrl, boolean isAd) {
@@ -100,9 +101,10 @@ public class MediaModel implements Serializable{
         return isAd;
     }
 
-    public String getMediaExtension(){
+    public String getMediaExtension() {
         return "m3u8";
     }
+
     public MediaSource getMediaSource() {
         return mediaSource;
     }
