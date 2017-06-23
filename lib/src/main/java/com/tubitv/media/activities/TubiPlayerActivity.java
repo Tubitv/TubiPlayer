@@ -191,7 +191,7 @@ public class TubiPlayerActivity extends Activity implements TubiPlayerControlVie
                 null);
         ad1.setMediaSource(buildMediaSource(ad1));
         MediaModel ad2 = MediaModel.ad("http://c13.adrise.tv/ads/transcodes/004130/1050072/v0617070213-640x360-SD-,764,1057,k.mp4.m3u8",
-                null);
+                "https://github.com/stoyand");
         ad2.setMediaSource(buildMediaSource(ad2));
         return MediaHelper.create(ad1, ad2, mediaModel).getConcatenatedMedia();
     }

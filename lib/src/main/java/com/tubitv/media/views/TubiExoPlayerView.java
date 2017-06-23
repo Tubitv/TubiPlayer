@@ -3,11 +3,13 @@ package com.tubitv.media.views;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.content.res.Resources;
 import android.content.res.TypedArray;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
@@ -53,8 +55,6 @@ import com.tubitv.ui.VaudTextView;
 import com.tubitv.ui.VaudType;
 
 import java.util.List;
-
-import static android.content.ContentValues.TAG;
 
 /**
  * Created by stoyan tubi_tv_quality_on 3/22/17.
@@ -686,6 +686,14 @@ public class TubiExoPlayerView extends FrameLayout implements TubiPlaybackContro
             if (mappedTrackInfo != null) {
                 mTrackSelectionHelper.showSelectionDialog(0, controller);
             }
+        }
+    }
+
+    @Override
+    public void onLearnMoreClick(@NonNull MediaModel mediaModel) {
+        if(mActivity != null && mediaModel.getClickThroughUrl() != null){
+            Intent intent= new Intent(Intent.ACTION_VIEW, Uri.parse(mediaModel.getClickThroughUrl()));
+            mActivity.startActivity(intent);
         }
     }
 

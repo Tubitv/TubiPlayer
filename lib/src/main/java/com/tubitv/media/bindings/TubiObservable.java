@@ -277,6 +277,9 @@ public class TubiObservable extends BaseObservable implements ExoPlayer.EventLis
                 playbackControlInterface.onQualityTrackToggle(((StateImageButton) view).isChecked());
                 break;
             case TUBI_AD_LEARN_MORE_TAG:
+                if (mediaModel != null) {
+                    playbackControlInterface.onLearnMoreClick(mediaModel);
+                }
                 break;
         }
 

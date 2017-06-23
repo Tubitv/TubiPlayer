@@ -54,6 +54,8 @@
             android:background="@drawable/tubi_tv_player_ad_learn_more_background"
             android:orientation="horizontal"
             android:tag="@{TubiObservable.TUBI_AD_LEARN_MORE_TAG}"
+            android:visibility="@{playMedia.mediaModel.clickThroughUrl != null ? View.VISIBLE : View.GONE }"
+            android:onClick="@{playMedia.mediaModel.clickThroughUrl != null ? playMedia : null}"
             app:layout_constraintBottom_toBottomOf="@+id/view_tubi_ad_learn_more_ads_resume_shortly"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toTopOf="@+id/view_tubi_ad_learn_more_ads_resume_shortly"
@@ -90,7 +92,7 @@
                 app:layout_constraintLeft_toRightOf="@+id/view_tubi_ad_learn_more_ads_learn_more_text"
                 app:layout_constraintRight_toRightOf="parent"
                 app:layout_constraintTop_toTopOf="@+id/view_tubi_ad_learn_more_ads_learn_more_text"
-                app:layout_constraintVertical_bias="0.49"/>
+                app:layout_constraintVertical_bias="0.5"/>
         </android.support.constraint.ConstraintLayout>
 
     </android.support.constraint.ConstraintLayout>
