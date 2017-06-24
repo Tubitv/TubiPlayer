@@ -36,13 +36,14 @@ import com.google.android.exoplayer2.util.Util;
 import com.tubitv.media.R;
 import com.tubitv.media.helpers.MediaHelper;
 import com.tubitv.media.helpers.TrackSelectionHelper;
+import com.tubitv.media.interfaces.TubiPlaybackInterface;
 import com.tubitv.media.models.MediaModel;
 import com.tubitv.media.utilities.EventLogger;
 import com.tubitv.media.utilities.Utils;
 import com.tubitv.media.views.TubiExoPlayerView;
 import com.tubitv.media.views.TubiPlayerControlView;
 
-public class TubiPlayerActivity extends Activity implements TubiPlayerControlView.VisibilityListener {
+public abstract class TubiPlayerActivity extends Activity implements TubiPlayerControlView.VisibilityListener, TubiPlaybackInterface {
     public static String TUBI_MEDIA_KEY = "tubi_media_key";
 
     private SimpleExoPlayer mTubiExoPlayer;
@@ -173,21 +174,16 @@ public class TubiPlayerActivity extends Activity implements TubiPlayerControlVie
 
         mTubiPlayerView.setPlayer(mTubiExoPlayer);
         mTubiPlayerView.setMediaModel(mediaModel);
+        mTubiPlayerView.setPlaybackInterface(this);
         mTubiPlayerView.setTrackSelectionHelper(mTrackSelectionHelper);
         mTubiExoPlayer.setPlayWhenReady(shouldAutoPlay);
     }
 
     private MediaSource createMediaSource() {
 
-//       MediaHelper.
-        //fake media
-//        Uri uri;
-//        uri = mediaModel.getVideoUrl();
-//        String extension = "m3u8";
-//        MediaSource mediaSource;
         mediaModel.setMediaSource(buildMediaSource(mediaModel));
 
-        MediaModel ad1 = MediaModel.ad( "http://c11.adrise.tv/ads/transcodes/003572/940826/v0329081907-1280x720-HD-,740,1285,1622,2138,3632,k.mp4.m3u8",
+        MediaModel ad1 = MediaModel.ad("http://c11.adrise.tv/ads/transcodes/003572/940826/v0329081907-1280x720-HD-,740,1285,1622,2138,3632,k.mp4.m3u8",
                 null);
         ad1.setMediaSource(buildMediaSource(ad1));
         MediaModel ad2 = MediaModel.ad("http://c13.adrise.tv/ads/transcodes/004130/1050072/v0617070213-640x360-SD-,764,1057,k.mp4.m3u8",

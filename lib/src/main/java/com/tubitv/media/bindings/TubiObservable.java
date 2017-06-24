@@ -4,7 +4,6 @@ import android.databinding.BaseObservable;
 import android.databinding.Bindable;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.SeekBar;
@@ -176,7 +175,6 @@ public class TubiObservable extends BaseObservable implements ExoPlayer.EventLis
         this.playbackControlInterface = playbackControlInterface;
         setPlayer(player);
         setAdPlaying(false);
-//        bind media models to views
     }
 
     @Override
@@ -204,7 +202,6 @@ public class TubiObservable extends BaseObservable implements ExoPlayer.EventLis
 
     @Override
     public void onPositionDiscontinuity() {
-//        updateNavigation();
         setPlaybackState();
         updateProgress();
         updateMedia();
@@ -217,7 +214,6 @@ public class TubiObservable extends BaseObservable implements ExoPlayer.EventLis
 
     @Override
     public void onTimelineChanged(Timeline timeline, Object manifest) {
-//        updateNavigation();
         setPlaybackState();
         updateProgress();
         updateMedia();
@@ -225,14 +221,11 @@ public class TubiObservable extends BaseObservable implements ExoPlayer.EventLis
 
     @Override
     public void onStartTrackingTouch(SeekBar seekBar) {
-//        Log.d(TAG, "onStartTrackingTouch");
-//        removeCallbacks(hideAction);
         setDraggingSeekBar(true);
     }
 
     @Override
     public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-//        Log.d(TAG, "onProgressChanged");
         if (fromUser) {
             long position = Utils.progressToMilli(player.getDuration(), seekBar);
             long duration = player == null ? 0 : player.getDuration();
@@ -242,7 +235,6 @@ public class TubiObservable extends BaseObservable implements ExoPlayer.EventLis
 
     @Override
     public void onStopTrackingTouch(SeekBar seekBar) {
-//        Log.d(TAG, "onStopTrackingTouch");
         if (player != null) {
             seekTo(Utils.progressToMilli(player.getDuration(), seekBar));
         }
@@ -253,7 +245,7 @@ public class TubiObservable extends BaseObservable implements ExoPlayer.EventLis
 
     @Override
     public boolean onTouch(View v, MotionEvent event) {
-        Log.d(TAG, "onTouch");
+        //override on touch of the seek bar for ads
         return true;
     }
 
@@ -261,7 +253,6 @@ public class TubiObservable extends BaseObservable implements ExoPlayer.EventLis
     public void onClick(View view) {
         switch ((String) view.getTag()) {
             case TUBI_PLAY_TOGGLE_TAG:
-                Log.d(TAG, "Play toggle pressed");
                 if (player != null) {
                     boolean playing = player.getPlayWhenReady();
                     player.setPlayWhenReady(!playing);
@@ -270,7 +261,6 @@ public class TubiObservable extends BaseObservable implements ExoPlayer.EventLis
                 playbackControlInterface.hideAfterTimeout();
                 break;
             case TUBI_SUBTITLES_TAG:
-                Log.d(TAG, "Subtitles toggle pressed");
                 playbackControlInterface.onSubtitlesToggle(((StateImageButton) view).isChecked());
                 break;
             case TUBI_QUALITY_TAG:

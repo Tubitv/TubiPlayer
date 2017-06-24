@@ -48,8 +48,10 @@ import com.google.android.exoplayer2.util.Assertions;
 import com.google.android.exoplayer2.util.Util;
 import com.squareup.picasso.Picasso;
 import com.tubitv.media.R;
+import com.tubitv.media.helpers.MediaHelper;
 import com.tubitv.media.helpers.TrackSelectionHelper;
 import com.tubitv.media.interfaces.TubiPlaybackControlInterface;
+import com.tubitv.media.interfaces.TubiPlaybackInterface;
 import com.tubitv.media.models.MediaModel;
 import com.tubitv.ui.VaudTextView;
 import com.tubitv.ui.VaudType;
@@ -87,6 +89,9 @@ public class TubiExoPlayerView extends FrameLayout implements TubiPlaybackContro
 
     @NonNull
     private MediaModel mediaModel;
+
+    @Nullable
+    private TubiPlaybackInterface playbackInterface;
 
     public TubiExoPlayerView(Context context) {
         this(context, null);
@@ -646,6 +651,10 @@ public class TubiExoPlayerView extends FrameLayout implements TubiPlaybackContro
         }
     }
 
+    public void setPlaybackInterface(@Nullable TubiPlaybackInterface playbackInterface) {
+        this.playbackInterface = playbackInterface;
+    }
+
     @TargetApi(23)
     private static void configureEditModeLogoV23(Resources resources, ImageView logo) {
         logo.setImageDrawable(resources.getDrawable(R.drawable.exo_edit_mode_logo, null));
@@ -705,6 +714,10 @@ public class TubiExoPlayerView extends FrameLayout implements TubiPlaybackContro
     @Override
     public void postRunnable(@NonNull Runnable runnable, long millisDelay) {
         postDelayed(runnable, millisDelay);
+        if(playbackInterface != null){
+            playbackInterface.onProgress(MediaHelper.getMediaByIndex(player.getCurrentWindowIndex()), player.getCurrentPosition());
+        }
+
     }
 
     @Override
