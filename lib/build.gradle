@@ -10,7 +10,7 @@ buildscript {
     }
 }
 
-def libVersion = "0.0.4-alpha"
+def libVersion = "0.0.1-beta"
 
 android {
     compileSdkVersion 25
