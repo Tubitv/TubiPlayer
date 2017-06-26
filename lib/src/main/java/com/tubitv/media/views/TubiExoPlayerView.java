@@ -269,7 +269,7 @@ public class TubiExoPlayerView extends FrameLayout implements TubiPlaybackContro
      *
      * @param player The {@link SimpleExoPlayer} to use.
      */
-    public void setPlayer(SimpleExoPlayer player, @Nullable TubiPlaybackInterface playbackInterface) {
+    public void setPlayer(SimpleExoPlayer player, @NonNull TubiPlaybackInterface playbackInterface) {
         setPlaybackInterface(playbackInterface);
         if (this.player == player) {
             return;
@@ -698,14 +698,6 @@ public class TubiExoPlayerView extends FrameLayout implements TubiPlaybackContro
             if (mappedTrackInfo != null) {
                 mTrackSelectionHelper.showSelectionDialog(0, controller);
             }
-        }
-    }
-
-    @Override
-    public void onLearnMoreClick(@NonNull MediaModel mediaModel) {
-        if(mActivity != null && mediaModel.getClickThroughUrl() != null){
-            Intent intent= new Intent(Intent.ACTION_VIEW, Uri.parse(mediaModel.getClickThroughUrl()));
-            mActivity.startActivity(intent);
         }
     }
 

@@ -265,19 +265,29 @@ public class TubiObservable extends BaseObservable implements ExoPlayer.EventLis
                 if (player != null) {
                     boolean playing = player.getPlayWhenReady();
                     player.setPlayWhenReady(!playing);
+                    if (mediaModel != null) {
+                        playbackInterface.onPlayToggle(mediaModel, !playing);
+                    }
                 }
                 setIsPlaying();
                 playbackControlInterface.hideAfterTimeout();
                 break;
             case TUBI_SUBTITLES_TAG:
+                boolean enabled = ((StateImageButton) view).isChecked();
                 playbackControlInterface.onSubtitlesToggle(((StateImageButton) view).isChecked());
+                if (mediaModel != null) {
+                    playbackInterface.onSubtitles(mediaModel, enabled);
+                }
                 break;
             case TUBI_QUALITY_TAG:
                 playbackControlInterface.onQualityTrackToggle(((StateImageButton) view).isChecked());
+                if (mediaModel != null) {
+                    playbackInterface.onQuality(mediaModel);
+                }
                 break;
             case TUBI_AD_LEARN_MORE_TAG:
                 if (mediaModel != null) {
-                    playbackControlInterface.onLearnMoreClick(mediaModel);
+                    playbackInterface.onLearnMoreClick(mediaModel);
                 }
                 break;
         }

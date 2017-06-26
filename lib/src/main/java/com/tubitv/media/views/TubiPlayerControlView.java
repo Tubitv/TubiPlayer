@@ -161,7 +161,7 @@ public class TubiPlayerControlView extends ConstraintLayout implements TrackSele
 
 
     public void setPlayer(@NonNull SimpleExoPlayer player, @NonNull final TubiPlaybackControlInterface playbackControlInterface,
-                          @Nullable final TubiPlaybackInterface playbackInterface) {
+                          @NonNull final TubiPlaybackInterface playbackInterface) {
         if (this.mPlayer == null || this.mPlayer != player) {
             tubiObservable = new TubiObservable(player, playbackControlInterface, playbackInterface);
             //Controller doesn't get re-initialized TODO fix instance call
