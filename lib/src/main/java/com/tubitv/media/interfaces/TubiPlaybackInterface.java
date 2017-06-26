@@ -11,4 +11,8 @@ import com.tubitv.media.models.MediaModel;
 public interface TubiPlaybackInterface {
 
     void onProgress(@Nullable MediaModel mediaModel, long milliseconds);
+
+    void onSeek(@Nullable MediaModel mediaModel, long oldPositionMillis, long newPositionMillis);
+
+    boolean isActive();
 }

@@ -18,6 +18,7 @@ import com.google.android.exoplayer2.trackselection.TrackSelectionArray;
 import com.tubitv.media.BR;
 import com.tubitv.media.helpers.MediaHelper;
 import com.tubitv.media.interfaces.TubiPlaybackControlInterface;
+import com.tubitv.media.interfaces.TubiPlaybackInterface;
 import com.tubitv.media.models.MediaModel;
 import com.tubitv.media.utilities.Utils;
 import com.tubitv.media.views.StateImageButton;
@@ -73,6 +74,12 @@ public class TubiObservable extends BaseObservable implements ExoPlayer.EventLis
      */
     @NonNull
     private final TubiPlaybackControlInterface playbackControlInterface;
+
+    /**
+     * The interface from the calling activity for hooking general media playback state
+     */
+    @NonNull
+    private final TubiPlaybackInterface playbackInterface;
 
     /**
      * The title of the movie being played
@@ -171,8 +178,10 @@ public class TubiObservable extends BaseObservable implements ExoPlayer.EventLis
      */
     private SimpleExoPlayer player;
 
-    public TubiObservable(@NonNull SimpleExoPlayer player, @NonNull final TubiPlaybackControlInterface playbackControlInterface) {
+    public TubiObservable(@NonNull SimpleExoPlayer player, @NonNull final TubiPlaybackControlInterface playbackControlInterface,
+                          @NonNull final TubiPlaybackInterface playbackInterface) {
         this.playbackControlInterface = playbackControlInterface;
+        this.playbackInterface = playbackInterface;
         setPlayer(player);
         setAdPlaying(false);
     }
@@ -302,6 +311,10 @@ public class TubiObservable extends BaseObservable implements ExoPlayer.EventLis
     private void seekTo(int windowIndex, long positionMs) {
         if (player != null) {
             player.seekTo(windowIndex, positionMs);
+            if (playbackInterface != null) {
+                playbackInterface.onSeek(MediaHelper.getMediaByIndex(player.getCurrentWindowIndex()),
+                        player.getCurrentPosition(), positionMs);
+            }
         }
     }
 
@@ -349,7 +362,9 @@ public class TubiObservable extends BaseObservable implements ExoPlayer.EventLis
             } else {
                 delayMs = 1000;
             }
-            playbackControlInterface.postRunnable(updateProgressAction, delayMs);
+            if (playbackInterface.isActive()) {
+                playbackControlInterface.postRunnable(updateProgressAction, delayMs);
+            }
         }
     }
 

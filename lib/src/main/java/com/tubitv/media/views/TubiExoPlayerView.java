@@ -90,8 +90,11 @@ public class TubiExoPlayerView extends FrameLayout implements TubiPlaybackContro
     @NonNull
     private MediaModel mediaModel;
 
+    /**
+     * The interface from the calling activity for hooking general media playback state
+     */
     @Nullable
-    private TubiPlaybackInterface playbackInterface;
+    private  TubiPlaybackInterface playbackInterface;
 
     public TubiExoPlayerView(Context context) {
         this(context, null);
@@ -209,7 +212,6 @@ public class TubiExoPlayerView extends FrameLayout implements TubiPlaybackContro
             // calls to set them.
             this.controller = new TubiPlayerControlView(context, attrs);
             controller.setLayoutParams(controllerPlaceholder.getLayoutParams());
-            controller.setPlaybackInterface(this);
             ViewGroup parent = ((ViewGroup) controllerPlaceholder.getParent());
             int controllerIndex = parent.indexOfChild(controllerPlaceholder);
             parent.removeView(controllerPlaceholder);
@@ -267,7 +269,8 @@ public class TubiExoPlayerView extends FrameLayout implements TubiPlaybackContro
      *
      * @param player The {@link SimpleExoPlayer} to use.
      */
-    public void setPlayer(SimpleExoPlayer player) {
+    public void setPlayer(SimpleExoPlayer player, @Nullable TubiPlaybackInterface playbackInterface) {
+        setPlaybackInterface(playbackInterface);
         if (this.player == player) {
             return;
         }
@@ -283,7 +286,7 @@ public class TubiExoPlayerView extends FrameLayout implements TubiPlaybackContro
         }
         this.player = player;
         if (useController) {
-            controller.setPlayer(player,this);
+            controller.setPlayer(player,this, playbackInterface);
         }
         if (shutterView != null) {
             shutterView.setVisibility(VISIBLE);
@@ -375,10 +378,10 @@ public class TubiExoPlayerView extends FrameLayout implements TubiPlaybackContro
         }
         this.useController = useController;
         if (useController) {
-            controller.setPlayer(player, this);
+            controller.setPlayer(player, this, playbackInterface);
         } else if (controller != null) {
             controller.hide();
-            controller.setPlayer(null, this);
+            controller.setPlayer(null, this, playbackInterface);
         }
     }
 

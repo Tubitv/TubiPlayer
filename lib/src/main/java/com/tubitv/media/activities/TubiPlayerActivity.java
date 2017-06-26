@@ -58,6 +58,8 @@ public abstract class TubiPlayerActivity extends Activity implements TubiPlayerC
 
     private long resumePosition;
 
+    protected boolean isActive = false;
+
     @NonNull
     private MediaModel mediaModel;
 
@@ -122,6 +124,11 @@ public abstract class TubiPlayerActivity extends Activity implements TubiPlayerC
         }
     }
 
+    @Override
+    public boolean isActive() {
+        return isActive;
+    }
+
     @SuppressWarnings("ConstantConditions")
     private void parseIntent() {
         String errorNoMediaMessage = getResources().getString(R.string.activity_tubi_player_no_media_error_message);
@@ -151,6 +158,8 @@ public abstract class TubiPlayerActivity extends Activity implements TubiPlayerC
         MediaSource mediaSource = createMediaSource();
 
         playMedia(mediaSource);
+
+        isActive = true;
     }
 
     private void initPlayer() {
@@ -172,9 +181,8 @@ public abstract class TubiPlayerActivity extends Activity implements TubiPlayerC
         mTubiExoPlayer.setVideoDebugListener(mEventLogger);
         mTubiExoPlayer.setMetadataOutput(mEventLogger);
 
-        mTubiPlayerView.setPlayer(mTubiExoPlayer);
+        mTubiPlayerView.setPlayer(mTubiExoPlayer, this);
         mTubiPlayerView.setMediaModel(mediaModel);
-        mTubiPlayerView.setPlaybackInterface(this);
         mTubiPlayerView.setTrackSelectionHelper(mTrackSelectionHelper);
         mTubiExoPlayer.setPlayWhenReady(shouldAutoPlay);
     }
@@ -209,6 +217,7 @@ public abstract class TubiPlayerActivity extends Activity implements TubiPlayerC
             mTubiExoPlayer = null;
             mTrackSelector = null;
         }
+        isActive = false;
     }
 
     private MediaSource buildMediaSource(MediaModel model) {
@@ -282,4 +291,6 @@ public abstract class TubiPlayerActivity extends Activity implements TubiPlayerC
     public HttpDataSource.Factory buildHttpDataSourceFactory(DefaultBandwidthMeter bandwidthMeter) {
         return new DefaultHttpDataSourceFactory(Util.getUserAgent(this, "TubiPlayerActivity"), bandwidthMeter);
     }
+
+
 }
