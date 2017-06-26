@@ -154,13 +154,11 @@ public abstract class TubiPlayerActivity extends Activity implements TubiPlayerC
 
     private void setupExo() {
         initPlayer();
-
-        MediaSource mediaSource = createMediaSource();
-
-        playMedia(mediaSource);
-
         isActive = true;
+        onPlayerReady();
     }
+
+    protected abstract void onPlayerReady();
 
     private void initPlayer() {
         // 1. Create a default TrackSelector
@@ -187,7 +185,7 @@ public abstract class TubiPlayerActivity extends Activity implements TubiPlayerC
         mTubiExoPlayer.setPlayWhenReady(shouldAutoPlay);
     }
 
-    private MediaSource createMediaSource() {
+    protected MediaSource createMediaSource() {
 
         mediaModel.setMediaSource(buildMediaSource(mediaModel));
 
@@ -200,7 +198,7 @@ public abstract class TubiPlayerActivity extends Activity implements TubiPlayerC
         return MediaHelper.create(ad1, ad2, mediaModel).getConcatenatedMedia();
     }
 
-    private void playMedia(MediaSource mediaSource) {
+    protected void playMedia(MediaSource mediaSource) {
         boolean haveResumePosition = resumeWindow != C.INDEX_UNSET;
         if (haveResumePosition) {
             mTubiExoPlayer.seekTo(resumeWindow, resumePosition);
@@ -209,7 +207,7 @@ public abstract class TubiPlayerActivity extends Activity implements TubiPlayerC
         Utils.hideSystemUI(this, true);
     }
 
-    private void releasePlayer() {
+    protected void releasePlayer() {
         if (mTubiExoPlayer != null) {
             shouldAutoPlay = mTubiExoPlayer.getPlayWhenReady();
             updateResumePosition();
@@ -220,7 +218,7 @@ public abstract class TubiPlayerActivity extends Activity implements TubiPlayerC
         isActive = false;
     }
 
-    private MediaSource buildMediaSource(MediaModel model) {
+    protected MediaSource buildMediaSource(MediaModel model) {
         MediaSource mediaSource;
         int type = TextUtils.isEmpty(model.getMediaExtension()) ? Util.inferContentType(model.getVideoUrl())
                 : Util.inferContentType("." + model.getMediaExtension());
@@ -266,11 +264,11 @@ public abstract class TubiPlayerActivity extends Activity implements TubiPlayerC
      *                          DataSource factory.
      * @return A new DataSource factory.
      */
-    private DataSource.Factory buildDataSourceFactory(boolean useBandwidthMeter) {
+    protected DataSource.Factory buildDataSourceFactory(boolean useBandwidthMeter) {
         return MediaHelper.buildDataSourceFactory(this, useBandwidthMeter ? BANDWIDTH_METER : null);
     }
 
-    private void updateResumePosition() {
+    protected void updateResumePosition() {
         if (mTubiExoPlayer != null) {
             resumeWindow = mTubiExoPlayer.getCurrentWindowIndex();
             resumePosition = mTubiExoPlayer.isCurrentWindowSeekable() ? Math.max(0, mTubiExoPlayer.getCurrentPosition())
@@ -278,7 +276,7 @@ public abstract class TubiPlayerActivity extends Activity implements TubiPlayerC
         }
     }
 
-    private void clearResumePosition() {
+    protected void clearResumePosition() {
         resumeWindow = C.INDEX_UNSET;
         resumePosition = C.TIME_UNSET;
     }

@@ -718,7 +718,7 @@ public class TubiExoPlayerView extends FrameLayout implements TubiPlaybackContro
     public void postRunnable(@NonNull Runnable runnable, long millisDelay) {
         postDelayed(runnable, millisDelay);
         if(playbackInterface != null){
-            playbackInterface.onProgress(MediaHelper.getMediaByIndex(player.getCurrentWindowIndex()), player.getCurrentPosition());
+            playbackInterface.onProgress(MediaHelper.getMediaByIndex(player.getCurrentWindowIndex()), player.getCurrentPosition(), player.getDuration());
         }
 
     }
