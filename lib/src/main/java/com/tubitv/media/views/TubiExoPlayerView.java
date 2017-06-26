@@ -783,8 +783,6 @@ public class TubiExoPlayerView extends FrameLayout implements TubiPlaybackContro
         @Override
         public void onPositionDiscontinuity() {
             // Do nothing.
-            Log.e("TubiExoPlayerView", "onPositionDiscontinuity window index : " + player.getCurrentWindowIndex());
-            Log.e("TubiExoPlayerView", "onPositionDiscontinuity period index : " + player.getCurrentPeriodIndex());
         }
 
         @Override

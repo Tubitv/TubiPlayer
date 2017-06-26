@@ -310,11 +310,10 @@ public class TubiObservable extends BaseObservable implements ExoPlayer.EventLis
 
     private void seekTo(int windowIndex, long positionMs) {
         if (player != null) {
+            playbackInterface.onSeek(MediaHelper.getMediaByIndex(player.getCurrentWindowIndex()),
+                    player.getCurrentPosition(), positionMs);
+
             player.seekTo(windowIndex, positionMs);
-            if (playbackInterface != null) {
-                playbackInterface.onSeek(MediaHelper.getMediaByIndex(player.getCurrentWindowIndex()),
-                        player.getCurrentPosition(), positionMs);
-            }
         }
     }
 
