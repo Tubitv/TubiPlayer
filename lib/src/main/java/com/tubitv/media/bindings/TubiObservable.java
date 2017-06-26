@@ -4,7 +4,6 @@ import android.databinding.BaseObservable;
 import android.databinding.Bindable;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.SeekBar;
@@ -19,6 +18,7 @@ import com.google.android.exoplayer2.trackselection.TrackSelectionArray;
 import com.tubitv.media.BR;
 import com.tubitv.media.helpers.MediaHelper;
 import com.tubitv.media.interfaces.TubiPlaybackControlInterface;
+import com.tubitv.media.interfaces.TubiPlaybackInterface;
 import com.tubitv.media.models.MediaModel;
 import com.tubitv.media.utilities.Utils;
 import com.tubitv.media.views.StateImageButton;
@@ -74,6 +74,12 @@ public class TubiObservable extends BaseObservable implements ExoPlayer.EventLis
      */
     @NonNull
     private final TubiPlaybackControlInterface playbackControlInterface;
+
+    /**
+     * The interface from the calling activity for hooking general media playback state
+     */
+    @NonNull
+    private final TubiPlaybackInterface playbackInterface;
 
     /**
      * The title of the movie being played
@@ -172,11 +178,12 @@ public class TubiObservable extends BaseObservable implements ExoPlayer.EventLis
      */
     private SimpleExoPlayer player;
 
-    public TubiObservable(@NonNull SimpleExoPlayer player, @NonNull final TubiPlaybackControlInterface playbackControlInterface) {
+    public TubiObservable(@NonNull SimpleExoPlayer player, @NonNull final TubiPlaybackControlInterface playbackControlInterface,
+                          @NonNull final TubiPlaybackInterface playbackInterface) {
         this.playbackControlInterface = playbackControlInterface;
+        this.playbackInterface = playbackInterface;
         setPlayer(player);
         setAdPlaying(false);
-//        bind media models to views
     }
 
     @Override
@@ -204,7 +211,6 @@ public class TubiObservable extends BaseObservable implements ExoPlayer.EventLis
 
     @Override
     public void onPositionDiscontinuity() {
-//        updateNavigation();
         setPlaybackState();
         updateProgress();
         updateMedia();
@@ -217,7 +223,6 @@ public class TubiObservable extends BaseObservable implements ExoPlayer.EventLis
 
     @Override
     public void onTimelineChanged(Timeline timeline, Object manifest) {
-//        updateNavigation();
         setPlaybackState();
         updateProgress();
         updateMedia();
@@ -225,14 +230,11 @@ public class TubiObservable extends BaseObservable implements ExoPlayer.EventLis
 
     @Override
     public void onStartTrackingTouch(SeekBar seekBar) {
-//        Log.d(TAG, "onStartTrackingTouch");
-//        removeCallbacks(hideAction);
         setDraggingSeekBar(true);
     }
 
     @Override
     public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-//        Log.d(TAG, "onProgressChanged");
         if (fromUser) {
             long position = Utils.progressToMilli(player.getDuration(), seekBar);
             long duration = player == null ? 0 : player.getDuration();
@@ -242,7 +244,6 @@ public class TubiObservable extends BaseObservable implements ExoPlayer.EventLis
 
     @Override
     public void onStopTrackingTouch(SeekBar seekBar) {
-//        Log.d(TAG, "onStopTrackingTouch");
         if (player != null) {
             seekTo(Utils.progressToMilli(player.getDuration(), seekBar));
         }
@@ -253,7 +254,7 @@ public class TubiObservable extends BaseObservable implements ExoPlayer.EventLis
 
     @Override
     public boolean onTouch(View v, MotionEvent event) {
-        Log.d(TAG, "onTouch");
+        //override on touch of the seek bar for ads
         return true;
     }
 
@@ -261,24 +262,32 @@ public class TubiObservable extends BaseObservable implements ExoPlayer.EventLis
     public void onClick(View view) {
         switch ((String) view.getTag()) {
             case TUBI_PLAY_TOGGLE_TAG:
-                Log.d(TAG, "Play toggle pressed");
                 if (player != null) {
                     boolean playing = player.getPlayWhenReady();
                     player.setPlayWhenReady(!playing);
+                    if (mediaModel != null) {
+                        playbackInterface.onPlayToggle(mediaModel, !playing);
+                    }
                 }
                 setIsPlaying();
                 playbackControlInterface.hideAfterTimeout();
                 break;
             case TUBI_SUBTITLES_TAG:
-                Log.d(TAG, "Subtitles toggle pressed");
+                boolean enabled = ((StateImageButton) view).isChecked();
                 playbackControlInterface.onSubtitlesToggle(((StateImageButton) view).isChecked());
+                if (mediaModel != null) {
+                    playbackInterface.onSubtitles(mediaModel, enabled);
+                }
                 break;
             case TUBI_QUALITY_TAG:
                 playbackControlInterface.onQualityTrackToggle(((StateImageButton) view).isChecked());
+                if (mediaModel != null) {
+                    playbackInterface.onQuality(mediaModel);
+                }
                 break;
             case TUBI_AD_LEARN_MORE_TAG:
                 if (mediaModel != null) {
-                    playbackControlInterface.onLearnMoreClick(mediaModel);
+                    playbackInterface.onLearnMoreClick(mediaModel);
                 }
                 break;
         }
@@ -311,6 +320,9 @@ public class TubiObservable extends BaseObservable implements ExoPlayer.EventLis
 
     private void seekTo(int windowIndex, long positionMs) {
         if (player != null) {
+            playbackInterface.onSeek(MediaHelper.getMediaByIndex(player.getCurrentWindowIndex()),
+                    player.getCurrentPosition(), positionMs);
+
             player.seekTo(windowIndex, positionMs);
         }
     }
@@ -359,7 +371,9 @@ public class TubiObservable extends BaseObservable implements ExoPlayer.EventLis
             } else {
                 delayMs = 1000;
             }
-            playbackControlInterface.postRunnable(updateProgressAction, delayMs);
+            if (playbackInterface.isActive()) {
+                playbackControlInterface.postRunnable(updateProgressAction, delayMs);
+            }
         }
     }
 

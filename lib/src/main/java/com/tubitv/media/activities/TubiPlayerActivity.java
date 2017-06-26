@@ -36,13 +36,14 @@ import com.google.android.exoplayer2.util.Util;
 import com.tubitv.media.R;
 import com.tubitv.media.helpers.MediaHelper;
 import com.tubitv.media.helpers.TrackSelectionHelper;
+import com.tubitv.media.interfaces.TubiPlaybackInterface;
 import com.tubitv.media.models.MediaModel;
 import com.tubitv.media.utilities.EventLogger;
 import com.tubitv.media.utilities.Utils;
 import com.tubitv.media.views.TubiExoPlayerView;
 import com.tubitv.media.views.TubiPlayerControlView;
 
-public class TubiPlayerActivity extends Activity implements TubiPlayerControlView.VisibilityListener {
+public abstract class TubiPlayerActivity extends Activity implements TubiPlayerControlView.VisibilityListener, TubiPlaybackInterface {
     public static String TUBI_MEDIA_KEY = "tubi_media_key";
 
     private SimpleExoPlayer mTubiExoPlayer;
@@ -56,6 +57,8 @@ public class TubiPlayerActivity extends Activity implements TubiPlayerControlVie
     private int resumeWindow;
 
     private long resumePosition;
+
+    protected boolean isActive = false;
 
     @NonNull
     private MediaModel mediaModel;
@@ -121,6 +124,11 @@ public class TubiPlayerActivity extends Activity implements TubiPlayerControlVie
         }
     }
 
+    @Override
+    public boolean isActive() {
+        return isActive;
+    }
+
     @SuppressWarnings("ConstantConditions")
     private void parseIntent() {
         String errorNoMediaMessage = getResources().getString(R.string.activity_tubi_player_no_media_error_message);
@@ -146,11 +154,11 @@ public class TubiPlayerActivity extends Activity implements TubiPlayerControlVie
 
     private void setupExo() {
         initPlayer();
-
-        MediaSource mediaSource = createMediaSource();
-
-        playMedia(mediaSource);
+        isActive = true;
+        onPlayerReady();
     }
+
+    protected abstract void onPlayerReady();
 
     private void initPlayer() {
         // 1. Create a default TrackSelector
@@ -171,23 +179,17 @@ public class TubiPlayerActivity extends Activity implements TubiPlayerControlVie
         mTubiExoPlayer.setVideoDebugListener(mEventLogger);
         mTubiExoPlayer.setMetadataOutput(mEventLogger);
 
-        mTubiPlayerView.setPlayer(mTubiExoPlayer);
+        mTubiPlayerView.setPlayer(mTubiExoPlayer, this);
         mTubiPlayerView.setMediaModel(mediaModel);
         mTubiPlayerView.setTrackSelectionHelper(mTrackSelectionHelper);
         mTubiExoPlayer.setPlayWhenReady(shouldAutoPlay);
     }
 
-    private MediaSource createMediaSource() {
+    protected MediaSource createMediaSource() {
 
-//       MediaHelper.
-        //fake media
-//        Uri uri;
-//        uri = mediaModel.getVideoUrl();
-//        String extension = "m3u8";
-//        MediaSource mediaSource;
         mediaModel.setMediaSource(buildMediaSource(mediaModel));
 
-        MediaModel ad1 = MediaModel.ad( "http://c11.adrise.tv/ads/transcodes/003572/940826/v0329081907-1280x720-HD-,740,1285,1622,2138,3632,k.mp4.m3u8",
+        MediaModel ad1 = MediaModel.ad("http://c11.adrise.tv/ads/transcodes/003572/940826/v0329081907-1280x720-HD-,740,1285,1622,2138,3632,k.mp4.m3u8",
                 null);
         ad1.setMediaSource(buildMediaSource(ad1));
         MediaModel ad2 = MediaModel.ad("http://c13.adrise.tv/ads/transcodes/004130/1050072/v0617070213-640x360-SD-,764,1057,k.mp4.m3u8",
@@ -196,7 +198,7 @@ public class TubiPlayerActivity extends Activity implements TubiPlayerControlVie
         return MediaHelper.create(ad1, ad2, mediaModel).getConcatenatedMedia();
     }
 
-    private void playMedia(MediaSource mediaSource) {
+    protected void playMedia(MediaSource mediaSource) {
         boolean haveResumePosition = resumeWindow != C.INDEX_UNSET;
         if (haveResumePosition) {
             mTubiExoPlayer.seekTo(resumeWindow, resumePosition);
@@ -205,7 +207,7 @@ public class TubiPlayerActivity extends Activity implements TubiPlayerControlVie
         Utils.hideSystemUI(this, true);
     }
 
-    private void releasePlayer() {
+    protected void releasePlayer() {
         if (mTubiExoPlayer != null) {
             shouldAutoPlay = mTubiExoPlayer.getPlayWhenReady();
             updateResumePosition();
@@ -213,9 +215,10 @@ public class TubiPlayerActivity extends Activity implements TubiPlayerControlVie
             mTubiExoPlayer = null;
             mTrackSelector = null;
         }
+        isActive = false;
     }
 
-    private MediaSource buildMediaSource(MediaModel model) {
+    protected MediaSource buildMediaSource(MediaModel model) {
         MediaSource mediaSource;
         int type = TextUtils.isEmpty(model.getMediaExtension()) ? Util.inferContentType(model.getVideoUrl())
                 : Util.inferContentType("." + model.getMediaExtension());
@@ -261,11 +264,11 @@ public class TubiPlayerActivity extends Activity implements TubiPlayerControlVie
      *                          DataSource factory.
      * @return A new DataSource factory.
      */
-    private DataSource.Factory buildDataSourceFactory(boolean useBandwidthMeter) {
+    protected DataSource.Factory buildDataSourceFactory(boolean useBandwidthMeter) {
         return MediaHelper.buildDataSourceFactory(this, useBandwidthMeter ? BANDWIDTH_METER : null);
     }
 
-    private void updateResumePosition() {
+    protected void updateResumePosition() {
         if (mTubiExoPlayer != null) {
             resumeWindow = mTubiExoPlayer.getCurrentWindowIndex();
             resumePosition = mTubiExoPlayer.isCurrentWindowSeekable() ? Math.max(0, mTubiExoPlayer.getCurrentPosition())
@@ -273,7 +276,7 @@ public class TubiPlayerActivity extends Activity implements TubiPlayerControlVie
         }
     }
 
-    private void clearResumePosition() {
+    protected void clearResumePosition() {
         resumeWindow = C.INDEX_UNSET;
         resumePosition = C.TIME_UNSET;
     }
@@ -286,4 +289,6 @@ public class TubiPlayerActivity extends Activity implements TubiPlayerControlVie
     public HttpDataSource.Factory buildHttpDataSourceFactory(DefaultBandwidthMeter bandwidthMeter) {
         return new DefaultHttpDataSourceFactory(Util.getUserAgent(this, "TubiPlayerActivity"), bandwidthMeter);
     }
+
+
 }

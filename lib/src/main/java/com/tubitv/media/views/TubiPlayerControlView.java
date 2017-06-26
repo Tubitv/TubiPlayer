@@ -19,6 +19,7 @@ import com.tubitv.media.bindings.TubiObservable;
 import com.tubitv.media.databinding.ViewTubiPlayerControlBinding;
 import com.tubitv.media.interfaces.TrackSelectionHelperInterface;
 import com.tubitv.media.interfaces.TubiPlaybackControlInterface;
+import com.tubitv.media.interfaces.TubiPlaybackInterface;
 import com.tubitv.media.models.MediaModel;
 
 /**
@@ -62,11 +63,6 @@ public class TubiPlayerControlView extends ConstraintLayout implements TrackSele
      * The time out time for the view to be hidden if the user is not interacting with it
      */
     private long hideAtMs;
-
-    /**
-     * The interface for playback control of the tubiObservable
-     */
-    private TubiPlaybackControlInterface playbackInterface;
 
     /**
      * The binding observable for the control views
@@ -164,10 +160,10 @@ public class TubiPlayerControlView extends ConstraintLayout implements TrackSele
     }
 
 
-    public void setPlayer(@NonNull SimpleExoPlayer player, @NonNull final TubiPlaybackControlInterface playbackControlInterface) {
+    public void setPlayer(@NonNull SimpleExoPlayer player, @NonNull final TubiPlaybackControlInterface playbackControlInterface,
+                          @NonNull final TubiPlaybackInterface playbackInterface) {
         if (this.mPlayer == null || this.mPlayer != player) {
-            tubiObservable = new TubiObservable(player, playbackControlInterface);
-            setPlaybackInterface(playbackControlInterface);
+            tubiObservable = new TubiObservable(player, playbackControlInterface, playbackInterface);
             //Controller doesn't get re-initialized TODO fix instance call
             mBinding.viewTubiControllerSubtitlesIb.clearClickListeners();
             mBinding.viewTubiControllerQualityIb.clearClickListeners();
@@ -278,10 +274,6 @@ public class TubiPlayerControlView extends ConstraintLayout implements TrackSele
 
     public void setShowTimeoutMs(int i) {
 
-    }
-
-    public void setPlaybackInterface(TubiPlaybackControlInterface playbackInterface) {
-        this.playbackInterface = playbackInterface;
     }
 
     public void setMediaModel(@NonNull MediaModel mediaModel) {

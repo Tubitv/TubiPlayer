@@ -48,8 +48,10 @@ import com.google.android.exoplayer2.util.Assertions;
 import com.google.android.exoplayer2.util.Util;
 import com.squareup.picasso.Picasso;
 import com.tubitv.media.R;
+import com.tubitv.media.helpers.MediaHelper;
 import com.tubitv.media.helpers.TrackSelectionHelper;
 import com.tubitv.media.interfaces.TubiPlaybackControlInterface;
+import com.tubitv.media.interfaces.TubiPlaybackInterface;
 import com.tubitv.media.models.MediaModel;
 import com.tubitv.ui.VaudTextView;
 import com.tubitv.ui.VaudType;
@@ -87,6 +89,12 @@ public class TubiExoPlayerView extends FrameLayout implements TubiPlaybackContro
 
     @NonNull
     private MediaModel mediaModel;
+
+    /**
+     * The interface from the calling activity for hooking general media playback state
+     */
+    @Nullable
+    private  TubiPlaybackInterface playbackInterface;
 
     public TubiExoPlayerView(Context context) {
         this(context, null);
@@ -204,7 +212,6 @@ public class TubiExoPlayerView extends FrameLayout implements TubiPlaybackContro
             // calls to set them.
             this.controller = new TubiPlayerControlView(context, attrs);
             controller.setLayoutParams(controllerPlaceholder.getLayoutParams());
-            controller.setPlaybackInterface(this);
             ViewGroup parent = ((ViewGroup) controllerPlaceholder.getParent());
             int controllerIndex = parent.indexOfChild(controllerPlaceholder);
             parent.removeView(controllerPlaceholder);
@@ -262,7 +269,8 @@ public class TubiExoPlayerView extends FrameLayout implements TubiPlaybackContro
      *
      * @param player The {@link SimpleExoPlayer} to use.
      */
-    public void setPlayer(SimpleExoPlayer player) {
+    public void setPlayer(SimpleExoPlayer player, @NonNull TubiPlaybackInterface playbackInterface) {
+        setPlaybackInterface(playbackInterface);
         if (this.player == player) {
             return;
         }
@@ -278,7 +286,7 @@ public class TubiExoPlayerView extends FrameLayout implements TubiPlaybackContro
         }
         this.player = player;
         if (useController) {
-            controller.setPlayer(player,this);
+            controller.setPlayer(player,this, playbackInterface);
         }
         if (shutterView != null) {
             shutterView.setVisibility(VISIBLE);
@@ -370,10 +378,10 @@ public class TubiExoPlayerView extends FrameLayout implements TubiPlaybackContro
         }
         this.useController = useController;
         if (useController) {
-            controller.setPlayer(player, this);
+            controller.setPlayer(player, this, playbackInterface);
         } else if (controller != null) {
             controller.hide();
-            controller.setPlayer(null, this);
+            controller.setPlayer(null, this, playbackInterface);
         }
     }
 
@@ -646,6 +654,10 @@ public class TubiExoPlayerView extends FrameLayout implements TubiPlaybackContro
         }
     }
 
+    public void setPlaybackInterface(@Nullable TubiPlaybackInterface playbackInterface) {
+        this.playbackInterface = playbackInterface;
+    }
+
     @TargetApi(23)
     private static void configureEditModeLogoV23(Resources resources, ImageView logo) {
         logo.setImageDrawable(resources.getDrawable(R.drawable.exo_edit_mode_logo, null));
@@ -690,14 +702,6 @@ public class TubiExoPlayerView extends FrameLayout implements TubiPlaybackContro
     }
 
     @Override
-    public void onLearnMoreClick(@NonNull MediaModel mediaModel) {
-        if(mActivity != null && mediaModel.getClickThroughUrl() != null){
-            Intent intent= new Intent(Intent.ACTION_VIEW, Uri.parse(mediaModel.getClickThroughUrl()));
-            mActivity.startActivity(intent);
-        }
-    }
-
-    @Override
     public void cancelRunnable(@NonNull Runnable runnable) {
         removeCallbacks(runnable);
     }
@@ -705,6 +709,10 @@ public class TubiExoPlayerView extends FrameLayout implements TubiPlaybackContro
     @Override
     public void postRunnable(@NonNull Runnable runnable, long millisDelay) {
         postDelayed(runnable, millisDelay);
+        if(playbackInterface != null){
+            playbackInterface.onProgress(MediaHelper.getMediaByIndex(player.getCurrentWindowIndex()), player.getCurrentPosition(), player.getDuration());
+        }
+
     }
 
     @Override
@@ -767,8 +775,6 @@ public class TubiExoPlayerView extends FrameLayout implements TubiPlaybackContro
         @Override
         public void onPositionDiscontinuity() {
             // Do nothing.
-            Log.e("TubiExoPlayerView", "onPositionDiscontinuity window index : " + player.getCurrentWindowIndex());
-            Log.e("TubiExoPlayerView", "onPositionDiscontinuity period index : " + player.getCurrentPeriodIndex());
         }
 
         @Override
