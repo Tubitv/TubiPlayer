@@ -3,17 +3,14 @@ package com.tubitv.media.views;
 import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
 import android.content.res.Resources;
 import android.content.res.TypedArray;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
-import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.util.TypedValue;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -42,7 +39,6 @@ import com.google.android.exoplayer2.trackselection.TrackSelection;
 import com.google.android.exoplayer2.trackselection.TrackSelectionArray;
 import com.google.android.exoplayer2.ui.AspectRatioFrameLayout;
 import com.google.android.exoplayer2.ui.PlaybackControlView;
-import com.google.android.exoplayer2.ui.SimpleExoPlayerView;
 import com.google.android.exoplayer2.ui.SubtitleView;
 import com.google.android.exoplayer2.util.Assertions;
 import com.google.android.exoplayer2.util.Util;
@@ -261,12 +257,6 @@ public class TubiExoPlayerView extends FrameLayout implements TubiPlaybackContro
      * {@link SimpleExoPlayer#setVideoListener} method of the player will be called and previous
      * assignments are overridden.
      * <p>
-     * To transition a {@link SimpleExoPlayer} from targeting one view to another, it's recommended to
-     * use {@link #switchTargetView(SimpleExoPlayer, SimpleExoPlayerView, SimpleExoPlayerView)} rather
-     * than this method. If you do wish to use this method directly, be sure to attach the player to
-     * the new view <em>before</em> calling {@code setPlayer(null)} to detach it from the old one.
-     * This ordering is significantly more efficient and may allow for more seamless transitions.
-     *
      * @param player The {@link SimpleExoPlayer} to use.
      */
     public void setPlayer(SimpleExoPlayer player, @NonNull TubiPlaybackInterface playbackInterface) {

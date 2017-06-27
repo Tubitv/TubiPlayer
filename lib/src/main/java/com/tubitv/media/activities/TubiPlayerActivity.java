@@ -61,7 +61,7 @@ public abstract class TubiPlayerActivity extends Activity implements TubiPlayerC
     protected boolean isActive = false;
 
     @NonNull
-    private MediaModel mediaModel;
+    protected MediaModel mediaModel;
 
     private static final DefaultBandwidthMeter BANDWIDTH_METER = new DefaultBandwidthMeter();
 
@@ -130,7 +130,7 @@ public abstract class TubiPlayerActivity extends Activity implements TubiPlayerC
     }
 
     @SuppressWarnings("ConstantConditions")
-    private void parseIntent() {
+    protected void parseIntent() {
         String errorNoMediaMessage = getResources().getString(R.string.activity_tubi_player_no_media_error_message);
         Assertions.checkState(getIntent() != null && getIntent().getExtras() != null,
                 errorNoMediaMessage);
@@ -183,19 +183,6 @@ public abstract class TubiPlayerActivity extends Activity implements TubiPlayerC
         mTubiPlayerView.setMediaModel(mediaModel);
         mTubiPlayerView.setTrackSelectionHelper(mTrackSelectionHelper);
         mTubiExoPlayer.setPlayWhenReady(shouldAutoPlay);
-    }
-
-    protected MediaSource createMediaSource() {
-
-        mediaModel.setMediaSource(buildMediaSource(mediaModel));
-
-        MediaModel ad1 = MediaModel.ad("http://c11.adrise.tv/ads/transcodes/003572/940826/v0329081907-1280x720-HD-,740,1285,1622,2138,3632,k.mp4.m3u8",
-                null);
-        ad1.setMediaSource(buildMediaSource(ad1));
-        MediaModel ad2 = MediaModel.ad("http://c13.adrise.tv/ads/transcodes/004130/1050072/v0617070213-640x360-SD-,764,1057,k.mp4.m3u8",
-                "https://github.com/stoyand");
-        ad2.setMediaSource(buildMediaSource(ad2));
-        return MediaHelper.create(ad1, ad2, mediaModel).getConcatenatedMedia();
     }
 
     protected void playMedia(MediaSource mediaSource) {
