@@ -666,10 +666,12 @@ public class TubiExoPlayerView extends FrameLayout implements TubiPlaybackContro
         aspectRatioFrame.setResizeMode(resizeMode);
     }
 
-    public void setMediaModel(@NonNull MediaModel mediaModel) {
+    public void setMediaModel(@NonNull MediaModel mediaModel, boolean forceShowArtView) {
         this.mediaModel = mediaModel;
-        artworkView.setVisibility(View.VISIBLE);
-        Picasso.with(getContext()).load(mediaModel.getArtworkUrl()).into(artworkView);
+        if(!mediaModel.isAd() && forceShowArtView) {
+            artworkView.setVisibility(View.VISIBLE);
+            Picasso.with(getContext()).load(mediaModel.getArtworkUrl()).into(artworkView);
+        }
         controller.setMediaModel(mediaModel);
     }
 

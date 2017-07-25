@@ -46,17 +46,17 @@ import com.tubitv.media.views.TubiPlayerControlView;
 public abstract class TubiPlayerActivity extends Activity implements TubiPlayerControlView.VisibilityListener, TubiPlaybackInterface {
     public static String TUBI_MEDIA_KEY = "tubi_media_key";
 
-    private SimpleExoPlayer mTubiExoPlayer;
+    protected SimpleExoPlayer mTubiExoPlayer;
     private Handler mMainHandler;
-    private TubiExoPlayerView mTubiPlayerView;
+    protected TubiExoPlayerView mTubiPlayerView;
     private DataSource.Factory mMediaDataSourceFactory;
-    private DefaultTrackSelector mTrackSelector;
+    protected DefaultTrackSelector mTrackSelector;
     private EventLogger mEventLogger;
     private TrackSelectionHelper mTrackSelectionHelper;
 
-    private int resumeWindow;
+    protected int resumeWindow;
 
-    private long resumePosition;
+    protected long resumePosition;
 
     protected boolean isActive = false;
 
@@ -139,7 +139,7 @@ public abstract class TubiPlayerActivity extends Activity implements TubiPlayerC
                 errorNoMediaMessage);
     }
 
-    private void initLayout() {
+    protected void initLayout() {
         setContentView(R.layout.activity_tubi_player);
         mTubiPlayerView = (TubiExoPlayerView) findViewById(R.id.tubitv_player);
         mTubiPlayerView.requestFocus();
@@ -160,7 +160,7 @@ public abstract class TubiPlayerActivity extends Activity implements TubiPlayerC
 
     protected abstract void onPlayerReady();
 
-    private void initPlayer() {
+    protected void initPlayer() {
         // 1. Create a default TrackSelector
         mMainHandler = new Handler();
         TrackSelection.Factory videoTrackSelectionFactory =
@@ -180,7 +180,7 @@ public abstract class TubiPlayerActivity extends Activity implements TubiPlayerC
         mTubiExoPlayer.setMetadataOutput(mEventLogger);
 
         mTubiPlayerView.setPlayer(mTubiExoPlayer, this);
-        mTubiPlayerView.setMediaModel(mediaModel);
+        mTubiPlayerView.setMediaModel(mediaModel,true);
         mTubiPlayerView.setTrackSelectionHelper(mTrackSelectionHelper);
         mTubiExoPlayer.setPlayWhenReady(shouldAutoPlay);
     }

@@ -72,9 +72,12 @@ public class DemoActivity extends TubiPlayerActivity {
 
         mediaModel.setMediaSource(buildMediaSource(mediaModel));
 
+        // blue apron
         MediaModel ad1 = MediaModel.ad("http://c11.adrise.tv/ads/transcodes/003572/940826/v0329081907-1280x720-HD-,740,1285,1622,2138,3632,k.mp4.m3u8",
                 null);
         ad1.setMediaSource(buildMediaSource(ad1));
+
+        // sports car
         MediaModel ad2 = MediaModel.ad("http://c13.adrise.tv/ads/transcodes/004130/1050072/v0617070213-640x360-SD-,764,1057,k.mp4.m3u8",
                 "https://github.com/stoyand");
         ad2.setMediaSource(buildMediaSource(ad2));
