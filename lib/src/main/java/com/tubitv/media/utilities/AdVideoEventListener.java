@@ -1,7 +1,6 @@
 package com.tubitv.media.utilities;
 
 import android.support.annotation.NonNull;
-import android.util.Log;
 
 import com.google.android.exoplayer2.ExoPlaybackException;
 import com.google.android.exoplayer2.ExoPlayer;
@@ -43,10 +42,17 @@ public class AdVideoEventListener implements ExoPlayer.EventListener {
     @Override
     public void onPlayerStateChanged(boolean playWhenReady, int playbackState) {
 
-        if (playbackState == ExoPlayer.STATE_ENDED && doublePlayerActivity != null) {
+        /**
+         * only when three conditionals are met, then finish the ads, and continue with the main content viedo
+         *
+         * 1. the video ads has ended
+         * 2. the activity is not empty
+         * 3. user did not pause the ad video when ads video are finished
+         */
+        if (playbackState == ExoPlayer.STATE_ENDED && doublePlayerActivity != null && playWhenReady == true) {
             doublePlayerActivity.adShowFinish();
-            Log.e(TAG, playbackState + "");
         }
+
     }
 
     @Override

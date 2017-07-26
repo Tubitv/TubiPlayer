@@ -131,7 +131,7 @@ public class DoubleViewTubiPlayerActivity extends TubiPlayerActivity implements 
         findViewById(R.id.button_stop_ads).setOnClickListener(new View.OnClickListener(){
             @Override
             public void onClick(View v) {
-                adShowFinish();
+                    adShowFinish();
             }
         });
     }
@@ -152,7 +152,6 @@ public class DoubleViewTubiPlayerActivity extends TubiPlayerActivity implements 
         // only one instance of AdPlayer can be created.
         if (adPlayer == null) {
             adPlayer = ExoPlayerFactory.newSimpleInstance(this, mTrackSelector);
-            adPlayer.addListener(adVideoEventListener);
         }
         adPlayer.prepare(ads, true, true);
     }
@@ -160,12 +159,10 @@ public class DoubleViewTubiPlayerActivity extends TubiPlayerActivity implements 
     @Override
     public void showAds() {
 
-        //keep tracks of main content video's position
-        updateResumePosition();
+        //TODO: keep track of the main content video's position in case network went bad
 
         //pause the primary content video player
         mTubiExoPlayer.setPlayWhenReady(false);
-
 
         //set the playerView to the ad video player, and player
         mTubiPlayerView.setPlayer(adPlayer, this);
@@ -175,12 +172,14 @@ public class DoubleViewTubiPlayerActivity extends TubiPlayerActivity implements 
 
         adPlayer.setPlayWhenReady(true);
 
+        //add listener every time when display video
+        adPlayer.addListener(adVideoEventListener);
     }
-
 
     @Override
     public void adShowFinish() {
-        adPlayer.setPlayWhenReady(false);
+        //need to remove the listener in case the
+        adPlayer.removeListener(adVideoEventListener);
 
         mTubiPlayerView.setPlayer(mTubiExoPlayer, this);
 
@@ -188,6 +187,11 @@ public class DoubleViewTubiPlayerActivity extends TubiPlayerActivity implements 
         mTubiPlayerView.setMediaModel(mediaModel,false);
 
         mTubiExoPlayer.setPlayWhenReady(true);
+
+        adPlayer.setPlayWhenReady(false);
+
+        //clear the player and its media source
+        adsMediaModel.getMediaSource().releaseSource();
 
         Log.e(TAG, "Ad show Finish");
 
@@ -197,15 +201,6 @@ public class DoubleViewTubiPlayerActivity extends TubiPlayerActivity implements 
 
         mediaModel.setMediaSource(buildMediaSource(mediaModel));
 
-        // blue apron
-//        MediaModel ad1 = MediaModel.ad("http://c11.adrise.tv/ads/transcodes/003572/940826/v0329081907-1280x720-HD-,740,1285,1622,2138,3632,k.mp4.m3u8",
-//                null);
-//        ad1.setMediaSource(buildMediaSource(ad1));
-//
-//        // sports car
-//        MediaModel ad2 = MediaModel.ad("http://c13.adrise.tv/ads/transcodes/004130/1050072/v0617070213-640x360-SD-,764,1057,k.mp4.m3u8",
-//                "https://github.com/stoyand");
-//        ad2.setMediaSource(buildMediaSource(ad2));
         return MediaHelper.create(mediaModel).getConcatenatedMedia();
     }
 }
