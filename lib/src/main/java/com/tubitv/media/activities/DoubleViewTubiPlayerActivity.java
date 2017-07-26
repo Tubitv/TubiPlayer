@@ -1,9 +1,12 @@
 package com.tubitv.media.activities;
 
+import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.util.Log;
 import android.view.View;
 
+import com.google.android.exoplayer2.ExoPlayer;
 import com.google.android.exoplayer2.ExoPlayerFactory;
 import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.source.MediaSource;
@@ -12,6 +15,7 @@ import com.tubitv.media.R;
 import com.tubitv.media.helpers.MediaHelper;
 import com.tubitv.media.interfaces.DoublePlayerInterface;
 import com.tubitv.media.models.MediaModel;
+import com.tubitv.media.utilities.AdVideoEventListener;
 import com.tubitv.media.views.TubiExoPlayerView;
 
 /**
@@ -23,20 +27,25 @@ public class DoubleViewTubiPlayerActivity extends TubiPlayerActivity implements 
 
     private MediaModel adsMediaModel;
 
+    private ExoPlayer.EventListener adVideoEventListener;
+
+    private static final String TAG = "DoubleViewTubiPlayerAct";
+
 
     @Override
     public void onProgress(@Nullable MediaModel mediaModel, long milliseconds, long durationMillis) {
 
+        Log.d(TAG, "onProgress: "+ "milliseconds: " + milliseconds + " durationMillis: "+ durationMillis);
     }
 
     @Override
     public void onSeek(@Nullable MediaModel mediaModel, long oldPositionMillis, long newPositionMillis) {
-
+        Log.d(TAG, "onSeek : " + "oldPositionMillis: "+ oldPositionMillis + " newPositionMillis: "+newPositionMillis);
     }
 
     @Override
     public void onPlayToggle(@Nullable MediaModel mediaModel, boolean playing) {
-
+        Log.d(TAG, "onPlayToggle :");
     }
 
     @Override
@@ -55,10 +64,17 @@ public class DoubleViewTubiPlayerActivity extends TubiPlayerActivity implements 
     }
 
     @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        adVideoEventListener = new AdVideoEventListener(this);
+    }
+
+    @Override
     public void onResume() {
         super.onResume();
         initAds();
-        onPrepareAds(adsMediaModel.getMediaSource());
+
     }
 
     @Override
@@ -106,6 +122,7 @@ public class DoubleViewTubiPlayerActivity extends TubiPlayerActivity implements 
         findViewById(R.id.button_show_ads).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                onPrepareAds(adsMediaModel.getMediaSource());
                 showAds();
             }
         });
@@ -135,8 +152,8 @@ public class DoubleViewTubiPlayerActivity extends TubiPlayerActivity implements 
         // only one instance of AdPlayer can be created.
         if (adPlayer == null) {
             adPlayer = ExoPlayerFactory.newSimpleInstance(this, mTrackSelector);
+            adPlayer.addListener(adVideoEventListener);
         }
-
         adPlayer.prepare(ads, true, true);
     }
 
@@ -171,6 +188,8 @@ public class DoubleViewTubiPlayerActivity extends TubiPlayerActivity implements 
         mTubiPlayerView.setMediaModel(mediaModel,false);
 
         mTubiExoPlayer.setPlayWhenReady(true);
+
+        Log.e(TAG, "Ad show Finish");
 
     }
 

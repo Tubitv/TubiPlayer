@@ -213,7 +213,7 @@ public class TubiObservable extends BaseObservable implements ExoPlayer.EventLis
     public void onPositionDiscontinuity() {
         setPlaybackState();
         updateProgress();
-        updateMedia();
+//        updateMedia();
     }
 
     @Override
@@ -225,7 +225,7 @@ public class TubiObservable extends BaseObservable implements ExoPlayer.EventLis
     public void onTimelineChanged(Timeline timeline, Object manifest) {
         setPlaybackState();
         updateProgress();
-        updateMedia();
+//        updateMedia();
     }
 
     @Override
@@ -386,14 +386,14 @@ public class TubiObservable extends BaseObservable implements ExoPlayer.EventLis
         setIsPlaying();
         setPlaybackState();
         updateProgress();
-        updateMedia();
+//        updateMedia();
     }
 
 
-    private void updateMedia() {
-//        setAdPlaying(player.getCurrentWindowIndex() < 2);
-        setMediaModel(MediaHelper.getMediaByIndex(player.getCurrentWindowIndex()));
-    }
+//    private void updateMedia() {
+////        setAdPlaying(player.getCurrentWindowIndex() < 2);
+//        setMediaModel(MediaHelper.getMediaByIndex(player.getCurrentWindowIndex()));
+//    }
 
     public boolean userInteracting() {
         return draggingSeekBar;
