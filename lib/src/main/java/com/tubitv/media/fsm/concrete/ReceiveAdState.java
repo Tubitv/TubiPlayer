@@ -12,6 +12,12 @@ public class ReceiveAdState extends BaseState {
 
     @Override
     public State transformToState(Input input, StateFactory factory) {
+
+        switch (input) {
+            case SHOW_ADS:
+                return factory.createState(AdPlayingState.class);
+        }
+
         return null;
     }
 

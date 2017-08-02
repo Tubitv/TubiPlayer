@@ -10,4 +10,6 @@ public interface Fsm {
     void transit(Input input);
 
     void mainfestToState();
+
+    void playerFinalize();
 }

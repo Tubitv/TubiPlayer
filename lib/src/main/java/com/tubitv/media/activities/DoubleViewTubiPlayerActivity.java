@@ -161,6 +161,8 @@ public class DoubleViewTubiPlayerActivity extends TubiPlayerActivity implements 
 
         //TODO: keep track of the main content video's position in case network went bad
 
+        updateResumePosition();
+
         //pause the primary content video player
         mTubiExoPlayer.setPlayWhenReady(false);
 
@@ -186,6 +188,7 @@ public class DoubleViewTubiPlayerActivity extends TubiPlayerActivity implements 
         //updating the playerView and controller view for different mediaModel whether if it is ads or main content
         mTubiPlayerView.setMediaModel(mediaModel,false);
 
+        onPlayerReady();
         mTubiExoPlayer.setPlayWhenReady(true);
 
         adPlayer.setPlayWhenReady(false);

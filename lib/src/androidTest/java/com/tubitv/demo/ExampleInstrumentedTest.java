@@ -7,6 +7,7 @@ import android.support.test.runner.AndroidJUnit4;
 import com.tubitv.media.fsm.State;
 import com.tubitv.media.fsm.concrete.MoviePlayingState;
 import com.tubitv.media.fsm.concrete.StateFactory;
+import com.tubitv.media.models.MediaModel;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -41,6 +42,10 @@ public class ExampleInstrumentedTest {
         state = factory.createState(MoviePlayingState.class);
 
         assertTrue(state instanceof MoviePlayingState);
+
+        //not expecting parameter type
+        state = factory.createState(MediaModel.class);
+        assertNull(state);
 
     }
 }

@@ -6,28 +6,16 @@ import com.tubitv.media.fsm.Input;
 import com.tubitv.media.fsm.State;
 
 /**
- * Created by allensun on 7/31/17.
+ * Created by allensun on 8/1/17.
  */
-public class AdPlayingState extends BaseState {
-
+public class VpaidState extends BaseState {
 
     @Override
     public State transformToState(Input input, StateFactory factory) {
 
         switch (input) {
-
-            case NEXT_AD:
-                return  factory.createState(AdPlayingState.class);
-
-            case AD_CLICK:
-                return factory.createState(VastAdInteractionSandBoxState.class);
-
-            case AD_FINISH:
+            case BACK_TO_PLAYER_FROM_VPAID_AD:
                 return factory.createState(MoviePlayingState.class);
-
-            case VPAID_MANIFEST:
-                return factory.createState(VpaidState.class);
-
         }
         return null;
     }
@@ -36,5 +24,4 @@ public class AdPlayingState extends BaseState {
     public void updatePlayer(ExoPlayer contentPlayer, ExoPlayer adPlayer) {
 
     }
-
 }

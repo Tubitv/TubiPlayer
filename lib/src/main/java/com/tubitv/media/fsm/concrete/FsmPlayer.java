@@ -34,11 +34,26 @@ public class FsmPlayer implements Fsm {
 
     @Override
     public void transit(Input input) {
-        currentState = currentState.transformToState(input, factory);
+
+        State transitToState = currentState.transformToState(input, factory);
+
+        if (transitToState != null) {
+            currentState = transitToState;
+        } else {
+            /**
+             *  if the current state is not support to handle the input, it means that somewhere, something went wrong, jump back to {@link MoviePlayingState}
+             */
+            currentState = factory.createState(MoviePlayingState.class);
+        }
     }
 
     @Override
     public void mainfestToState() {
+
+    }
+
+    @Override
+    public void playerFinalize() {
 
     }
 }
