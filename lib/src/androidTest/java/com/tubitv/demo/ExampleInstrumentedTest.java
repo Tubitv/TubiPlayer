@@ -6,7 +6,7 @@ import android.support.test.runner.AndroidJUnit4;
 
 import com.tubitv.media.fsm.State;
 import com.tubitv.media.fsm.concrete.MoviePlayingState;
-import com.tubitv.media.fsm.concrete.StateFactory;
+import com.tubitv.media.fsm.concrete.factory.StateFactory;
 import com.tubitv.media.models.MediaModel;
 
 import org.junit.Test;

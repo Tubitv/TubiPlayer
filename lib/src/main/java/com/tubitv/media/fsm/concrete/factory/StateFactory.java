@@ -1,4 +1,4 @@
-package com.tubitv.media.fsm.concrete;
+package com.tubitv.media.fsm.concrete.factory;
 
 import android.support.annotation.Nullable;
 

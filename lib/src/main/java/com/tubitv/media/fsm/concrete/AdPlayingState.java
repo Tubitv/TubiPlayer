@@ -4,6 +4,7 @@ import com.google.android.exoplayer2.ExoPlayer;
 import com.tubitv.media.fsm.BaseState;
 import com.tubitv.media.fsm.Input;
 import com.tubitv.media.fsm.State;
+import com.tubitv.media.fsm.concrete.factory.StateFactory;
 
 /**
  * Created by allensun on 7/31/17.
@@ -34,6 +35,11 @@ public class AdPlayingState extends BaseState {
 
     @Override
     public void updatePlayer(ExoPlayer contentPlayer, ExoPlayer adPlayer) {
+
+    }
+
+    @Override
+    public void prepareWorkLoad() {
 
     }
 

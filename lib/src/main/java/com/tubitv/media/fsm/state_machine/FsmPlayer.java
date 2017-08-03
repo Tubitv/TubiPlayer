@@ -1,9 +1,11 @@
-package com.tubitv.media.fsm.concrete;
+package com.tubitv.media.fsm.state_machine;
 
 import com.google.android.exoplayer2.ExoPlayer;
-import com.tubitv.media.fsm.Fsm;
 import com.tubitv.media.fsm.Input;
 import com.tubitv.media.fsm.State;
+import com.tubitv.media.fsm.concrete.MakingAdCallState;
+import com.tubitv.media.fsm.concrete.MoviePlayingState;
+import com.tubitv.media.fsm.concrete.factory.StateFactory;
 
 /**
  * Created by allensun on 7/27/17.
@@ -39,12 +41,23 @@ public class FsmPlayer implements Fsm {
 
         if (transitToState != null) {
             currentState = transitToState;
+
         } else {
-            /**
-             *  if the current state is not support to handle the input, it means that somewhere, something went wrong, jump back to {@link MoviePlayingState}
-             */
+
+            //if the current state is not support to handle the input, it means that somewhere, something went wrong, jump back to {@link MoviePlayingState}
+            if (currentState instanceof MoviePlayingState) {
+                // no need to do any thing.
+                return;
+            }
+
             currentState = factory.createState(MoviePlayingState.class);
         }
+
+        // once the state transformation happened, then prepare the player to its current state.
+        currentState.prepareWorkLoad();
+
+        currentState.updatePlayer(contentPlayer,adPlayer);
+
     }
 
     @Override
