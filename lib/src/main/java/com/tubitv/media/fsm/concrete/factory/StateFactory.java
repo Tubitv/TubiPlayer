@@ -11,6 +11,8 @@ import java.util.Map;
 
 /**
  * Created by allensun on 7/31/17.
+ * To reuse state instance, we have a caching mechanism to only create one instance of each {@link State},
+ * reuse that instance from cached map.
  */
 public class StateFactory {
 

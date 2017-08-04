@@ -55,21 +55,27 @@ public class MediaModel implements Serializable {
      */
     private boolean isAd;
 
+    /**
+     * Whether this media is an ad or not
+     */
+    private boolean isVpaid;
+
     public static MediaModel video(@NonNull String mediaName, @NonNull String videoUrl, @NonNull String artworkUrl, @Nullable String subtitlesUrl) {
-        return new MediaModel(mediaName, videoUrl, artworkUrl, subtitlesUrl, null, false);
+        return new MediaModel(mediaName, videoUrl, artworkUrl, subtitlesUrl, null, false,false);
     }
 
-    public static MediaModel ad(@NonNull String videoUrl, @Nullable String clickThroughUrl) {
-        return new MediaModel(null, videoUrl, null, null, clickThroughUrl, true);
+    public static MediaModel ad(@NonNull String videoUrl, @Nullable String clickThroughUrl, boolean isVpaid) {
+        return new MediaModel(null, videoUrl, null, null, clickThroughUrl, true, isVpaid);
     }
 
-    private MediaModel(@Nullable String mediaName, @NonNull String videoUrl, @Nullable String artworkUrl, @Nullable String subtitlesUrl, @Nullable String clickThroughUrl, boolean isAd) {
+    public MediaModel(@Nullable String mediaName, @NonNull String videoUrl, @Nullable String artworkUrl, @Nullable String subtitlesUrl, @Nullable String clickThroughUrl, boolean isAd, boolean isVpaid) {
         this.mediaName = mediaName;
         this.videoUrl = videoUrl;
         this.artworkUrl = artworkUrl;
         this.subtitlesUrl = subtitlesUrl;
         this.clickThroughUrl = clickThroughUrl;
         this.isAd = isAd;
+        this.isVpaid = isVpaid;
     }
 
     @Nullable
