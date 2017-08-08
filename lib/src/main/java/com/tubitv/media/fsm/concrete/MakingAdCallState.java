@@ -11,6 +11,7 @@ import com.tubitv.media.fsm.State;
 import com.tubitv.media.fsm.callback.AdInterface;
 import com.tubitv.media.fsm.callback.RetrieveAdCallback;
 import com.tubitv.media.fsm.concrete.factory.StateFactory;
+import com.tubitv.media.models.AdMediaModel;
 import com.tubitv.media.models.AdRetriever;
 import com.tubitv.media.models.MediaModel;
 
@@ -58,7 +59,7 @@ public class MakingAdCallState extends BaseState {
     }
 
     @Override
-    public void updatePlayerUI(@NonNull PlayerUIController controller, @NonNull MediaModel movieMedia, @Nullable MediaModel adMedia) {
+    public void updatePlayerUI(@NonNull PlayerUIController controller, @NonNull MediaModel movieMedia, @Nullable AdMediaModel adMedia) {
 
     }
 

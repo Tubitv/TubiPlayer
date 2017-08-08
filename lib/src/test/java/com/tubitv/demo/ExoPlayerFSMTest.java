@@ -1,36 +1,81 @@
 package com.tubitv.demo;
 
-import android.support.test.runner.AndroidJUnit4;
-
-import com.tubitv.media.fsm.state_machine.Fsm;
+import com.tubitv.media.controller.PlayerUIController;
+import com.tubitv.media.di.FSMModule;
+import com.tubitv.media.di.component.DaggerFsmComonent;
+import com.tubitv.media.di.component.FsmComonent;
 import com.tubitv.media.fsm.Input;
+import com.tubitv.media.fsm.callback.AdInterface;
 import com.tubitv.media.fsm.concrete.AdPlayingState;
 import com.tubitv.media.fsm.concrete.FinishState;
-import com.tubitv.media.fsm.state_machine.FsmPlayer;
 import com.tubitv.media.fsm.concrete.MakingAdCallState;
 import com.tubitv.media.fsm.concrete.MoviePlayingState;
 import com.tubitv.media.fsm.concrete.ReceiveAdState;
 import com.tubitv.media.fsm.concrete.VastAdInteractionSandBoxState;
 import com.tubitv.media.fsm.concrete.VpaidState;
+import com.tubitv.media.fsm.concrete.factory.StateFactory;
+import com.tubitv.media.fsm.state_machine.FsmPlayer;
+import com.tubitv.media.models.AdRetriever;
+import com.tubitv.media.models.MediaModel;
 
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
+import org.mockito.Mock;
+
+import javax.inject.Inject;
 
 import static junit.framework.Assert.assertTrue;
 
 /**
  * Created by allensun on 8/1/17.
  */
-@RunWith(AndroidJUnit4.class)
+@RunWith(JUnit4.class)
 public class ExoPlayerFSMTest {
 
-    Fsm playerFsm;
+    FsmPlayer playerFsm;
 
+    @Mock
+    MediaModel movieMedia;
+
+    @Mock
+    MediaModel adMedia;
+
+    @Mock
+    AdRetriever retriever;
+
+    @Mock
+    AdInterface adServerInterface;
+
+    @Mock
+    PlayerUIController controller;
+
+    @Inject
+    StateFactory factory;
+
+
+    FsmComonent comonent;
+
+    @Before
+    public void setup() {
+        comonent = DaggerFsmComonent.builder().fSMModule(new FSMModule()).build();
+    }
 
     @Test
     public void testFSMFlowWithVpaid() {
 
-        playerFsm = new FsmPlayer();
+
+        factory = comonent.getStateFactory();
+
+        playerFsm = new FsmPlayer(factory);
+//        playerFsm.setAdMedia(adMedia);
+//        playerFsm.setMovieMedia(movieMedia);
+//        playerFsm.setAdServerInterface(adServerInterface);
+//        playerFsm.setRetriever(retriever);
+//        playerFsm.setController(controller);
+
+        playerFsm.transit(Input.MAKE_AD_CALL);
 
         assertTrue(playerFsm.getCurrentState() instanceof MakingAdCallState);
 
@@ -77,10 +122,13 @@ public class ExoPlayerFSMTest {
 
     @Test
     public void testFSMFlowWithNoVpaid() {
+        factory = comonent.getStateFactory();
 
-        playerFsm = new FsmPlayer();
+        playerFsm = new FsmPlayer(factory);
 
         for (int i = 0; i < 10; i++) {
+
+            playerFsm.transit(Input.MAKE_AD_CALL);
 
             assertTrue(playerFsm.getCurrentState() instanceof MakingAdCallState);
 
@@ -136,7 +184,7 @@ public class ExoPlayerFSMTest {
     }
 
     @Test
-    public void testErrorFlow(){
+    public void testErrorFlow() {
         testFSMFlowWithNoVpaid();
 
         playerFsm.transit(Input.AD_CLICK);

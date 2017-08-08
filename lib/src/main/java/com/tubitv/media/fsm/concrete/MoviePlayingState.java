@@ -8,6 +8,7 @@ import com.tubitv.media.fsm.BaseState;
 import com.tubitv.media.fsm.Input;
 import com.tubitv.media.fsm.State;
 import com.tubitv.media.fsm.concrete.factory.StateFactory;
+import com.tubitv.media.models.AdMediaModel;
 import com.tubitv.media.models.MediaModel;
 
 /**
@@ -31,7 +32,7 @@ public class MoviePlayingState extends BaseState {
     }
 
     @Override
-    public void updatePlayerUI(@NonNull PlayerUIController controller, @NonNull MediaModel movieMedia, @Nullable MediaModel adMedia) {
+    public void updatePlayerUI(@NonNull PlayerUIController controller, @NonNull MediaModel movieMedia, @Nullable AdMediaModel adMedia) {
 
     }
 

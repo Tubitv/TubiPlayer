@@ -140,7 +140,7 @@ public class DoubleViewTubiPlayerActivity extends TubiPlayerActivity implements 
 
         // sports car
         adsMediaModel = MediaModel.ad("http://c13.adrise.tv/ads/transcodes/004130/1050072/v0617070213-640x360-SD-,764,1057,k.mp4.m3u8",
-                "https://github.com/stoyand");
+                "https://github.com/stoyand",false);
 
         MediaSource adMediaSource = buildMediaSource(adsMediaModel);
         adsMediaModel.setMediaSource(adMediaSource);

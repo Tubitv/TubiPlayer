@@ -5,6 +5,7 @@ import android.support.annotation.Nullable;
 
 import com.tubitv.media.controller.PlayerUIController;
 import com.tubitv.media.fsm.concrete.factory.StateFactory;
+import com.tubitv.media.models.AdMediaModel;
 import com.tubitv.media.models.MediaModel;
 
 /**
@@ -27,6 +28,6 @@ public interface State {
      * @param movieMedia the source of movie
      * @param adMedia the source of ad
      */
-    void updatePlayerUI(@NonNull PlayerUIController controller, @NonNull MediaModel movieMedia, @Nullable MediaModel adMedia);
+    void updatePlayerUI(@NonNull PlayerUIController controller, @NonNull MediaModel movieMedia, @Nullable AdMediaModel adMedia);
 
 }

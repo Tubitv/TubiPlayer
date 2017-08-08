@@ -1,6 +1,7 @@
 package com.tubitv.media.utilities;
 
 import android.support.annotation.NonNull;
+import android.util.Log;
 
 import com.google.android.exoplayer2.ExoPlaybackException;
 import com.google.android.exoplayer2.ExoPlayer;
@@ -26,22 +27,22 @@ public class AdVideoEventListener implements ExoPlayer.EventListener {
 
     @Override
     public void onTimelineChanged(Timeline timeline, Object manifest) {
-
+        Log.e(TAG,"onTimelineChanged");
     }
 
     @Override
     public void onTracksChanged(TrackGroupArray trackGroups, TrackSelectionArray trackSelections) {
-
+        Log.e(TAG,"onTracksChanged");
     }
 
     @Override
     public void onLoadingChanged(boolean isLoading) {
-
+        Log.e(TAG,"onLoadingChanged");
     }
 
     @Override
     public void onPlayerStateChanged(boolean playWhenReady, int playbackState) {
-
+        Log.e(TAG,"onPlayerStateChanged");
         /**
          * only when three conditionals are met, then finish the ads, and continue with the main content viedo
          *
@@ -57,16 +58,16 @@ public class AdVideoEventListener implements ExoPlayer.EventListener {
 
     @Override
     public void onPlayerError(ExoPlaybackException error) {
-
+        Log.e(TAG,"onPlayerError");
     }
 
     @Override
     public void onPositionDiscontinuity() {
-
+        Log.e(TAG,"onPositionDiscontinuity");
     }
 
     @Override
     public void onPlaybackParametersChanged(PlaybackParameters playbackParameters) {
-
+        Log.e(TAG,"onPlaybackParametersChanged");
     }
 }

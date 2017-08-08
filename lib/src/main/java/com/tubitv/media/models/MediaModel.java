@@ -118,4 +118,8 @@ public class MediaModel implements Serializable {
     public void setMediaSource(MediaSource mediaSource) {
         this.mediaSource = mediaSource;
     }
+
+    public boolean isVpaid() {
+        return isVpaid;
+    }
 }

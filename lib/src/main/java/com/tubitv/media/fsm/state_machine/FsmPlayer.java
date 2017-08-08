@@ -10,10 +10,9 @@ import com.tubitv.media.fsm.callback.RetrieveAdCallback;
 import com.tubitv.media.fsm.concrete.MakingAdCallState;
 import com.tubitv.media.fsm.concrete.MoviePlayingState;
 import com.tubitv.media.fsm.concrete.factory.StateFactory;
+import com.tubitv.media.models.AdMediaModel;
 import com.tubitv.media.models.AdRetriever;
 import com.tubitv.media.models.MediaModel;
-
-import java.util.List;
 
 /**
  * Created by allensun on 7/27/17.
@@ -43,32 +42,27 @@ public class FsmPlayer implements Fsm, RetrieveAdCallback {
     /**
      * the content of ad being playing
      */
-    private MediaModel adMedia;
+    private AdMediaModel adMedia;
 
     /**
      * the central state representing {@link com.google.android.exoplayer2.ExoPlayer} state at any given time.
      */
-    private State currentState;
+    private State currentState = null;
 
     /**
      * a factory class to create different state when fsm change to a different state.
      */
-    private StateFactory factory;
+    StateFactory factory;
 
-    public FsmPlayer() {
-        factory = new StateFactory();
-
-        /**
-         *  initializing state is to make an ad call
-         */
-        currentState = factory.createState(MakingAdCallState.class);
+    public FsmPlayer(StateFactory factory) {
+        this.factory = factory;
     }
 
     public void setMovieMedia(MediaModel movieMedia) {
         this.movieMedia = movieMedia;
     }
 
-    public void setAdMedia(MediaModel adMedia) {
+    public void setAdMedia(AdMediaModel adMedia) {
         this.adMedia = adMedia;
     }
 
@@ -80,7 +74,7 @@ public class FsmPlayer implements Fsm, RetrieveAdCallback {
         this.adServerInterface = adServerInterface;
     }
 
-    public void setRetriever(@NonNull AdRetriever retriever) {
+    public void updateAdRetriever(@NonNull AdRetriever retriever) {
         this.retriever = retriever;
     }
 
@@ -92,7 +86,13 @@ public class FsmPlayer implements Fsm, RetrieveAdCallback {
     @Override
     public void transit(Input input) {
 
-        State transitToState = currentState.transformToState(input, factory);
+        State transitToState;
+
+        if (currentState != null) {
+            transitToState = currentState.transformToState(input, factory);
+        } else {
+            transitToState = factory.createState(MakingAdCallState.class);
+        }
 
         if (transitToState != null) {
             /**
@@ -118,7 +118,7 @@ public class FsmPlayer implements Fsm, RetrieveAdCallback {
      * some special state need to handle special operation when changing state,
      * When change to {@link MakingAdCallState}, the state need to handle fetch to nerwork.
      *
-     * @param state
+     * @param state the special sate that need to handle special operations.
      */
     public void specialCaseHandle(State state) {
         if (state instanceof MakingAdCallState) {
@@ -132,7 +132,8 @@ public class FsmPlayer implements Fsm, RetrieveAdCallback {
     }
 
     @Override
-    public void onReceiveAd(List<MediaModel> mediaModels) {
+    public void onReceiveAd(AdMediaModel mediaModels) {
+        adMedia = mediaModels;
         transit(Input.AD_RECEIVED);
     }
 
