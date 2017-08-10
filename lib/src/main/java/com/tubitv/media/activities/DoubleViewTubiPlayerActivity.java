@@ -6,17 +6,28 @@ import android.support.annotation.Nullable;
 import android.util.Log;
 import android.view.View;
 
-import com.google.android.exoplayer2.ExoPlayer;
 import com.google.android.exoplayer2.ExoPlayerFactory;
 import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.source.MediaSource;
 import com.google.android.exoplayer2.util.Util;
 import com.tubitv.media.R;
+import com.tubitv.media.controller.PlayerUIController;
+import com.tubitv.media.di.FSMModuleTesting;
+import com.tubitv.media.di.component.DaggerFsmComonent;
+import com.tubitv.media.fsm.Input;
+import com.tubitv.media.fsm.callback.AdInterface;
+import com.tubitv.media.fsm.listener.AdPlayingMonitor;
+import com.tubitv.media.fsm.listener.CuePointMonitor;
+import com.tubitv.media.fsm.state_machine.FsmPlayer;
 import com.tubitv.media.helpers.MediaHelper;
 import com.tubitv.media.interfaces.DoublePlayerInterface;
+import com.tubitv.media.models.AdMediaModel;
+import com.tubitv.media.models.AdRetriever;
 import com.tubitv.media.models.MediaModel;
-import com.tubitv.media.utilities.AdVideoEventListener;
 import com.tubitv.media.views.TubiExoPlayerView;
+
+import javax.inject.Inject;
+
 
 /**
  * Created by allensun on 7/24/17.
@@ -25,56 +36,57 @@ public class DoubleViewTubiPlayerActivity extends TubiPlayerActivity implements 
 
     private SimpleExoPlayer adPlayer;
 
-    private MediaModel adsMediaModel;
-
-    private ExoPlayer.EventListener adVideoEventListener;
-
     private static final String TAG = "DoubleViewTubiPlayerAct";
 
+    @Inject
+    FsmPlayer fsmPlayer;
 
-    @Override
-    public void onProgress(@Nullable MediaModel mediaModel, long milliseconds, long durationMillis) {
+    @Inject
+    PlayerUIController playerUIController;
 
-        Log.e(TAG, "onProgress: "+ "milliseconds: " + milliseconds + " durationMillis: "+ durationMillis);
-    }
+    @Inject
+    AdPlayingMonitor adPlayingMonitor;
 
-    @Override
-    public void onSeek(@Nullable MediaModel mediaModel, long oldPositionMillis, long newPositionMillis) {
-        Log.d(TAG, "onSeek : " + "oldPositionMillis: "+ oldPositionMillis + " newPositionMillis: "+newPositionMillis);
-    }
+    @Inject
+    CuePointMonitor cuePointMonitor;
 
-    @Override
-    public void onPlayToggle(@Nullable MediaModel mediaModel, boolean playing) {
-        Log.d(TAG, "onPlayToggle :");
-    }
+    @Inject
+    AdMediaModel adMediaModel;
 
-    @Override
-    public void onLearnMoreClick(@NonNull MediaModel mediaModel) {
+    @Inject
+    AdRetriever adRetriever;
 
-    }
+    @Inject
+    AdInterface adInterface;
 
-    @Override
-    public void onSubtitles(@Nullable MediaModel mediaModel, boolean enabled) {
-
-    }
-
-    @Override
-    public void onQuality(@Nullable MediaModel mediaModel) {
-
-    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        DaggerFsmComonent.builder().fSMModuleTesting(new FSMModuleTesting(null, null, null, null)).build().inject(this);
 
-        adVideoEventListener = new AdVideoEventListener(this);
+        prepareAds(adMediaModel);
     }
+
+
+    @Override
+    public void onStart() {
+        super.onStart();
+
+        if (Util.SDK_INT > 23) {
+            setupAdPlayer();
+            prepareFSM();
+        }
+    }
+
 
     @Override
     public void onResume() {
         super.onResume();
-        initAds();
-
+        if ((Util.SDK_INT <= 23 || adPlayer == null)) {
+            setupAdPlayer();
+            prepareFSM();
+        }
     }
 
     @Override
@@ -94,6 +106,28 @@ public class DoubleViewTubiPlayerActivity extends TubiPlayerActivity implements 
             if (adPlayer != null) {
                 adPlayer.release();
             }
+        }
+    }
+
+    private void setupAdPlayer() {
+        adPlayer = ExoPlayerFactory.newSimpleInstance(this, mTrackSelector);
+    }
+
+    private void prepareFSM() {
+        //update the playerUIController view
+        playerUIController.setContentPlayer(mTubiExoPlayer);
+        playerUIController.setAdPlayer(adPlayer);
+        playerUIController.setExoPlayerView(mTubiPlayerView);
+
+        //update the MediaModel
+        fsmPlayer.setController(playerUIController);
+        fsmPlayer.setMovieMedia(mediaModel);
+        fsmPlayer.setAdMedia(adMediaModel);
+        fsmPlayer.setAdRetriever(adRetriever);
+        fsmPlayer.setAdServerInterface(adInterface);
+
+        if (fsmPlayer != null) {
+            fsmPlayer.transit(Input.MAKE_AD_CALL);
         }
     }
 
@@ -118,33 +152,35 @@ public class DoubleViewTubiPlayerActivity extends TubiPlayerActivity implements 
             }
         });
 
-        //showing ads
-        findViewById(R.id.button_show_ads).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                onPrepareAds(adsMediaModel.getMediaSource());
-                showAds();
-            }
-        });
+//        //showing ads
+//        findViewById(R.id.button_show_ads).setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                onPrepareAds(adsMediaModel.getMediaSource());
+//                showAds();
+//            }
+//        });
 
         //stop ads
-        findViewById(R.id.button_stop_ads).setOnClickListener(new View.OnClickListener(){
+        findViewById(R.id.button_stop_ads).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                    adShowFinish();
+                adShowFinish();
             }
         });
     }
 
-    private void initAds() {
+    /**
+     * prepare the {@link AdMediaModel} to have the {@link MediaSource} insert into it.
+     *
+     * @param adMediaModel the adMediaModel.
+     */
+    private void prepareAds(@Nullable AdMediaModel adMediaModel) {
 
-        // sports car
-        adsMediaModel = MediaModel.ad("http://c13.adrise.tv/ads/transcodes/004130/1050072/v0617070213-640x360-SD-,764,1057,k.mp4.m3u8",
-                "https://github.com/stoyand",false);
-
-        MediaSource adMediaSource = buildMediaSource(adsMediaModel);
-        adsMediaModel.setMediaSource(adMediaSource);
-
+        for (MediaModel singleMedia : adMediaModel.getListOfAds()) {
+            MediaSource adMediaSource = buildMediaSource(singleMedia);
+            singleMedia.setMediaSource(adMediaSource);
+        }
     }
 
     @Override
@@ -170,23 +206,23 @@ public class DoubleViewTubiPlayerActivity extends TubiPlayerActivity implements 
         mTubiPlayerView.setPlayer(adPlayer, this);
 
         //updating the playerView and controller view for different mediaModel whether if it is ads or main content
-        mTubiPlayerView.setMediaModel(adsMediaModel,false);
+//        mTubiPlayerView.setMediaModel(adsMediaModel, false);
 
         adPlayer.setPlayWhenReady(true);
 
         //add listener every time when display video
-        adPlayer.addListener(adVideoEventListener);
+        adPlayer.addListener(adPlayingMonitor);
     }
 
     @Override
     public void adShowFinish() {
         //need to remove the listener in case the
-        adPlayer.removeListener(adVideoEventListener);
+        adPlayer.removeListener(adPlayingMonitor);
 
         mTubiPlayerView.setPlayer(mTubiExoPlayer, this);
 
         //updating the playerView and controller view for different mediaModel whether if it is ads or main content
-        mTubiPlayerView.setMediaModel(mediaModel,false);
+        mTubiPlayerView.setMediaModel(mediaModel, false);
 
         onPlayerReady();
         mTubiExoPlayer.setPlayWhenReady(true);
@@ -194,7 +230,7 @@ public class DoubleViewTubiPlayerActivity extends TubiPlayerActivity implements 
         adPlayer.setPlayWhenReady(false);
 
         //clear the player and its media source
-        adsMediaModel.getMediaSource().releaseSource();
+//        adsMediaModel.getMediaSource().releaseSource();
 
         Log.e(TAG, "Ad show Finish");
 
@@ -205,5 +241,38 @@ public class DoubleViewTubiPlayerActivity extends TubiPlayerActivity implements 
         mediaModel.setMediaSource(buildMediaSource(mediaModel));
 
         return MediaHelper.create(mediaModel).getConcatenatedMedia();
+    }
+
+    @Override
+    public void onProgress(@Nullable MediaModel mediaModel, long milliseconds, long durationMillis) {
+        Log.e(TAG, "onProgress: " + "milliseconds: " + milliseconds + " durationMillis: " + durationMillis);
+
+        // monitor the movie progress.
+        cuePointMonitor.onMovieProgress(milliseconds, durationMillis);
+    }
+
+    @Override
+    public void onSeek(@Nullable MediaModel mediaModel, long oldPositionMillis, long newPositionMillis) {
+        Log.d(TAG, "onSeek : " + "oldPositionMillis: " + oldPositionMillis + " newPositionMillis: " + newPositionMillis);
+    }
+
+    @Override
+    public void onPlayToggle(@Nullable MediaModel mediaModel, boolean playing) {
+        Log.d(TAG, "onPlayToggle :");
+    }
+
+    @Override
+    public void onLearnMoreClick(@NonNull MediaModel mediaModel) {
+
+    }
+
+    @Override
+    public void onSubtitles(@Nullable MediaModel mediaModel, boolean enabled) {
+
+    }
+
+    @Override
+    public void onQuality(@Nullable MediaModel mediaModel) {
+
     }
 }

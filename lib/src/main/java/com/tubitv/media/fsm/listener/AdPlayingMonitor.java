@@ -17,7 +17,7 @@ import com.tubitv.media.fsm.state_machine.FsmPlayer;
  */
 public class AdPlayingMonitor implements ExoPlayer.EventListener {
 
-    private FsmPlayer fsmPlayer;
+    public FsmPlayer fsmPlayer;
 
     public AdPlayingMonitor(@NonNull FsmPlayer fsmPlayer) {
         this.fsmPlayer = fsmPlayer;

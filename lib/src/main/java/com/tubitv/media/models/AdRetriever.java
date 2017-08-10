@@ -14,6 +14,9 @@ public class AdRetriever {
 
     private long cubPoint;
 
+    public AdRetriever() {
+    }
+
     public AdRetriever(String videoId, String publisherId, long cubPoint) {
         this.videoId = videoId;
         this.publisherId = publisherId;

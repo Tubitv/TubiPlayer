@@ -1,5 +1,7 @@
 package com.tubitv.media.fsm.listener;
 
+import android.util.Log;
+
 import com.tubitv.media.fsm.Input;
 import com.tubitv.media.fsm.state_machine.FsmPlayer;
 
@@ -15,7 +17,9 @@ import com.tubitv.media.fsm.state_machine.FsmPlayer;
  */
 public abstract class CuePointMonitor {
 
-    private FsmPlayer fsmPlayer;
+    public FsmPlayer fsmPlayer;
+
+    private static final String TAG = CuePointMonitor.class.getSimpleName();
 
     /**
      * this is the safe check to only call ad work one time given that the range check can make multiple add call for one cuepoint.
@@ -63,8 +67,9 @@ public abstract class CuePointMonitor {
         if (isProgressActionable(cuePoints, milliseconds) && safeCheckForCue) {
             safeCheckForCue = false;
             fsmPlayer.transit(Input.SHOW_ADS);
+            Log.d(TAG, "Show ads at : " + milliseconds);
             return;
-        } else {
+        } else if (!isProgressActionable(cuePoints, milliseconds)) {
             safeCheckForCue = true;
         }
     }
@@ -80,10 +85,11 @@ public abstract class CuePointMonitor {
                 // update the cue point infor to AdRetriever and FsmPlayer status.
                 fsmPlayer.updateCuePointForRetriever(currentQueuePoint);
                 fsmPlayer.transit(Input.MAKE_AD_CALL);
+                Log.d(TAG, "make network call at: " + milliseconds);
                 return;
             }
 
-        } else {
+        } else if (!isProgressActionable(adCallPoints, milliseconds)) {
             safeCheckForAdcall = true;
         }
     }
@@ -98,7 +104,6 @@ public abstract class CuePointMonitor {
     private boolean isProgressActionable(int[] array, long currentProgress) {
         if (array == null || array.length <= 0) {
             currentQueuePointPos = -1;
-            safeCheckForAdcall = true;
             return false;
         }
 
@@ -106,7 +111,6 @@ public abstract class CuePointMonitor {
 
         if (resultPos < 0) {
             currentQueuePointPos = -1;
-            safeCheckForAdcall = true;
             return false;
         }
 
@@ -115,7 +119,7 @@ public abstract class CuePointMonitor {
     }
 
 
-    private static final int RANGE_FACTOR = 0 ;
+    private static final int RANGE_FACTOR = 1500;
 
     public static int binarySerchWithRange(int[] a, int key) {
         return binarySearchWithRange(a, 0, a.length, key, RANGE_FACTOR);
@@ -150,7 +154,10 @@ public abstract class CuePointMonitor {
     private int[] getAddCallPoints(int[] cuePoints) {
         int array[] = new int[cuePoints.length];
         for (int i = 0; i < cuePoints.length; i++) {
-            array[i] = cuePoints[i] * networkingAhead();
+            int temp = cuePoints[i] - networkingAhead();
+
+            //minimum networking call is 0 millisecond.
+            array[i] = temp > 0 ? temp : 0;
         }//end for
         return array;
     }
