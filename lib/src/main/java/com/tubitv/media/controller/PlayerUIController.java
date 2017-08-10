@@ -1,5 +1,6 @@
 package com.tubitv.media.controller;
 
+import android.support.annotation.Nullable;
 import android.view.View;
 import android.webkit.WebView;
 
@@ -19,7 +20,7 @@ public class PlayerUIController {
 
     private View exoPlayerView;
 
-    public PlayerUIController(ExoPlayer contentPlayer, ExoPlayer adPlayer, WebView vpaidWebView, View exoPlayerView) {
+    public PlayerUIController(@Nullable ExoPlayer contentPlayer, @Nullable ExoPlayer adPlayer, @Nullable WebView vpaidWebView, @Nullable View exoPlayerView) {
         this.contentPlayer = contentPlayer;
         this.adPlayer = adPlayer;
         this.vpaidWebView = vpaidWebView;

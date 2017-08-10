@@ -52,7 +52,7 @@ public class FsmPlayer implements Fsm, RetrieveAdCallback {
     /**
      * a factory class to create different state when fsm change to a different state.
      */
-    StateFactory factory;
+    private StateFactory factory;
 
     public FsmPlayer(StateFactory factory) {
         this.factory = factory;
@@ -66,6 +66,23 @@ public class FsmPlayer implements Fsm, RetrieveAdCallback {
         this.adMedia = adMedia;
     }
 
+    public boolean hasAdToPlay() {
+        return adMedia != null && adMedia.getListOfAds() != null && adMedia.getListOfAds().size() > 0;
+    }
+
+    /**
+     * delete the add at the first of the itme in list, which have been played already.
+     */
+    public void popPlayedAd(){
+        if(adMedia!=null){
+            adMedia.popFirstAd();
+        }
+    }
+
+    public MediaModel getNextAdd(){
+        return adMedia.nextAD();
+    }
+
     public void setController(@NonNull PlayerUIController controller) {
         this.controller = controller;
     }
@@ -74,8 +91,12 @@ public class FsmPlayer implements Fsm, RetrieveAdCallback {
         this.adServerInterface = adServerInterface;
     }
 
-    public void updateAdRetriever(@NonNull AdRetriever retriever) {
+    public void setAdRetriever(@NonNull AdRetriever retriever) {
         this.retriever = retriever;
+    }
+
+    public void updateCuePointForRetriever(long cuepoint) {
+        retriever.setCubPoint(cuepoint);
     }
 
     @Override

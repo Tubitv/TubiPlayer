@@ -46,5 +46,14 @@ public class SelectionActivity extends Activity {
                 startActivity(intent);
             }
         });
+
+        Button showVpaid = (Button)findViewById(R.id.show_webview);
+        showVpaid.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(SelectionActivity.this, WebviewActivity.class);
+                startActivity(intent);
+            }
+        });
     }
 }

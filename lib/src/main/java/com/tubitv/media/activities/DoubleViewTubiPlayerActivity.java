@@ -35,7 +35,7 @@ public class DoubleViewTubiPlayerActivity extends TubiPlayerActivity implements 
     @Override
     public void onProgress(@Nullable MediaModel mediaModel, long milliseconds, long durationMillis) {
 
-        Log.d(TAG, "onProgress: "+ "milliseconds: " + milliseconds + " durationMillis: "+ durationMillis);
+        Log.e(TAG, "onProgress: "+ "milliseconds: " + milliseconds + " durationMillis: "+ durationMillis);
     }
 
     @Override

@@ -11,4 +11,9 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Play HLS No Subtitles"/>
+
+    <Button android:id="@+id/show_webview"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Show Vpaid"/>
 </LinearLayout>

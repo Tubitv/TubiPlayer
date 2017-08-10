@@ -2,7 +2,6 @@ package com.tubitv.media.fsm.listener;
 
 import com.tubitv.media.fsm.Input;
 import com.tubitv.media.fsm.state_machine.FsmPlayer;
-import com.tubitv.media.models.AdRetriever;
 
 /**
  * Created by allensun on 8/7/17.
@@ -29,8 +28,6 @@ public abstract class CuePointMonitor {
 
     private int[] adCallPoints;
 
-    private AdRetriever adRetriever;
-
     /**
      * keep track of current relevant cue point this time,
      */
@@ -38,9 +35,8 @@ public abstract class CuePointMonitor {
 
     public abstract int networkingAhead();
 
-    public CuePointMonitor(FsmPlayer fsmPlayer, AdRetriever adRetriever) {
+    public CuePointMonitor(FsmPlayer fsmPlayer) {
         this.fsmPlayer = fsmPlayer;
-        this.adRetriever = adRetriever;
     }
 
     public void setQuePoints(int[] cuePoints) {
@@ -82,7 +78,7 @@ public abstract class CuePointMonitor {
                 long currentQueuePoint = cuePoints[currentQueuePointPos];
 
                 // update the cue point infor to AdRetriever and FsmPlayer status.
-                adRetriever.setCubPoint(currentQueuePoint);
+                fsmPlayer.updateCuePointForRetriever(currentQueuePoint);
                 fsmPlayer.transit(Input.MAKE_AD_CALL);
                 return;
             }

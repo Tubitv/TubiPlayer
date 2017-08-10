@@ -1,6 +1,6 @@
 package com.tubitv.media.fsm.listener;
 
-import android.util.Log;
+import android.support.annotation.NonNull;
 
 import com.google.android.exoplayer2.ExoPlaybackException;
 import com.google.android.exoplayer2.ExoPlayer;
@@ -10,27 +10,17 @@ import com.google.android.exoplayer2.source.TrackGroupArray;
 import com.google.android.exoplayer2.trackselection.TrackSelectionArray;
 import com.tubitv.media.fsm.Input;
 import com.tubitv.media.fsm.state_machine.FsmPlayer;
-import com.tubitv.media.models.AdMediaModel;
-import com.tubitv.media.models.MediaModel;
 
 /**
- * Created by allensun on 8/7/17.
+ * Created by allensun on 8/9/17.
  * on Tubitv.com, allengotstuff@gmail.com
  */
-public class AdVideoEventListener implements ExoPlayer.EventListener {
+public class AdPlayingMonitor implements ExoPlayer.EventListener {
 
-    private static final String TAG = AdVideoEventListener.class.getSimpleName();
+    private FsmPlayer fsmPlayer;
 
-    private FsmPlayer fsm;
-
-    private AdMediaModel adMediaModel;
-
-    public AdVideoEventListener(FsmPlayer fsmPlayer) {
-        fsm = fsmPlayer;
-    }
-
-    public void setAdMediaModel(AdMediaModel adMediaModel) {
-        this.adMediaModel = adMediaModel;
+    public AdPlayingMonitor(@NonNull FsmPlayer fsmPlayer) {
+        this.fsmPlayer = fsmPlayer;
     }
 
     @Override
@@ -51,21 +41,23 @@ public class AdVideoEventListener implements ExoPlayer.EventListener {
     @Override
     public void onPlayerStateChanged(boolean playWhenReady, int playbackState) {
 
-        if (playbackState == ExoPlayer.STATE_ENDED && fsm != null && playWhenReady == true) {
+        //the last ad has finish playing.
+        if (playbackState == ExoPlayer.STATE_ENDED && playWhenReady == true) {
+            // need to remove the already played ad first.
+            fsmPlayer.popPlayedAd();
 
-            MediaModel nextAd = adMediaModel.nextMedaiModel();
+            //then check if there are any ad need to be played.
+            if (fsmPlayer.hasAdToPlay()) {
 
-            if (nextAd == null) { // when all ads are finish playing
-                fsm.transit(Input.AD_FINISH);
+                if (fsmPlayer.getNextAdd().isVpaid()) {
+                    fsmPlayer.transit(Input.VPAID_MANIFEST);
+                } else {
+                    fsmPlayer.transit(Input.NEXT_AD);
+                }
 
-            } else if (nextAd.isAd() && !nextAd.isVpaid()){ // the next add is vast ads
-                fsm.transit(Input.NEXT_AD);
+            } else {
 
-            }else if (nextAd.isAd() && nextAd.isAd()){ // the next add is vpaid ads
-                fsm.transit(Input.VPAID_MANIFEST);
-
-            }else{
-                Log.w(TAG, "unexpected ad mediaModel format");
+                fsmPlayer.transit(Input.AD_FINISH);
             }
 
         }
@@ -73,7 +65,7 @@ public class AdVideoEventListener implements ExoPlayer.EventListener {
 
     @Override
     public void onPlayerError(ExoPlaybackException error) {
-
+        fsmPlayer.transit(Input.ERROR);
     }
 
     @Override
