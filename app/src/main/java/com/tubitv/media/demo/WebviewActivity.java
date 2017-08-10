@@ -7,6 +7,8 @@ import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
 import android.webkit.WebView;
+import android.util.Log;
+import android.view.View;
 
 import com.tubitv.demo.R;
 import com.tubitv.media.demo.vpaid.TubiVPAID;
@@ -43,9 +45,9 @@ public class WebviewActivity extends Activity {
 
         tubiVPAID.init();
 
-//        webView.setVisibility(View.VISIBLE);
-//        webView.bringToFront();
-//        webView.invalidate();
+        webView.setVisibility(View.VISIBLE);
+        webView.bringToFront();
+        webView.invalidate();
 
         webView.addJavascriptInterface(tubiVPAID, "TubiNativeJSInterface");
         webView.loadUrl(VPAID_URL);

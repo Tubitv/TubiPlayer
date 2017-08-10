@@ -29,6 +29,7 @@
         <activity android:name="com.tubitv.media.demo.WebviewActivity"
             android:configChanges="keyboard|keyboardHidden|orientation|screenSize|screenLayout|smallestScreenSize|uiMode"
             android:launchMode="singleTop"
+            android:hardwareAccelerated="true"
             android:theme="@style/TubiPlayerTheme"/>
     </application>
 
