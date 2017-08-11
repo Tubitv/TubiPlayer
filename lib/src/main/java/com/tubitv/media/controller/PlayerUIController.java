@@ -4,7 +4,7 @@ import android.support.annotation.Nullable;
 import android.view.View;
 import android.webkit.WebView;
 
-import com.google.android.exoplayer2.ExoPlayer;
+import com.google.android.exoplayer2.SimpleExoPlayer;
 
 /**
  * Created by allensun on 8/3/17.
@@ -12,26 +12,34 @@ import com.google.android.exoplayer2.ExoPlayer;
  */
 public class PlayerUIController {
 
-    private ExoPlayer contentPlayer;
+    private SimpleExoPlayer contentPlayer;
 
-    private ExoPlayer adPlayer;
+    private SimpleExoPlayer adPlayer;
 
     private WebView vpaidWebView;
 
     private View exoPlayerView;
 
-    public PlayerUIController(@Nullable ExoPlayer contentPlayer, @Nullable ExoPlayer adPlayer, @Nullable WebView vpaidWebView, @Nullable View exoPlayerView) {
+    private int adResumeWindow;
+
+    private long adResumePosition;
+
+    private int movieResumeWindow;
+
+    private long movieResumePosition;
+
+    public PlayerUIController(@Nullable SimpleExoPlayer contentPlayer, @Nullable SimpleExoPlayer adPlayer, @Nullable WebView vpaidWebView, @Nullable View exoPlayerView) {
         this.contentPlayer = contentPlayer;
         this.adPlayer = adPlayer;
         this.vpaidWebView = vpaidWebView;
         this.exoPlayerView = exoPlayerView;
     }
 
-    public ExoPlayer getContentPlayer() {
+    public SimpleExoPlayer getContentPlayer() {
         return contentPlayer;
     }
 
-    public ExoPlayer getAdPlayer() {
+    public SimpleExoPlayer getAdPlayer() {
         return adPlayer;
     }
 
@@ -43,11 +51,37 @@ public class PlayerUIController {
         return exoPlayerView;
     }
 
-    public void setContentPlayer(ExoPlayer contentPlayer) {
+    public void setContentPlayer(SimpleExoPlayer contentPlayer) {
         this.contentPlayer = contentPlayer;
     }
 
-    public void setAdPlayer(ExoPlayer adPlayer) {
+    public void setAdResumeInfo(int window, long position) {
+        adResumeWindow = window;
+        adResumePosition = position;
+    }
+
+    public void setMovieResumeInfo(int window, long position) {
+        movieResumeWindow = window;
+        movieResumePosition = position;
+    }
+
+    public int getAdResumeWindow() {
+        return adResumeWindow;
+    }
+
+    public long getAdResumePosition() {
+        return adResumePosition;
+    }
+
+    public int getMovieResumeWindow() {
+        return movieResumeWindow;
+    }
+
+    public long getMovieResumePosition() {
+        return movieResumePosition;
+    }
+
+    public void setAdPlayer(SimpleExoPlayer adPlayer) {
         this.adPlayer = adPlayer;
     }
 
@@ -61,9 +95,9 @@ public class PlayerUIController {
 
     public static class Builder {
 
-        private ExoPlayer contentPlayer = null;
+        private SimpleExoPlayer contentPlayer = null;
 
-        private ExoPlayer adPlayer = null;
+        private SimpleExoPlayer adPlayer = null;
 
         private WebView vpaidWebView = null;
 
@@ -72,12 +106,12 @@ public class PlayerUIController {
         public Builder() {
         }
 
-        public Builder setContentPlayer(ExoPlayer contentPlayer) {
+        public Builder setContentPlayer(SimpleExoPlayer contentPlayer) {
             this.contentPlayer = contentPlayer;
             return this;
         }
 
-        public Builder setAdPlayer(ExoPlayer adPlayer) {
+        public Builder setAdPlayer(SimpleExoPlayer adPlayer) {
             this.adPlayer = adPlayer;
             return this;
         }

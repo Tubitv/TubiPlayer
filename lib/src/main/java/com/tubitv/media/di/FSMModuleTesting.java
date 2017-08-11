@@ -1,10 +1,12 @@
 package com.tubitv.media.di;
 
 import android.support.annotation.Nullable;
+import android.util.Log;
 import android.view.View;
 import android.webkit.WebView;
 
-import com.google.android.exoplayer2.ExoPlayer;
+import com.google.android.exoplayer2.SimpleExoPlayer;
+import com.tubitv.media.controller.PlayerComponentController;
 import com.tubitv.media.controller.PlayerUIController;
 import com.tubitv.media.di.annotation.ActicityScope;
 import com.tubitv.media.fsm.callback.AdInterface;
@@ -30,15 +32,15 @@ import dagger.Provides;
 @Module
 public class FSMModuleTesting {
 
-    private ExoPlayer mainPlayer;
+    private SimpleExoPlayer mainPlayer;
 
-    private ExoPlayer adPlayer;
+    private SimpleExoPlayer adPlayer;
 
     private WebView webView;
 
     private View rootView;
 
-    public FSMModuleTesting(@Nullable ExoPlayer mainPlayer, @Nullable ExoPlayer adPlayer, @Nullable WebView webView, @Nullable View rootView) {
+    public FSMModuleTesting(@Nullable SimpleExoPlayer mainPlayer, @Nullable SimpleExoPlayer adPlayer, @Nullable WebView webView, @Nullable View rootView) {
         this.mainPlayer = mainPlayer;
         this.adPlayer = adPlayer;
         this.webView = webView;
@@ -65,6 +67,12 @@ public class FSMModuleTesting {
 
     @ActicityScope
     @Provides
+    PlayerComponentController provideComponentController(){
+        return new PlayerComponentController(null,null);
+    }
+
+    @ActicityScope
+    @Provides
     AdRetriever provideAdRetriever() {
         return new AdRetriever();
     }
@@ -77,9 +85,9 @@ public class FSMModuleTesting {
 
     @ActicityScope
     @Provides
-    CuePointMonitor provideCuePointMonitor(FsmPlayer player) {
+    CuePointMonitor provideCuePointMonitor(FsmPlayer fsmPlayer) {
 
-        CuePointMonitor cuePointMonitor = new CuePointMonitor(player) {
+        CuePointMonitor cuePointMonitor = new CuePointMonitor(fsmPlayer) {
             @Override
             public int networkingAhead() {
                 return 5000;
@@ -119,6 +127,7 @@ public class FSMModuleTesting {
         return new AdInterface() {
             @Override
             public void fetchAd(AdRetriever retriever, RetrieveAdCallback callback) {
+                Log.d("FSMTESTING", "On ad receive");
                 callback.onReceiveAd(adMediaModel);
             }
         };

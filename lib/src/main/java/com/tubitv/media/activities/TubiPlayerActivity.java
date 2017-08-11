@@ -65,7 +65,7 @@ public abstract class TubiPlayerActivity extends Activity implements TubiPlayerC
 
     private static final DefaultBandwidthMeter BANDWIDTH_METER = new DefaultBandwidthMeter();
 
-    private boolean shouldAutoPlay;
+    protected boolean shouldAutoPlay;
 
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
@@ -182,7 +182,6 @@ public abstract class TubiPlayerActivity extends Activity implements TubiPlayerC
         mTubiPlayerView.setPlayer(mTubiExoPlayer, this);
         mTubiPlayerView.setMediaModel(mediaModel,true);
         mTubiPlayerView.setTrackSelectionHelper(mTrackSelectionHelper);
-        mTubiExoPlayer.setPlayWhenReady(shouldAutoPlay);
     }
 
     protected void playMedia(MediaSource mediaSource) {
@@ -190,6 +189,7 @@ public abstract class TubiPlayerActivity extends Activity implements TubiPlayerC
         if (haveResumePosition) {
             mTubiExoPlayer.seekTo(resumeWindow, resumePosition);
         }
+        mTubiExoPlayer.setPlayWhenReady(shouldAutoPlay);
         mTubiExoPlayer.prepare(mediaSource, !haveResumePosition, false);
         Utils.hideSystemUI(this, true);
     }

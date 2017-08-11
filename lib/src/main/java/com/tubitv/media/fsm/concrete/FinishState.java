@@ -3,6 +3,7 @@ package com.tubitv.media.fsm.concrete;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
+import com.tubitv.media.controller.PlayerComponentController;
 import com.tubitv.media.controller.PlayerUIController;
 import com.tubitv.media.fsm.BaseState;
 import com.tubitv.media.fsm.Input;
@@ -22,7 +23,7 @@ public class FinishState extends BaseState {
     }
 
     @Override
-    public void updatePlayerUI(@NonNull PlayerUIController controller, @NonNull MediaModel movieMedia, @Nullable AdMediaModel adMedia) {
+    public void updatePlayerUI(@NonNull PlayerUIController controller, @NonNull PlayerComponentController componentController, @NonNull MediaModel movieMedia, @Nullable AdMediaModel adMedia) {
 
     }
 }

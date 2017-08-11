@@ -3,6 +3,7 @@ package com.tubitv.media.fsm.listener;
 import android.util.Log;
 
 import com.tubitv.media.fsm.Input;
+import com.tubitv.media.fsm.concrete.AdPlayingState;
 import com.tubitv.media.fsm.state_machine.FsmPlayer;
 
 /**
@@ -56,6 +57,10 @@ public abstract class CuePointMonitor {
      */
     public void onMovieProgress(long milliseconds, long durationMillis) {
 
+        if(fsmPlayer.getCurrentState() instanceof AdPlayingState){
+            // if ad playing, do nothing
+            return;
+        }
         //check if need to request ad call, if does, update the fsmPlayer, Request_AD.
         preformAdCallIfNecessary(milliseconds);
 
@@ -66,8 +71,8 @@ public abstract class CuePointMonitor {
     private void preformShowAdIfNecessary(long milliseconds) {
         if (isProgressActionable(cuePoints, milliseconds) && safeCheckForCue) {
             safeCheckForCue = false;
+            Log.d("FSMTESTING", "Show ads at : " + milliseconds);
             fsmPlayer.transit(Input.SHOW_ADS);
-            Log.d(TAG, "Show ads at : " + milliseconds);
             return;
         } else if (!isProgressActionable(cuePoints, milliseconds)) {
             safeCheckForCue = true;
@@ -84,8 +89,8 @@ public abstract class CuePointMonitor {
 
                 // update the cue point infor to AdRetriever and FsmPlayer status.
                 fsmPlayer.updateCuePointForRetriever(currentQueuePoint);
+                Log.d("FSMTESTING", "make network call at: " + milliseconds);
                 fsmPlayer.transit(Input.MAKE_AD_CALL);
-                Log.d(TAG, "make network call at: " + milliseconds);
                 return;
             }
 

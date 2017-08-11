@@ -6,15 +6,16 @@ import android.support.annotation.Nullable;
 import android.util.Log;
 import android.view.View;
 
+import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.ExoPlayerFactory;
 import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.source.MediaSource;
 import com.google.android.exoplayer2.util.Util;
 import com.tubitv.media.R;
+import com.tubitv.media.controller.PlayerComponentController;
 import com.tubitv.media.controller.PlayerUIController;
 import com.tubitv.media.di.FSMModuleTesting;
 import com.tubitv.media.di.component.DaggerFsmComonent;
-import com.tubitv.media.fsm.Input;
 import com.tubitv.media.fsm.callback.AdInterface;
 import com.tubitv.media.fsm.listener.AdPlayingMonitor;
 import com.tubitv.media.fsm.listener.CuePointMonitor;
@@ -59,6 +60,9 @@ public class DoubleViewTubiPlayerActivity extends TubiPlayerActivity implements 
     @Inject
     AdInterface adInterface;
 
+    @Inject
+    PlayerComponentController playerComponentController;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -94,7 +98,7 @@ public class DoubleViewTubiPlayerActivity extends TubiPlayerActivity implements 
         super.onPause();
         if (Util.SDK_INT <= 23) {
             if (adPlayer != null) {
-                adPlayer.release();
+                releaseAdPlayer();
             }
         }
     }
@@ -104,7 +108,7 @@ public class DoubleViewTubiPlayerActivity extends TubiPlayerActivity implements 
         super.onStop();
         if (Util.SDK_INT > 23) {
             if (adPlayer != null) {
-                adPlayer.release();
+                releaseAdPlayer();
             }
         }
     }
@@ -113,11 +117,45 @@ public class DoubleViewTubiPlayerActivity extends TubiPlayerActivity implements 
         adPlayer = ExoPlayerFactory.newSimpleInstance(this, mTrackSelector);
     }
 
+    private void releaseAdPlayer() {
+        if (adPlayer != null) {
+            updateAdResumePosition();
+            adPlayer.release();
+            adPlayer = null;
+        }
+    }
+
+    private void updateAdResumePosition() {
+        if (adPlayer != null && playerUIController != null) {
+            int adResumeWindow = adPlayer.getCurrentWindowIndex();
+            long adResumePosition = adPlayer.isCurrentWindowSeekable() ? Math.max(0, adPlayer.getCurrentPosition())
+                    : C.TIME_UNSET;
+            playerUIController.setAdResumeInfo(adResumeWindow, adResumePosition);
+        }
+    }
+
+    @Override
+    protected void updateResumePosition() {
+        super.updateResumePosition();
+        if (mTubiExoPlayer != null && playerUIController != null) {
+            int resumeWindow = mTubiExoPlayer.getCurrentWindowIndex();
+            long resumePosition = mTubiExoPlayer.isCurrentWindowSeekable() ? Math.max(0, mTubiExoPlayer.getCurrentPosition())
+                    : C.TIME_UNSET;
+            playerUIController.setMovieResumeInfo(resumeWindow, resumePosition);
+        }
+    }
+
+    /**
+     * prepare / set up FSM and inject all the elements into the FSM
+     */
     private void prepareFSM() {
-        //update the playerUIController view
+        //update the playerUIController view, need to update the view everything when two ExoPlayer being recreated in activity lifecycle.
         playerUIController.setContentPlayer(mTubiExoPlayer);
         playerUIController.setAdPlayer(adPlayer);
         playerUIController.setExoPlayerView(mTubiPlayerView);
+
+        //media model in the wrapper.
+        mediaModel.setMediaSource(buildMediaSource(mediaModel));
 
         //update the MediaModel
         fsmPlayer.setController(playerUIController);
@@ -126,9 +164,15 @@ public class DoubleViewTubiPlayerActivity extends TubiPlayerActivity implements 
         fsmPlayer.setAdRetriever(adRetriever);
         fsmPlayer.setAdServerInterface(adInterface);
 
-        if (fsmPlayer != null) {
-            fsmPlayer.transit(Input.MAKE_AD_CALL);
-        }
+        //set the PlayerComponentController.
+        playerComponentController.setAdPlayingMonitor(adPlayingMonitor);
+        playerComponentController.setTubiPlaybackInterface(this);
+        fsmPlayer.setPlayerComponentController(playerComponentController);
+
+        //let disable pre-roll ads first, assume that movie will always be played first.
+//        if (fsmPlayer != null) {
+//            fsmPlayer.transit(Input.MAKE_AD_CALL);
+//        }
     }
 
     @Override
@@ -185,54 +229,54 @@ public class DoubleViewTubiPlayerActivity extends TubiPlayerActivity implements 
 
     @Override
     public void onPrepareAds(MediaSource ads) {
-        // only one instance of AdPlayer can be created.
-        if (adPlayer == null) {
-            adPlayer = ExoPlayerFactory.newSimpleInstance(this, mTrackSelector);
-        }
-        adPlayer.prepare(ads, true, true);
+//        // only one instance of AdPlayer can be created.
+//        if (adPlayer == null) {
+//            adPlayer = ExoPlayerFactory.newSimpleInstance(this, mTrackSelector);
+//        }
+//        adPlayer.prepare(ads, true, true);
     }
 
     @Override
     public void showAds() {
 
-        //TODO: keep track of the main content video's position in case network went bad
-
-        updateResumePosition();
-
-        //pause the primary content video player
-        mTubiExoPlayer.setPlayWhenReady(false);
-
-        //set the playerView to the ad video player, and player
-        mTubiPlayerView.setPlayer(adPlayer, this);
-
-        //updating the playerView and controller view for different mediaModel whether if it is ads or main content
-//        mTubiPlayerView.setMediaModel(adsMediaModel, false);
-
-        adPlayer.setPlayWhenReady(true);
-
-        //add listener every time when display video
-        adPlayer.addListener(adPlayingMonitor);
+//        //TODO: keep track of the main content video's position in case network went bad
+//
+//        updateResumePosition();
+//
+//        //pause the primary content video player
+//        mTubiExoPlayer.setPlayWhenReady(false);
+//
+//        //set the playerView to the ad video player, and player
+//        mTubiPlayerView.setPlayer(adPlayer, this);
+//
+//        //updating the playerView and controller view for different mediaModel whether if it is ads or main content
+//        mTubiPlayerView.setMediaModel(null, false);
+//
+//        adPlayer.setPlayWhenReady(true);
+//
+//        //add listener every time when display video
+//        adPlayer.addListener(adPlayingMonitor);
     }
 
     @Override
     public void adShowFinish() {
-        //need to remove the listener in case the
-        adPlayer.removeListener(adPlayingMonitor);
-
-        mTubiPlayerView.setPlayer(mTubiExoPlayer, this);
-
-        //updating the playerView and controller view for different mediaModel whether if it is ads or main content
-        mTubiPlayerView.setMediaModel(mediaModel, false);
-
-        onPlayerReady();
-        mTubiExoPlayer.setPlayWhenReady(true);
-
-        adPlayer.setPlayWhenReady(false);
-
-        //clear the player and its media source
-//        adsMediaModel.getMediaSource().releaseSource();
-
-        Log.e(TAG, "Ad show Finish");
+//        //need to remove the listener in case the
+//        adPlayer.removeListener(adPlayingMonitor);
+//
+//        mTubiPlayerView.setPlayer(mTubiExoPlayer, this);
+//
+//        //updating the playerView and controller view for different mediaModel whether if it is ads or main content
+//        mTubiPlayerView.setMediaModel(mediaModel, false);
+//
+//        onPlayerReady();
+//        mTubiExoPlayer.setPlayWhenReady(true);
+//
+//        adPlayer.setPlayWhenReady(false);
+//
+//        //clear the player and its media source
+////        adsMediaModel.getMediaSource().releaseSource();
+//
+//        Log.e(TAG, "Ad show Finish");
 
     }
 

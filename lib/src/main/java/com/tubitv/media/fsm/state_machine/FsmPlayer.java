@@ -1,7 +1,9 @@
 package com.tubitv.media.fsm.state_machine;
 
 import android.support.annotation.NonNull;
+import android.util.Log;
 
+import com.tubitv.media.controller.PlayerComponentController;
 import com.tubitv.media.controller.PlayerUIController;
 import com.tubitv.media.fsm.Input;
 import com.tubitv.media.fsm.State;
@@ -23,6 +25,11 @@ public class FsmPlayer implements Fsm, RetrieveAdCallback {
      * a wrapper class for player UI related objects
      */
     private PlayerUIController controller;
+
+    /**
+     * a wrapper class for player logic related component objects.
+     */
+    private PlayerComponentController playerComponentController;
 
     /**
      * a generic call ad network class
@@ -95,6 +102,10 @@ public class FsmPlayer implements Fsm, RetrieveAdCallback {
         this.retriever = retriever;
     }
 
+    public void setPlayerComponentController(PlayerComponentController playerComponentController) {
+        this.playerComponentController = playerComponentController;
+    }
+
     public void updateCuePointForRetriever(long cuepoint) {
         retriever.setCubPoint(cuepoint);
     }
@@ -122,6 +133,8 @@ public class FsmPlayer implements Fsm, RetrieveAdCallback {
             currentState = transitToState;
             specialCaseHandle(currentState);
         } else {
+
+            Log.w("FSMTESTING", "Error happed");
             /**
              * when transition is null, state change is error, transit to default {@link MoviePlayingState}
              */
@@ -132,7 +145,7 @@ public class FsmPlayer implements Fsm, RetrieveAdCallback {
             currentState = factory.createState(MoviePlayingState.class);
         }
 
-        currentState.updatePlayerUI(controller, movieMedia, adMedia);
+        currentState.updatePlayerUI(controller,playerComponentController, movieMedia, adMedia);
     }
 
     /**

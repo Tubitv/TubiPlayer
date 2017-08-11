@@ -2,7 +2,9 @@ package com.tubitv.media.fsm.concrete;
 
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.util.Log;
 
+import com.tubitv.media.controller.PlayerComponentController;
 import com.tubitv.media.controller.PlayerUIController;
 import com.tubitv.media.fsm.BaseState;
 import com.tubitv.media.fsm.Input;
@@ -16,6 +18,8 @@ import com.tubitv.media.models.MediaModel;
  */
 public class ReceiveAdState extends BaseState {
 
+    private static final String TAG = ReceiveAdState.class.getSimpleName();
+
     @Override
     public State transformToState(Input input, StateFactory factory) {
 
@@ -28,7 +32,8 @@ public class ReceiveAdState extends BaseState {
     }
 
     @Override
-    public void updatePlayerUI(@NonNull PlayerUIController controller, @NonNull MediaModel movieMedia, @Nullable AdMediaModel adMedia) {
-
+    public void updatePlayerUI(@NonNull PlayerUIController controller, @NonNull PlayerComponentController componentController, @NonNull MediaModel movieMedia, @Nullable AdMediaModel adMedia) {
+        Log.d("FSMTESTING", "update stat to: " + TAG);
+        // doesn't need to do any UI work.
     }
 }
