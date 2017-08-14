@@ -73,6 +73,14 @@ public class FsmPlayer implements Fsm, RetrieveAdCallback {
         this.adMedia = adMedia;
     }
 
+    public AdInterface getAdServerInterface() {
+        return adServerInterface;
+    }
+
+    public AdRetriever getRetriever() {
+        return retriever;
+    }
+
     public boolean hasAdToPlay() {
         return adMedia != null && adMedia.getListOfAds() != null && adMedia.getListOfAds().size() > 0;
     }
@@ -131,7 +139,7 @@ public class FsmPlayer implements Fsm, RetrieveAdCallback {
              * when transition is not null, state change is successful, and transit to a new state
              */
             currentState = transitToState;
-            specialCaseHandle(currentState);
+
         } else {
 
             Log.w("FSMTESTING", "Error happed");
@@ -145,20 +153,9 @@ public class FsmPlayer implements Fsm, RetrieveAdCallback {
             currentState = factory.createState(MoviePlayingState.class);
         }
 
-        currentState.updatePlayerUI(controller, playerComponentController, movieMedia, adMedia);
+        currentState.performWorkAndupdatePlayerUI(this, controller, playerComponentController, movieMedia, adMedia);
     }
 
-    /**
-     * some special state need to handle special operation when changing state,
-     * When change to {@link MakingAdCallState}, the state need to handle fetch to nerwork.
-     *
-     * @param state the special sate that need to handle special operations.
-     */
-    public void specialCaseHandle(State state) {
-        if (state instanceof MakingAdCallState) {
-            ((MakingAdCallState) state).fetchAd(adServerInterface, retriever, this);
-        }
-    }
 
     @Override
     public void playerFinalize() {

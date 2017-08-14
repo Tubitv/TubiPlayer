@@ -94,7 +94,7 @@ public class FSMModuleTesting {
             }
         };
 
-        cuePointMonitor.setQuePoints(new int[]{20000, 60000, 120000, 1800000});
+        cuePointMonitor.setQuePoints(new int[]{0,20000, 60000, 120000, 1800000});
 
         return cuePointMonitor;
     }

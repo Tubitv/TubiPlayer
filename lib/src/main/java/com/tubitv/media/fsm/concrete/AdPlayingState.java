@@ -12,6 +12,7 @@ import com.tubitv.media.fsm.BaseState;
 import com.tubitv.media.fsm.Input;
 import com.tubitv.media.fsm.State;
 import com.tubitv.media.fsm.concrete.factory.StateFactory;
+import com.tubitv.media.fsm.state_machine.FsmPlayer;
 import com.tubitv.media.models.AdMediaModel;
 import com.tubitv.media.models.MediaModel;
 import com.tubitv.media.views.TubiExoPlayerView;
@@ -45,7 +46,7 @@ public class AdPlayingState extends BaseState {
     }
 
     @Override
-    public void updatePlayerUI(@NonNull PlayerUIController controller, @NonNull PlayerComponentController componentController, @NonNull MediaModel movieMedia, @Nullable AdMediaModel adMedia) {
+    public void performWorkAndupdatePlayerUI(@Nullable FsmPlayer fsmPlayer, @NonNull PlayerUIController controller, @NonNull PlayerComponentController componentController, @NonNull MediaModel movieMedia, @Nullable AdMediaModel adMedia) {
         Log.d("FSMTESTING", "update stat to: " + TAG);
 
         playingAdAndPauseMovie(controller, adMedia, componentController);

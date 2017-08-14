@@ -209,6 +209,17 @@ public class DoubleViewTubiPlayerActivity extends TubiPlayerActivity implements 
         });
     }
 
+    /**
+     * creating the {@link MediaSource} for the Exoplayer.
+     * @return
+     */
+    protected MediaSource createMediaSource() {
+
+        mediaModel.setMediaSource(buildMediaSource(mediaModel));
+
+        return MediaHelper.create(mediaModel).getConcatenatedMedia();
+    }
+
     @Override
     public void onPrepareAds(@Nullable AdMediaModel adMediaModel) {
 
@@ -218,57 +229,11 @@ public class DoubleViewTubiPlayerActivity extends TubiPlayerActivity implements 
         }
     }
 
+    @Override
+    public void showAds() {}
 
     @Override
-    public void showAds() {
-
-//        //TODO: keep track of the main content video's position in case network went bad
-//
-//        updateResumePosition();
-//
-//        //pause the primary content video player
-//        mTubiExoPlayer.setPlayWhenReady(false);
-//
-//        //set the playerView to the ad video player, and player
-//        mTubiPlayerView.setPlayer(adPlayer, this);
-//
-//        //updating the playerView and controller view for different mediaModel whether if it is ads or main content
-//        mTubiPlayerView.setMediaModel(null, false);
-//
-//        adPlayer.setPlayWhenReady(true);
-//
-//        //add listener every time when display video
-//        adPlayer.addListener(adPlayingMonitor);
-    }
-
-    @Override
-    public void adShowFinish() {
-//        //need to remove the listener in case the
-//        adPlayer.removeListener(adPlayingMonitor);
-//
-//        mTubiPlayerView.setPlayer(mTubiExoPlayer, this);
-//
-//        //updating the playerView and controller view for different mediaModel whether if it is ads or main content
-//        mTubiPlayerView.setMediaModel(mediaModel, false);
-//
-//        onPlayerReady();
-//        mTubiExoPlayer.setPlayWhenReady(true);
-//
-//        adPlayer.setPlayWhenReady(false);
-//
-//        //clear the player and its media source
-////        adsMediaModel.getMediaSource().releaseSource();
-//
-//        Log.e(TAG, "Ad show Finish");
-
-    }
-
-    protected MediaSource createMediaSource() {
-
-        mediaModel.setMediaSource(buildMediaSource(mediaModel));
-
-        return MediaHelper.create(mediaModel).getConcatenatedMedia();
-    }
+    public void adShowFinish() {}
 
     @Override
     public void onProgress(@Nullable MediaModel mediaModel, long milliseconds, long durationMillis) {
