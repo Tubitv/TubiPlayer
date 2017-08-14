@@ -80,13 +80,13 @@ public class FsmPlayer implements Fsm, RetrieveAdCallback {
     /**
      * delete the add at the first of the itme in list, which have been played already.
      */
-    public void popPlayedAd(){
-        if(adMedia!=null){
+    public void popPlayedAd() {
+        if (adMedia != null) {
             adMedia.popFirstAd();
         }
     }
 
-    public MediaModel getNextAdd(){
+    public MediaModel getNextAdd() {
         return adMedia.nextAD();
     }
 
@@ -145,7 +145,7 @@ public class FsmPlayer implements Fsm, RetrieveAdCallback {
             currentState = factory.createState(MoviePlayingState.class);
         }
 
-        currentState.updatePlayerUI(controller,playerComponentController, movieMedia, adMedia);
+        currentState.updatePlayerUI(controller, playerComponentController, movieMedia, adMedia);
     }
 
     /**
@@ -168,6 +168,9 @@ public class FsmPlayer implements Fsm, RetrieveAdCallback {
     @Override
     public void onReceiveAd(AdMediaModel mediaModels) {
         adMedia = mediaModels;
+        // prepare and build the adMediaModel
+        playerComponentController.getDoublePlayerInterface().onPrepareAds(adMedia);
+
         transit(Input.AD_RECEIVED);
     }
 

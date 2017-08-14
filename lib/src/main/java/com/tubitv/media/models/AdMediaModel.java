@@ -3,6 +3,8 @@ package com.tubitv.media.models;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
+import com.google.android.exoplayer2.source.MediaSource;
+
 import java.util.List;
 
 /**
@@ -28,7 +30,8 @@ public abstract class AdMediaModel {
 
     public void popFirstAd() {
         if (listOfAds != null && listOfAds.size() > 0) {
-            listOfAds.remove(0);
+            MediaModel adMediaModel = listOfAds.remove(0);
+            adMediaModel.getMediaSource().releaseSource();
         }
     }
 

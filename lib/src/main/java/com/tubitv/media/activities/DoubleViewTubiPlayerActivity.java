@@ -52,9 +52,6 @@ public class DoubleViewTubiPlayerActivity extends TubiPlayerActivity implements 
     CuePointMonitor cuePointMonitor;
 
     @Inject
-    AdMediaModel adMediaModel;
-
-    @Inject
     AdRetriever adRetriever;
 
     @Inject
@@ -67,9 +64,9 @@ public class DoubleViewTubiPlayerActivity extends TubiPlayerActivity implements 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        DaggerFsmComonent.builder().fSMModuleTesting(new FSMModuleTesting(null, null, null, null)).build().inject(this);
 
-        prepareAds(adMediaModel);
+        //FSMModuleTesting requirement object such as ExoPlayer haven't been initialized yet
+        DaggerFsmComonent.builder().fSMModuleTesting(new FSMModuleTesting(null, null, null, null)).build().inject(this);
     }
 
 
@@ -154,19 +151,17 @@ public class DoubleViewTubiPlayerActivity extends TubiPlayerActivity implements 
         playerUIController.setAdPlayer(adPlayer);
         playerUIController.setExoPlayerView(mTubiPlayerView);
 
-        //media model in the wrapper.
-        mediaModel.setMediaSource(buildMediaSource(mediaModel));
-
         //update the MediaModel
         fsmPlayer.setController(playerUIController);
         fsmPlayer.setMovieMedia(mediaModel);
-        fsmPlayer.setAdMedia(adMediaModel);
+//        fsmPlayer.setAdMedia(adMediaModel);
         fsmPlayer.setAdRetriever(adRetriever);
         fsmPlayer.setAdServerInterface(adInterface);
 
         //set the PlayerComponentController.
         playerComponentController.setAdPlayingMonitor(adPlayingMonitor);
         playerComponentController.setTubiPlaybackInterface(this);
+        playerComponentController.setDoublePlayerInterface(this);
         fsmPlayer.setPlayerComponentController(playerComponentController);
 
         //let disable pre-roll ads first, assume that movie will always be played first.
@@ -214,12 +209,8 @@ public class DoubleViewTubiPlayerActivity extends TubiPlayerActivity implements 
         });
     }
 
-    /**
-     * prepare the {@link AdMediaModel} to have the {@link MediaSource} insert into it.
-     *
-     * @param adMediaModel the adMediaModel.
-     */
-    private void prepareAds(@Nullable AdMediaModel adMediaModel) {
+    @Override
+    public void onPrepareAds(@Nullable AdMediaModel adMediaModel) {
 
         for (MediaModel singleMedia : adMediaModel.getListOfAds()) {
             MediaSource adMediaSource = buildMediaSource(singleMedia);
@@ -227,14 +218,6 @@ public class DoubleViewTubiPlayerActivity extends TubiPlayerActivity implements 
         }
     }
 
-    @Override
-    public void onPrepareAds(MediaSource ads) {
-//        // only one instance of AdPlayer can be created.
-//        if (adPlayer == null) {
-//            adPlayer = ExoPlayerFactory.newSimpleInstance(this, mTrackSelector);
-//        }
-//        adPlayer.prepare(ads, true, true);
-    }
 
     @Override
     public void showAds() {

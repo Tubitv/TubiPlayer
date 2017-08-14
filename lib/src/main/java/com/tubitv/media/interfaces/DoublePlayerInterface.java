@@ -1,6 +1,6 @@
 package com.tubitv.media.interfaces;
 
-import com.google.android.exoplayer2.source.MediaSource;
+import com.tubitv.media.models.AdMediaModel;
 
 /**
  * Created by allensun on 7/24/17.
@@ -9,9 +9,11 @@ import com.google.android.exoplayer2.source.MediaSource;
 public interface DoublePlayerInterface {
 
     /**
-     *  to prepare resource for showing video ads in the secondary ExoPlayer.
+     * prepare the {@link AdMediaModel} to have the {@link com.google.android.exoplayer2.source.MediaSource} insert into it.
+     *
+     * @param ads the adMediaModel.
      */
-    void onPrepareAds(MediaSource ads);
+    void onPrepareAds(AdMediaModel ads);
 
     /**
      * this is the method to call when application want to show a video.

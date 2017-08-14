@@ -60,6 +60,9 @@ public abstract class TubiPlayerActivity extends Activity implements TubiPlayerC
 
     protected boolean isActive = false;
 
+    /**
+     * ideally, only one instance of {@link MediaModel} and its arrtibute {@link MediaSource} for movie should be created throughout the whole movie playing experiences.
+     */
     @NonNull
     protected MediaModel mediaModel;
 

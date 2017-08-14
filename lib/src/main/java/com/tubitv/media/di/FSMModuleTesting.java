@@ -68,7 +68,7 @@ public class FSMModuleTesting {
     @ActicityScope
     @Provides
     PlayerComponentController provideComponentController(){
-        return new PlayerComponentController(null,null);
+        return new PlayerComponentController(null,null,null);
     }
 
     @ActicityScope
@@ -121,14 +121,14 @@ public class FSMModuleTesting {
 
     @ActicityScope
     @Provides
-    AdInterface provideAdInterface(final AdMediaModel adMediaModel) {
+    AdInterface provideAdInterface() {
 
         // using the fake generated AdMediaModel to do has the returned data.
         return new AdInterface() {
             @Override
             public void fetchAd(AdRetriever retriever, RetrieveAdCallback callback) {
                 Log.d("FSMTESTING", "On ad receive");
-                callback.onReceiveAd(adMediaModel);
+                callback.onReceiveAd(provideAdMediaModel());
             }
         };
     }
