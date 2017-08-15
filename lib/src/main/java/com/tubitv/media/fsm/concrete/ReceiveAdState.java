@@ -38,8 +38,16 @@ public class ReceiveAdState extends BaseState {
         Log.d(Constants.FSMPLAYER_TESTING, "update stat to: " + TAG);
         // doesn't need to do any UI work.
 
-        if(isNull(fsmPlayer,controller,componentController,movieMedia,adMedia)){
+        if (isNull(fsmPlayer, controller, componentController, movieMedia, adMedia)) {
             return;
         }
+
+//        SimpleExoPlayer moviePlayer = controller.getContentPlayer();
+//
+//        // this mean, user jump out of the activity lifecycle in ReceivedAdState.
+//        if (moviePlayer.getPlaybackState() == ExoPlayer.STATE_IDLE) {
+//            fsmPlayer.transit(Input.ERROR);
+//        }
+
     }
 }

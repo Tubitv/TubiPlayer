@@ -1,5 +1,6 @@
 package com.tubitv.media.fsm.concrete.factory;
 
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
 import com.tubitv.media.fsm.State;
@@ -19,16 +20,16 @@ public class StateFactory {
     private static final Map<Class, State> stateInstance = new HashMap<>();
 
     @Nullable
-    private synchronized State getCacheInstance(Class type) {
+    private synchronized State getCacheInstance(@NonNull Class type) {
         return stateInstance.get(type);
     }
 
-    private synchronized void setCacheInstance(Class type, State instance) {
+    private synchronized void setCacheInstance(@NonNull Class type, @NonNull State instance) {
         stateInstance.put(type, instance);
     }
 
 
-    public State createState(Class classType) {
+    public State createState(@NonNull Class classType) {
 
         State buildState = getCacheInstance(classType);
 

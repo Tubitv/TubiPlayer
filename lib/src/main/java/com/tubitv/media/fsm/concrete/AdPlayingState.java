@@ -5,6 +5,7 @@ import android.support.annotation.Nullable;
 import android.util.Log;
 
 import com.google.android.exoplayer2.C;
+import com.google.android.exoplayer2.ExoPlayer;
 import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.tubitv.media.controller.PlayerComponentController;
 import com.tubitv.media.controller.PlayerUIController;
@@ -87,7 +88,7 @@ public class AdPlayingState extends BaseState {
         SimpleExoPlayer moviePlayer = controller.getContentPlayer();
 
         if(moviePlayer!=null){
-            if (moviePlayer != null) {
+            if (moviePlayer != null && moviePlayer.getPlaybackState()!= ExoPlayer.STATE_IDLE) {
                 int resumeWindow = moviePlayer.getCurrentWindowIndex();
                 long resumePosition = moviePlayer.isCurrentWindowSeekable() ? Math.max(0, moviePlayer.getCurrentPosition())
                         : C.TIME_UNSET;

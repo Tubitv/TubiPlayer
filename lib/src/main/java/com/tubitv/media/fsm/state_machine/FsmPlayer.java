@@ -19,7 +19,7 @@ import com.tubitv.media.models.MediaModel;
 /**
  * Created by allensun on 7/27/17.
  */
-public class FsmPlayer implements Fsm, RetrieveAdCallback {
+public abstract class FsmPlayer implements Fsm, RetrieveAdCallback {
 
     /**
      * a wrapper class for player UI related objects
@@ -133,11 +133,6 @@ public class FsmPlayer implements Fsm, RetrieveAdCallback {
     }
 
     @Override
-    public Class initializeState() {
-        return MoviePlayingState.class;
-    }
-
-    @Override
     public void transit(Input input) {
 
         State transitToState;
@@ -145,6 +140,8 @@ public class FsmPlayer implements Fsm, RetrieveAdCallback {
         if (currentState != null) {
             transitToState = currentState.transformToState(input, factory);
         } else {
+
+            isInitialized = true;
             transitToState = factory.createState(initializeState());
         }
 
@@ -153,7 +150,6 @@ public class FsmPlayer implements Fsm, RetrieveAdCallback {
              * when transition is not null, state change is successful, and transit to a new state
              */
             currentState = transitToState;
-            isInitialized = true;
 
         } else {
 

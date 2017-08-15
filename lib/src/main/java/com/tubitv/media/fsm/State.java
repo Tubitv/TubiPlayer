@@ -22,6 +22,7 @@ public interface State {
     /**
      * let the state to examine itself in a constant time line to detects any input that can change the state.
      */
+    @Nullable
     State transformToState(@NonNull Input input, @NonNull StateFactory factory);
 
     /**

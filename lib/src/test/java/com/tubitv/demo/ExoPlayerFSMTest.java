@@ -59,21 +59,27 @@ public class ExoPlayerFSMTest {
 
     @Before
     public void setup() {
-        comonent = DaggerFsmComonent.builder().fSMModuleTesting(new FSMModuleTesting(null,null,null,null)).build();
+        comonent = DaggerFsmComonent.builder().fSMModuleTesting(new FSMModuleTesting(null, null, null, null)).build();
     }
 
     @Test
     public void testFSMFlowWithVpaid() {
 
-
         factory = comonent.getStateFactory();
 
-        playerFsm = new FsmPlayer(factory);
+        playerFsm = new FsmPlayer(factory) {
+            @Override
+            public Class initializeState() {
+                return MoviePlayingState.class;
+            }
+        };
 //        playerFsm.setAdMedia(adMedia);
 //        playerFsm.setMovieMedia(movieMedia);
 //        playerFsm.setAdServerInterface(adServerInterface);
 //        playerFsm.setRetriever(retriever);
 //        playerFsm.setController(controller);
+
+        playerFsm.transit(Input.INITIALIZE);
 
         playerFsm.transit(Input.MAKE_AD_CALL);
 
@@ -124,7 +130,14 @@ public class ExoPlayerFSMTest {
     public void testFSMFlowWithNoVpaid() {
         factory = comonent.getStateFactory();
 
-        playerFsm = new FsmPlayer(factory);
+        playerFsm = new FsmPlayer(factory) {
+            @Override
+            public Class initializeState() {
+                return MoviePlayingState.class;
+            }
+        };
+
+        playerFsm.transit(Input.INITIALIZE);
 
         for (int i = 0; i < 10; i++) {
 

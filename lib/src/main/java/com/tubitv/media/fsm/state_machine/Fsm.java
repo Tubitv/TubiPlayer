@@ -1,5 +1,7 @@
 package com.tubitv.media.fsm.state_machine;
 
+import android.support.annotation.NonNull;
+
 import com.tubitv.media.fsm.Input;
 import com.tubitv.media.fsm.State;
 
@@ -17,6 +19,7 @@ public interface Fsm {
      * this is the begining state of the fsm
      * @return
      */
+    @NonNull
     Class initializeState();
 
 }

@@ -67,7 +67,6 @@ public class DoubleViewTubiPlayerActivity extends TubiPlayerActivity implements 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-
         //FSMModuleTesting requirement object such as ExoPlayer haven't been initialized yet
         DaggerFsmComonent.builder().fSMModuleTesting(new FSMModuleTesting(null, null, null, null)).build().inject(this);
     }
@@ -158,7 +157,8 @@ public class DoubleViewTubiPlayerActivity extends TubiPlayerActivity implements 
     /**
      * prepare / set up FSM and inject all the elements into the FSM
      */
-    private void prepareFSM() {
+    @Override
+    public void prepareFSM() {
         //update the playerUIController view, need to update the view everything when two ExoPlayer being recreated in activity lifecycle.
         playerUIController.setContentPlayer(mTubiExoPlayer);
         playerUIController.setAdPlayer(adPlayer);
@@ -202,23 +202,6 @@ public class DoubleViewTubiPlayerActivity extends TubiPlayerActivity implements 
 
             }
         });
-
-//        //showing ads
-//        findViewById(R.id.button_show_ads).setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                onPrepareAds(adsMediaModel.getMediaSource());
-//                showAds();
-//            }
-//        });
-
-        //stop ads
-        findViewById(R.id.button_stop_ads).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                adShowFinish();
-            }
-        });
     }
 
     /**
@@ -242,13 +225,6 @@ public class DoubleViewTubiPlayerActivity extends TubiPlayerActivity implements 
         }
     }
 
-    @Override
-    public void showAds() {
-    }
-
-    @Override
-    public void adShowFinish() {
-    }
 
     @Override
     public void onProgress(@Nullable MediaModel mediaModel, long milliseconds, long durationMillis) {

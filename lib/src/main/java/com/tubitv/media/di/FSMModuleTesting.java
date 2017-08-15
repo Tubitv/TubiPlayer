@@ -11,6 +11,7 @@ import com.tubitv.media.controller.PlayerUIController;
 import com.tubitv.media.di.annotation.ActicityScope;
 import com.tubitv.media.fsm.callback.AdInterface;
 import com.tubitv.media.fsm.callback.RetrieveAdCallback;
+import com.tubitv.media.fsm.concrete.MoviePlayingState;
 import com.tubitv.media.fsm.concrete.factory.StateFactory;
 import com.tubitv.media.fsm.listener.AdPlayingMonitor;
 import com.tubitv.media.fsm.listener.CuePointMonitor;
@@ -57,7 +58,12 @@ public class FSMModuleTesting {
     @ActicityScope
     @Provides
     FsmPlayer provideFsmPlayer(StateFactory factory) {
-        return new FsmPlayer(factory);
+        return new FsmPlayer(factory){
+            @Override
+            public Class initializeState() {
+                return MoviePlayingState.class;
+            }
+        };
     }
 
     @ActicityScope

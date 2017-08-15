@@ -15,15 +15,5 @@ public interface DoublePlayerInterface {
      */
     void onPrepareAds(AdMediaModel ads);
 
-    /**
-     * this is the method to call when application want to show a video.
-     */
-    void showAds();
-
-    /**
-     * when the video ads is finished, show release secondary video resource, and pop back to the primary ExoPlayer and its contentView.
-     */
-    void adShowFinish();
-
-    //TODO: also considering situation when user exist the activity when playing video ads, also should release player resource.
+    void prepareFSM();
 }
