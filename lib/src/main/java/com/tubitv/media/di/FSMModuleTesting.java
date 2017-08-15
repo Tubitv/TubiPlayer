@@ -15,6 +15,7 @@ import com.tubitv.media.fsm.concrete.factory.StateFactory;
 import com.tubitv.media.fsm.listener.AdPlayingMonitor;
 import com.tubitv.media.fsm.listener.CuePointMonitor;
 import com.tubitv.media.fsm.state_machine.FsmPlayer;
+import com.tubitv.media.helpers.Constants;
 import com.tubitv.media.models.AdMediaModel;
 import com.tubitv.media.models.AdRetriever;
 import com.tubitv.media.models.MediaModel;
@@ -94,7 +95,7 @@ public class FSMModuleTesting {
             }
         };
 
-        cuePointMonitor.setQuePoints(new int[]{0,20000, 60000, 120000, 1800000});
+        cuePointMonitor.setQuePoints(new int[]{20000, 60000, 120000, 1800000});
 
         return cuePointMonitor;
     }
@@ -127,7 +128,7 @@ public class FSMModuleTesting {
         return new AdInterface() {
             @Override
             public void fetchAd(AdRetriever retriever, RetrieveAdCallback callback) {
-                Log.d("FSMTESTING", "On ad receive");
+                Log.d(Constants.FSMPLAYER_TESTING, "On ad receive");
                 callback.onReceiveAd(provideAdMediaModel());
             }
         };

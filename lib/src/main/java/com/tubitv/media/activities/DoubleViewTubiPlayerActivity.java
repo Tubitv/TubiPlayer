@@ -16,6 +16,7 @@ import com.tubitv.media.controller.PlayerComponentController;
 import com.tubitv.media.controller.PlayerUIController;
 import com.tubitv.media.di.FSMModuleTesting;
 import com.tubitv.media.di.component.DaggerFsmComonent;
+import com.tubitv.media.fsm.Input;
 import com.tubitv.media.fsm.callback.AdInterface;
 import com.tubitv.media.fsm.listener.AdPlayingMonitor;
 import com.tubitv.media.fsm.listener.CuePointMonitor;
@@ -25,6 +26,7 @@ import com.tubitv.media.interfaces.DoublePlayerInterface;
 import com.tubitv.media.models.AdMediaModel;
 import com.tubitv.media.models.AdRetriever;
 import com.tubitv.media.models.MediaModel;
+import com.tubitv.media.utilities.Utils;
 import com.tubitv.media.views.TubiExoPlayerView;
 
 import javax.inject.Inject;
@@ -65,6 +67,7 @@ public class DoubleViewTubiPlayerActivity extends TubiPlayerActivity implements 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+
         //FSMModuleTesting requirement object such as ExoPlayer haven't been initialized yet
         DaggerFsmComonent.builder().fSMModuleTesting(new FSMModuleTesting(null, null, null, null)).build().inject(this);
     }
@@ -75,6 +78,9 @@ public class DoubleViewTubiPlayerActivity extends TubiPlayerActivity implements 
         super.onStart();
 
         if (Util.SDK_INT > 23) {
+            //build the mediaModel into medaiSource.
+            createMediaSource();
+
             setupAdPlayer();
             prepareFSM();
         }
@@ -85,6 +91,9 @@ public class DoubleViewTubiPlayerActivity extends TubiPlayerActivity implements 
     public void onResume() {
         super.onResume();
         if ((Util.SDK_INT <= 23 || adPlayer == null)) {
+            //build the mediaModel into medaiSource.
+            createMediaSource();
+
             setupAdPlayer();
             prepareFSM();
         }
@@ -110,6 +119,7 @@ public class DoubleViewTubiPlayerActivity extends TubiPlayerActivity implements 
         }
     }
 
+
     private void setupAdPlayer() {
         adPlayer = ExoPlayerFactory.newSimpleInstance(this, mTrackSelector);
     }
@@ -131,6 +141,9 @@ public class DoubleViewTubiPlayerActivity extends TubiPlayerActivity implements 
         }
     }
 
+    /**
+     * update the movie and ad playing position
+     */
     @Override
     protected void updateResumePosition() {
         super.updateResumePosition();
@@ -164,17 +177,16 @@ public class DoubleViewTubiPlayerActivity extends TubiPlayerActivity implements 
         playerComponentController.setDoublePlayerInterface(this);
         fsmPlayer.setPlayerComponentController(playerComponentController);
 
-        //let disable pre-roll ads first, assume that movie will always be played first.
-//        if (fsmPlayer != null) {
-//            fsmPlayer.transit(Input.MAKE_AD_CALL);
-//        }
+        if (fsmPlayer.isInitialized()) {
+            fsmPlayer.updateSelf();
+            Utils.hideSystemUI(this, true);
+        } else {
+            fsmPlayer.transit(Input.INITIALIZE);
+        }
     }
 
     @Override
     protected void onPlayerReady() {
-        MediaSource mediaSource = createMediaSource();
-
-        playMedia(mediaSource);
     }
 
     @Override
@@ -210,7 +222,8 @@ public class DoubleViewTubiPlayerActivity extends TubiPlayerActivity implements 
     }
 
     /**
-     * creating the {@link MediaSource} for the Exoplayer.
+     * creating the {@link MediaSource} for the Exoplayer, recreate it everytime when new {@link SimpleExoPlayer} has been initialized
+     *
      * @return
      */
     protected MediaSource createMediaSource() {
@@ -230,10 +243,12 @@ public class DoubleViewTubiPlayerActivity extends TubiPlayerActivity implements 
     }
 
     @Override
-    public void showAds() {}
+    public void showAds() {
+    }
 
     @Override
-    public void adShowFinish() {}
+    public void adShowFinish() {
+    }
 
     @Override
     public void onProgress(@Nullable MediaModel mediaModel, long milliseconds, long durationMillis) {

@@ -9,9 +9,9 @@ import com.tubitv.media.fsm.Input;
 import com.tubitv.media.fsm.State;
 import com.tubitv.media.fsm.callback.AdInterface;
 import com.tubitv.media.fsm.callback.RetrieveAdCallback;
-import com.tubitv.media.fsm.concrete.MakingAdCallState;
 import com.tubitv.media.fsm.concrete.MoviePlayingState;
 import com.tubitv.media.fsm.concrete.factory.StateFactory;
+import com.tubitv.media.helpers.Constants;
 import com.tubitv.media.models.AdMediaModel;
 import com.tubitv.media.models.AdRetriever;
 import com.tubitv.media.models.MediaModel;
@@ -61,8 +61,17 @@ public class FsmPlayer implements Fsm, RetrieveAdCallback {
      */
     private StateFactory factory;
 
+    /**
+     * only initialize the fsmPlay onc
+     */
+    private boolean isInitialized = false;
+
     public FsmPlayer(StateFactory factory) {
         this.factory = factory;
+    }
+
+    public boolean isInitialized() {
+        return isInitialized;
     }
 
     public void setMovieMedia(MediaModel movieMedia) {
@@ -124,6 +133,11 @@ public class FsmPlayer implements Fsm, RetrieveAdCallback {
     }
 
     @Override
+    public Class initializeState() {
+        return MoviePlayingState.class;
+    }
+
+    @Override
     public void transit(Input input) {
 
         State transitToState;
@@ -131,7 +145,7 @@ public class FsmPlayer implements Fsm, RetrieveAdCallback {
         if (currentState != null) {
             transitToState = currentState.transformToState(input, factory);
         } else {
-            transitToState = factory.createState(MakingAdCallState.class);
+            transitToState = factory.createState(initializeState());
         }
 
         if (transitToState != null) {
@@ -139,10 +153,11 @@ public class FsmPlayer implements Fsm, RetrieveAdCallback {
              * when transition is not null, state change is successful, and transit to a new state
              */
             currentState = transitToState;
+            isInitialized = true;
 
         } else {
 
-            Log.w("FSMTESTING", "Error happed");
+            Log.w(Constants.FSMPLAYER_TESTING, "Error happed");
             /**
              * when transition is null, state change is error, transit to default {@link MoviePlayingState}
              */
@@ -158,8 +173,10 @@ public class FsmPlayer implements Fsm, RetrieveAdCallback {
 
 
     @Override
-    public void playerFinalize() {
-
+    public void updateSelf() {
+        if (currentState != null) {
+            currentState.performWorkAndupdatePlayerUI(this, controller, playerComponentController, movieMedia, adMedia);
+        }
     }
 
     @Override

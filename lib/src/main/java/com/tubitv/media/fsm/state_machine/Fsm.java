@@ -12,5 +12,11 @@ public interface Fsm {
 
     void transit(Input input);
 
-    void playerFinalize();
+    void updateSelf();
+    /**
+     * this is the begining state of the fsm
+     * @return
+     */
+    Class initializeState();
+
 }

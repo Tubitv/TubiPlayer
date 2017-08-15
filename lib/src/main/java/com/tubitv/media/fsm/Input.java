@@ -45,5 +45,7 @@ public enum Input {
     /**
      * ERROR INPUT
      */
-    ERROR
+    ERROR,
+
+    INITIALIZE,
 }
