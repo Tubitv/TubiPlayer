@@ -23,3 +23,7 @@
 # If you keep the line number information, uncomment this to
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
+
+# For Crashlytics
+-keep class com.crashlytics.** { *; }
+-keep class com.crashlytics.android.**
