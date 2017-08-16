@@ -58,6 +58,7 @@ public class StateFactory {
 
     /**
      * @param subClass must be the subclass of {@link com.tubitv.media.fsm.BaseState} to swap original to subclass
+     * Must be called before any createState method being called.
      */
     public void overrideStateCreation(@NonNull Class subClass) {
 

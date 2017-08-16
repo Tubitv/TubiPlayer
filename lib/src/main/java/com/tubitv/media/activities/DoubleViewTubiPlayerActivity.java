@@ -228,7 +228,7 @@ public class DoubleViewTubiPlayerActivity extends TubiPlayerActivity implements 
 
     @Override
     public void onProgress(@Nullable MediaModel mediaModel, long milliseconds, long durationMillis) {
-        Log.e(TAG, "onProgress: " + "milliseconds: " + milliseconds + " durationMillis: " + durationMillis);
+//        Log.e(TAG, "onProgress: " + "milliseconds: " + milliseconds + " durationMillis: " + durationMillis);
 
         // monitor the movie progress.
         cuePointMonitor.onMovieProgress(milliseconds, durationMillis);
@@ -246,16 +246,16 @@ public class DoubleViewTubiPlayerActivity extends TubiPlayerActivity implements 
 
     @Override
     public void onLearnMoreClick(@NonNull MediaModel mediaModel) {
-
+        Log.d(TAG, "onLearnMoreClick :" + mediaModel.getClickThroughUrl());
     }
 
     @Override
     public void onSubtitles(@Nullable MediaModel mediaModel, boolean enabled) {
-
+        Log.d(TAG, "onSubtitles :"+ mediaModel.getMediaName());
     }
 
     @Override
     public void onQuality(@Nullable MediaModel mediaModel) {
-
+        Log.d(TAG, "onQuality :"+ mediaModel.getMediaName());
     }
 }
