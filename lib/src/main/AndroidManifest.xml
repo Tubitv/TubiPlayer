@@ -8,10 +8,10 @@
         android:label="@string/app_name"
         android:supportsRtl="true">
 
-        <activity android:name="com.tubitv.media.activities.TubiPlayerActivity"
-                  android:configChanges="keyboard|keyboardHidden|orientation|screenSize|screenLayout|smallestScreenSize|uiMode"
-                  android:launchMode="singleTop"
-                  android:theme="@style/TubiPlayerTheme"/>
+        <!--<activity android:name="com.tubitv.media.activities.TubiPlayerActivity"-->
+                  <!--android:configChanges="keyboard|keyboardHidden|orientation|screenSize|screenLayout|smallestScreenSize|uiMode"-->
+                  <!--android:launchMode="singleTop"-->
+                  <!--android:theme="@style/TubiPlayerTheme"/>-->
 
         <activity android:name="com.tubitv.media.activities.DoubleViewTubiPlayerActivity"
             android:configChanges="keyboard|keyboardHidden|orientation|screenSize|screenLayout|smallestScreenSize|uiMode"
