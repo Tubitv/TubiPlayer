@@ -4,8 +4,6 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
-import com.google.android.exoplayer2.C;
-import com.google.android.exoplayer2.ExoPlayer;
 import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.tubitv.media.controller.PlayerComponentController;
 import com.tubitv.media.controller.PlayerUIController;
@@ -67,7 +65,7 @@ public class AdPlayingState extends BaseState {
         MediaModel adMedia = adMediaModel.nextAD();
         if (adMedia != null) {
             // first need to pause the movie player, and also remember main movie playing position.
-            updateMovieResumePostion(controller);
+            FsmPlayer.updateMovieResumePostion(controller);
             moviePlayer.setPlayWhenReady(false);
 
             //prepare the mediaSource to AdPlayer
@@ -83,19 +81,5 @@ public class AdPlayingState extends BaseState {
             adPlayer.addListener(componentController.getAdPlayingMonitor());
         }
     }
-
-    private void updateMovieResumePostion(PlayerUIController controller){
-        SimpleExoPlayer moviePlayer = controller.getContentPlayer();
-
-        if(moviePlayer!=null){
-            if (moviePlayer != null && moviePlayer.getPlaybackState()!= ExoPlayer.STATE_IDLE) {
-                int resumeWindow = moviePlayer.getCurrentWindowIndex();
-                long resumePosition = moviePlayer.isCurrentWindowSeekable() ? Math.max(0, moviePlayer.getCurrentPosition())
-                        : C.TIME_UNSET;
-                controller.setMovieResumeInfo(resumeWindow, resumePosition);
-            }
-        }
-    }
-
 
 }

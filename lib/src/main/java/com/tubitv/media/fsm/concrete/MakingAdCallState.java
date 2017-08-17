@@ -23,7 +23,7 @@ import com.tubitv.media.models.MediaModel;
  */
 public class MakingAdCallState extends BaseState {
 
-    private static final String TAG = MakingAdCallState.class.toString();
+    private static final String TAG = MakingAdCallState.class.getSimpleName();
 
     @Override
     public State transformToState(Input input, StateFactory factory) {

@@ -11,21 +11,28 @@
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="50dp"
+        android:layout_marginBottom="70dp"
         android:layout_gravity="center|bottom"
         android:orientation="horizontal">
-    <Button
-        android:id="@+id/button_show_ads"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Show ads"/>
+    <!--<Button-->
+        <!--android:id="@+id/button_show_ads"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:text="Show ads"/>-->
 
-    <Button
-        android:id="@+id/button_stop_ads"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center|bottom"
-        android:text="Stop Ads"/>
+    <!--<Button-->
+        <!--android:id="@+id/button_stop_ads"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_gravity="center|bottom"-->
+        <!--android:text="Stop Ads"/>-->
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:textColor="@android:color/holo_purple"
+            android:text="AdBreak point at 0s, 1min, 15min, 30min, 60min. With each adbreak showing one ads"/>
     </LinearLayout>
 
 </FrameLayout>

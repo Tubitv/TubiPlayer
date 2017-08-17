@@ -3,6 +3,9 @@ package com.tubitv.media.fsm.state_machine;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
+import com.google.android.exoplayer2.C;
+import com.google.android.exoplayer2.ExoPlayer;
+import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.tubitv.media.controller.PlayerComponentController;
 import com.tubitv.media.controller.PlayerUIController;
 import com.tubitv.media.fsm.Input;
@@ -153,7 +156,9 @@ public abstract class FsmPlayer implements Fsm, RetrieveAdCallback {
 
         } else {
 
-            Log.w(Constants.FSMPLAYER_TESTING, "Error happed");
+            Log.e(Constants.FSMPLAYER_TESTING, "Error happed"+ " jump to MoviePlayingState");
+
+            updateMovieResumePostion(controller);
             /**
              * when transition is null, state change is error, transit to default {@link MoviePlayingState}
              */
@@ -192,5 +197,27 @@ public abstract class FsmPlayer implements Fsm, RetrieveAdCallback {
     @Override
     public void onEmptyAdReceived() {
         transit(Input.EMPTY_AD);
+    }
+
+    /**
+     * update the resume position of the main movice
+     * @param controller
+     */
+    public static void updateMovieResumePostion(PlayerUIController controller) {
+
+        if (controller == null) {
+            return;
+        }
+
+        SimpleExoPlayer moviePlayer = controller.getContentPlayer();
+
+        if (moviePlayer != null) {
+            if (moviePlayer != null && moviePlayer.getPlaybackState() != ExoPlayer.STATE_IDLE) {
+                int resumeWindow = moviePlayer.getCurrentWindowIndex();
+                long resumePosition = moviePlayer.isCurrentWindowSeekable() ? Math.max(0, moviePlayer.getCurrentPosition())
+                        : C.TIME_UNSET;
+                controller.setMovieResumeInfo(resumeWindow, resumePosition);
+            }
+        }
     }
 }

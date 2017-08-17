@@ -4,6 +4,8 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
 
+import com.google.android.exoplayer2.ExoPlayer;
+import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.tubitv.media.controller.PlayerComponentController;
 import com.tubitv.media.controller.PlayerUIController;
 import com.tubitv.media.fsm.BaseState;
@@ -42,12 +44,12 @@ public class ReceiveAdState extends BaseState {
             return;
         }
 
-//        SimpleExoPlayer moviePlayer = controller.getContentPlayer();
-//
-//        // this mean, user jump out of the activity lifecycle in ReceivedAdState.
-//        if (moviePlayer.getPlaybackState() == ExoPlayer.STATE_IDLE) {
-//            fsmPlayer.transit(Input.ERROR);
-//        }
+        SimpleExoPlayer moviePlayer = controller.getContentPlayer();
+
+        // this mean, user jump out of the activity lifecycle in ReceivedAdState.
+        if (moviePlayer!=null && moviePlayer.getPlaybackState() == ExoPlayer.STATE_IDLE) {
+            fsmPlayer.transit(Input.ERROR);
+        }
 
     }
 }
