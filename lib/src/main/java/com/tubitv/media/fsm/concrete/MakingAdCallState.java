@@ -37,10 +37,13 @@ public class MakingAdCallState extends BaseState {
             case MAKE_AD_CALL:
                 return factory.createState(MakingAdCallState.class);
 
-            /***************below is the error handling******************************************/
-            case SHOW_ADS:
-                // ad server hasn't return any ad, can not show ad, this round of ad showing opportunity is over.
-                return factory.createState(MoviePlayingState.class);
+            case PRE_ROLL_AD_RECEIVED:
+                return factory.createState(AdPlayingState.class);
+
+//            /***************below is the error handling******************************************/
+//            case SHOW_ADS:
+//                // ad server hasn't return any ad, can not show ad, this round of ad showing opportunity is over.
+//                return factory.createState(MoviePlayingState.class);
 
         }
         return null;
@@ -61,7 +64,7 @@ public class MakingAdCallState extends BaseState {
     }
 
     private void fetchAd(AdInterface adInterface, AdRetriever retriever, RetrieveAdCallback callback) {
-        if (adInterface != null && retriever != null) {
+        if (adInterface != null && retriever != null && callback!=null) {
             adInterface.fetchAd(retriever,callback);
         } else {
             Log.e("TAG", "fetchAd fail, adInterface or retreiever is empty");

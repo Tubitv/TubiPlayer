@@ -175,6 +175,7 @@ public class DoubleViewTubiPlayerActivity extends TubiPlayerActivity implements 
         playerComponentController.setAdPlayingMonitor(adPlayingMonitor);
         playerComponentController.setTubiPlaybackInterface(this);
         playerComponentController.setDoublePlayerInterface(this);
+        playerComponentController.setCuePointMonitor(cuePointMonitor);
         fsmPlayer.setPlayerComponentController(playerComponentController);
 
         if (fsmPlayer.isInitialized()) {

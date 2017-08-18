@@ -10,6 +10,13 @@ public enum Input {
     /**
      *  Only expect inputs of {@link com.tubitv.media.fsm.concrete.MakingAdCallState}
      */
+    HAS_PREROLL_AD,
+    NO_PREROLL_AD,
+
+    /**
+     *  Only expect inputs of {@link com.tubitv.media.fsm.concrete.MakingAdCallState}
+     */
+    PRE_ROLL_AD_RECEIVED,
     AD_RECEIVED,
     EMPTY_AD,
 

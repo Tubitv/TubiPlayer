@@ -3,6 +3,7 @@ package com.tubitv.media.controller;
 import android.support.annotation.Nullable;
 
 import com.tubitv.media.fsm.listener.AdPlayingMonitor;
+import com.tubitv.media.fsm.listener.CuePointMonitor;
 import com.tubitv.media.interfaces.DoublePlayerInterface;
 import com.tubitv.media.interfaces.TubiPlaybackInterface;
 
@@ -18,10 +19,13 @@ public class PlayerComponentController {
 
     private DoublePlayerInterface doublePlayerInterface;
 
-    public PlayerComponentController(@Nullable AdPlayingMonitor adPlayingMonitor,@Nullable TubiPlaybackInterface tubiPlaybackInterface,@Nullable DoublePlayerInterface doublePlayerInterface) {
+    private CuePointMonitor cuePointMonitor;
+
+    public PlayerComponentController(@Nullable AdPlayingMonitor adPlayingMonitor, @Nullable TubiPlaybackInterface tubiPlaybackInterface, @Nullable DoublePlayerInterface doublePlayerInterface, @Nullable CuePointMonitor cuePointMonitor) {
         this.adPlayingMonitor = adPlayingMonitor;
         this.tubiPlaybackInterface = tubiPlaybackInterface;
         this.doublePlayerInterface = doublePlayerInterface;
+        this.cuePointMonitor = cuePointMonitor;
     }
 
     public DoublePlayerInterface getDoublePlayerInterface() {
@@ -46,5 +50,13 @@ public class PlayerComponentController {
 
     public TubiPlaybackInterface getTubiPlaybackInterface() {
         return tubiPlaybackInterface;
+    }
+
+    public CuePointMonitor getCuePointMonitor() {
+        return cuePointMonitor;
+    }
+
+    public void setCuePointMonitor(CuePointMonitor cuePointMonitor) {
+        this.cuePointMonitor = cuePointMonitor;
     }
 }

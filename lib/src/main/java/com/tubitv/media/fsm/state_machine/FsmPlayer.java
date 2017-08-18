@@ -32,7 +32,7 @@ public abstract class FsmPlayer implements Fsm, RetrieveAdCallback {
     /**
      * a wrapper class for player logic related component objects.
      */
-    private PlayerComponentController playerComponentController;
+    protected PlayerComponentController playerComponentController;
 
     /**
      * a generic call ad network class

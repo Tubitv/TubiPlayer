@@ -10,6 +10,7 @@ import com.tubitv.media.controller.PlayerComponentController;
 import com.tubitv.media.controller.PlayerUIController;
 import com.tubitv.media.di.annotation.ActicityScope;
 import com.tubitv.media.fsm.callback.AdInterface;
+import com.tubitv.media.fsm.callback.CuePointCallBack;
 import com.tubitv.media.fsm.callback.RetrieveAdCallback;
 import com.tubitv.media.fsm.concrete.MoviePlayingState;
 import com.tubitv.media.fsm.concrete.factory.StateFactory;
@@ -19,6 +20,7 @@ import com.tubitv.media.fsm.state_machine.FsmPlayer;
 import com.tubitv.media.helpers.Constants;
 import com.tubitv.media.models.AdMediaModel;
 import com.tubitv.media.models.AdRetriever;
+import com.tubitv.media.models.CuePointsRetriever;
 import com.tubitv.media.models.MediaModel;
 
 import java.util.ArrayList;
@@ -75,7 +77,7 @@ public class FSMModuleTesting {
     @ActicityScope
     @Provides
     PlayerComponentController provideComponentController(){
-        return new PlayerComponentController(null,null,null);
+        return new PlayerComponentController(null,null,null,null);
     }
 
     @ActicityScope
@@ -140,6 +142,11 @@ public class FSMModuleTesting {
             public void fetchAd(AdRetriever retriever, RetrieveAdCallback callback) {
                 Log.d(Constants.FSMPLAYER_TESTING, "On ad receive");
                 callback.onReceiveAd(provideAdMediaModel());
+            }
+
+            @Override
+            public void fetchQuePoint(CuePointsRetriever retriever, CuePointCallBack callBack) {
+
             }
         };
     }
