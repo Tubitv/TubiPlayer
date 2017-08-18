@@ -3,8 +3,10 @@ package com.tubitv.demo;
 import com.tubitv.media.fsm.Input;
 import com.tubitv.media.fsm.State;
 import com.tubitv.media.fsm.concrete.AdPlayingState;
+import com.tubitv.media.fsm.concrete.FetchCuePointState;
 import com.tubitv.media.fsm.concrete.FinishState;
 import com.tubitv.media.fsm.concrete.MakingAdCallState;
+import com.tubitv.media.fsm.concrete.MakingPrerollAdCallState;
 import com.tubitv.media.fsm.concrete.MoviePlayingState;
 import com.tubitv.media.fsm.concrete.ReceiveAdState;
 import com.tubitv.media.fsm.concrete.VastAdInteractionSandBoxState;
@@ -102,6 +104,32 @@ public class ExoPlayerFactoryTest {
         state = stateFactory.createState(MoviePlayingState.class);
 
         assertThat(state instanceof TestMoviePlayingState, is(true));
+
+        // fetchCuePoint
+
+        state = stateFactory.createState(FetchCuePointState.class);
+
+        assertThat(state instanceof TestFetchCuePointState, is(false));
+
+        stateFactory.overrideStateCreation(TestFetchCuePointState.class);
+
+        state = stateFactory.createState(FetchCuePointState.class);
+
+        assertThat(state instanceof TestFetchCuePointState, is(true));
+
+        // makingPrerollAdcall
+
+        state = stateFactory.createState(MakingPrerollAdCallState.class);
+
+        assertThat(state instanceof TestMakingPrerollAdCallState, is(false));
+
+        stateFactory.overrideStateCreation(TestMakingPrerollAdCallState.class);
+
+        state = stateFactory.createState(MakingPrerollAdCallState.class);
+
+        assertThat(state instanceof TestMakingPrerollAdCallState, is(true));
+
+
 
     }
 
@@ -230,6 +258,9 @@ public class ExoPlayerFactoryTest {
         assertTrue(playerFsm.getCurrentState() instanceof MoviePlayingState);
     }
 
+    /**
+     *  this is for testing custom class of {@link com.tubitv.media.fsm.BaseState} can be swap into {@link StateFactory}
+     */
     public static class TestMoviePlayingState extends MoviePlayingState {}
 
     public static class TestMakingAdCallState extends MakingAdCallState {}
@@ -243,4 +274,8 @@ public class ExoPlayerFactoryTest {
     public static class TestVastAdSandBox extends VastAdInteractionSandBoxState {}
 
     public static class TestVpadState extends VpaidState {}
+
+    public static class TestFetchCuePointState extends FetchCuePointState {}
+
+    public static class TestMakingPrerollAdCallState extends MakingPrerollAdCallState {}
 }

@@ -5,8 +5,10 @@ import android.support.annotation.Nullable;
 
 import com.tubitv.media.fsm.State;
 import com.tubitv.media.fsm.concrete.AdPlayingState;
+import com.tubitv.media.fsm.concrete.FetchCuePointState;
 import com.tubitv.media.fsm.concrete.FinishState;
 import com.tubitv.media.fsm.concrete.MakingAdCallState;
+import com.tubitv.media.fsm.concrete.MakingPrerollAdCallState;
 import com.tubitv.media.fsm.concrete.MoviePlayingState;
 import com.tubitv.media.fsm.concrete.ReceiveAdState;
 import com.tubitv.media.fsm.concrete.VastAdInteractionSandBoxState;
@@ -23,6 +25,10 @@ import java.util.Map;
  * reuse that instance from cached map.
  * <p>
  * The default instance of {@link com.tubitv.media.fsm.BaseState} should be created using the below class.
+ * * <p>
+ * {@link com.tubitv.media.fsm.concrete.FetchCuePointState},
+ * <p>
+ * {@link com.tubitv.media.fsm.concrete.MakingPrerollAdCallState},
  * <p>
  * {@link com.tubitv.media.fsm.concrete.MakingAdCallState},
  * <p>
@@ -58,7 +64,7 @@ public class StateFactory {
 
     /**
      * @param subClass must be the subclass of {@link com.tubitv.media.fsm.BaseState} to swap original to subclass
-     * Must be called before any createState method being called.
+     *                 Must be called before any createState method being called.
      */
     public void overrideStateCreation(@NonNull Class subClass) {
 
@@ -82,6 +88,12 @@ public class StateFactory {
 
         } else if (VastAdInteractionSandBoxState.class.isAssignableFrom(subClass)) {
             customStateType.put(VastAdInteractionSandBoxState.class, subClass);
+
+        } else if (FetchCuePointState.class.isAssignableFrom(subClass)) {
+            customStateType.put(FetchCuePointState.class, subClass);
+
+        } else if (MakingPrerollAdCallState.class.isAssignableFrom(subClass)) {
+            customStateType.put(MakingPrerollAdCallState.class, subClass);
 
         } else {
             throw new IllegalStateException(String.valueOf(subClass.getName() + "is not a base class of default State class "));
