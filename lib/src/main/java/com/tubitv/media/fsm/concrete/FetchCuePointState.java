@@ -52,7 +52,7 @@ public class FetchCuePointState extends BaseState {
         if (adInterface != null && retriever != null && callBack != null) {
             adInterface.fetchQuePoint(retriever, callBack);
         } else {
-            Log.e("TAG", "fetchAd fail, adInterface or retreiever is empty");
+            Log.e(TAG, "fetchAd fail, adInterface or retreiever is empty");
         }
     }
 
