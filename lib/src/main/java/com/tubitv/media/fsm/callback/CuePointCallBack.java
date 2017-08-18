@@ -6,7 +6,7 @@ package com.tubitv.media.fsm.callback;
  */
 public interface CuePointCallBack {
 
-    void onCuePointReceived(int[] quePoints);
+    void onCuePointReceived(long[] quePoints);
 
     void onCuePointError();
 }

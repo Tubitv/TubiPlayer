@@ -12,11 +12,12 @@ import com.tubitv.media.di.annotation.ActicityScope;
 import com.tubitv.media.fsm.callback.AdInterface;
 import com.tubitv.media.fsm.callback.CuePointCallBack;
 import com.tubitv.media.fsm.callback.RetrieveAdCallback;
-import com.tubitv.media.fsm.concrete.MoviePlayingState;
+import com.tubitv.media.fsm.concrete.FetchCuePointState;
 import com.tubitv.media.fsm.concrete.factory.StateFactory;
 import com.tubitv.media.fsm.listener.AdPlayingMonitor;
 import com.tubitv.media.fsm.listener.CuePointMonitor;
 import com.tubitv.media.fsm.state_machine.FsmPlayer;
+import com.tubitv.media.fsm.state_machine.FsmPlayerImperial;
 import com.tubitv.media.helpers.Constants;
 import com.tubitv.media.models.AdMediaModel;
 import com.tubitv.media.models.AdRetriever;
@@ -25,6 +26,8 @@ import com.tubitv.media.models.MediaModel;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.inject.Named;
 
 import dagger.Module;
 import dagger.Provides;
@@ -60,10 +63,10 @@ public class FSMModuleTesting {
     @ActicityScope
     @Provides
     FsmPlayer provideFsmPlayer(StateFactory factory) {
-        return new FsmPlayer(factory){
+        return new FsmPlayerImperial(factory){
             @Override
             public Class initializeState() {
-                return MoviePlayingState.class;
+                return FetchCuePointState.class;
             }
         };
     }
@@ -103,7 +106,7 @@ public class FSMModuleTesting {
             }
         };
 
-        cuePointMonitor.setQuePoints(new int[]{0, 60000, 900000, 1800000, 3600000});
+//        cuePointMonitor.setQuePoints(new int[]{0, 60000, 900000, 1800000, 3600000});
 
         return cuePointMonitor;
     }
@@ -133,6 +136,7 @@ public class FSMModuleTesting {
     }
 
     @ActicityScope
+    @Named("pre_roll")
     @Provides
     AdInterface provideAdInterface() {
 
@@ -146,7 +150,30 @@ public class FSMModuleTesting {
 
             @Override
             public void fetchQuePoint(CuePointsRetriever retriever, CuePointCallBack callBack) {
+                Log.d(Constants.FSMPLAYER_TESTING, "On ad receive");
+                callBack.onCuePointReceived(new long[]{0, 60000, 900000, 1800000, 3600000});
+            }
+        };
+    }
 
+
+    @ActicityScope
+    @Named("no_pre_roll")
+    @Provides
+    AdInterface provideAdInterfaceNoPreroll() {
+
+        // using the fake generated AdMediaModel to do has the returned data.
+        return new AdInterface() {
+            @Override
+            public void fetchAd(AdRetriever retriever, RetrieveAdCallback callback) {
+                Log.d(Constants.FSMPLAYER_TESTING, "On ad receive");
+                callback.onReceiveAd(provideAdMediaModel());
+            }
+
+            @Override
+            public void fetchQuePoint(CuePointsRetriever retriever, CuePointCallBack callBack) {
+                Log.d(Constants.FSMPLAYER_TESTING, "On ad receive");
+                callBack.onCuePointReceived(new long[]{60000, 900000, 1800000, 3600000});
             }
         };
     }

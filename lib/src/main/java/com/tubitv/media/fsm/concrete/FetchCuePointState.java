@@ -14,6 +14,7 @@ import com.tubitv.media.fsm.callback.CuePointCallBack;
 import com.tubitv.media.fsm.concrete.factory.StateFactory;
 import com.tubitv.media.fsm.state_machine.FsmPlayer;
 import com.tubitv.media.fsm.state_machine.FsmPlayerImperial;
+import com.tubitv.media.helpers.Constants;
 import com.tubitv.media.models.AdMediaModel;
 import com.tubitv.media.models.CuePointsRetriever;
 import com.tubitv.media.models.MediaModel;
@@ -43,9 +44,10 @@ public class FetchCuePointState extends BaseState {
 
     @Override
     public void performWorkAndupdatePlayerUI(@Nullable FsmPlayer fsmPlayer, @NonNull PlayerUIController controller, @NonNull PlayerComponentController componentController, @NonNull MediaModel movieMedia, @Nullable AdMediaModel adMedia) {
+        Log.d(Constants.FSMPLAYER_TESTING, "update stat to: " + TAG);
         //does nothing with the UI.
 
-        fetchCuePointCall(fsmPlayer.getAdServerInterface(), null, (FsmPlayerImperial) fsmPlayer);
+        fetchCuePointCall(fsmPlayer.getAdServerInterface(), new CuePointsRetriever(), (FsmPlayerImperial) fsmPlayer);
     }
 
     private void fetchCuePointCall(AdInterface adInterface, CuePointsRetriever retriever, CuePointCallBack callBack) {

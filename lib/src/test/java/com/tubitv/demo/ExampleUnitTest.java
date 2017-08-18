@@ -15,17 +15,36 @@ import static org.hamcrest.core.Is.is;
  */
 public class ExampleUnitTest {
 
-    int[] a;
+    long[] a;
 
-    int range = 0;
+    long range = 0;
 
     @Before
     public void setup(){
-        a = new int[]{0,4,10,25,29,40,50,60,65,68,909};
+        a = new long[]{0,4,10,25,29,40,50,60,65,68,909};
     }
 
     @Test
-    public void addition_isCorrect() throws Exception {
+    public void searchWithOutRange() throws Exception {
+        int resultPos = CuePointMonitor.binarySerchExactly(a,60 + range);
+        assertThat(resultPos,is(7));
+
+        resultPos = CuePointMonitor.binarySerchExactly(a,0+ range);
+        assertThat(resultPos>=0,is(true));
+
+        resultPos = CuePointMonitor.binarySerchExactly(a,10+ range);
+        assertThat(resultPos>=0,is(true));
+
+        resultPos = CuePointMonitor.binarySerchExactly(a,25+ range);
+        assertThat(resultPos>=0,is(true));
+
+        resultPos = CuePointMonitor.binarySerchExactly(a, 909+ range);
+        assertThat(resultPos,is(10));
+    }
+
+
+    @Test
+    public void searchWithRange() throws Exception {
         int resultPos = CuePointMonitor.binarySerchWithRange(a,60 + range);
         assertThat(resultPos,is(7));
 

@@ -30,9 +30,9 @@ public abstract class CuePointMonitor {
 
     private boolean safeCheckForCue = true;
 
-    private int[] cuePoints;
+    private long[] cuePoints;
 
-    private int[] adCallPoints;
+    private long[] adCallPoints;
 
     /**
      * keep track of current relevant cue point this time,
@@ -45,10 +45,11 @@ public abstract class CuePointMonitor {
         this.fsmPlayer = fsmPlayer;
     }
 
-    public void setQuePoints(int[] cuePoints) {
+    public void setQuePoints(long[] cuePoints) {
         this.cuePoints = cuePoints;
         adCallPoints = getAddCallPoints(cuePoints);
     }
+
 
     /**
      * this method will update frame by frame on movie millisecond to check if any action can be triggered
@@ -107,13 +108,13 @@ public abstract class CuePointMonitor {
      * @param currentProgress current milliSecond of movie
      * @return is current millisecond need to trigger action.
      */
-    private boolean isProgressActionable(int[] array, long currentProgress) {
+    private boolean isProgressActionable(long[] array, long currentProgress) {
         if (array == null || array.length <= 0) {
             currentQueuePointPos = -1;
             return false;
         }
 
-        int resultPos = binarySerchWithRange(array, (int) currentProgress);
+        int resultPos = binarySerchWithRange(array, currentProgress);
 
         if (resultPos < 0) {
             currentQueuePointPos = -1;
@@ -125,21 +126,25 @@ public abstract class CuePointMonitor {
     }
 
 
-    private static final int RANGE_FACTOR = 1500;
+    private static final long RANGE_FACTOR = 1500;
 
-    public static int binarySerchWithRange(int[] a, int key) {
+    public static int binarySerchWithRange(long[] a, long key) {
         return binarySearchWithRange(a, 0, a.length, key, RANGE_FACTOR);
     }
 
+    public static int binarySerchExactly(long[] a, long key) {
+        return binarySearchWithRange(a, 0, a.length, key, 0);
+    }
+
     // Like public version, but without range checks.
-    private static int binarySearchWithRange(int[] a, int fromIndex, int toIndex,
-                                             int key, int range_factor) {
+    private static int binarySearchWithRange(long[] a, int fromIndex, int toIndex,
+                                             long key, long range_factor) {
         int low = fromIndex;
         int high = toIndex - 1;
 
         while (low <= high) {
             int mid = (low + high) >>> 1;
-            int midVal = a[mid];
+            long midVal = a[mid];
 
             if (midVal + range_factor < key)
                 low = mid + 1;
@@ -157,10 +162,10 @@ public abstract class CuePointMonitor {
      * @param cuePoints the cuePoints of the movie
      * @return ad call points
      */
-    private int[] getAddCallPoints(int[] cuePoints) {
-        int array[] = new int[cuePoints.length];
+    private long[] getAddCallPoints(long[] cuePoints) {
+        long[] array = new long[cuePoints.length];
         for (int i = 0; i < cuePoints.length; i++) {
-            int temp = cuePoints[i] - networkingAhead();
+            long temp = cuePoints[i] - networkingAhead();
 
             //minimum networking call is 0 millisecond.
             array[i] = temp > 0 ? temp : 0;

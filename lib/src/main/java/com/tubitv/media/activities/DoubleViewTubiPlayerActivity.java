@@ -7,6 +7,7 @@ import android.util.Log;
 import android.view.View;
 
 import com.google.android.exoplayer2.C;
+import com.google.android.exoplayer2.ExoPlayer;
 import com.google.android.exoplayer2.ExoPlayerFactory;
 import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.source.MediaSource;
@@ -30,6 +31,7 @@ import com.tubitv.media.utilities.Utils;
 import com.tubitv.media.views.TubiExoPlayerView;
 
 import javax.inject.Inject;
+import javax.inject.Named;
 
 
 /**
@@ -57,6 +59,7 @@ public class DoubleViewTubiPlayerActivity extends TubiPlayerActivity implements 
     AdRetriever adRetriever;
 
     @Inject
+    @Named("no_pre_roll")
     AdInterface adInterface;
 
     @Inject
@@ -146,7 +149,7 @@ public class DoubleViewTubiPlayerActivity extends TubiPlayerActivity implements 
     @Override
     protected void updateResumePosition() {
         super.updateResumePosition();
-        if (mTubiExoPlayer != null && playerUIController != null) {
+        if (mTubiExoPlayer != null && playerUIController != null && mTubiExoPlayer.getPlaybackState()!= ExoPlayer.STATE_IDLE) {
             int resumeWindow = mTubiExoPlayer.getCurrentWindowIndex();
             long resumePosition = mTubiExoPlayer.isCurrentWindowSeekable() ? Math.max(0, mTubiExoPlayer.getCurrentPosition())
                     : C.TIME_UNSET;

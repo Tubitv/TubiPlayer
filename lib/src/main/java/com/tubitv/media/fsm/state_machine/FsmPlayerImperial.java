@@ -17,7 +17,7 @@ public abstract class FsmPlayerImperial extends FsmPlayer implements CuePointCal
     }
 
     @Override
-    public void onCuePointReceived(int[] quePoints) {
+    public void onCuePointReceived(long[] quePoints) {
 
         // update the cuePointMonitor
         if (playerComponentController != null && playerComponentController.getCuePointMonitor() != null) {
@@ -35,7 +35,7 @@ public abstract class FsmPlayerImperial extends FsmPlayer implements CuePointCal
     public void onCuePointError() {
     }
 
-    private boolean hasPrerollAd(int[] cuePoints) {
+    private boolean hasPrerollAd(long[] cuePoints) {
         if (cuePoints != null && cuePoints.length > 0 && cuePoints[0] == 0) {
             return true;
         }
