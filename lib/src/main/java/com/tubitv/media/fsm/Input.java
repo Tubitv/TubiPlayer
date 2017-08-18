@@ -8,20 +8,24 @@ import com.tubitv.media.fsm.concrete.VastAdInteractionSandBoxState;
 public enum Input {
 
     /**
-     *  Only expect inputs of {@link com.tubitv.media.fsm.concrete.MakingAdCallState}
+     * Only expect inputs of {@link com.tubitv.media.fsm.concrete.MakingAdCallState}
      */
     HAS_PREROLL_AD,
     NO_PREROLL_AD,
 
     /**
-     *  Only expect inputs of {@link com.tubitv.media.fsm.concrete.MakingAdCallState}
+     * Only expect inputs of {@link com.tubitv.media.fsm.concrete.MakingPrerollAdCallState}
      */
     PRE_ROLL_AD_RECEIVED,
+
+    /**
+     * Only expect inputs of {@link com.tubitv.media.fsm.concrete.MakingAdCallState}
+     */
     AD_RECEIVED,
     EMPTY_AD,
 
     /**
-     *  Only expect inputs of {@link com.tubitv.media.fsm.concrete.ReceiveAdState}
+     * Only expect inputs of {@link com.tubitv.media.fsm.concrete.ReceiveAdState}
      */
     SHOW_ADS,
 

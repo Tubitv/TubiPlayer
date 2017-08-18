@@ -32,7 +32,7 @@ public class FetchCuePointState extends BaseState {
 
         switch (input) {
             case HAS_PREROLL_AD:
-                return factory.createState(MakingAdCallState.class);
+                return factory.createState(MakingPrerollAdCallState.class);
 
             case NO_PREROLL_AD:
                 return factory.createState(MoviePlayingState.class);
@@ -45,16 +45,15 @@ public class FetchCuePointState extends BaseState {
     public void performWorkAndupdatePlayerUI(@Nullable FsmPlayer fsmPlayer, @NonNull PlayerUIController controller, @NonNull PlayerComponentController componentController, @NonNull MediaModel movieMedia, @Nullable AdMediaModel adMedia) {
         //does nothing with the UI.
 
-        fetchCuePointCall(fsmPlayer.getAdServerInterface(), null, (FsmPlayerImperial)fsmPlayer);
+        fetchCuePointCall(fsmPlayer.getAdServerInterface(), null, (FsmPlayerImperial) fsmPlayer);
     }
 
-    private void fetchCuePointCall(AdInterface adInterface, CuePointsRetriever retriever, CuePointCallBack callBack){
-        if(adInterface!=null && retriever!=null && callBack!=null){
-            adInterface.fetchQuePoint(retriever,callBack);
-        }else{
+    private void fetchCuePointCall(AdInterface adInterface, CuePointsRetriever retriever, CuePointCallBack callBack) {
+        if (adInterface != null && retriever != null && callBack != null) {
+            adInterface.fetchQuePoint(retriever, callBack);
+        } else {
             Log.e("TAG", "fetchAd fail, adInterface or retreiever is empty");
         }
-
     }
 
 }

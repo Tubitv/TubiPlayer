@@ -19,13 +19,13 @@ public abstract class FsmPlayerImperial extends FsmPlayer implements CuePointCal
     @Override
     public void onCuePointReceived(int[] quePoints) {
 
-        //update the cuePointMonitor
+        // update the cuePointMonitor
         if (playerComponentController != null && playerComponentController.getCuePointMonitor() != null) {
             playerComponentController.getCuePointMonitor().setQuePoints(quePoints);
         }
 
         if (hasPrerollAd(quePoints)) {
-            transit(Input.PRE_ROLL_AD_RECEIVED);
+            transit(Input.HAS_PREROLL_AD);
         } else {
             transit(Input.NO_PREROLL_AD);
         }

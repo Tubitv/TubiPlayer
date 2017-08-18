@@ -12,6 +12,8 @@ import com.tubitv.media.fsm.Input;
 import com.tubitv.media.fsm.State;
 import com.tubitv.media.fsm.callback.AdInterface;
 import com.tubitv.media.fsm.callback.RetrieveAdCallback;
+import com.tubitv.media.fsm.concrete.MakingAdCallState;
+import com.tubitv.media.fsm.concrete.MakingPrerollAdCallState;
 import com.tubitv.media.fsm.concrete.MoviePlayingState;
 import com.tubitv.media.fsm.concrete.factory.StateFactory;
 import com.tubitv.media.helpers.Constants;
@@ -127,7 +129,9 @@ public abstract class FsmPlayer implements Fsm, RetrieveAdCallback {
     }
 
     public void updateCuePointForRetriever(long cuepoint) {
-        retriever.setCubPoint(cuepoint);
+        if (retriever != null) {
+            retriever.setCubPoint(cuepoint);
+        }
     }
 
     @Override
@@ -156,7 +160,7 @@ public abstract class FsmPlayer implements Fsm, RetrieveAdCallback {
 
         } else {
 
-            Log.e(Constants.FSMPLAYER_TESTING, "Error happed"+ " jump to MoviePlayingState");
+            Log.e(Constants.FSMPLAYER_TESTING, "Error happed" + " jump to MoviePlayingState");
 
             updateMovieResumePostion(controller);
             /**
@@ -186,7 +190,7 @@ public abstract class FsmPlayer implements Fsm, RetrieveAdCallback {
         // prepare and build the adMediaModel
         playerComponentController.getDoublePlayerInterface().onPrepareAds(adMedia);
 
-        transit(Input.AD_RECEIVED);
+        transitToStateBaseOnCurrentState(currentState);
     }
 
     @Override
@@ -201,6 +205,7 @@ public abstract class FsmPlayer implements Fsm, RetrieveAdCallback {
 
     /**
      * update the resume position of the main movice
+     *
      * @param controller
      */
     public static void updateMovieResumePostion(PlayerUIController controller) {
@@ -211,13 +216,31 @@ public abstract class FsmPlayer implements Fsm, RetrieveAdCallback {
 
         SimpleExoPlayer moviePlayer = controller.getContentPlayer();
 
-        if (moviePlayer != null) {
-            if (moviePlayer != null && moviePlayer.getPlaybackState() != ExoPlayer.STATE_IDLE) {
-                int resumeWindow = moviePlayer.getCurrentWindowIndex();
-                long resumePosition = moviePlayer.isCurrentWindowSeekable() ? Math.max(0, moviePlayer.getCurrentPosition())
-                        : C.TIME_UNSET;
-                controller.setMovieResumeInfo(resumeWindow, resumePosition);
-            }
+        if (moviePlayer != null && moviePlayer.getPlaybackState() != ExoPlayer.STATE_IDLE) {
+            int resumeWindow = moviePlayer.getCurrentWindowIndex();
+            long resumePosition = moviePlayer.isCurrentWindowSeekable() ? Math.max(0, moviePlayer.getCurrentPosition())
+                    : C.TIME_UNSET;
+            controller.setMovieResumeInfo(resumeWindow, resumePosition);
+        }
+    }
+
+    /**
+     * transit to different state, when current state is {@link MakingAdCallState}, then when Ad comes back from server, transit to AD_RECEIVED,which transit current state to {@link com.tubitv.media.fsm.concrete.ReceiveAdState}
+     * <p>
+     * if current state is {@link MakingPrerollAdCallState}, then when Ad comes back, transit to PRE_ROLL_AD_RECEIVED, which then transit state to {@link com.tubitv.media.fsm.concrete.AdPlayingState}.
+     *
+     * @param currentState
+     */
+    private void transitToStateBaseOnCurrentState(State currentState) {
+
+        if (currentState == null) {
+            return;
+        }
+
+        if (currentState instanceof MakingPrerollAdCallState) {
+            transit(Input.PRE_ROLL_AD_RECEIVED);
+        } else if (currentState instanceof MakingAdCallState) {
+            transit(Input.AD_RECEIVED);
         }
     }
 }
