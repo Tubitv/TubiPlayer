@@ -1,5 +1,7 @@
 package com.tubitv.media.activities;
 
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -173,7 +175,6 @@ public class DoubleViewTubiPlayerActivity extends TubiPlayerActivity implements 
 //        fsmPlayer.setAdMedia(adMediaModel);
         fsmPlayer.setAdRetriever(adRetriever);
         fsmPlayer.setAdServerInterface(adInterface);
-        fsmPlayer.setCuePointMonitor(cuePointMonitor);
 
         //set the PlayerComponentController.
         playerComponentController.setAdPlayingMonitor(adPlayingMonitor);
@@ -252,6 +253,9 @@ public class DoubleViewTubiPlayerActivity extends TubiPlayerActivity implements 
     @Override
     public void onLearnMoreClick(@NonNull MediaModel mediaModel) {
         Log.d(TAG, "onLearnMoreClick :" + mediaModel.getClickThroughUrl());
+
+        Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(mediaModel.getClickThroughUrl()));
+        startActivity(browserIntent);
     }
 
     @Override

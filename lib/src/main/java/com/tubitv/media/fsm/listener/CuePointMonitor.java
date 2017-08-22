@@ -60,8 +60,11 @@ public abstract class CuePointMonitor {
         adCallPoints = getAddCallPoints(cuePoints);
     }
 
+
     /**
      * remove the cuepoint that already shown, only when a add call is finished.
+     *
+     * Not used
      */
     public void remoteShowedCuePoints() {
 

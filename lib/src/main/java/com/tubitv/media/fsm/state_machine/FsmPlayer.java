@@ -16,7 +16,6 @@ import com.tubitv.media.fsm.concrete.MakingAdCallState;
 import com.tubitv.media.fsm.concrete.MakingPrerollAdCallState;
 import com.tubitv.media.fsm.concrete.MoviePlayingState;
 import com.tubitv.media.fsm.concrete.factory.StateFactory;
-import com.tubitv.media.fsm.listener.CuePointMonitor;
 import com.tubitv.media.helpers.Constants;
 import com.tubitv.media.models.AdMediaModel;
 import com.tubitv.media.models.AdRetriever;
@@ -67,8 +66,6 @@ public abstract class FsmPlayer implements Fsm, RetrieveAdCallback {
      */
     private StateFactory factory;
 
-    private CuePointMonitor cuePointMonitor;
-
     /**
      * only initialize the fsmPlay onc
      */
@@ -102,9 +99,6 @@ public abstract class FsmPlayer implements Fsm, RetrieveAdCallback {
         return adMedia != null && adMedia.getListOfAds() != null && adMedia.getListOfAds().size() > 0;
     }
 
-    public void setCuePointMonitor(CuePointMonitor cuePointMonitor) {
-        this.cuePointMonitor = cuePointMonitor;
-    }
 
     /**
      * delete the add at the first of the itme in list, which have been played already.
@@ -112,12 +106,6 @@ public abstract class FsmPlayer implements Fsm, RetrieveAdCallback {
     public void popPlayedAd() {
         if (adMedia != null) {
             adMedia.popFirstAd();
-        }
-    }
-
-    public void updateCuePointAfterAdbeenPlayed(){
-        if(cuePointMonitor!=null){
-            cuePointMonitor.remoteShowedCuePoints();
         }
     }
 
