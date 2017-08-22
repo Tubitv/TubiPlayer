@@ -59,7 +59,7 @@ public class DoubleViewTubiPlayerActivity extends TubiPlayerActivity implements 
     AdRetriever adRetriever;
 
     @Inject
-    @Named("no_pre_roll")
+    @Named("pre_roll")
     AdInterface adInterface;
 
     @Inject
@@ -173,6 +173,7 @@ public class DoubleViewTubiPlayerActivity extends TubiPlayerActivity implements 
 //        fsmPlayer.setAdMedia(adMediaModel);
         fsmPlayer.setAdRetriever(adRetriever);
         fsmPlayer.setAdServerInterface(adInterface);
+        fsmPlayer.setCuePointMonitor(cuePointMonitor);
 
         //set the PlayerComponentController.
         playerComponentController.setAdPlayingMonitor(adPlayingMonitor);

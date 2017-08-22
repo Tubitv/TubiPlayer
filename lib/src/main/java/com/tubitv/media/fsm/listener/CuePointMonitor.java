@@ -1,5 +1,6 @@
 package com.tubitv.media.fsm.listener;
 
+import android.support.annotation.Nullable;
 import android.util.Log;
 
 import com.tubitv.media.fsm.Input;
@@ -45,11 +46,67 @@ public abstract class CuePointMonitor {
         this.fsmPlayer = fsmPlayer;
     }
 
-    public void setQuePoints(long[] cuePoints) {
+    public void setQuePoints(@Nullable long[] cuePoints) {
+
+        currentQueuePointPos = -1;
+
+        if (cuePoints == null) {
+            this.cuePoints = null;
+            adCallPoints = null;
+            return;
+        }
+
         this.cuePoints = cuePoints;
         adCallPoints = getAddCallPoints(cuePoints);
     }
 
+    /**
+     * remove the cuepoint that already shown, only when a add call is finished.
+     */
+    public void remoteShowedCuePoints() {
+
+        if (cuePoints == null || cuePoints.length <= 0) {
+            return;
+        }
+
+        //when only remain the last one.
+        if (cuePoints.length == 1) {
+            setQuePoints(null);
+            return;
+        }
+
+        long[] newcuePoints = removeElementFromArray(cuePoints,currentQueuePointPos);
+
+        if(newcuePoints!=null){
+            setQuePoints(newcuePoints);
+        }
+    }
+
+    @Nullable
+    private long[] removeElementFromArray(long[] array, int keyPos) {
+
+        if (array == null || keyPos < 0 || array.length <= 1) {
+            return null;
+        }
+
+        int length = array.length - 1;
+
+        long[] result = new long[length];
+
+        int tempPos = 0;
+        for (int i = 0; i < length; i++) {
+
+            if (i == keyPos) {
+                tempPos++;
+            }
+
+            result[i] = array[tempPos];
+
+            tempPos++;
+        }
+
+        return result;
+    }
 
     /**
      * this method will update frame by frame on movie millisecond to check if any action can be triggered
@@ -59,7 +116,7 @@ public abstract class CuePointMonitor {
      */
     public void onMovieProgress(long milliseconds, long durationMillis) {
 
-        if(fsmPlayer.getCurrentState() instanceof AdPlayingState){
+        if (fsmPlayer.getCurrentState() instanceof AdPlayingState) {
             // if ad playing, do nothing
             return;
         }

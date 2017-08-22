@@ -5,6 +5,8 @@ import com.tubitv.media.fsm.listener.CuePointMonitor;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.util.Arrays;
+
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 
@@ -18,6 +20,7 @@ public class ExampleUnitTest {
     long[] a;
 
     long range = 0;
+
 
     @Before
     public void setup(){
@@ -40,24 +43,44 @@ public class ExampleUnitTest {
 
         resultPos = CuePointMonitor.binarySerchExactly(a, 909+ range);
         assertThat(resultPos,is(10));
+
     }
 
 
+//    @Test
+//    public void searchWithRange() throws Exception {
+//        int resultPos = CuePointMonitor.binarySerchWithRange(a,60 + range);
+//        assertThat(resultPos,is(7));
+//
+//        resultPos = CuePointMonitor.binarySerchWithRange(a,0+ range);
+//        assertThat(resultPos>=0,is(true));
+//
+//        resultPos = CuePointMonitor.binarySerchWithRange(a,10+ range);
+//        assertThat(resultPos>=0,is(true));
+//
+//        resultPos = CuePointMonitor.binarySerchWithRange(a,25+ range);
+//        assertThat(resultPos>=0,is(true));
+//
+//        resultPos = CuePointMonitor.binarySerchWithRange(a, 909+ range);
+//        assertThat(resultPos,is(10));
+//    }
+
     @Test
-    public void searchWithRange() throws Exception {
-        int resultPos = CuePointMonitor.binarySerchWithRange(a,60 + range);
-        assertThat(resultPos,is(7));
+    public void test(){
+        long[] temp = removePreroll(a);
+//        int size = temp.length;
 
-        resultPos = CuePointMonitor.binarySerchWithRange(a,0+ range);
-        assertThat(resultPos>=0,is(true));
+        for(int i =0; i < temp.length ; i++){
+            System.out.print(" "+ temp[i] + " ");
+        }
+    }
 
-        resultPos = CuePointMonitor.binarySerchWithRange(a,10+ range);
-        assertThat(resultPos>=0,is(true));
 
-        resultPos = CuePointMonitor.binarySerchWithRange(a,25+ range);
-        assertThat(resultPos>=0,is(true));
+    private long[] removePreroll(long[] array) {
+        if (array.length <= 1) {
+            return array;
+        }
 
-        resultPos = CuePointMonitor.binarySerchWithRange(a, 909+ range);
-        assertThat(resultPos,is(10));
+        return Arrays.copyOfRange(array, 1, array.length);
     }
 }

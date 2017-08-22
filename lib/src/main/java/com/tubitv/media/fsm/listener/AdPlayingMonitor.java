@@ -56,7 +56,7 @@ public class AdPlayingMonitor implements ExoPlayer.EventListener {
                 }
 
             } else {
-
+                fsmPlayer.updateCuePointAfterAdbeenPlayed();
                 fsmPlayer.transit(Input.AD_FINISH);
             }
 
