@@ -1,6 +1,7 @@
 package com.tubitv.media.activities;
 
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -61,7 +62,7 @@ public class DoubleViewTubiPlayerActivity extends TubiPlayerActivity implements 
     AdRetriever adRetriever;
 
     @Inject
-    @Named("pre_roll")
+    @Named("no_pre_roll")
     AdInterface adInterface;
 
     @Inject
@@ -90,6 +91,11 @@ public class DoubleViewTubiPlayerActivity extends TubiPlayerActivity implements 
         }
     }
 
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        Log.d(TAG, "onConfgurationChanged :");
+    }
 
     @Override
     public void onResume() {

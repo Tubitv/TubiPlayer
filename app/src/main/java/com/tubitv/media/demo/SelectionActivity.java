@@ -16,6 +16,9 @@ import com.tubitv.media.models.MediaModel;
  * Created by stoyan on 6/5/17.
  */
 public class SelectionActivity extends Activity {
+
+    private static final String LOGIN_TOKEN = "?pVJiicetIe13CLViqLW3ET8ICu4kSyZBnO7dOxOQ3VZLrcdaRRV9c-BUz03_drbn";
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -24,10 +27,10 @@ public class SelectionActivity extends Activity {
         playHls1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String url = "http://c13.adrise.tv/v2/sources/content-owners/cinedigm-tubi/339391/v201701300137-,210,415,677,1134,1552,k.mp4.m3u8?pVJiicetIe13CLViqLW3ET8ICu4kSyZBnO7dOxOQ3VZLrcdaRRV9c-BUz03_drbn";
-                String subs = "http://s.adrise.tv/94335ae6-c5d3-414d-8ff2-177c955441c6.srt";
-                String artwork = "http://images.adrise.tv/J3cemMAwJC8aX_Eb4MzIaAcNJvY=/768x362/smart/img.adrise.tv/0c690475-ea32-4b91-b704-7d3fab94a48f.jpg";
-                String name = "Real movies";
+                String url = "http://c13.adrise.tv/v2/sources/content-owners/paramount/322939/v201608180126-1024x576-,362,907,1186,1651,k.mp4.m3u8" + LOGIN_TOKEN;
+                String subs = "http://s.adrise.tv/88703acf-66a2-4071-8231-d6cffe579f33.srt";
+                String artwork = "http://images.adrise.tv/6sjdZy7rGz23YZ62_diTF26BfgE=/214x306/smart/img.adrise.tv/4b85521c-c3af-41d5-bf52-40b698c6d56d.jpg";
+                String name = "School of Rock";
                 Intent intent = new Intent(SelectionActivity.this, DoubleViewTubiPlayerActivity.class);
                 intent.putExtra(TubiPlayerActivity.TUBI_MEDIA_KEY, MediaModel.video(name, url, artwork, subs));
                 startActivity(intent);
@@ -38,16 +41,16 @@ public class SelectionActivity extends Activity {
         playHls2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String url = "http://c13.adrise.tv/v2/sources/content-owners/cinedigm-tubi/339391/v201701300137-,210,415,677,1134,1552,k.mp4.m3u8?pVJiicetIe13CLViqLW3ET8ICu4kSyZBnO7dOxOQ3VZLrcdaRRV9c-BUz03_drbn";
-                String artwork = "http://images.adrise.tv/7V6_jCHzkl0lQARtDgWCnOKUozs=/492x118:1909x905/768x362/smart/img.adrise.tv/1541c7d3-9a50-4c5c-9bf7-ba63e4018f36.jpg";
-                String name = "Wild Bill";
+                String url = "http://c13.adrise.tv/v2/sources/content-owners/lionsgate/302437/v201703051151-,238,489,779,1138,1345,k.mp4.m3u8" + LOGIN_TOKEN;
+                String artwork = "http://images.adrise.tv/q4v7JUQPPHqn8nTmYiudW6l8w_0=/214x306/smart/img.adrise.tv/1c31dfce-5338-4a09-bcb0-f68789153f33.png";
+                String name = "Man on the ledge";
                 Intent intent = new Intent(SelectionActivity.this, DoubleViewTubiPlayerActivity.class);
                 intent.putExtra(TubiPlayerActivity.TUBI_MEDIA_KEY, MediaModel.video(name, url, artwork, null));
                 startActivity(intent);
             }
         });
 
-        Button showVpaid = (Button)findViewById(R.id.show_webview);
+        Button showVpaid = (Button) findViewById(R.id.show_webview);
         showVpaid.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
