@@ -14,6 +14,10 @@ import com.google.android.exoplayer2.ExoPlayer;
 import com.google.android.exoplayer2.ExoPlayerFactory;
 import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.source.MediaSource;
+import com.google.android.exoplayer2.trackselection.AdaptiveTrackSelection;
+import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
+import com.google.android.exoplayer2.trackselection.TrackSelection;
+import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter;
 import com.google.android.exoplayer2.util.Util;
 import com.tubitv.media.R;
 import com.tubitv.media.controller.PlayerComponentController;
@@ -129,9 +133,14 @@ public class DoubleViewTubiPlayerActivity extends TubiPlayerActivity implements 
         }
     }
 
+    private static final DefaultBandwidthMeter BANDWIDTH_METER_AD = new DefaultBandwidthMeter();
+    private DefaultTrackSelector trackSelector_ad;
 
     private void setupAdPlayer() {
-        adPlayer = ExoPlayerFactory.newSimpleInstance(this, mTrackSelector);
+        TrackSelection.Factory adaptiveTrackSelectionFactory =
+                new AdaptiveTrackSelection.Factory(BANDWIDTH_METER_AD);
+        trackSelector_ad = new DefaultTrackSelector(adaptiveTrackSelectionFactory);
+        adPlayer = ExoPlayerFactory.newSimpleInstance(this, trackSelector_ad);
     }
 
     private void releaseAdPlayer() {
@@ -139,6 +148,7 @@ public class DoubleViewTubiPlayerActivity extends TubiPlayerActivity implements 
             updateAdResumePosition();
             adPlayer.release();
             adPlayer = null;
+            trackSelector_ad = null;
         }
     }
 
@@ -157,7 +167,7 @@ public class DoubleViewTubiPlayerActivity extends TubiPlayerActivity implements 
     @Override
     protected void updateResumePosition() {
         super.updateResumePosition();
-        if (mTubiExoPlayer != null && playerUIController != null && mTubiExoPlayer.getPlaybackState()!= ExoPlayer.STATE_IDLE) {
+        if (mTubiExoPlayer != null && playerUIController != null && mTubiExoPlayer.getPlaybackState() != ExoPlayer.STATE_IDLE) {
             int resumeWindow = mTubiExoPlayer.getCurrentWindowIndex();
             long resumePosition = mTubiExoPlayer.isCurrentWindowSeekable() ? Math.max(0, mTubiExoPlayer.getCurrentPosition())
                     : C.TIME_UNSET;
@@ -266,11 +276,11 @@ public class DoubleViewTubiPlayerActivity extends TubiPlayerActivity implements 
 
     @Override
     public void onSubtitles(@Nullable MediaModel mediaModel, boolean enabled) {
-        Log.d(TAG, "onSubtitles :"+ mediaModel.getMediaName());
+        Log.d(TAG, "onSubtitles :" + mediaModel.getMediaName());
     }
 
     @Override
     public void onQuality(@Nullable MediaModel mediaModel) {
-        Log.d(TAG, "onQuality :"+ mediaModel.getMediaName());
+        Log.d(TAG, "onQuality :" + mediaModel.getMediaName());
     }
 }

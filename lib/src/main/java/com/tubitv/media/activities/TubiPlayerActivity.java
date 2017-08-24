@@ -170,7 +170,7 @@ public abstract class TubiPlayerActivity extends Activity implements TubiPlayerC
                 new AdaptiveTrackSelection.Factory(BANDWIDTH_METER);
         mTrackSelector =
                 new DefaultTrackSelector(videoTrackSelectionFactory);
-        mTrackSelectionHelper = new TrackSelectionHelper(this, mTrackSelector);
+        mTrackSelectionHelper = new TrackSelectionHelper(this, mTrackSelector,videoTrackSelectionFactory);
 
 
         // 3. Create the mTubiExoPlayer
