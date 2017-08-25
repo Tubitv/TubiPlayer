@@ -9,6 +9,7 @@ import android.widget.Button;
 
 import com.tubitv.demo.R;
 import com.tubitv.media.activities.DoubleViewTubiPlayerActivity;
+import com.tubitv.media.activities.TestingPreRollActivity;
 import com.tubitv.media.activities.TubiPlayerActivity;
 import com.tubitv.media.models.MediaModel;
 
@@ -55,6 +56,20 @@ public class SelectionActivity extends Activity {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(SelectionActivity.this, WebviewActivity.class);
+                startActivity(intent);
+            }
+        });
+
+        Button pre_roll = (Button) findViewById(R.id.show_pre_roll_ad);
+        pre_roll.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String url = "http://c13.adrise.tv/v2/sources/content-owners/paramount/322939/v201608180126-1024x576-,362,907,1186,1651,k.mp4.m3u8" + LOGIN_TOKEN;
+                String subs = "http://s.adrise.tv/88703acf-66a2-4071-8231-d6cffe579f33.srt";
+                String artwork = "http://images.adrise.tv/6sjdZy7rGz23YZ62_diTF26BfgE=/214x306/smart/img.adrise.tv/4b85521c-c3af-41d5-bf52-40b698c6d56d.jpg";
+                String name = "School of Rock";
+                Intent intent = new Intent(SelectionActivity.this, TestingPreRollActivity.class);
+                intent.putExtra(TubiPlayerActivity.TUBI_MEDIA_KEY, MediaModel.video(name, url, artwork, subs));
                 startActivity(intent);
             }
         });

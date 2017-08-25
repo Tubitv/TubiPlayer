@@ -17,6 +17,11 @@
             android:configChanges="keyboard|keyboardHidden|orientation|screenSize|screenLayout|smallestScreenSize|uiMode"
             android:launchMode="singleTop"
             android:theme="@style/TubiPlayerTheme"/>
+
+        <activity android:name="com.tubitv.media.activities.TestingPreRollActivity"
+            android:configChanges="keyboard|keyboardHidden|orientation|screenSize|screenLayout|smallestScreenSize|uiMode"
+            android:launchMode="singleTop"
+            android:theme="@style/TubiPlayerTheme"/>
     </application>
 
 </manifest>
