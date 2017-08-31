@@ -31,6 +31,12 @@
             android:launchMode="singleTop"
             android:hardwareAccelerated="true"
             android:theme="@style/TubiPlayerTheme"/>
+
+        <activity android:name="com.tubitv.media.demo.RealActivity"
+            android:configChanges="keyboard|keyboardHidden|orientation|screenSize|screenLayout|smallestScreenSize|uiMode"
+            android:launchMode="singleTop"
+            android:hardwareAccelerated="true"
+            android:theme="@style/TubiPlayerTheme"/>
         <meta-data
             android:name="io.fabric.ApiKey"
             android:value="939b44e536bf66a0209a6eff6bce13b5874f7298" />

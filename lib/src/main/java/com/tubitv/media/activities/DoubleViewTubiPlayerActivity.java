@@ -77,10 +77,13 @@ public class DoubleViewTubiPlayerActivity extends TubiPlayerActivity implements 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        injectDependency();
+    }
+
+    protected void injectDependency(){
         //FSMModuleTesting requirement object such as ExoPlayer haven't been initialized yet
         DaggerFsmComonent.builder().fSMModuleTesting(new FSMModuleTesting(null, null, null, null)).build().inject(this);
     }
-
 
     @Override
     public void onStart() {
