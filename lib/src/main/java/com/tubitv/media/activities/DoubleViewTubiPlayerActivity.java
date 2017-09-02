@@ -33,6 +33,7 @@ import com.tubitv.media.helpers.MediaHelper;
 import com.tubitv.media.interfaces.DoublePlayerInterface;
 import com.tubitv.media.models.AdMediaModel;
 import com.tubitv.media.models.AdRetriever;
+import com.tubitv.media.models.CuePointsRetriever;
 import com.tubitv.media.models.MediaModel;
 import com.tubitv.media.utilities.Utils;
 import com.tubitv.media.views.TubiExoPlayerView;
@@ -66,11 +67,15 @@ public class DoubleViewTubiPlayerActivity extends TubiPlayerActivity implements 
     AdRetriever adRetriever;
 
     @Inject
+    CuePointsRetriever cuePointsRetriever;
+
+    @Inject
     @Named("no_pre_roll")
     AdInterface adInterface;
 
     @Inject
     PlayerComponentController playerComponentController;
+
 
 
     @Override
@@ -193,6 +198,7 @@ public class DoubleViewTubiPlayerActivity extends TubiPlayerActivity implements 
         fsmPlayer.setMovieMedia(mediaModel);
 //        fsmPlayer.setAdMedia(adMediaModel);
         fsmPlayer.setAdRetriever(adRetriever);
+        fsmPlayer.setCuePointsRetriever(cuePointsRetriever);
         fsmPlayer.setAdServerInterface(adInterface);
 
         //set the PlayerComponentController.

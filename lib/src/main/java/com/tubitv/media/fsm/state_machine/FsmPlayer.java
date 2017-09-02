@@ -19,6 +19,7 @@ import com.tubitv.media.fsm.concrete.factory.StateFactory;
 import com.tubitv.media.helpers.Constants;
 import com.tubitv.media.models.AdMediaModel;
 import com.tubitv.media.models.AdRetriever;
+import com.tubitv.media.models.CuePointsRetriever;
 import com.tubitv.media.models.MediaModel;
 
 /**
@@ -44,7 +45,12 @@ public abstract class FsmPlayer implements Fsm, RetrieveAdCallback {
     /**
      * information to use when retrieve ad from server
      */
-    private AdRetriever retriever;
+    private AdRetriever adRetriever;
+
+    /**
+     * information to use when retrieve cuePoint from server.
+     */
+    private CuePointsRetriever cuePointsRetriever;
 
     /**
      * the main content media
@@ -91,8 +97,8 @@ public abstract class FsmPlayer implements Fsm, RetrieveAdCallback {
         return adServerInterface;
     }
 
-    public AdRetriever getRetriever() {
-        return retriever;
+    public AdRetriever getAdRetriever() {
+        return adRetriever;
     }
 
     public boolean hasAdToPlay() {
@@ -121,17 +127,25 @@ public abstract class FsmPlayer implements Fsm, RetrieveAdCallback {
         this.adServerInterface = adServerInterface;
     }
 
-    public void setAdRetriever(@NonNull AdRetriever retriever) {
-        this.retriever = retriever;
+    public void setAdRetriever(@NonNull AdRetriever adRetriever) {
+        this.adRetriever = adRetriever;
     }
 
     public void setPlayerComponentController(PlayerComponentController playerComponentController) {
         this.playerComponentController = playerComponentController;
     }
 
+    public void setCuePointsRetriever(CuePointsRetriever cuePointsRetriever) {
+        this.cuePointsRetriever = cuePointsRetriever;
+    }
+
+    public CuePointsRetriever getCuePointsRetriever() {
+        return cuePointsRetriever;
+    }
+
     public void updateCuePointForRetriever(long cuepoint) {
-        if (retriever != null) {
-            retriever.setCubPoint(cuepoint);
+        if (adRetriever != null) {
+            adRetriever.setCubPoint(cuepoint);
         }
     }
 

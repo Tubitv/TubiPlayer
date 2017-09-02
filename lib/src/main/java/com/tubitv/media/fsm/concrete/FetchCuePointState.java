@@ -47,7 +47,7 @@ public class FetchCuePointState extends BaseState {
         Log.d(Constants.FSMPLAYER_TESTING, "update stat to: " + TAG);
         //does nothing with the UI.
 
-        fetchCuePointCall(fsmPlayer.getAdServerInterface(), new CuePointsRetriever(), (FsmPlayerImperial) fsmPlayer);
+        fetchCuePointCall(fsmPlayer.getAdServerInterface(), fsmPlayer.getCuePointsRetriever(), (FsmPlayerImperial) fsmPlayer);
     }
 
     private void fetchCuePointCall(AdInterface adInterface, CuePointsRetriever retriever, CuePointCallBack callBack) {

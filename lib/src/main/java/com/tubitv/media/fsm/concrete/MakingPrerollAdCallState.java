@@ -49,7 +49,7 @@ public class MakingPrerollAdCallState extends BaseState {
 
         //update the AdRetriever for pre_roll cue point, which is 0.
         fsmPlayer.updateCuePointForRetriever(0);
-        fetchAd(fsmPlayer.getAdServerInterface(), fsmPlayer.getRetriever(), fsmPlayer);
+        fetchAd(fsmPlayer.getAdServerInterface(), fsmPlayer.getAdRetriever(), fsmPlayer);
     }
 
 

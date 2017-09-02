@@ -57,7 +57,7 @@ public class MakingAdCallState extends BaseState {
             return;
         }
 
-        fetchAd(fsmPlayer.getAdServerInterface(),fsmPlayer.getRetriever(),fsmPlayer);
+        fetchAd(fsmPlayer.getAdServerInterface(),fsmPlayer.getAdRetriever(),fsmPlayer);
 
         //in the MadingAdCallState, no UI need to be updated.
 

@@ -91,6 +91,12 @@ public class FSMModuleTesting {
 
     @ActicityScope
     @Provides
+    CuePointsRetriever provideCuePointsRetriever(){
+        return  new CuePointsRetriever();
+    }
+
+    @ActicityScope
+    @Provides
     AdPlayingMonitor provideAdPlayingMonitor(FsmPlayer player) {
         return new AdPlayingMonitor(player);
     }
