@@ -12,8 +12,7 @@ public enum Input {
      */
     HAS_PREROLL_AD,
     NO_PREROLL_AD,
-    NO_CUE_POINT,
-    
+
     /**
      * Only expect inputs of {@link com.tubitv.media.fsm.concrete.MakingPrerollAdCallState}
      */
