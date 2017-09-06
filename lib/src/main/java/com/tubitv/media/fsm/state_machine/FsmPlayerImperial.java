@@ -42,6 +42,8 @@ public abstract class FsmPlayerImperial extends FsmPlayer implements CuePointCal
 
     @Override
     public void onCuePointError() {
+        //TODO: need to handle situation when cuepoint not able to retrieve.
+        transit(Input.NO_CUE_POINT);
     }
 
 

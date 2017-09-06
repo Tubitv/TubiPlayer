@@ -76,7 +76,13 @@ public class DoubleViewTubiPlayerActivity extends TubiPlayerActivity implements 
     @Inject
     PlayerComponentController playerComponentController;
 
+    public AdRetriever getAdRetriever() {
+        return adRetriever;
+    }
 
+    public CuePointsRetriever getCuePointsRetriever() {
+        return cuePointsRetriever;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
