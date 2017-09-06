@@ -66,7 +66,7 @@ public abstract class FsmPlayerImperial extends FsmPlayer implements CuePointCal
     }
 
     private boolean hasPrerollAd(long[] cuePoints) {
-        if (cuePoints != null && cuePoints.length > 0 && cuePoints[0] == 0) {
+        if (cuePoints != null && cuePoints.length > 0 && cuePoints[0] == 0l) {
             //TODO: need to remove the time 0 cuePoint indicator.
             return true;
         }
