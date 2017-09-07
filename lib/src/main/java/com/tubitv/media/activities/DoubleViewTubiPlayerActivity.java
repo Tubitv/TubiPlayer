@@ -315,9 +315,12 @@ public class DoubleViewTubiPlayerActivity extends TubiPlayerActivity implements 
 
         for (int i = 0; i < cuePoints.length; i++) {
 
-            double breakPeriod = (double)cuePoints[i] /1000 /60;
+            double minutes = (double)cuePoints[i] /1000 /60;
 
-            builder.append(breakPeriod + "min, ");
+            double second = (minutes - Math.floor(minutes)) *60;
+
+
+            builder.append((int)minutes + "min" + (int)second + "sec, " );
         }
 
         return builder.toString();
