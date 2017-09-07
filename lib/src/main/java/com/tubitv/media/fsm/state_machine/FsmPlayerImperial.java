@@ -37,6 +37,12 @@ public abstract class FsmPlayerImperial extends FsmPlayer implements CuePointCal
             updateCuePointsWithRemoveFirstCue(quePoints, false);
             transit(Input.NO_PREROLL_AD);
         }
+        /**
+         *  update the cuepoint receive event to Activity {@link com.tubitv.media.activities.DoubleViewTubiPlayerActivity}
+         *
+         */
+
+        playerComponentController.getTubiPlaybackInterface().onCuePointReceived(quePoints);
     }
 
 

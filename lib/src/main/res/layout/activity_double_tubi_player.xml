@@ -28,11 +28,12 @@
         <!--android:text="Stop Ads"/>-->
 
         <TextView
+            android:id="@+id/cuepoint_indictor"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:gravity="center"
-            android:textColor="@android:color/holo_purple"
-            android:text="AdBreak point at 0s, 1min, 15min, 30min, 60min. With each adbreak showing one ads"/>
+            android:textColor="@android:color/holo_purple"/>
+
     </LinearLayout>
 
 </FrameLayout>

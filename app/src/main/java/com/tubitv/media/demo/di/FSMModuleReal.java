@@ -142,27 +142,6 @@ public class FSMModuleReal {
         return adMediaModel;
     }
 
-    @ActicityScope
-    @Named("pre_roll")
-    @Provides
-    AdInterface provideAdInterface() {
-
-        // using the fake generated AdMediaModel to do has the returned data.
-        return new AdInterface() {
-            @Override
-            public void fetchAd(AdRetriever retriever, RetrieveAdCallback callback) {
-                Log.d(Constants.FSMPLAYER_TESTING, "On ad receive");
-                callback.onReceiveAd(provideAdMediaModel());
-            }
-
-            @Override
-            public void fetchQuePoint(CuePointsRetriever retriever, CuePointCallBack callBack) {
-                Log.d(Constants.FSMPLAYER_TESTING, "On ad receive");
-                callBack.onCuePointReceived(new long[]{0, 60000, 900000, 1800000, 3600000});
-            }
-        };
-    }
-
 
     @ActicityScope
     @Named("no_pre_roll")

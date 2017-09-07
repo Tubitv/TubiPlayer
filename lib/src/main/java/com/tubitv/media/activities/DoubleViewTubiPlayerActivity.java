@@ -8,6 +8,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
 import android.view.View;
+import android.widget.TextView;
 
 import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.ExoPlayer;
@@ -51,6 +52,8 @@ public class DoubleViewTubiPlayerActivity extends TubiPlayerActivity implements 
 
     private static final String TAG = "DoubleViewTubiPlayerAct";
 
+    private TextView cuePointIndictor;
+
     @Inject
     FsmPlayer fsmPlayer;
 
@@ -88,10 +91,11 @@ public class DoubleViewTubiPlayerActivity extends TubiPlayerActivity implements 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        cuePointIndictor = (TextView) findViewById(R.id.cuepoint_indictor);
         injectDependency();
     }
 
-    protected void injectDependency(){
+    protected void injectDependency() {
         //FSMModuleTesting requirement object such as ExoPlayer haven't been initialized yet
         DaggerFsmComonent.builder().fSMModuleTesting(new FSMModuleTesting(null, null, null, null)).build().inject(this);
     }
@@ -297,5 +301,25 @@ public class DoubleViewTubiPlayerActivity extends TubiPlayerActivity implements 
     @Override
     public void onQuality(@Nullable MediaModel mediaModel) {
         Log.d(TAG, "onQuality :" + mediaModel.getMediaName());
+    }
+
+    @Override
+    public void onCuePointReceived(long[] cuePoints) {
+
+        cuePointIndictor.setText(printCuePoints(cuePoints));
+    }
+
+    private String printCuePoints(long[] cuePoints) {
+        StringBuilder builder = new StringBuilder();
+        builder.append("Adbreak will be in : ");
+
+        for (int i = 0; i < cuePoints.length; i++) {
+
+            double breakPeriod = (double)cuePoints[i] /1000 /60;
+
+            builder.append(breakPeriod + "min, ");
+        }
+
+        return builder.toString();
     }
 }

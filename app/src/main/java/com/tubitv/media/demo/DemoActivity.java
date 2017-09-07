@@ -68,6 +68,11 @@ public class DemoActivity extends TubiPlayerActivity {
         Log.d(TAG, "quality");
     }
 
+    @Override
+    public void onCuePointReceived(long[] cuePoints) {
+        
+    }
+
     protected MediaSource createMediaSource() {
 
         mediaModel.setMediaSource(buildMediaSource(mediaModel));

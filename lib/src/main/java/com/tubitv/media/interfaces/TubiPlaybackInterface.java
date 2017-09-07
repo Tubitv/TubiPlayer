@@ -23,5 +23,7 @@ public interface TubiPlaybackInterface {
 
     void onQuality(@Nullable MediaModel mediaModel);
 
+    void onCuePointReceived(long[] cuePoints);
+
     boolean isActive();
 }
