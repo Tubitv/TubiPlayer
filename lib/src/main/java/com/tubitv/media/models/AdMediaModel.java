@@ -3,8 +3,6 @@ package com.tubitv.media.models;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
-import com.google.android.exoplayer2.source.MediaSource;
-
 import java.util.List;
 
 /**
@@ -13,7 +11,7 @@ import java.util.List;
  * <p>
  * this is the wrapper class store a representation of AdBreak ojects, could be a list of ad {@link MediaModel}
  */
-public abstract class AdMediaModel {
+public class AdMediaModel {
 
     private List<MediaModel> listOfAds;
 
@@ -22,7 +20,9 @@ public abstract class AdMediaModel {
     }
 
     @Nullable
-    public abstract MediaModel nextAD();
+    public MediaModel nextAD() {
+        return listOfAds != null && listOfAds.size() > 0 ? listOfAds.get(0) : null;
+    }
 
     public List<MediaModel> getListOfAds() {
         return listOfAds;
