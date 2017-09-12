@@ -32,7 +32,7 @@ public class MakingAdCallState extends BaseState {
                 return factory.createState(ReceiveAdState.class);
 
             case EMPTY_AD:
-                return factory.createState(MoviePlayingState.class);
+                return null;
 
             case MAKE_AD_CALL:
                 return factory.createState(MakingAdCallState.class);
