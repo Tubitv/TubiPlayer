@@ -1,8 +1,6 @@
 package com.tubitv.media.activities;
 
-import android.content.Intent;
 import android.content.res.Configuration;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -30,7 +28,6 @@ import com.tubitv.media.fsm.callback.AdInterface;
 import com.tubitv.media.fsm.listener.AdPlayingMonitor;
 import com.tubitv.media.fsm.listener.CuePointMonitor;
 import com.tubitv.media.fsm.state_machine.FsmPlayer;
-import com.tubitv.media.helpers.MediaHelper;
 import com.tubitv.media.interfaces.DoublePlayerInterface;
 import com.tubitv.media.models.AdMediaModel;
 import com.tubitv.media.models.AdRetriever;
@@ -250,11 +247,9 @@ public class DoubleViewTubiPlayerActivity extends TubiPlayerActivity implements 
      *
      * @return
      */
-    protected MediaSource createMediaSource() {
+    protected void createMediaSource() {
 
         mediaModel.setMediaSource(buildMediaSource(mediaModel));
-
-        return MediaHelper.create(mediaModel).getConcatenatedMedia();
     }
 
     @Override
@@ -269,7 +264,7 @@ public class DoubleViewTubiPlayerActivity extends TubiPlayerActivity implements 
 
     @Override
     public void onProgress(@Nullable MediaModel mediaModel, long milliseconds, long durationMillis) {
-//        Log.e(TAG, "onProgress: " + "milliseconds: " + milliseconds + " durationMillis: " + durationMillis);
+        Log.e(TAG, mediaModel.getClickThroughUrl() + " onProgress: " + "milliseconds: " + milliseconds + " durationMillis: " + durationMillis);
 
         // monitor the movie progress.
         cuePointMonitor.onMovieProgress(milliseconds, durationMillis);
@@ -277,30 +272,30 @@ public class DoubleViewTubiPlayerActivity extends TubiPlayerActivity implements 
 
     @Override
     public void onSeek(@Nullable MediaModel mediaModel, long oldPositionMillis, long newPositionMillis) {
-        Log.d(TAG, "onSeek : " + "oldPositionMillis: " + oldPositionMillis + " newPositionMillis: " + newPositionMillis);
+        Log.d(TAG, mediaModel.getMediaName() +  " onSeek : " + "oldPositionMillis: " + oldPositionMillis + " newPositionMillis: " + newPositionMillis);
     }
 
     @Override
     public void onPlayToggle(@Nullable MediaModel mediaModel, boolean playing) {
-        Log.d(TAG, "onPlayToggle :");
+        Log.d(TAG, mediaModel.getMediaName() + " onPlayToggle :");
     }
 
     @Override
     public void onLearnMoreClick(@NonNull MediaModel mediaModel) {
-        Log.d(TAG, "onLearnMoreClick :" + mediaModel.getClickThroughUrl());
+        Log.d(TAG, mediaModel.getClickThroughUrl() + " onLearnMoreClick :" + mediaModel.getClickThroughUrl());
 
-        Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(mediaModel.getClickThroughUrl()));
-        startActivity(browserIntent);
+//        Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(mediaModel.getClickThroughUrl()));
+//        startActivity(browserIntent);
     }
 
     @Override
     public void onSubtitles(@Nullable MediaModel mediaModel, boolean enabled) {
-        Log.d(TAG, "onSubtitles :" + mediaModel.getMediaName());
+        Log.d(TAG, mediaModel.getMediaName() +" onSubtitles :" + mediaModel.getMediaName());
     }
 
     @Override
     public void onQuality(@Nullable MediaModel mediaModel) {
-        Log.d(TAG, "onQuality :" + mediaModel.getMediaName());
+        Log.d(TAG,mediaModel.getMediaName() +  " onQuality :" + mediaModel.getMediaName());
     }
 
     @Override

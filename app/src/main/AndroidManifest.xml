@@ -21,10 +21,6 @@
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
-        <activity android:name="com.tubitv.media.demo.DemoActivity"
-                  android:configChanges="keyboard|keyboardHidden|orientation|screenSize|screenLayout|smallestScreenSize|uiMode"
-                  android:launchMode="singleTop"
-                  android:theme="@style/TubiPlayerTheme"/>
 
         <activity android:name="com.tubitv.media.demo.WebviewActivity"
             android:configChanges="keyboard|keyboardHidden|orientation|screenSize|screenLayout|smallestScreenSize|uiMode"

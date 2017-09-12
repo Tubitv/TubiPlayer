@@ -44,7 +44,6 @@ import com.google.android.exoplayer2.util.Assertions;
 import com.google.android.exoplayer2.util.Util;
 import com.squareup.picasso.Picasso;
 import com.tubitv.media.R;
-import com.tubitv.media.helpers.MediaHelper;
 import com.tubitv.media.helpers.TrackSelectionHelper;
 import com.tubitv.media.interfaces.TubiPlaybackControlInterface;
 import com.tubitv.media.interfaces.TubiPlaybackInterface;
@@ -702,7 +701,7 @@ public class TubiExoPlayerView extends FrameLayout implements TubiPlaybackContro
     public void postRunnable(@NonNull Runnable runnable, long millisDelay) {
         postDelayed(runnable, millisDelay);
         if(playbackInterface != null){
-            playbackInterface.onProgress(MediaHelper.getMediaByIndex(player.getCurrentWindowIndex()), player.getCurrentPosition(), player.getDuration());
+            playbackInterface.onProgress(mediaModel, player.getCurrentPosition(), player.getDuration());
         }
 
     }

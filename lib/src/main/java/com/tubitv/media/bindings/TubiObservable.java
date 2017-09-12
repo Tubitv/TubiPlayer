@@ -16,7 +16,6 @@ import com.google.android.exoplayer2.Timeline;
 import com.google.android.exoplayer2.source.TrackGroupArray;
 import com.google.android.exoplayer2.trackselection.TrackSelectionArray;
 import com.tubitv.media.BR;
-import com.tubitv.media.helpers.MediaHelper;
 import com.tubitv.media.interfaces.TubiPlaybackControlInterface;
 import com.tubitv.media.interfaces.TubiPlaybackInterface;
 import com.tubitv.media.models.MediaModel;
@@ -320,7 +319,7 @@ public class TubiObservable extends BaseObservable implements ExoPlayer.EventLis
 
     private void seekTo(int windowIndex, long positionMs) {
         if (player != null) {
-            playbackInterface.onSeek(MediaHelper.getMediaByIndex(player.getCurrentWindowIndex()),
+            playbackInterface.onSeek(mediaModel,
                     player.getCurrentPosition(), positionMs);
 
             player.seekTo(windowIndex, positionMs);
