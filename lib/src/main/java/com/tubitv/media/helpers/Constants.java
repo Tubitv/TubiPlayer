@@ -5,5 +5,5 @@ package com.tubitv.media.helpers;
  * on Tubitv.com, allengotstuff@gmail.com
  */
 public class Constants {
-    public static final String FSMPLAYER_TESTING = "FSMTESTING";
+    public static final String FSMPLAYER_TESTING = "FSM_LOGGING";
 }

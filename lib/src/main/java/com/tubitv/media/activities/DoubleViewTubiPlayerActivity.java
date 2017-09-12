@@ -37,7 +37,6 @@ import com.tubitv.media.utilities.Utils;
 import com.tubitv.media.views.TubiExoPlayerView;
 
 import javax.inject.Inject;
-import javax.inject.Named;
 
 
 /**
@@ -70,7 +69,6 @@ public class DoubleViewTubiPlayerActivity extends TubiPlayerActivity implements 
     CuePointsRetriever cuePointsRetriever;
 
     @Inject
-    @Named("no_pre_roll")
     AdInterface adInterface;
 
     @Inject

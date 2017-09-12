@@ -1,10 +1,10 @@
 package com.tubitv.media.fsm.state_machine;
 
-import android.util.Log;
-
 import com.tubitv.media.fsm.Input;
 import com.tubitv.media.fsm.callback.CuePointCallBack;
 import com.tubitv.media.fsm.concrete.factory.StateFactory;
+import com.tubitv.media.helpers.Constants;
+import com.tubitv.media.utilities.ExoPlayerLogger;
 
 import java.util.Arrays;
 
@@ -25,6 +25,7 @@ public abstract class FsmPlayerImperial extends FsmPlayer implements CuePointCal
     @Override
     public void onCuePointReceived(long[] quePoints) {
 
+        ExoPlayerLogger.i(Constants.FSMPLAYER_TESTING, "CuePoint received");
 
         //if it has pre-roll in the list of cue points, remove the pre-roll cue point,
         // because the pre-roll should not managed by the CuePointMonitor
@@ -48,6 +49,8 @@ public abstract class FsmPlayerImperial extends FsmPlayer implements CuePointCal
 
     @Override
     public void onCuePointError() {
+
+        ExoPlayerLogger.e(Constants.FSMPLAYER_TESTING, "CuePoint fetch fail");
         //TODO: need to handle situation when cuepoint not able to retrieve.
         transit(Input.ERROR);
     }
@@ -57,7 +60,7 @@ public abstract class FsmPlayerImperial extends FsmPlayer implements CuePointCal
 
         if (playerComponentController == null || playerComponentController.getCuePointMonitor() == null) {
 
-            Log.e(TAG, " playerComponentController || playerComponentController is empty");
+            ExoPlayerLogger.e(TAG, " playerComponentController || playerComponentController is empty");
             return;
         }
 

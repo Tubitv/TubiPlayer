@@ -1,7 +1,6 @@
 package com.tubitv.media.fsm.state_machine;
 
 import android.support.annotation.NonNull;
-import android.util.Log;
 
 import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.ExoPlayer;
@@ -21,6 +20,7 @@ import com.tubitv.media.models.AdMediaModel;
 import com.tubitv.media.models.AdRetriever;
 import com.tubitv.media.models.CuePointsRetriever;
 import com.tubitv.media.models.MediaModel;
+import com.tubitv.media.utilities.ExoPlayerLogger;
 
 /**
  * Created by allensun on 7/27/17.
@@ -165,6 +165,8 @@ public abstract class FsmPlayer implements Fsm, RetrieveAdCallback {
 
             isInitialized = true;
             transitToState = factory.createState(initializeState());
+
+            ExoPlayerLogger.i(Constants.FSMPLAYER_TESTING, "initialize fsmPlayer");
         }
 
         if (transitToState != null) {
@@ -175,32 +177,39 @@ public abstract class FsmPlayer implements Fsm, RetrieveAdCallback {
 
         } else {
 
-            Log.e(Constants.FSMPLAYER_TESTING, "Error happed" + " jump to MoviePlayingState");
-
             updateMovieResumePostion(controller);
             /**
              * when transition is null, state change is error, transit to default {@link MoviePlayingState}
              */
             if (currentState instanceof MoviePlayingState) { // if player is current in moviePlayingstate when transition error happen, doesn't nothing.
+                ExoPlayerLogger.e(Constants.FSMPLAYER_TESTING, "FSM flow error: remain in MoviePlayingState");
                 return;
             }
 
+            ExoPlayerLogger.e(Constants.FSMPLAYER_TESTING, "FSM flow error:" + "prepare transition to MoviePlayingState");
             currentState = factory.createState(MoviePlayingState.class);
         }
 
+        ExoPlayerLogger.d(Constants.FSMPLAYER_TESTING, "transit to: " + currentState.getClass().getSimpleName());
+
         currentState.performWorkAndupdatePlayerUI(this, controller, playerComponentController, movieMedia, adMedia);
+
+
     }
 
 
     @Override
     public void updateSelf() {
         if (currentState != null) {
+            ExoPlayerLogger.i(Constants.FSMPLAYER_TESTING, "Fsm updates self : " + currentState.getClass().getSimpleName());
             currentState.performWorkAndupdatePlayerUI(this, controller, playerComponentController, movieMedia, adMedia);
         }
     }
 
     @Override
     public void onReceiveAd(AdMediaModel mediaModels) {
+        ExoPlayerLogger.i(Constants.FSMPLAYER_TESTING, "AdBreak received");
+
         adMedia = mediaModels;
         // prepare and build the adMediaModel
         playerComponentController.getDoublePlayerInterface().onPrepareAds(adMedia);
@@ -210,11 +219,13 @@ public abstract class FsmPlayer implements Fsm, RetrieveAdCallback {
 
     @Override
     public void onError() {
+        ExoPlayerLogger.w(Constants.FSMPLAYER_TESTING, "Fetch Ad fail");
         transit(Input.ERROR);
     }
 
     @Override
     public void onEmptyAdReceived() {
+        ExoPlayerLogger.w(Constants.FSMPLAYER_TESTING, "Fetch ad succeed, but empty ad");
         transit(Input.EMPTY_AD);
     }
 
