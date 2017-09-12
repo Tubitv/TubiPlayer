@@ -1,6 +1,8 @@
 package com.tubitv.media.activities;
 
+import android.content.Intent;
 import android.content.res.Configuration;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -33,6 +35,7 @@ import com.tubitv.media.models.AdMediaModel;
 import com.tubitv.media.models.AdRetriever;
 import com.tubitv.media.models.CuePointsRetriever;
 import com.tubitv.media.models.MediaModel;
+import com.tubitv.media.utilities.ExoPlayerLogger;
 import com.tubitv.media.utilities.Utils;
 import com.tubitv.media.views.TubiExoPlayerView;
 
@@ -262,7 +265,7 @@ public class DoubleViewTubiPlayerActivity extends TubiPlayerActivity implements 
 
     @Override
     public void onProgress(@Nullable MediaModel mediaModel, long milliseconds, long durationMillis) {
-        Log.e(TAG, mediaModel.getClickThroughUrl() + " onProgress: " + "milliseconds: " + milliseconds + " durationMillis: " + durationMillis);
+        ExoPlayerLogger.v(TAG, mediaModel.getMediaName() + ": " + mediaModel.toString() + " onProgress: " + "milliseconds: " + milliseconds + " durationMillis: " + durationMillis);
 
         // monitor the movie progress.
         cuePointMonitor.onMovieProgress(milliseconds, durationMillis);
@@ -270,30 +273,30 @@ public class DoubleViewTubiPlayerActivity extends TubiPlayerActivity implements 
 
     @Override
     public void onSeek(@Nullable MediaModel mediaModel, long oldPositionMillis, long newPositionMillis) {
-        Log.d(TAG, mediaModel.getMediaName() +  " onSeek : " + "oldPositionMillis: " + oldPositionMillis + " newPositionMillis: " + newPositionMillis);
+        ExoPlayerLogger.v(TAG, mediaModel.getMediaName() + ": " + mediaModel.toString() + " onSeek : " + "oldPositionMillis: " + oldPositionMillis + " newPositionMillis: " + newPositionMillis);
     }
 
     @Override
     public void onPlayToggle(@Nullable MediaModel mediaModel, boolean playing) {
-        Log.d(TAG, mediaModel.getMediaName() + " onPlayToggle :");
+        ExoPlayerLogger.v(TAG, mediaModel.getMediaName() + ": " + mediaModel.toString() +" onPlayToggle :");
     }
 
     @Override
     public void onLearnMoreClick(@NonNull MediaModel mediaModel) {
-        Log.d(TAG, mediaModel.getClickThroughUrl() + " onLearnMoreClick :" + mediaModel.getClickThroughUrl());
+        ExoPlayerLogger.v(TAG, mediaModel.getMediaName() + ": " + mediaModel.toString() + " onLearnMoreClick :" + mediaModel.getClickThroughUrl());
 
-//        Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(mediaModel.getClickThroughUrl()));
-//        startActivity(browserIntent);
+        Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(mediaModel.getClickThroughUrl()));
+        startActivity(browserIntent);
     }
 
     @Override
     public void onSubtitles(@Nullable MediaModel mediaModel, boolean enabled) {
-        Log.d(TAG, mediaModel.getMediaName() +" onSubtitles :" + mediaModel.getMediaName());
+        ExoPlayerLogger.v(TAG, mediaModel.getMediaName() + ": " + mediaModel.toString() +" onSubtitles :" + mediaModel.getMediaName());
     }
 
     @Override
     public void onQuality(@Nullable MediaModel mediaModel) {
-        Log.d(TAG,mediaModel.getMediaName() +  " onQuality :" + mediaModel.getMediaName());
+        ExoPlayerLogger.v(TAG,mediaModel.getMediaName() + ": " + mediaModel.toString() +" onQuality :" + mediaModel.getMediaName());
     }
 
     @Override

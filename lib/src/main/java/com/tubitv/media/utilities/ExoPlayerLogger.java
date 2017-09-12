@@ -37,4 +37,11 @@ public class ExoPlayerLogger {
             Log.e(tag, message);
         }
     }
+
+    public static void v(String tag, String message) {
+        if (SHOW_LOGGING) {
+            // do something for a debug build
+            Log.v(tag, message);
+        }
+    }
 }
