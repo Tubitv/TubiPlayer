@@ -2,10 +2,20 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent" android:layout_height="match_parent">
 
+
+
     <com.tubitv.media.views.TubiExoPlayerView
         android:id="@+id/tubitv_player"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
+
+    <WebView
+        android:id="@+id/vpaid_webview"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_gravity="center"
+        android:visibility="gone"
+        />
 
 
     <LinearLayout
@@ -14,18 +24,6 @@
         android:layout_marginBottom="70dp"
         android:layout_gravity="center|bottom"
         android:orientation="horizontal">
-    <!--<Button-->
-        <!--android:id="@+id/button_show_ads"-->
-        <!--android:layout_width="wrap_content"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:text="Show ads"/>-->
-
-    <!--<Button-->
-        <!--android:id="@+id/button_stop_ads"-->
-        <!--android:layout_width="wrap_content"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:layout_gravity="center|bottom"-->
-        <!--android:text="Stop Ads"/>-->
 
         <TextView
             android:id="@+id/cuepoint_indictor"

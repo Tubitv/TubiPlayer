@@ -8,6 +8,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
 import android.view.View;
+import android.webkit.WebView;
 import android.widget.TextView;
 
 import com.google.android.exoplayer2.C;
@@ -48,6 +49,8 @@ import javax.inject.Inject;
 public class DoubleViewTubiPlayerActivity extends TubiPlayerActivity implements DoublePlayerInterface {
 
     private SimpleExoPlayer adPlayer;
+
+    private WebView vpaidWebView;
 
     private static final String TAG = "DoubleViewTubiPlayerAct";
 
@@ -200,6 +203,7 @@ public class DoubleViewTubiPlayerActivity extends TubiPlayerActivity implements 
         playerUIController.setContentPlayer(mTubiExoPlayer);
         playerUIController.setAdPlayer(adPlayer);
         playerUIController.setExoPlayerView(mTubiPlayerView);
+        playerUIController.setVpaidWebView(vpaidWebView);
 
         //update the MediaModel
         fsmPlayer.setController(playerUIController);
@@ -233,6 +237,8 @@ public class DoubleViewTubiPlayerActivity extends TubiPlayerActivity implements 
         setContentView(R.layout.activity_double_tubi_player);
 
         mTubiPlayerView = (TubiExoPlayerView) findViewById(R.id.tubitv_player);
+        vpaidWebView = (WebView)findViewById(R.id.vpaid_webview);
+
         mTubiPlayerView.requestFocus();
         mTubiPlayerView.setActivity(this);
         mTubiPlayerView.addOnLayoutChangeListener(new View.OnLayoutChangeListener() {

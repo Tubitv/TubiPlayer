@@ -6,9 +6,8 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
-import android.webkit.WebView;
-import android.util.Log;
 import android.view.View;
+import android.webkit.WebView;
 
 import com.tubitv.demo.R;
 import com.tubitv.media.demo.vpaid.TubiVPAID;
@@ -25,7 +24,8 @@ public class WebviewActivity extends Activity {
 
     private WebView webView;
 
-    private static final String VPAID_URL = "https://s3-us-west-1.amazonaws.com/tubi-vpaid/index.html";
+    private static final String VPAID_URL = "http://tubitv.com/vpaid/";
+//            "https://s3-us-west-1.amazonaws.com/tubi-vpaid/index.html";
 
     @RequiresApi(Build.VERSION_CODES.KITKAT)
     @Override
