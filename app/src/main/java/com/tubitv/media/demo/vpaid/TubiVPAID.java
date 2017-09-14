@@ -16,6 +16,7 @@ import android.webkit.WebResourceError;
 import android.webkit.WebResourceRequest;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
+import android.webkit.WebSettings;
 
 import com.tubitv.demo.BuildConfig;
 
@@ -48,12 +49,14 @@ public class TubiVPAID {
     }
 
     @SuppressLint("SetJavaScriptEnabled")
+    @TargetApi(21)
     public void init() {
         // setup the webview we need if we want to load vpaid
         mVPAIDWebView.setWebViewClient(new VPAidWebViewClient());
         mVPAIDWebView.setWebChromeClient(new VPAIDWebChromeClient());
         mVPAIDWebView.getSettings().setJavaScriptEnabled(true);
         mVPAIDWebView.getSettings().setMediaPlaybackRequiresUserGesture(false);
+        mVPAIDWebView.getSettings().setMixedContentMode(WebSettings.MIXED_CONTENT_ALWAYS_ALLOW);
         if (BuildConfig.DEBUG) {
             WebView.setWebContentsDebuggingEnabled(true);
         }
