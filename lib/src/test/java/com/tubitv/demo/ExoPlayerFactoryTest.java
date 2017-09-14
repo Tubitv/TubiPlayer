@@ -166,7 +166,15 @@ public class ExoPlayerFactoryTest {
 
         assertTrue(playerFsm.getCurrentState() instanceof VpaidState);
 
-        playerFsm.transit(Input.BACK_TO_PLAYER_FROM_VPAID_AD);
+        playerFsm.transit(Input.NEXT_VPAID);
+
+        assertTrue(playerFsm.getCurrentState() instanceof VpaidState);
+
+        playerFsm.transit(Input.NEXT_VPAID);
+
+        assertTrue(playerFsm.getCurrentState() instanceof VpaidState);
+
+        playerFsm.transit(Input.VPAID_FINISH);
 
         assertTrue(playerFsm.getCurrentState() instanceof MoviePlayingState);
 
@@ -230,7 +238,15 @@ public class ExoPlayerFactoryTest {
 
             assertTrue(playerFsm.getCurrentState() instanceof VpaidState);
 
-            playerFsm.transit(Input.BACK_TO_PLAYER_FROM_VPAID_AD);
+            playerFsm.transit(Input.NEXT_VPAID);
+
+            assertTrue(playerFsm.getCurrentState() instanceof VpaidState);
+
+            playerFsm.transit(Input.NEXT_VPAID);
+
+            assertTrue(playerFsm.getCurrentState() instanceof VpaidState);
+
+            playerFsm.transit(Input.VPAID_FINISH);
 
             assertTrue(playerFsm.getCurrentState() instanceof MoviePlayingState);
 

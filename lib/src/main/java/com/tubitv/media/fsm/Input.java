@@ -40,7 +40,8 @@ public enum Input {
     /**
      * Only expect inputs of {@link com.tubitv.media.fsm.concrete.VpaidState}
      */
-    BACK_TO_PLAYER_FROM_VPAID_AD,
+    VPAID_FINISH,
+    NEXT_VPAID,
 
     /**
      * Only expect inputs of {@link VastAdInteractionSandBoxState}

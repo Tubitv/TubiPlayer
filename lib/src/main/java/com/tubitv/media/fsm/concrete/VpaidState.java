@@ -22,8 +22,11 @@ public class VpaidState extends BaseState {
     public State transformToState(Input input, StateFactory factory) {
 
         switch (input) {
-            case BACK_TO_PLAYER_FROM_VPAID_AD:
+            case VPAID_FINISH:
                 return factory.createState(MoviePlayingState.class);
+
+            case NEXT_VPAID:
+                return factory.createState(VpaidState.class);
         }
         return null;
     }
