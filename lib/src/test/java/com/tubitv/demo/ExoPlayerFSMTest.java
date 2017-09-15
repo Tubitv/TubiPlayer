@@ -112,6 +112,10 @@ public class ExoPlayerFSMTest {
 
         assertTrue(playerFsm.getCurrentState() instanceof VpaidState);
 
+        playerFsm.transit(Input.NEXT_VPAID);
+
+        assertTrue(playerFsm.getCurrentState() instanceof VpaidState);
+
         playerFsm.transit(Input.VPAID_FINISH);
 
         assertTrue(playerFsm.getCurrentState() instanceof MoviePlayingState);

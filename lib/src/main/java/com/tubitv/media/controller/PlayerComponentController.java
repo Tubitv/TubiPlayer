@@ -6,6 +6,7 @@ import com.tubitv.media.fsm.listener.AdPlayingMonitor;
 import com.tubitv.media.fsm.listener.CuePointMonitor;
 import com.tubitv.media.interfaces.DoublePlayerInterface;
 import com.tubitv.media.interfaces.TubiPlaybackInterface;
+import com.tubitv.media.models.VpaidClient;
 
 /**
  * Created by allensun on 8/11/17.
@@ -21,11 +22,22 @@ public class PlayerComponentController {
 
     private CuePointMonitor cuePointMonitor;
 
+    private VpaidClient vpaidClient;
+
     public PlayerComponentController(@Nullable AdPlayingMonitor adPlayingMonitor, @Nullable TubiPlaybackInterface tubiPlaybackInterface, @Nullable DoublePlayerInterface doublePlayerInterface, @Nullable CuePointMonitor cuePointMonitor) {
         this.adPlayingMonitor = adPlayingMonitor;
         this.tubiPlaybackInterface = tubiPlaybackInterface;
         this.doublePlayerInterface = doublePlayerInterface;
         this.cuePointMonitor = cuePointMonitor;
+        this.vpaidClient = null;
+    }
+
+    public PlayerComponentController(@Nullable AdPlayingMonitor adPlayingMonitor, @Nullable TubiPlaybackInterface tubiPlaybackInterface, @Nullable DoublePlayerInterface doublePlayerInterface, @Nullable CuePointMonitor cuePointMonitor, @Nullable VpaidClient vpaidClient) {
+        this.adPlayingMonitor = adPlayingMonitor;
+        this.tubiPlaybackInterface = tubiPlaybackInterface;
+        this.doublePlayerInterface = doublePlayerInterface;
+        this.cuePointMonitor = cuePointMonitor;
+        this.vpaidClient = vpaidClient;
     }
 
     public DoublePlayerInterface getDoublePlayerInterface() {
@@ -59,4 +71,15 @@ public class PlayerComponentController {
     public void setCuePointMonitor(CuePointMonitor cuePointMonitor) {
         this.cuePointMonitor = cuePointMonitor;
     }
+
+    @Nullable
+    public VpaidClient getVpaidClient() {
+        return vpaidClient;
+    }
+
+    public void setVpaidClient(@Nullable VpaidClient vpaidClient) {
+        this.vpaidClient = vpaidClient;
+    }
 }
+
+

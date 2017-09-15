@@ -2,6 +2,8 @@ package com.tubitv.media.fsm.concrete;
 
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.view.View;
+import android.webkit.WebView;
 
 import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.ExoPlayer;
@@ -39,7 +41,7 @@ public class MoviePlayingState extends BaseState {
     @Override
     public void performWorkAndupdatePlayerUI(@Nullable FsmPlayer fsmPlayer, @NonNull PlayerUIController controller, @NonNull PlayerComponentController componentController, @NonNull MediaModel movieMedia, @Nullable AdMediaModel adMedia) {
 
-        if(isNull(fsmPlayer,controller,componentController,movieMedia,adMedia)){
+        if (isNull(fsmPlayer, controller, componentController, movieMedia, adMedia)) {
             return;
         }
 
@@ -67,13 +69,26 @@ public class MoviePlayingState extends BaseState {
             moviePlayer.seekTo(controller.getMovieResumeWindow(), controller.getMovieResumePosition());
         }
 
-        if(moviePlayer.getPlaybackState() == ExoPlayer.STATE_IDLE){
+        if (moviePlayer.getPlaybackState() == ExoPlayer.STATE_IDLE) {
             moviePlayer.prepare(movieMedia.getMediaSource(), !haveResumePosition, false);
         }
 
         moviePlayer.setPlayWhenReady(true);
 
+        hideVpaidNShowPlayer(controller);
+    }
 
+    private void hideVpaidNShowPlayer(final PlayerUIController controller) {
+
+        controller.getExoPlayerView().setVisibility(View.VISIBLE);
+
+        WebView vpaidEWebView = controller.getVpaidWebView();
+        if (vpaidEWebView != null) {
+            vpaidEWebView.setVisibility(View.GONE);
+            vpaidEWebView.loadUrl("about:blank");
+            vpaidEWebView.clearHistory();
+            vpaidEWebView.setVisibility(View.GONE);
+        }
     }
 
 }

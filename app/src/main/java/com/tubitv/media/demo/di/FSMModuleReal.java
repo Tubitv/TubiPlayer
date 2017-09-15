@@ -1,12 +1,16 @@
 package com.tubitv.media.demo.di;
 
+import android.os.Build;
+import android.os.Handler;
+import android.os.Looper;
 import android.support.annotation.Nullable;
+import android.support.annotation.RequiresApi;
 import android.view.View;
 import android.webkit.WebView;
 
-import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.tubitv.media.controller.PlayerComponentController;
 import com.tubitv.media.controller.PlayerUIController;
+import com.tubitv.media.demo.vpaid_model.TubiVPAID;
 import com.tubitv.media.di.annotation.ActicityScope;
 import com.tubitv.media.fsm.callback.AdInterface;
 import com.tubitv.media.fsm.callback.CuePointCallBack;
@@ -21,6 +25,7 @@ import com.tubitv.media.models.AdMediaModel;
 import com.tubitv.media.models.AdRetriever;
 import com.tubitv.media.models.CuePointsRetriever;
 import com.tubitv.media.models.MediaModel;
+import com.tubitv.media.models.VpaidClient;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -36,17 +41,11 @@ import dagger.Provides;
 public class FSMModuleReal {
 
 
-    private SimpleExoPlayer mainPlayer;
-
-    private SimpleExoPlayer adPlayer;
-
     private WebView webView;
 
     private View rootView;
 
-    public FSMModuleReal(@Nullable SimpleExoPlayer mainPlayer, @Nullable SimpleExoPlayer adPlayer, @Nullable WebView webView, @Nullable View rootView) {
-        this.mainPlayer = mainPlayer;
-        this.adPlayer = adPlayer;
+    public FSMModuleReal(@Nullable WebView webView, @Nullable View rootView) {
         this.webView = webView;
         this.rootView = rootView;
     }
@@ -71,7 +70,7 @@ public class FSMModuleReal {
     @ActicityScope
     @Provides
     PlayerUIController provideController() {
-        return new PlayerUIController(mainPlayer, adPlayer, webView, rootView);
+        return new PlayerUIController(null, null, webView, rootView);
     }
 
     @ActicityScope
@@ -121,7 +120,7 @@ public class FSMModuleReal {
                 "first ad", false);
 
         MediaModel ad_2 = MediaModel.ad("http://c11.adrise.tv/ads/transcodes/003572/940826/v0329081907-1280x720-HD-,740,1285,1622,2138,3632,k.mp4.m3u8",
-                "second ad",false);
+                "second ad",true);
 
         final List<MediaModel> list = new ArrayList<>();
         list.add(ad_1);
@@ -157,5 +156,12 @@ public class FSMModuleReal {
                 callBack.onCuePointReceived(new long[]{0,60000, 900000, 1800000, 3600000});
             }
         };
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
+    @ActicityScope
+    @Provides
+    VpaidClient provideVpaidClient(FsmPlayer player){
+        return new TubiVPAID(webView, new Handler(Looper.getMainLooper()),player);
     }
 }

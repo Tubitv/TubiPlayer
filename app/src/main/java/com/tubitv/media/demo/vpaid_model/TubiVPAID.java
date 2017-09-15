@@ -1,4 +1,4 @@
-package com.tubitv.media.demo.vpaid;
+package com.tubitv.media.demo.vpaid_model;
 
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
@@ -14,11 +14,14 @@ import android.webkit.PermissionRequest;
 import android.webkit.WebChromeClient;
 import android.webkit.WebResourceError;
 import android.webkit.WebResourceRequest;
+import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
-import android.webkit.WebSettings;
 
 import com.tubitv.demo.BuildConfig;
+import com.tubitv.media.fsm.state_machine.FsmAdController;
+import com.tubitv.media.fsm.state_machine.FsmPlayer;
+import com.tubitv.media.models.VpaidClient;
 
 import java.util.Locale;
 
@@ -32,20 +35,24 @@ import java.util.Locale;
  * JS code communicate with the android code and vice-versa
  */
 @RequiresApi(Build.VERSION_CODES.KITKAT)
-public class TubiVPAID {
+public class TubiVPAID implements VpaidClient {
     private static final String TAG = "VPAIDAD";
     //    private TubiPlayerEvents mPlayerEvents;
     private WebView mVPAIDWebView;
     private Handler mHandler;
     private String vastXml = Vastxml.getAdXmlBody();
+    private FsmAdController fsmPlayer;
 //    private Ad mAd;
 
     /**
-     * @param webView the webview that will be playing the VPAID ad
+     * @param webView   the webview to displaying vpaid
+     * @param uiHandler Handler create on ui thread
+     * @param fsmPlayer
      */
-    public TubiVPAID(@NonNull WebView webView, @NonNull Handler handler) {
+    public TubiVPAID(@NonNull WebView webView, @NonNull Handler uiHandler, @NonNull FsmPlayer fsmPlayer) {
         mVPAIDWebView = webView;
-        mHandler = handler;
+        mHandler = uiHandler;
+        this.fsmPlayer = fsmPlayer;
     }
 
     @SuppressLint("SetJavaScriptEnabled")
@@ -62,12 +69,6 @@ public class TubiVPAID {
         }
     }
 
-    public void reset() {
-        mVPAIDWebView.clearHistory();
-        mVPAIDWebView.loadUrl("about:blank");
-        mVPAIDWebView.setVisibility(View.GONE);
-    }
-
     @JavascriptInterface
     @SuppressWarnings("unused")
     public void notifyVideoEnd() {
@@ -75,14 +76,17 @@ public class TubiVPAID {
         mHandler.post(new Runnable() {
             @Override
             public void run() {
-                reset();
+
+                if (fsmPlayer != null) {
+                    fsmPlayer.removePlayedAdAndTransitToNextState();
+                }
             }
         });
 
-        //TODO: Ask the Androids if the below needs to be done async on another thread
 //        if (mPlayerEvents != null) {
 //            mPlayerEvents.onComplete();
 //        }
+
     }
 
     /**
@@ -102,31 +106,15 @@ public class TubiVPAID {
 
         Log.e(TAG, "Error playing VPAID Ad: " + errorMsg);
 
-//        try {
-//            TubiTvService.UnifiedApiWithoutAuthorization service
-//                    = new TubiTvService(TubiApplication.getInstance().getApplicationContext()).getUnifiedApiWithoutAuthorization();
-//            JsonObject content = new JsonObject();
-//            content.addProperty("platform", TubiTvService.API_ANDROID_PLATFORM);
-//            content.addProperty("device_id", TubiApplication.getInstance().getAppUUID());
-//            content.addProperty("user_id", UserAuthHelper.getUserId());
-//            content.addProperty("type", "AD:ERROR");
-//            content.addProperty("level", "error");
-//            content.addProperty("subtype", "VPAID");
-//            content.addProperty("message", errorMsg);
-//            content.addProperty("version", BuildConfig.VERSION_NAME);
-//            service.createLog(content, new ResponseCallback() {
-//                @Override
-//                public void success(Response response) {
-//                }
-//
-//                @Override
-//                public void failure(RetrofitError error) {
-//                    TubiLog.e(error, "Failed to log VPAID ad error issue.");
-//                }
-//            });
-//        } catch (Exception ex) {
-//            TubiLog.e(ex);
-//        }
+        mHandler.post(new Runnable() {
+            @Override
+            public void run() {
+
+                if (fsmPlayer != null) {
+                    fsmPlayer.removePlayedAdAndTransitToNextState();
+                }
+            }
+        });
     }
 
     @JavascriptInterface
@@ -157,7 +145,17 @@ public class TubiVPAID {
                     errorCode,
                     description);
             Log.e(TAG, errorMsg);
-            reset();
+
+            //TODO: now assume that only max of one vpaid will show per {@link AdBreak}
+            mHandler.post(new Runnable() {
+                @Override
+                public void run() {
+
+                    if (fsmPlayer != null) {
+                        fsmPlayer.removePlayedAdAndTransitToNextState();
+                    }
+                }
+            });
 //            if (mPlayerEvents != null)
 //                mPlayerEvents.onComplete();
         }

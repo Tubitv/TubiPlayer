@@ -12,6 +12,6 @@ public class RealActivity extends DoubleViewTubiPlayerActivity {
 
     @Override
     protected void injectDependency() {
-        DaggerFsmComonentReal.builder().fSMModuleReal(new FSMModuleReal(null, null, null, null)).build().inject(this);
+        DaggerFsmComonentReal.builder().fSMModuleReal(new FSMModuleReal(vpaidWebView,mTubiPlayerView)).build().inject(this);
     }
 }

@@ -8,7 +8,7 @@ import com.google.android.exoplayer2.PlaybackParameters;
 import com.google.android.exoplayer2.Timeline;
 import com.google.android.exoplayer2.source.TrackGroupArray;
 import com.google.android.exoplayer2.trackselection.TrackSelectionArray;
-import com.tubitv.media.fsm.Input;
+import com.tubitv.media.fsm.state_machine.FsmAdController;
 import com.tubitv.media.fsm.state_machine.FsmPlayer;
 
 /**
@@ -17,7 +17,7 @@ import com.tubitv.media.fsm.state_machine.FsmPlayer;
  */
 public class AdPlayingMonitor implements ExoPlayer.EventListener {
 
-    public FsmPlayer fsmPlayer;
+    public FsmAdController fsmPlayer;
 
     public AdPlayingMonitor(@NonNull FsmPlayer fsmPlayer) {
         this.fsmPlayer = fsmPlayer;
@@ -43,28 +43,13 @@ public class AdPlayingMonitor implements ExoPlayer.EventListener {
 
         //the last ad has finish playing.
         if (playbackState == ExoPlayer.STATE_ENDED && playWhenReady == true) {
-            // need to remove the already played ad first.
-            fsmPlayer.popPlayedAd();
-
-            //then check if there are any ad need to be played.
-            if (fsmPlayer.hasAdToPlay()) {
-
-                if (fsmPlayer.getNextAdd().isVpaid()) {
-                    fsmPlayer.transit(Input.VPAID_MANIFEST);
-                } else {
-                    fsmPlayer.transit(Input.NEXT_AD);
-                }
-
-            } else {
-                fsmPlayer.transit(Input.AD_FINISH);
-            }
-
+            fsmPlayer.removePlayedAdAndTransitToNextState();
         }
     }
 
     @Override
     public void onPlayerError(ExoPlaybackException error) {
-        fsmPlayer.transit(Input.ERROR);
+        fsmPlayer.removePlayedAdAndTransitToNextState();
     }
 
     @Override

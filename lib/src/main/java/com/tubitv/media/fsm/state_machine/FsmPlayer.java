@@ -14,6 +14,7 @@ import com.tubitv.media.fsm.callback.RetrieveAdCallback;
 import com.tubitv.media.fsm.concrete.MakingAdCallState;
 import com.tubitv.media.fsm.concrete.MakingPrerollAdCallState;
 import com.tubitv.media.fsm.concrete.MoviePlayingState;
+import com.tubitv.media.fsm.concrete.VpaidState;
 import com.tubitv.media.fsm.concrete.factory.StateFactory;
 import com.tubitv.media.helpers.Constants;
 import com.tubitv.media.models.AdMediaModel;
@@ -25,7 +26,7 @@ import com.tubitv.media.utilities.ExoPlayerLogger;
 /**
  * Created by allensun on 7/27/17.
  */
-public abstract class FsmPlayer implements Fsm, RetrieveAdCallback {
+public abstract class FsmPlayer implements Fsm, RetrieveAdCallback, FsmAdController {
 
     /**
      * a wrapper class for player UI related objects
@@ -197,6 +198,35 @@ public abstract class FsmPlayer implements Fsm, RetrieveAdCallback {
 
     }
 
+    @Override
+    public void removePlayedAdAndTransitToNextState() {
+        // need to remove the already played ad first.
+        popPlayedAd();
+
+        //then check if there are any ad need to be played.
+        if (hasAdToPlay()) {
+
+            if (getNextAdd().isVpaid()) {
+                transit(Input.VPAID_MANIFEST);
+            } else {
+                transit(Input.NEXT_AD);
+            }
+
+        } else {
+            //depends on current state, to transit to MoviePlayingState.
+            if (currentState != null && currentState instanceof VpaidState) {
+                transit(Input.VPAID_FINISH);
+            } else {
+                transit(Input.AD_FINISH);
+            }
+        }
+
+    }
+
+    @Override
+    public void adPlayerError() {
+        transit(Input.ERROR);
+    }
 
     @Override
     public void updateSelf() {

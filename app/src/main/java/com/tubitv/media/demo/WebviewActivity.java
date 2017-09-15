@@ -6,11 +6,12 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
+import android.util.Log;
 import android.view.View;
 import android.webkit.WebView;
 
 import com.tubitv.demo.R;
-import com.tubitv.media.demo.vpaid.TubiVPAID;
+import com.tubitv.media.demo.vpaid_model.TubiVPAID;
 
 /**
  * Created by allensun on 8/9/17.
@@ -41,7 +42,7 @@ public class WebviewActivity extends Activity {
 
     @RequiresApi(Build.VERSION_CODES.KITKAT)
     private void initVpaidWebview(WebView view, Handler handler) {
-        tubiVPAID = new TubiVPAID(view, handler);
+        tubiVPAID = new TubiVPAID(view, handler,null);
 
         tubiVPAID.init();
 
@@ -51,6 +52,19 @@ public class WebviewActivity extends Activity {
 
         webView.addJavascriptInterface(tubiVPAID, "TubiNativeJSInterface");
         webView.loadUrl(VPAID_URL);
+
     }
 
+
+
+
+    @Override
+    public void onBackPressed() {
+        Log.e("TAG", "onBackButton");
+        if (webView.canGoBack()) {
+            webView.goBack();
+        } else {
+            super.onBackPressed();
+        }
+    }
 }

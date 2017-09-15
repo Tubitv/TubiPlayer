@@ -1,4 +1,4 @@
-package com.tubitv.media.demo.vpaid;
+package com.tubitv.media.demo.vpaid_model;
 
 import android.text.TextUtils;
 

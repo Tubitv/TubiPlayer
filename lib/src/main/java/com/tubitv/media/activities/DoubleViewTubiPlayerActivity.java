@@ -36,6 +36,7 @@ import com.tubitv.media.models.AdMediaModel;
 import com.tubitv.media.models.AdRetriever;
 import com.tubitv.media.models.CuePointsRetriever;
 import com.tubitv.media.models.MediaModel;
+import com.tubitv.media.models.VpaidClient;
 import com.tubitv.media.utilities.ExoPlayerLogger;
 import com.tubitv.media.utilities.Utils;
 import com.tubitv.media.views.TubiExoPlayerView;
@@ -50,7 +51,7 @@ public class DoubleViewTubiPlayerActivity extends TubiPlayerActivity implements 
 
     private SimpleExoPlayer adPlayer;
 
-    private WebView vpaidWebView;
+    protected WebView vpaidWebView;
 
     private static final String TAG = "DoubleViewTubiPlayerAct";
 
@@ -79,6 +80,9 @@ public class DoubleViewTubiPlayerActivity extends TubiPlayerActivity implements 
 
     @Inject
     PlayerComponentController playerComponentController;
+
+    @Inject
+    VpaidClient vpaidClient;
 
     public AdRetriever getAdRetriever() {
         return adRetriever;
@@ -218,6 +222,7 @@ public class DoubleViewTubiPlayerActivity extends TubiPlayerActivity implements 
         playerComponentController.setTubiPlaybackInterface(this);
         playerComponentController.setDoublePlayerInterface(this);
         playerComponentController.setCuePointMonitor(cuePointMonitor);
+        playerComponentController.setVpaidClient(vpaidClient);
         fsmPlayer.setPlayerComponentController(playerComponentController);
 
         if (fsmPlayer.isInitialized()) {
@@ -247,6 +252,15 @@ public class DoubleViewTubiPlayerActivity extends TubiPlayerActivity implements 
 
             }
         });
+    }
+
+    @Override
+    public void onBackPressed() {
+        if (vpaidWebView!=null && vpaidWebView.canGoBack()) {
+            vpaidWebView.goBack();
+        } else {
+            super.onBackPressed();
+        }
     }
 
     /**

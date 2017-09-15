@@ -21,6 +21,7 @@ import com.tubitv.media.models.AdMediaModel;
 import com.tubitv.media.models.AdRetriever;
 import com.tubitv.media.models.CuePointsRetriever;
 import com.tubitv.media.models.MediaModel;
+import com.tubitv.media.models.VpaidClient;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -59,7 +60,7 @@ public class FSMModuleTesting {
     @ActicityScope
     @Provides
     FsmPlayer provideFsmPlayer(StateFactory factory) {
-        return new FsmPlayerImperial(factory){
+        return new FsmPlayerImperial(factory) {
             @Override
             public Class initializeState() {
                 return FetchCuePointState.class;
@@ -75,8 +76,8 @@ public class FSMModuleTesting {
 
     @ActicityScope
     @Provides
-    PlayerComponentController provideComponentController(){
-        return new PlayerComponentController(null,null,null,null);
+    PlayerComponentController provideComponentController() {
+        return new PlayerComponentController(null, null, null, null);
     }
 
     @ActicityScope
@@ -87,8 +88,8 @@ public class FSMModuleTesting {
 
     @ActicityScope
     @Provides
-    CuePointsRetriever provideCuePointsRetriever(){
-        return  new CuePointsRetriever();
+    CuePointsRetriever provideCuePointsRetriever() {
+        return new CuePointsRetriever();
     }
 
     @ActicityScope
@@ -160,5 +161,29 @@ public class FSMModuleTesting {
         };
     }
 
+    @ActicityScope
+    @Provides
+    VpaidClient provideVpaidClient(){
+        return new VpaidClient() {
+            @Override
+            public void init() {
 
+            }
+
+            @Override
+            public void notifyAdError(int code, String error) {
+
+            }
+
+            @Override
+            public void notifyVideoEnd() {
+
+            }
+
+            @Override
+            public String getVastXml() {
+                return null;
+            }
+        };
+    }
 }
