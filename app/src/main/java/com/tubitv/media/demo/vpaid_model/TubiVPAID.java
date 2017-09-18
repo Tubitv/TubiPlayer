@@ -57,6 +57,7 @@ public class TubiVPAID implements VpaidClient {
     @SuppressLint("SetJavaScriptEnabled")
     @TargetApi(21)
     public void init() {
+        mVPAIDWebView.clearHistory();
         // setup the webview we need if we want to load vpaid
         mVPAIDWebView.setWebViewClient(new VPAidWebViewClient());
         mVPAIDWebView.setWebChromeClient(new VPAIDWebChromeClient());

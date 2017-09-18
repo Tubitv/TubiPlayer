@@ -4,6 +4,7 @@ import android.support.annotation.Nullable;
 
 import com.tubitv.media.fsm.Input;
 import com.tubitv.media.fsm.concrete.AdPlayingState;
+import com.tubitv.media.fsm.concrete.VpaidState;
 import com.tubitv.media.fsm.state_machine.FsmPlayer;
 import com.tubitv.media.helpers.Constants;
 import com.tubitv.media.utilities.ExoPlayerLogger;
@@ -119,7 +120,7 @@ public abstract class CuePointMonitor {
      */
     public void onMovieProgress(long milliseconds, long durationMillis) {
 
-        if (fsmPlayer.getCurrentState() instanceof AdPlayingState) {
+        if (fsmPlayer.getCurrentState() instanceof AdPlayingState || fsmPlayer.getCurrentState() instanceof VpaidState) {
             // if ad playing, do nothing
             return;
         }
