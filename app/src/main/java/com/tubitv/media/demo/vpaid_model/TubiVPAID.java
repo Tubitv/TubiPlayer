@@ -5,7 +5,6 @@ import android.annotation.TargetApi;
 import android.os.Build;
 import android.os.Handler;
 import android.support.annotation.NonNull;
-import android.support.annotation.RequiresApi;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
@@ -34,7 +33,7 @@ import java.util.Locale;
  * Includes the JS Interface added to a WebView that is meant to play a VPAID ad which helps the
  * JS code communicate with the android code and vice-versa
  */
-@RequiresApi(Build.VERSION_CODES.KITKAT)
+//@RequiresApi(Build.VERSION_CODES.KITKAT)
 public class TubiVPAID implements VpaidClient {
     private static final String TAG = "VPAIDAD";
     //    private TubiPlayerEvents mPlayerEvents;

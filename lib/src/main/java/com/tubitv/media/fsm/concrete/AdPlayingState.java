@@ -3,6 +3,7 @@ package com.tubitv.media.fsm.concrete;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
+import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.tubitv.media.controller.PlayerComponentController;
 import com.tubitv.media.controller.PlayerUIController;
@@ -45,7 +46,7 @@ public class AdPlayingState extends BaseState {
     @Override
     public void performWorkAndupdatePlayerUI(@Nullable FsmPlayer fsmPlayer, @NonNull PlayerUIController controller, @NonNull PlayerComponentController componentController, @NonNull MediaModel movieMedia, @Nullable AdMediaModel adMedia) {
 
-        if(isNull(fsmPlayer,controller,componentController,movieMedia,adMedia)){
+        if (isNull(fsmPlayer, controller, componentController, movieMedia, adMedia)) {
             return;
         }
 
@@ -64,8 +65,15 @@ public class AdPlayingState extends BaseState {
             FsmPlayer.updateMovieResumePostion(controller);
             moviePlayer.setPlayWhenReady(false);
 
+            //prepare the moviePlayer with data source and set it play
+
+            boolean haveResumePosition = controller.getAdResumePosition() != C.TIME_UNSET;
+            if (haveResumePosition) {
+                adPlayer.seekTo(controller.getAdResumeWindow(), controller.getAdResumePosition());
+            }
+
             //prepare the mediaSource to AdPlayer
-            adPlayer.prepare(adMedia.getMediaSource(), true, true);
+            adPlayer.prepare(adMedia.getMediaSource(), !haveResumePosition, true);
 
             //update the ExoPlayerView with AdPlayer and AdMedia
             TubiExoPlayerView tubiExoPlayerView = (TubiExoPlayerView) controller.getExoPlayerView();

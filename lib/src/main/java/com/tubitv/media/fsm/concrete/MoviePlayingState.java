@@ -64,7 +64,7 @@ public class MoviePlayingState extends BaseState {
 
         //prepare the moviePlayer with data source and set it play
 
-        boolean haveResumePosition = controller.getMovieResumePosition() != C.INDEX_UNSET;
+        boolean haveResumePosition = controller.getMovieResumePosition() != C.TIME_UNSET;
         if (haveResumePosition) {
             moviePlayer.seekTo(controller.getMovieResumeWindow(), controller.getMovieResumePosition());
         }

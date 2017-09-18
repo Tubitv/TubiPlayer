@@ -1,9 +1,7 @@
 package com.tubitv.media.fsm.concrete;
 
-import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.annotation.RequiresApi;
 import android.view.View;
 import android.webkit.WebView;
 
@@ -43,7 +41,6 @@ public class VpaidState extends BaseState {
     }
 
     //TODO: API level lower that certain, will disable vpaid.
-    @RequiresApi(Build.VERSION_CODES.KITKAT)
     @Override
     public void performWorkAndupdatePlayerUI(@Nullable FsmPlayer fsmPlayer, @NonNull PlayerUIController controller, @NonNull PlayerComponentController componentController, @NonNull MediaModel movieMedia, @Nullable AdMediaModel adMedia) {
         if (isNull(fsmPlayer, controller, componentController, movieMedia, adMedia)) {
@@ -53,7 +50,6 @@ public class VpaidState extends BaseState {
         pausePlayerAndSHowVpaid(controller, componentController, fsmPlayer);
     }
 
-    @RequiresApi(Build.VERSION_CODES.KITKAT)
     private void pausePlayerAndSHowVpaid(PlayerUIController controller, PlayerComponentController componentController, FsmPlayer fsmPlayer) {
 
         ExoPlayer moviePlayer = controller.getContentPlayer();

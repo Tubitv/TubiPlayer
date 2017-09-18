@@ -28,6 +28,7 @@ import com.tubitv.media.di.FSMModuleTesting;
 import com.tubitv.media.di.component.DaggerFsmComonent;
 import com.tubitv.media.fsm.Input;
 import com.tubitv.media.fsm.callback.AdInterface;
+import com.tubitv.media.fsm.concrete.AdPlayingState;
 import com.tubitv.media.fsm.listener.AdPlayingMonitor;
 import com.tubitv.media.fsm.listener.CuePointMonitor;
 import com.tubitv.media.fsm.state_machine.FsmPlayer;
@@ -190,11 +191,21 @@ public class DoubleViewTubiPlayerActivity extends TubiPlayerActivity implements 
     @Override
     protected void updateResumePosition() {
         super.updateResumePosition();
+
+        //keep track of movie player's position when activity resume back
         if (mTubiExoPlayer != null && playerUIController != null && mTubiExoPlayer.getPlaybackState() != ExoPlayer.STATE_IDLE) {
             int resumeWindow = mTubiExoPlayer.getCurrentWindowIndex();
             long resumePosition = mTubiExoPlayer.isCurrentWindowSeekable() ? Math.max(0, mTubiExoPlayer.getCurrentPosition())
                     : C.TIME_UNSET;
             playerUIController.setMovieResumeInfo(resumeWindow, resumePosition);
+        }
+
+        //keep track of ad player's position when activity resume back, only keep track when current state is in AdPlayingState.
+        if(fsmPlayer.getCurrentState() instanceof AdPlayingState && adPlayer !=null && playerUIController != null && adPlayer.getPlaybackState()!=ExoPlayer.STATE_IDLE){
+            int ad_resumeWindow = adPlayer.getCurrentWindowIndex();
+            long ad_resumePosition = adPlayer.isCurrentWindowSeekable() ? Math.max(0, adPlayer.getCurrentPosition())
+                    : C.TIME_UNSET;
+            playerUIController.setAdResumeInfo(ad_resumeWindow, ad_resumePosition);
         }
     }
 
