@@ -4,6 +4,7 @@ import android.support.annotation.Nullable;
 import android.view.View;
 import android.webkit.WebView;
 
+import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.SimpleExoPlayer;
 
 /**
@@ -20,13 +21,13 @@ public class PlayerUIController {
 
     private View exoPlayerView;
 
-    private int adResumeWindow;
+    private int adResumeWindow = C.INDEX_UNSET;
 
-    private long adResumePosition;
+    private long adResumePosition = C.TIME_UNSET;
 
-    private int movieResumeWindow;
+    private int movieResumeWindow = C.INDEX_UNSET;
 
-    private long movieResumePosition;
+    private long movieResumePosition = C.TIME_UNSET;
 
     public PlayerUIController(@Nullable SimpleExoPlayer contentPlayer, @Nullable SimpleExoPlayer adPlayer, @Nullable WebView vpaidWebView, @Nullable View exoPlayerView) {
         this.contentPlayer = contentPlayer;
