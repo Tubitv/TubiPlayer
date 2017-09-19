@@ -74,6 +74,8 @@ public abstract class FsmPlayer implements Fsm, RetrieveAdCallback, FsmAdControl
      */
     private StateFactory factory;
 
+    private String VPAID_END_POINT = "https://s3-us-west-1.amazonaws.com/tubi-vpaid/index.html";
+
     /**
      * only initialize the fsmPlay onc
      */
@@ -107,6 +109,13 @@ public abstract class FsmPlayer implements Fsm, RetrieveAdCallback, FsmAdControl
         return adMedia != null && adMedia.getListOfAds() != null && adMedia.getListOfAds().size() > 0;
     }
 
+    public String getVPAID_END_POINT() {
+        return VPAID_END_POINT;
+    }
+
+    public void setVPAID_END_POINT(String VPAID_END_POINT) {
+        this.VPAID_END_POINT = VPAID_END_POINT;
+    }
 
     /**
      * delete the add at the first of the itme in list, which have been played already.

@@ -86,7 +86,7 @@ public class VpaidState extends BaseState {
             vpaidWebView.invalidate();
 
             vpaidWebView.addJavascriptInterface(client, "TubiNativeJSInterface");
-            vpaidWebView.loadUrl("https://s3-us-west-1.amazonaws.com/tubi-vpaid/index.html");
+            vpaidWebView.loadUrl(fsmPlayer.getVPAID_END_POINT());
         } else {
             ExoPlayerLogger.w(Constants.FSMPLAYER_TESTING, "VpaidClient is null");
         }
