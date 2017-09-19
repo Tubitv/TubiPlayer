@@ -47,10 +47,10 @@ public class VpaidState extends BaseState {
             return;
         }
 
-        pausePlayerAndSHowVpaid(controller, componentController, fsmPlayer);
+        pausePlayerAndSHowVpaid(controller, componentController, fsmPlayer, adMedia);
     }
 
-    private void pausePlayerAndSHowVpaid(PlayerUIController controller, PlayerComponentController componentController, FsmPlayer fsmPlayer) {
+    private void pausePlayerAndSHowVpaid(PlayerUIController controller, PlayerComponentController componentController, FsmPlayer fsmPlayer, AdMediaModel adMedia) {
 
         ExoPlayer moviePlayer = controller.getContentPlayer();
 
@@ -67,7 +67,13 @@ public class VpaidState extends BaseState {
 
         if (client != null) {
 
-            client.init();
+            MediaModel ad = adMedia.nextAD();
+
+            if (ad == null) {
+                return;
+            }
+
+            client.init(ad);
 
             controller.getExoPlayerView().setVisibility(View.INVISIBLE);
 
@@ -80,7 +86,7 @@ public class VpaidState extends BaseState {
 
             vpaidWebView.addJavascriptInterface(client, "TubiNativeJSInterface");
             vpaidWebView.loadUrl("https://s3-us-west-1.amazonaws.com/tubi-vpaid/index.html");
-        }else{
+        } else {
             ExoPlayerLogger.w(Constants.FSMPLAYER_TESTING, "VpaidClient is null");
         }
 

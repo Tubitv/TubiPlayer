@@ -1,10 +1,8 @@
 package com.tubitv.media.demo.di;
 
-import android.os.Build;
 import android.os.Handler;
 import android.os.Looper;
 import android.support.annotation.Nullable;
-import android.support.annotation.RequiresApi;
 import android.view.View;
 import android.webkit.WebView;
 
@@ -163,7 +161,6 @@ public class FSMModuleReal {
         };
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
     @ActicityScope
     @Provides
     VpaidClient provideVpaidClient(FsmPlayer player){

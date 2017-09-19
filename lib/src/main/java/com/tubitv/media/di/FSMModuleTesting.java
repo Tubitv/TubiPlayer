@@ -166,7 +166,7 @@ public class FSMModuleTesting {
     VpaidClient provideVpaidClient(){
         return new VpaidClient() {
             @Override
-            public void init() {
+            public void init(MediaModel ad) {
 
             }
 

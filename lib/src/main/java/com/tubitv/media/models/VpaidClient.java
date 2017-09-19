@@ -8,7 +8,7 @@ import android.webkit.JavascriptInterface;
  */
 public interface VpaidClient {
 
-    void init();
+    void init(MediaModel adMediaModel);
 
     @JavascriptInterface
     void notifyAdError(int code, String error);

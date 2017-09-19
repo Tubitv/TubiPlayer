@@ -5,6 +5,7 @@ import android.annotation.TargetApi;
 import android.os.Build;
 import android.os.Handler;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
@@ -20,6 +21,7 @@ import android.webkit.WebViewClient;
 import com.tubitv.demo.BuildConfig;
 import com.tubitv.media.fsm.state_machine.FsmAdController;
 import com.tubitv.media.fsm.state_machine.FsmPlayer;
+import com.tubitv.media.models.MediaModel;
 import com.tubitv.media.models.VpaidClient;
 
 import java.util.Locale;
@@ -56,7 +58,7 @@ public class TubiVPAID implements VpaidClient {
 
     @SuppressLint("SetJavaScriptEnabled")
     @TargetApi(21)
-    public void init() {
+    public void init(@Nullable MediaModel mediaModel) {
         mVPAIDWebView.clearHistory();
         // setup the webview we need if we want to load vpaid
         mVPAIDWebView.setWebViewClient(new VPAidWebViewClient());

@@ -44,7 +44,7 @@ public class WebviewActivity extends Activity {
     private void initVpaidWebview(WebView view, Handler handler) {
         tubiVPAID = new TubiVPAID(view, handler,null);
 
-        tubiVPAID.init();
+        tubiVPAID.init(null);
 
         webView.setVisibility(View.VISIBLE);
         webView.bringToFront();
