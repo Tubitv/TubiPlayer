@@ -34,8 +34,8 @@ public class VpaidState extends BaseState {
             case VPAID_MANIFEST:
                 return factory.createState(VpaidState.class);
 
-            case NEXT_VPAID:
-                return factory.createState(VpaidState.class);
+            case NEXT_AD:
+                return factory.createState(AdPlayingState.class);
         }
         return null;
     }

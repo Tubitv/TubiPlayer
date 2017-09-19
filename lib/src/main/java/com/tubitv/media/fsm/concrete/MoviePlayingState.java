@@ -87,7 +87,6 @@ public class MoviePlayingState extends BaseState {
             vpaidEWebView.setVisibility(View.GONE);
             vpaidEWebView.loadUrl("about:blank");
             vpaidEWebView.clearHistory();
-            vpaidEWebView.setVisibility(View.GONE);
         }
     }
 

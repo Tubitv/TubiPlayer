@@ -41,7 +41,6 @@ public enum Input {
      * Only expect inputs of {@link com.tubitv.media.fsm.concrete.VpaidState}
      */
     VPAID_FINISH,
-    NEXT_VPAID,
 
     /**
      * Only expect inputs of {@link VastAdInteractionSandBoxState}

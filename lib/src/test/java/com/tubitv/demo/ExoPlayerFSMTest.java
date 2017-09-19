@@ -112,7 +112,7 @@ public class ExoPlayerFSMTest {
 
         assertTrue(playerFsm.getCurrentState() instanceof VpaidState);
 
-        playerFsm.transit(Input.NEXT_VPAID);
+        playerFsm.transit(Input.VPAID_MANIFEST);
 
         assertTrue(playerFsm.getCurrentState() instanceof VpaidState);
 
@@ -256,11 +256,11 @@ public class ExoPlayerFSMTest {
 
         assertTrue(playerFsm.getCurrentState() instanceof VpaidState);
 
-        playerFsm.transit(Input.NEXT_VPAID);
+        playerFsm.transit(Input.VPAID_MANIFEST);
 
         assertTrue(playerFsm.getCurrentState() instanceof VpaidState);
 
-        playerFsm.transit(Input.NEXT_VPAID);
+        playerFsm.transit(Input.VPAID_MANIFEST);
 
         assertTrue(playerFsm.getCurrentState() instanceof VpaidState);
 
@@ -345,11 +345,11 @@ public class ExoPlayerFSMTest {
 
             assertTrue(playerFsm.getCurrentState() instanceof VpaidState);
 
-            playerFsm.transit(Input.NEXT_VPAID);
+            playerFsm.transit(Input.VPAID_MANIFEST);
 
             assertTrue(playerFsm.getCurrentState() instanceof VpaidState);
 
-            playerFsm.transit(Input.NEXT_VPAID);
+            playerFsm.transit(Input.VPAID_MANIFEST);
 
             assertTrue(playerFsm.getCurrentState() instanceof VpaidState);
 

@@ -117,14 +117,19 @@ public class FSMModuleReal {
     @Provides
     AdMediaModel provideAdMediaModel() {
         MediaModel ad_1 = MediaModel.ad("http://c13.adrise.tv/ads/transcodes/004130/1050072/v0617070213-640x360-SD-,764,1057,k.mp4.m3u8",
-                "first ad", false);
+                "first ad", true);
 
         MediaModel ad_2 = MediaModel.ad("http://c11.adrise.tv/ads/transcodes/003572/940826/v0329081907-1280x720-HD-,740,1285,1622,2138,3632,k.mp4.m3u8",
-                "second ad",true);
+                "second ad",false);
+
+        MediaModel ad_3 = MediaModel.ad("http://c11.adrise.tv/ads/transcodes/003572/940826/v0329081907-1280x720-HD-,740,1285,1622,2138,3632,k.mp4.m3u8",
+                "third ad",true);
 
         final List<MediaModel> list = new ArrayList<>();
+
         list.add(ad_1);
         list.add(ad_2);
+        list.add(ad_3);
 
         AdMediaModel adMediaModel = new AdMediaModel(list) {
             @Nullable
