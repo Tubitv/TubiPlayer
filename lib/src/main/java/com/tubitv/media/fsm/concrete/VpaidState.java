@@ -70,6 +70,7 @@ public class VpaidState extends BaseState {
             MediaModel ad = adMedia.nextAD();
 
             if (ad == null) {
+                ExoPlayerLogger.w(Constants.FSMPLAYER_TESTING, "Vpaid ad is null");
                 return;
             }
 
