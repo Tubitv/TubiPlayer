@@ -42,7 +42,7 @@ public class TubiVPAID implements VpaidClient {
     private Handler mHandler;
     private String vastXml = Vastxml.getAdXmlBody();
     private FsmAdController fsmPlayer;
-//    private Ad mAd;
+
 
     /**
      * @param webView   the webview to displaying vpaid
@@ -58,6 +58,7 @@ public class TubiVPAID implements VpaidClient {
     @SuppressLint("SetJavaScriptEnabled")
     @TargetApi(21)
     public void init(@Nullable MediaModel mediaModel) {
+        mVPAIDWebView.loadUrl(VpaidClient.EMPTY_URL);
         mVPAIDWebView.clearHistory();
         // setup the webview we need if we want to load vpaid
         mVPAIDWebView.setWebViewClient(new VPAidWebViewClient());
@@ -84,10 +85,6 @@ public class TubiVPAID implements VpaidClient {
             }
         });
 
-//        if (mPlayerEvents != null) {
-//            mPlayerEvents.onComplete();
-//        }
-
     }
 
     /**
@@ -100,10 +97,6 @@ public class TubiVPAID implements VpaidClient {
     @JavascriptInterface
     @SuppressWarnings("unused")
     public void notifyAdError(int code, String error) {
-        // make the error comma separated for easy parsing
-//        String errorMsg = String.format(Locale.US, "AdId:%s,SiId:%s,Code:%d,Message:\"%s\"",
-//                code,
-//                TextUtils.isEmpty(error) ? "No msg" : error);
 
         Log.e(TAG, "Error playing VPAID Ad: " + error);
 
@@ -157,8 +150,7 @@ public class TubiVPAID implements VpaidClient {
                     }
                 }
             });
-//            if (mPlayerEvents != null)
-//                mPlayerEvents.onComplete();
+
         }
 
         /**

@@ -17,6 +17,7 @@ import com.tubitv.media.fsm.concrete.factory.StateFactory;
 import com.tubitv.media.fsm.state_machine.FsmPlayer;
 import com.tubitv.media.models.AdMediaModel;
 import com.tubitv.media.models.MediaModel;
+import com.tubitv.media.models.VpaidClient;
 import com.tubitv.media.views.TubiExoPlayerView;
 
 /**
@@ -85,7 +86,7 @@ public class MoviePlayingState extends BaseState {
         WebView vpaidEWebView = controller.getVpaidWebView();
         if (vpaidEWebView != null) {
             vpaidEWebView.setVisibility(View.GONE);
-            vpaidEWebView.loadUrl("about:blank");
+            vpaidEWebView.loadUrl(VpaidClient.EMPTY_URL);
             vpaidEWebView.clearHistory();
         }
     }

@@ -8,6 +8,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.Log;
 import android.view.View;
+import android.webkit.WebBackForwardList;
 import android.webkit.WebView;
 import android.widget.TextView;
 
@@ -29,6 +30,7 @@ import com.tubitv.media.di.component.DaggerFsmComonent;
 import com.tubitv.media.fsm.Input;
 import com.tubitv.media.fsm.callback.AdInterface;
 import com.tubitv.media.fsm.concrete.AdPlayingState;
+import com.tubitv.media.fsm.concrete.VpaidState;
 import com.tubitv.media.fsm.listener.AdPlayingMonitor;
 import com.tubitv.media.fsm.listener.CuePointMonitor;
 import com.tubitv.media.fsm.state_machine.FsmPlayer;
@@ -205,7 +207,7 @@ public class DoubleViewTubiPlayerActivity extends TubiPlayerActivity implements 
         }
 
         //keep track of ad player's position when activity resume back, only keep track when current state is in AdPlayingState.
-        if(fsmPlayer.getCurrentState() instanceof AdPlayingState && adPlayer !=null && playerUIController != null && adPlayer.getPlaybackState()!=ExoPlayer.STATE_IDLE){
+        if (fsmPlayer.getCurrentState() instanceof AdPlayingState && adPlayer != null && playerUIController != null && adPlayer.getPlaybackState() != ExoPlayer.STATE_IDLE) {
             int ad_resumeWindow = adPlayer.getCurrentWindowIndex();
             long ad_resumePosition = adPlayer.isCurrentWindowSeekable() ? Math.max(0, adPlayer.getCurrentPosition())
                     : C.TIME_UNSET;
@@ -257,7 +259,7 @@ public class DoubleViewTubiPlayerActivity extends TubiPlayerActivity implements 
         setContentView(R.layout.activity_double_tubi_player);
 
         mTubiPlayerView = (TubiExoPlayerView) findViewById(R.id.tubitv_player);
-        vpaidWebView = (WebView)findViewById(R.id.vpaid_webview);
+        vpaidWebView = (WebView) findViewById(R.id.vpaid_webview);
 
         mTubiPlayerView.requestFocus();
         mTubiPlayerView.setActivity(this);
@@ -271,8 +273,20 @@ public class DoubleViewTubiPlayerActivity extends TubiPlayerActivity implements 
 
     @Override
     public void onBackPressed() {
-        if (vpaidWebView!=null && vpaidWebView.canGoBack()) {
+
+        //if the last page is empty url, then, it should
+        if (vpaidWebView != null) {
+            WebBackForwardList mWebBackForwardList = vpaidWebView.copyBackForwardList();
+            String historyUrl = mWebBackForwardList.getItemAtIndex(mWebBackForwardList.getCurrentIndex() - 1).getUrl();
+            if (historyUrl != null && historyUrl.equalsIgnoreCase(VpaidClient.EMPTY_URL)) {
+                super.onBackPressed();
+                return;
+            }
+        }
+
+        if (fsmPlayer != null && fsmPlayer.getCurrentState() instanceof VpaidState && vpaidWebView != null && vpaidWebView.canGoBack()) {
             vpaidWebView.goBack();
+
         } else {
             super.onBackPressed();
         }
@@ -313,7 +327,7 @@ public class DoubleViewTubiPlayerActivity extends TubiPlayerActivity implements 
 
     @Override
     public void onPlayToggle(@Nullable MediaModel mediaModel, boolean playing) {
-        ExoPlayerLogger.v(TAG, mediaModel.getMediaName() + ": " + mediaModel.toString() +" onPlayToggle :");
+        ExoPlayerLogger.v(TAG, mediaModel.getMediaName() + ": " + mediaModel.toString() + " onPlayToggle :");
     }
 
     @Override
@@ -326,12 +340,12 @@ public class DoubleViewTubiPlayerActivity extends TubiPlayerActivity implements 
 
     @Override
     public void onSubtitles(@Nullable MediaModel mediaModel, boolean enabled) {
-        ExoPlayerLogger.v(TAG, mediaModel.getMediaName() + ": " + mediaModel.toString() +" onSubtitles :" + mediaModel.getMediaName());
+        ExoPlayerLogger.v(TAG, mediaModel.getMediaName() + ": " + mediaModel.toString() + " onSubtitles :" + mediaModel.getMediaName());
     }
 
     @Override
     public void onQuality(@Nullable MediaModel mediaModel) {
-        ExoPlayerLogger.v(TAG,mediaModel.getMediaName() + ": " + mediaModel.toString() +" onQuality :" + mediaModel.getMediaName());
+        ExoPlayerLogger.v(TAG, mediaModel.getMediaName() + ": " + mediaModel.toString() + " onQuality :" + mediaModel.getMediaName());
     }
 
     @Override
@@ -346,12 +360,12 @@ public class DoubleViewTubiPlayerActivity extends TubiPlayerActivity implements 
 
         for (int i = 0; i < cuePoints.length; i++) {
 
-            double minutes = (double)cuePoints[i] /1000 /60;
+            double minutes = (double) cuePoints[i] / 1000 / 60;
 
-            double second = (minutes - Math.floor(minutes)) *60;
+            double second = (minutes - Math.floor(minutes)) * 60;
 
 
-            builder.append((int)minutes + "min" + (int)second + "sec, " );
+            builder.append((int) minutes + "min" + (int) second + "sec, ");
         }
 
         return builder.toString();

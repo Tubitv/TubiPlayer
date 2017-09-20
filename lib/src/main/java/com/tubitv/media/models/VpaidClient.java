@@ -18,4 +18,6 @@ public interface VpaidClient {
 
     @JavascriptInterface
     String getVastXml();
+
+    String EMPTY_URL = "about:blank";
 }
