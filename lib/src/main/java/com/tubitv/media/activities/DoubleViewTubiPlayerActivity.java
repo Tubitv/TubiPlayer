@@ -181,6 +181,11 @@ public class DoubleViewTubiPlayerActivity extends TubiPlayerActivity implements 
             adPlayer = null;
             trackSelector_ad = null;
         }
+
+        if(vpaidWebView!=null){
+            vpaidWebView.loadUrl(VpaidClient.EMPTY_URL);
+            vpaidWebView.clearHistory();
+        }
     }
 
     private void updateAdResumePosition() {
