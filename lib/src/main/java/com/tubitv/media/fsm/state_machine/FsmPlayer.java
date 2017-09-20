@@ -74,7 +74,7 @@ public abstract class FsmPlayer implements Fsm, RetrieveAdCallback, FsmAdControl
      */
     private StateFactory factory;
 
-    private String VPAID_END_POINT = "https://s3-us-west-1.amazonaws.com/tubi-vpaid/index.html";
+    private String VPAID_END_POINT = "http://tubi-vpaid.s3-website-us-west-1.amazonaws.com/";
 
     /**
      * only initialize the fsmPlay onc

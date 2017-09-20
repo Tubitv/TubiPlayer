@@ -106,6 +106,10 @@ public class DoubleViewTubiPlayerActivity extends TubiPlayerActivity implements 
         DaggerFsmComonent.builder().fSMModuleTesting(new FSMModuleTesting(null, null, null, null)).build().inject(this);
     }
 
+    protected FsmPlayer getFsmPlayer() {
+        return fsmPlayer;
+    }
+
     @Override
     public void onStart() {
         super.onStart();

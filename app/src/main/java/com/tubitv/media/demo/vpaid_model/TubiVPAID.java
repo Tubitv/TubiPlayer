@@ -6,7 +6,6 @@ import android.os.Build;
 import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.webkit.JavascriptInterface;
@@ -102,11 +101,11 @@ public class TubiVPAID implements VpaidClient {
     @SuppressWarnings("unused")
     public void notifyAdError(int code, String error) {
         // make the error comma separated for easy parsing
-        String errorMsg = String.format(Locale.US, "AdId:%s,SiId:%s,Code:%d,Message:\"%s\"",
-                code,
-                TextUtils.isEmpty(error) ? "No msg" : error);
+//        String errorMsg = String.format(Locale.US, "AdId:%s,SiId:%s,Code:%d,Message:\"%s\"",
+//                code,
+//                TextUtils.isEmpty(error) ? "No msg" : error);
 
-        Log.e(TAG, "Error playing VPAID Ad: " + errorMsg);
+        Log.e(TAG, "Error playing VPAID Ad: " + error);
 
         mHandler.post(new Runnable() {
             @Override
