@@ -9,6 +9,7 @@ import android.support.annotation.Nullable;
 import android.util.Log;
 import android.view.View;
 import android.webkit.WebBackForwardList;
+import android.webkit.WebHistoryItem;
 import android.webkit.WebView;
 import android.widget.TextView;
 
@@ -274,22 +275,49 @@ public class DoubleViewTubiPlayerActivity extends TubiPlayerActivity implements 
     @Override
     public void onBackPressed() {
 
-        //if the last page is empty url, then, it should
-        if (vpaidWebView != null) {
-            WebBackForwardList mWebBackForwardList = vpaidWebView.copyBackForwardList();
-            String historyUrl = mWebBackForwardList.getItemAtIndex(mWebBackForwardList.getCurrentIndex() - 1).getUrl();
-            if (historyUrl != null && historyUrl.equalsIgnoreCase(VpaidClient.EMPTY_URL)) {
+
+        if (fsmPlayer != null && fsmPlayer.getCurrentState() instanceof VpaidState && vpaidWebView != null && vpaidWebView.canGoBack()) {
+
+            //if the last page is empty url, then, it should
+            if (ingoreWebViewBackNavigation(vpaidWebView)) {
                 super.onBackPressed();
                 return;
             }
-        }
 
-        if (fsmPlayer != null && fsmPlayer.getCurrentState() instanceof VpaidState && vpaidWebView != null && vpaidWebView.canGoBack()) {
             vpaidWebView.goBack();
 
         } else {
             super.onBackPressed();
         }
+    }
+
+    //when the last item is "about:blank", ingore the back navigation for webview.
+    private boolean ingoreWebViewBackNavigation(WebView vpaidWebView) {
+
+        if (vpaidWebView != null) {
+            WebBackForwardList mWebBackForwardList = vpaidWebView.copyBackForwardList();
+
+            if (mWebBackForwardList == null) {
+                return false;
+            }
+
+
+            WebHistoryItem historyItem = mWebBackForwardList.getItemAtIndex(mWebBackForwardList.getCurrentIndex() - 1);
+
+            if (historyItem == null) {
+                return false;
+            }
+
+            String historyUrl = historyItem.getUrl();
+
+
+            if (historyUrl != null && historyUrl.equalsIgnoreCase(VpaidClient.EMPTY_URL)) {
+
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /**
