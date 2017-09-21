@@ -88,12 +88,16 @@ public class DoubleViewTubiPlayerActivity extends TubiPlayerActivity implements 
     @Inject
     VpaidClient vpaidClient;
 
-    public AdRetriever getAdRetriever() {
+    protected AdRetriever getAdRetriever() {
         return adRetriever;
     }
 
-    public CuePointsRetriever getCuePointsRetriever() {
+    protected CuePointsRetriever getCuePointsRetriever() {
         return cuePointsRetriever;
+    }
+
+    protected PlayerUIController getPlayerUIController() {
+        return playerUIController;
     }
 
     @Override
