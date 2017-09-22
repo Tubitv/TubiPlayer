@@ -66,23 +66,109 @@ public class ExoPlayerFSMTest {
     }
 
     @Test
-    public void testFSMFlowWithVpaid() {
+    public void testFSMFlowWithVpaid_No_PreRollAd() {
 
         factory = comonent.getStateFactory();
 
-        playerFsm = new FsmPlayer(factory) {
+        playerFsm = new FsmPlayerImperial(factory) {
             @Override
             public Class initializeState() {
-                return MoviePlayingState.class;
+                return FetchCuePointState.class;
             }
         };
-//        playerFsm.setAdMedia(adMedia);
-//        playerFsm.setMovieMedia(movieMedia);
-//        playerFsm.setAdServerInterface(adServerInterface);
-//        playerFsm.setRetriever(retriever);
-//        playerFsm.setController(controller);
 
         playerFsm.transit(Input.INITIALIZE);
+
+        assertTrue(playerFsm.getCurrentState() instanceof FetchCuePointState);
+
+        playerFsm.transit(Input.NO_PREROLL_AD);
+
+        assertTrue(playerFsm.getCurrentState() instanceof MoviePlayingState);
+
+        playerFsm.transit(Input.MAKE_AD_CALL);
+
+        assertTrue(playerFsm.getCurrentState() instanceof MakingAdCallState);
+
+        playerFsm.transit(Input.AD_RECEIVED);
+
+        assertTrue(playerFsm.getCurrentState() instanceof ReceiveAdState);
+
+        playerFsm.transit(Input.SHOW_ADS);
+
+        assertTrue(playerFsm.getCurrentState() instanceof AdPlayingState);
+
+        playerFsm.transit(Input.NEXT_AD);
+
+        assertTrue(playerFsm.getCurrentState() instanceof AdPlayingState);
+
+        playerFsm.transit(Input.AD_CLICK);
+
+        assertTrue(playerFsm.getCurrentState() instanceof VastAdInteractionSandBoxState);
+
+        playerFsm.transit(Input.BACK_TO_PLAYER_FROM_VAST_AD);
+
+        assertTrue(playerFsm.getCurrentState() instanceof AdPlayingState);
+
+        playerFsm.transit(Input.VPAID_MANIFEST);
+
+        assertTrue(playerFsm.getCurrentState() instanceof VpaidState);
+
+        playerFsm.transit(Input.VPAID_MANIFEST);
+
+        assertTrue(playerFsm.getCurrentState() instanceof VpaidState);
+
+        playerFsm.transit(Input.VPAID_FINISH);
+
+        assertTrue(playerFsm.getCurrentState() instanceof MoviePlayingState);
+
+        playerFsm.transit(Input.MAKE_AD_CALL);
+
+        assertTrue(playerFsm.getCurrentState() instanceof MakingAdCallState);
+
+        playerFsm.transit(Input.EMPTY_AD);
+
+        assertTrue(playerFsm.getCurrentState() instanceof MoviePlayingState);
+
+        playerFsm.transit(Input.MOVIE_FINISH);
+
+        assertTrue(playerFsm.getCurrentState() instanceof FinishState);
+    }
+
+    @Test
+    public void testFSMFlowWithVpaid_With_PreRollAd() {
+
+        factory = comonent.getStateFactory();
+
+        playerFsm = new FsmPlayerImperial(factory) {
+            @Override
+            public Class initializeState() {
+                return FetchCuePointState.class;
+            }
+        };
+
+        playerFsm.transit(Input.INITIALIZE);
+
+        assertTrue(playerFsm.getCurrentState() instanceof FetchCuePointState);
+
+        playerFsm.transit(Input.HAS_PREROLL_AD);
+
+        assertTrue(playerFsm.getCurrentState() instanceof MakingPrerollAdCallState);
+
+        playerFsm.transit(Input.PRE_ROLL_AD_RECEIVED);
+
+        assertTrue(playerFsm.getCurrentState() instanceof AdPlayingState);
+
+        playerFsm.transit(Input.NEXT_AD);
+
+        assertTrue(playerFsm.getCurrentState() instanceof AdPlayingState);
+
+        playerFsm.transit(Input.VPAID_MANIFEST);
+
+        assertTrue(playerFsm.getCurrentState() instanceof VpaidState);
+
+        playerFsm.transit(Input.VPAID_FINISH);
+
+        assertTrue(playerFsm.getCurrentState() instanceof MoviePlayingState);
 
         playerFsm.transit(Input.MAKE_AD_CALL);
 
@@ -137,7 +223,7 @@ public class ExoPlayerFSMTest {
     public void testFSMFlowWithNoVpaid() {
         factory = comonent.getStateFactory();
 
-        playerFsm = new FsmPlayer(factory) {
+        playerFsm = new FsmPlayerImperial(factory) {
             @Override
             public Class initializeState() {
                 return MoviePlayingState.class;

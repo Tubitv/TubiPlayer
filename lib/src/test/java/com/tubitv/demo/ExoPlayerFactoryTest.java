@@ -13,6 +13,7 @@ import com.tubitv.media.fsm.concrete.VastAdInteractionSandBoxState;
 import com.tubitv.media.fsm.concrete.VpaidState;
 import com.tubitv.media.fsm.concrete.factory.StateFactory;
 import com.tubitv.media.fsm.state_machine.FsmPlayer;
+import com.tubitv.media.fsm.state_machine.FsmPlayerImperial;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -48,7 +49,7 @@ public class ExoPlayerFactoryTest {
         stateFactory.overrideStateCreation(TestVastAdSandBox.class);
         stateFactory.overrideStateCreation(TestVpadState.class);
 
-        playerFsm = new FsmPlayer(stateFactory) {
+        playerFsm = new FsmPlayerImperial(stateFactory) {
             @Override
             public Class initializeState() {
                 return MoviePlayingState.class;
