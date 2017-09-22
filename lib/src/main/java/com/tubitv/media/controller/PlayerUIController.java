@@ -29,6 +29,10 @@ public class PlayerUIController {
 
     private long movieResumePosition = C.TIME_UNSET;
 
+    private boolean hasHistory = false;
+
+    private long historyPosition = C.TIME_UNSET;
+
     public PlayerUIController(@Nullable SimpleExoPlayer contentPlayer, @Nullable SimpleExoPlayer adPlayer, @Nullable WebView vpaidWebView, @Nullable View exoPlayerView) {
         this.contentPlayer = contentPlayer;
         this.adPlayer = adPlayer;
@@ -54,6 +58,28 @@ public class PlayerUIController {
 
     public void setContentPlayer(SimpleExoPlayer contentPlayer) {
         this.contentPlayer = contentPlayer;
+    }
+
+    /**
+     * This is set when user want to begin the movie from current position
+     * @param pos
+     */
+    public void setPlayFromHistory(long pos){
+        hasHistory = true;
+        historyPosition = pos;
+    }
+
+    public boolean hasHistory(){
+        return hasHistory;
+    }
+
+    public long getHistoryPosition(){
+        return historyPosition;
+    }
+
+    public void clearHistoryRecord(){
+        hasHistory = false;
+        historyPosition = C.TIME_UNSET;
     }
 
     public void setAdResumeInfo(int window, long position) {

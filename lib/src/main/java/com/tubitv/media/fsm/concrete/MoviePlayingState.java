@@ -66,17 +66,30 @@ public class MoviePlayingState extends BaseState {
         //prepare the moviePlayer with data source and set it play
 
         boolean haveResumePosition = controller.getMovieResumePosition() != C.TIME_UNSET;
-        if (haveResumePosition) {
-            moviePlayer.seekTo(controller.getMovieResumeWindow(), controller.getMovieResumePosition());
-        }
-
         if (moviePlayer.getPlaybackState() == ExoPlayer.STATE_IDLE) {
             moviePlayer.prepare(movieMedia.getMediaSource(), !haveResumePosition, false);
         }
 
+        updatePlayerPosition(moviePlayer, controller);
+
         moviePlayer.setPlayWhenReady(true);
 
         hideVpaidNShowPlayer(controller);
+    }
+
+    private void updatePlayerPosition(SimpleExoPlayer moviePlayer, PlayerUIController controller) {
+
+        // if want to play movie from certain position when first open the movie
+        if (controller.hasHistory()) {
+            moviePlayer.seekTo(moviePlayer.getCurrentWindowIndex(), controller.getHistoryPosition());
+            controller.clearHistoryRecord();
+            return;
+        }
+
+        boolean haveResumePosition = controller.getMovieResumePosition() != C.TIME_UNSET;
+        if (haveResumePosition) {
+            moviePlayer.seekTo(moviePlayer.getCurrentWindowIndex(), controller.getMovieResumePosition());
+        }
     }
 
     private void hideVpaidNShowPlayer(final PlayerUIController controller) {

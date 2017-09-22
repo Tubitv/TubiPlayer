@@ -79,12 +79,13 @@ public class AdPlayingState extends BaseState {
             //prepare the moviePlayer with data source and set it play
 
             boolean haveResumePosition = controller.getAdResumePosition() != C.TIME_UNSET;
-            if (haveResumePosition) {
-                adPlayer.seekTo(controller.getAdResumeWindow(), controller.getAdResumePosition());
-            }
 
             //prepare the mediaSource to AdPlayer
             adPlayer.prepare(adMedia.getMediaSource(), !haveResumePosition, true);
+
+            if (haveResumePosition) {
+                adPlayer.seekTo(adPlayer.getCurrentWindowIndex(), controller.getAdResumePosition());
+            }
 
             //update the ExoPlayerView with AdPlayer and AdMedia
             TubiExoPlayerView tubiExoPlayerView = (TubiExoPlayerView) controller.getExoPlayerView();
