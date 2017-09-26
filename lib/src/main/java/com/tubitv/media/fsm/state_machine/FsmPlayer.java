@@ -93,6 +93,10 @@ public abstract class FsmPlayer implements Fsm, RetrieveAdCallback, FsmAdControl
         this.movieMedia = movieMedia;
     }
 
+    public MediaModel getMovieMedia() {
+        return movieMedia;
+    }
+
     public void setAdMedia(AdMediaModel adMedia) {
         this.adMedia = adMedia;
     }
@@ -132,6 +136,10 @@ public abstract class FsmPlayer implements Fsm, RetrieveAdCallback, FsmAdControl
 
     public void setController(@NonNull PlayerUIController controller) {
         this.controller = controller;
+    }
+
+    public PlayerUIController getController() {
+        return controller;
     }
 
     public void setAdServerInterface(@NonNull AdInterface adServerInterface) {
