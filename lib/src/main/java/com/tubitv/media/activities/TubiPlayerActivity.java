@@ -46,26 +46,29 @@ import com.tubitv.media.views.TubiPlayerControlView;
 public abstract class TubiPlayerActivity extends Activity implements TubiPlayerControlView.VisibilityListener, TubiPlaybackInterface {
     public static String TUBI_MEDIA_KEY = "tubi_media_key";
 
-    private SimpleExoPlayer mTubiExoPlayer;
+    protected SimpleExoPlayer mTubiExoPlayer;
     private Handler mMainHandler;
-    private TubiExoPlayerView mTubiPlayerView;
+    protected TubiExoPlayerView mTubiPlayerView;
     private DataSource.Factory mMediaDataSourceFactory;
-    private DefaultTrackSelector mTrackSelector;
+    protected DefaultTrackSelector mTrackSelector;
     private EventLogger mEventLogger;
     private TrackSelectionHelper mTrackSelectionHelper;
 
-    private int resumeWindow;
+    protected int resumeWindow;
 
-    private long resumePosition;
+    protected long resumePosition;
 
     protected boolean isActive = false;
 
+    /**
+     * ideally, only one instance of {@link MediaModel} and its arrtibute {@link MediaSource} for movie should be created throughout the whole movie playing experiences.
+     */
     @NonNull
     protected MediaModel mediaModel;
 
     private static final DefaultBandwidthMeter BANDWIDTH_METER = new DefaultBandwidthMeter();
 
-    private boolean shouldAutoPlay;
+    protected boolean shouldAutoPlay;
 
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
@@ -139,7 +142,7 @@ public abstract class TubiPlayerActivity extends Activity implements TubiPlayerC
                 errorNoMediaMessage);
     }
 
-    private void initLayout() {
+    protected void initLayout() {
         setContentView(R.layout.activity_tubi_player);
         mTubiPlayerView = (TubiExoPlayerView) findViewById(R.id.tubitv_player);
         mTubiPlayerView.requestFocus();
@@ -160,14 +163,14 @@ public abstract class TubiPlayerActivity extends Activity implements TubiPlayerC
 
     protected abstract void onPlayerReady();
 
-    private void initPlayer() {
+    protected void initPlayer() {
         // 1. Create a default TrackSelector
         mMainHandler = new Handler();
         TrackSelection.Factory videoTrackSelectionFactory =
                 new AdaptiveTrackSelection.Factory(BANDWIDTH_METER);
         mTrackSelector =
                 new DefaultTrackSelector(videoTrackSelectionFactory);
-        mTrackSelectionHelper = new TrackSelectionHelper(this, mTrackSelector);
+        mTrackSelectionHelper = new TrackSelectionHelper(this, mTrackSelector,videoTrackSelectionFactory);
 
 
         // 3. Create the mTubiExoPlayer
@@ -180,9 +183,8 @@ public abstract class TubiPlayerActivity extends Activity implements TubiPlayerC
         mTubiExoPlayer.setMetadataOutput(mEventLogger);
 
         mTubiPlayerView.setPlayer(mTubiExoPlayer, this);
-        mTubiPlayerView.setMediaModel(mediaModel);
+        mTubiPlayerView.setMediaModel(mediaModel,true);
         mTubiPlayerView.setTrackSelectionHelper(mTrackSelectionHelper);
-        mTubiExoPlayer.setPlayWhenReady(shouldAutoPlay);
     }
 
     protected void playMedia(MediaSource mediaSource) {
@@ -190,6 +192,7 @@ public abstract class TubiPlayerActivity extends Activity implements TubiPlayerC
         if (haveResumePosition) {
             mTubiExoPlayer.seekTo(resumeWindow, resumePosition);
         }
+        mTubiExoPlayer.setPlayWhenReady(shouldAutoPlay);
         mTubiExoPlayer.prepare(mediaSource, !haveResumePosition, false);
         Utils.hideSystemUI(this, true);
     }

@@ -5,11 +5,14 @@ import android.databinding.DataBindingUtil;
 import android.support.annotation.NonNull;
 import android.text.TextUtils;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.LinearLayout;
 
+import com.afollestad.materialdialogs.DialogAction;
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.google.android.exoplayer2.Format;
 import com.google.android.exoplayer2.RendererCapabilities;
 import com.google.android.exoplayer2.source.TrackGroup;
@@ -20,7 +23,6 @@ import com.google.android.exoplayer2.trackselection.TrackSelection;
 import com.google.android.exoplayer2.util.MimeTypes;
 import com.tubitv.media.R;
 import com.tubitv.media.databinding.ViewTubiQualityDialogBinding;
-import com.tubitv.media.utilities.Utils;
 
 import java.util.Arrays;
 import java.util.Locale;
@@ -28,7 +30,7 @@ import java.util.Locale;
 /**
  * Created by stoyan on 6/2/17.
  */
-public class TubiQualityDialogView extends LinearLayout implements View.OnClickListener {
+public class TubiQualityDialogView extends LinearLayout implements View.OnClickListener, MaterialDialog.SingleButtonCallback {
 
     private static final TrackSelection.Factory FIXED_FACTORY = new FixedTrackSelection.Factory();
 
@@ -65,6 +67,13 @@ public class TubiQualityDialogView extends LinearLayout implements View.OnClickL
      */
     private ViewTubiQualityDialogBinding mBinding;
 
+    private boolean[] trackGroupsAdaptive;
+
+    private boolean isDisabled;
+
+    @NonNull
+    private TrackSelection.Factory adaptiveTrackSelectionFactory;
+
     public TubiQualityDialogView(Context context) {
         this(context, null);
     }
@@ -84,6 +93,10 @@ public class TubiQualityDialogView extends LinearLayout implements View.OnClickL
         initLayout();
     }
 
+    public void setAdaptiveTrackSelectionFactory(TrackSelection.Factory adaptiveTrackSelectionFactory) {
+        this.adaptiveTrackSelectionFactory = adaptiveTrackSelectionFactory;
+    }
+
     @Override
     public void onAttachedToWindow() {
         super.onAttachedToWindow();
@@ -97,25 +110,49 @@ public class TubiQualityDialogView extends LinearLayout implements View.OnClickL
     }
 
     @Override
+    public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+
+        Log.e("Dialog", "positive click");
+
+        selector.setRendererDisabled(rendererIndex, isDisabled);
+        if (override != null) {
+            selector.setSelectionOverride(rendererIndex, trackGroups, override);
+        } else {
+            selector.clearSelectionOverrides(rendererIndex);
+        }
+    }
+
+    @Override
     public void onClick(View view) {
+
         if (view == qualityAutoView) {
+            isDisabled = false;
             override = null;
         } else {
+            isDisabled = false;
             @SuppressWarnings("unchecked")
             Pair<Integer, Integer> tag = (Pair<Integer, Integer>) view.getTag();
             int groupIndex = tag.first;
             int trackIndex = tag.second;
-            if (override == null || override.groupIndex != groupIndex) {
+            if (!trackGroupsAdaptive[groupIndex] || override == null
+                    || override.groupIndex != groupIndex) {
                 override = new MappingTrackSelector.SelectionOverride(FIXED_FACTORY, groupIndex, trackIndex);
             } else {
                 // The group being modified is adaptive and we already have a non-null override.
                 boolean isEnabled = ((TubiRadioButton) view).isChecked();
+                int overrideLength = override.length;
                 if (isEnabled) {
                     // Remove the track from the override.
-                    override = null;
+                    if (overrideLength == 1) {
+                        // The last track is being removed, so the override becomes empty.
+                        override = null;
+                        isDisabled = true;
+                    } else {
+                        setOverride(groupIndex, getTracksRemoving(override, trackIndex));
+                    }
                 } else {
                     // Add the track to the override.
-                    setOverride(groupIndex, trackIndex);
+                    setOverride(groupIndex, getTracksAdding(override, trackIndex));
                 }
             }
         }
@@ -206,8 +243,14 @@ public class TubiQualityDialogView extends LinearLayout implements View.OnClickL
         qualityAutoView.setChecked(override == null);
     }
 
-    private void setOverride(int group, int... tracks) {
-        override = new MappingTrackSelector.SelectionOverride(FIXED_FACTORY, group, tracks);
+//    private void setOverride(int group, int... tracks) {
+//        override = new MappingTrackSelector.SelectionOverride(FIXED_FACTORY, group, tracks);
+//    }
+
+    private void setOverride(int group, int[] tracks) {
+        TrackSelection.Factory factory = tracks.length == 1 ? FIXED_FACTORY
+                : adaptiveTrackSelectionFactory;
+        override = new MappingTrackSelector.SelectionOverride(factory, group, tracks);
     }
 
     private static int[] getTracksRemoving(@NonNull MappingTrackSelector.SelectionOverride override, int removedTrack) {
@@ -237,12 +280,12 @@ public class TubiQualityDialogView extends LinearLayout implements View.OnClickL
 
     // Track name construction.
 
-    private static String buildTrackName(Format format) {
+    public static String buildTrackName(Format format) {
         String trackName;
         if (MimeTypes.isVideo(format.sampleMimeType)) {
-            trackName = !Utils.isEmpty(buildResolutionString(format)) ? buildResolutionString(format) :
-                    !Utils.isEmpty(buildBitrateString(format)) ? buildBitrateString(format) :
-                            buildTrackIdString(format);
+            trackName = joinWithSeparator(joinWithSeparator(joinWithSeparator(
+                    buildResolutionString(format), buildBitrateString(format)), buildTrackIdString(format)),
+                    buildSampleMimeTypeString(format));
         } else if (MimeTypes.isAudio(format.sampleMimeType)) {
             trackName = joinWithSeparator(joinWithSeparator(joinWithSeparator(joinWithSeparator(
                     buildLanguageString(format), buildAudioPropertyString(format)),
@@ -288,11 +331,22 @@ public class TubiQualityDialogView extends LinearLayout implements View.OnClickL
         return format.sampleMimeType == null ? "" : format.sampleMimeType;
     }
 
+
     private void setSelector(MappingTrackSelector selector) {
         this.selector = selector;
         setTrackInfo(selector.getCurrentMappedTrackInfo());
         setTrackGroups(trackInfo.getTrackGroups(rendererIndex));
         setOverride(selector.getSelectionOverride(rendererIndex, trackGroups));
+
+        trackGroupsAdaptive = new boolean[trackGroups.length];
+        for (int i = 0; i < trackGroups.length; i++) {
+            trackGroupsAdaptive[i] = adaptiveTrackSelectionFactory != null
+                    && trackInfo.getAdaptiveSupport(rendererIndex, i, false)
+                    != RendererCapabilities.ADAPTIVE_NOT_SUPPORTED
+                    && trackGroups.get(i).length > 1;
+        }
+//        isDisabled = selector.getRendererDisabled(rendererIndex);
+//        override = selector.getSelectionOverride(rendererIndex, trackGroups);
     }
 
     private void setTrackGroups(@NonNull TrackGroupArray trackGroups) {

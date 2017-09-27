@@ -280,5 +280,6 @@ public class TubiPlayerControlView extends ConstraintLayout implements TrackSele
         this.mediaModel = mediaModel;
         this.tubiObservable.setTitle(mediaModel.getMediaName());
         this.tubiObservable.setSubtitlesExist(mediaModel.getSubtitlesUrl() != null);
+        this.tubiObservable.setMediaModel(mediaModel);
     }
 }
