@@ -23,14 +23,15 @@
             android:id="@+id/view_tubi_ad_learn_more_ads_remaining"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:visibility="invisible"
             android:layout_marginTop="8dp"
             android:maxLines="1"
-            android:text="@{String.format(@string/view_tubi_ad_learn_more_ads_remaining_text, playMedia.adIndex, playMedia.adTotal)}"
             android:textColor="@color/tubi_tv_golden_gate"
             android:textSize="@dimen/view_tubi_ad_learn_more_text_size"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            tools:text="Ad 1/4"/>
+            tools:text="Ad"/>
+        <!--android:text="@{String.format(@string/view_tubi_ad_learn_more_ads_remaining_text, playMedia.adIndex, playMedia.adTotal)}"-->
 
         <com.tubitv.ui.VaudTextView
             android:id="@+id/view_tubi_ad_learn_more_ads_resume_shortly"
