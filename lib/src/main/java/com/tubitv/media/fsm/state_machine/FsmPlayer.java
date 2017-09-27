@@ -74,12 +74,14 @@ public abstract class FsmPlayer implements Fsm, RetrieveAdCallback, FsmAdControl
      */
     private StateFactory factory;
 
-    private String VPAID_END_POINT = "http://tubi-vpaid-player.tubitv.com/";
+    //this is a example url, you should use your own vpaid url instead.
+    private String VPAID_END_POINT = "http://tubitv.com/";
 
     /**
      * only initialize the fsmPlay onc
      */
     private boolean isInitialized = false;
+
 
     public FsmPlayer(StateFactory factory) {
         this.factory = factory;

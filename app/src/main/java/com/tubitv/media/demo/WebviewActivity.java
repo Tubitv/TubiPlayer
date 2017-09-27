@@ -25,8 +25,7 @@ public class WebviewActivity extends Activity {
 
     private WebView webView;
 
-    private static final String VPAID_URL = "http://tubi-vpaid.s3-website-us-west-1.amazonaws.com/";
-//            "http://tubi-vpaid.s3-website-us-west-1.amazonaws.com/?debug&mock";
+    private static final String VPAID_URL = "http://tubitv.com/";
 
 
     @RequiresApi(Build.VERSION_CODES.KITKAT)
