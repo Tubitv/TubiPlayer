@@ -87,9 +87,17 @@ public class PlayerUIController {
         adResumePosition = position;
     }
 
+    public void clearAdResumeInfo(){
+        setAdResumeInfo(C.INDEX_UNSET,C.TIME_UNSET);
+    }
+
     public void setMovieResumeInfo(int window, long position) {
         movieResumeWindow = window;
         movieResumePosition = position;
+    }
+
+    public void clearMovieResumeInfo(){
+        setMovieResumeInfo(C.INDEX_UNSET,C.TIME_UNSET);
     }
 
     public int getAdResumeWindow() {

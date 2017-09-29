@@ -198,7 +198,7 @@ public abstract class FsmPlayer implements Fsm, RetrieveAdCallback, FsmAdControl
 
             //reset the ad player position everytime when a transition to AdPlaying occur
             if(currentState instanceof AdPlayingState && controller!=null){
-                controller.setAdResumeInfo(C.INDEX_UNSET,C.TIME_UNSET);
+                controller.clearAdResumeInfo();
             }
 
         } else {
