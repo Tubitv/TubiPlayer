@@ -1,13 +1,11 @@
 package com.tubitv.media.activities;
 
 import android.content.Intent;
-import android.content.res.Configuration;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.View;
 import android.webkit.WebBackForwardList;
 import android.webkit.WebHistoryItem;
@@ -23,7 +21,6 @@ import com.google.android.exoplayer2.trackselection.AdaptiveTrackSelection;
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
 import com.google.android.exoplayer2.trackselection.TrackSelection;
 import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter;
-import com.google.android.exoplayer2.util.Util;
 import com.tubitv.media.R;
 import com.tubitv.media.controller.PlayerComponentController;
 import com.tubitv.media.controller.PlayerUIController;
@@ -118,54 +115,21 @@ public class DoubleViewTubiPlayerActivity extends TubiPlayerActivity implements 
     }
 
     @Override
-    public void onStart() {
-        super.onStart();
-
-        if (Util.SDK_INT > 23) {
-            //build the mediaModel into medaiSource.
-            createMediaSource();
-
-            setupAdPlayer();
-            prepareFSM();
-        }
+    protected void initPlayer() {
+        super.initPlayer();
+        createMediaSource();
+        setupAdPlayer();
     }
 
     @Override
-    public void onConfigurationChanged(Configuration newConfig) {
-        super.onConfigurationChanged(newConfig);
-        Log.d(TAG, "onConfgurationChanged :");
+    protected void onPlayerReady() {
+        prepareFSM();
     }
 
     @Override
-    public void onResume() {
-        super.onResume();
-        if ((Util.SDK_INT <= 23 || adPlayer == null)) {
-            //build the mediaModel into medaiSource.
-            createMediaSource();
-
-            setupAdPlayer();
-            prepareFSM();
-        }
-    }
-
-    @Override
-    public void onPause() {
-        super.onPause();
-        if (Util.SDK_INT <= 23) {
-            if (adPlayer != null) {
-                releaseAdPlayer();
-            }
-        }
-    }
-
-    @Override
-    public void onStop() {
-        super.onStop();
-        if (Util.SDK_INT > 23) {
-            if (adPlayer != null) {
-                releaseAdPlayer();
-            }
-        }
+    protected void releasePlayer() {
+        super.releasePlayer();
+        releaseAdPlayer();
     }
 
     private static final DefaultBandwidthMeter BANDWIDTH_METER_AD = new DefaultBandwidthMeter();
@@ -202,7 +166,7 @@ public class DoubleViewTubiPlayerActivity extends TubiPlayerActivity implements 
     }
 
     /**
-     * update the movie and ad playing position
+     * update the movie and ad playing position when players are released
      */
     @Override
     protected void updateResumePosition() {
@@ -260,9 +224,6 @@ public class DoubleViewTubiPlayerActivity extends TubiPlayerActivity implements 
         }
     }
 
-    @Override
-    protected void onPlayerReady() {
-    }
 
     @Override
     protected void initLayout() {
@@ -279,6 +240,14 @@ public class DoubleViewTubiPlayerActivity extends TubiPlayerActivity implements 
 
             }
         });
+    }
+
+    @Override
+    public void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        if(playerUIController!=null){
+            playerUIController.clearMovieResumeInfo();
+        }
     }
 
     @Override

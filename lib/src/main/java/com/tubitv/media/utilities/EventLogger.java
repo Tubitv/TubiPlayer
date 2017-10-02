@@ -57,7 +57,7 @@ import java.util.Locale;
 /**
  * Logs player events using {@link Log}.
  */
-public final class EventLogger implements ExoPlayer.EventListener,
+public class EventLogger implements ExoPlayer.EventListener,
         AudioRendererEventListener, VideoRendererEventListener, AdaptiveMediaSourceEventListener,
     ExtractorMediaSource.EventListener, DefaultDrmSessionManager.EventListener,
     MetadataRenderer.Output {
