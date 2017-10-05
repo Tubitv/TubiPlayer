@@ -95,6 +95,9 @@ public class AdPlayingState extends BaseState {
             //Player the Ad.
             adPlayer.setPlayWhenReady(true);
             adPlayer.addListener(componentController.getAdPlayingMonitor());
+            adPlayer.setAudioDebugListener(componentController.getAdPlayingMonitor());
+            adPlayer.setVideoDebugListener(componentController.getAdPlayingMonitor());
+            adPlayer.setMetadataOutput(componentController.getAdPlayingMonitor());
         }
     }
 

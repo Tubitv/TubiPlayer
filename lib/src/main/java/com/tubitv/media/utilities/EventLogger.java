@@ -16,6 +16,7 @@
 package com.tubitv.media.utilities;
 
 import android.os.SystemClock;
+import android.support.annotation.Nullable;
 import android.util.Log;
 import android.view.Surface;
 
@@ -77,7 +78,7 @@ public class EventLogger implements ExoPlayer.EventListener,
   private final Timeline.Period period;
   private final long startTimeMs;
 
-  public EventLogger(MappingTrackSelector trackSelector) {
+  public EventLogger(@Nullable MappingTrackSelector trackSelector) {
     this.trackSelector = trackSelector;
     window = new Timeline.Window();
     period = new Timeline.Period();
@@ -137,6 +138,10 @@ public class EventLogger implements ExoPlayer.EventListener,
 
   @Override
   public void onTracksChanged(TrackGroupArray ignored, TrackSelectionArray trackSelections) {
+    if(trackSelector==null){
+      Log.d(TAG, "Track selector is null");
+      return;
+    }
     MappedTrackInfo mappedTrackInfo = trackSelector.getCurrentMappedTrackInfo();
     if (mappedTrackInfo == null) {
       Log.d(TAG, "Tracks []");
