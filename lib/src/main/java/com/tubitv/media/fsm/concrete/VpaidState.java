@@ -58,7 +58,7 @@ public class VpaidState extends BaseState {
             moviePlayer.setPlayWhenReady(false);
         }
 
-        ExoPlayer adPlayer = controller.getContentPlayer();
+        ExoPlayer adPlayer = controller.getAdPlayer();
         if (adPlayer != null && adPlayer.getPlayWhenReady()) {
             adPlayer.setPlayWhenReady(false);
         }

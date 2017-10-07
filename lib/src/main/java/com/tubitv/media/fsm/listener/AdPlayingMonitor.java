@@ -65,6 +65,5 @@ public class AdPlayingMonitor extends EventLogger {
                 }
             }
         }
-        fsmPlayer.removePlayedAdAndTransitToNextState();
     }
 }
