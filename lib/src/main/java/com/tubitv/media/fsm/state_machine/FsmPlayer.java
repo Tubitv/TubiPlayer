@@ -126,7 +126,7 @@ public abstract class FsmPlayer implements Fsm, RetrieveAdCallback, FsmAdControl
     /**
      * delete the add at the first of the itme in list, which have been played already.
      */
-    public void popPlayedAd() {
+    private void popPlayedAd() {
         if (adMedia != null) {
             adMedia.popFirstAd();
         }

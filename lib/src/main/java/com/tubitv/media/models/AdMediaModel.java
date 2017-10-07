@@ -31,7 +31,9 @@ public class AdMediaModel {
     public void popFirstAd() {
         if (listOfAds != null && listOfAds.size() > 0) {
             MediaModel adMediaModel = listOfAds.remove(0);
-            adMediaModel.getMediaSource().releaseSource();
+            if(adMediaModel.getMediaSource()!=null) {
+                adMediaModel.getMediaSource().releaseSource();
+            }
         }
     }
 
