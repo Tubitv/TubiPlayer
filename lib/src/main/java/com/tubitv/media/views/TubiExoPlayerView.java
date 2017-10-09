@@ -289,7 +289,7 @@ public class TubiExoPlayerView extends FrameLayout implements TubiPlaybackContro
             player.setVideoListener(componentListener);
             player.setTextOutput(componentListener);
             player.addListener(componentListener);
-            maybeShowController(false);
+//            maybeShowController(false);
             updateForCurrentTrackSelections();
         } else {
             hideController();
@@ -762,7 +762,7 @@ public class TubiExoPlayerView extends FrameLayout implements TubiPlaybackContro
 
         @Override
         public void onPlayerStateChanged(boolean playWhenReady, int playbackState) {
-            maybeShowController(false);
+//            maybeShowController(false);
         }
 
         @Override
