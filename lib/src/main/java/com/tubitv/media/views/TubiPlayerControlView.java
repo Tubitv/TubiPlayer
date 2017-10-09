@@ -1,6 +1,7 @@
 package com.tubitv.media.views;
 
 import android.content.Context;
+import android.content.res.Resources;
 import android.databinding.BindingAdapter;
 import android.databinding.DataBindingUtil;
 import android.os.SystemClock;
@@ -278,8 +279,18 @@ public class TubiPlayerControlView extends ConstraintLayout implements TrackSele
 
     public void setMediaModel(@NonNull MediaModel mediaModel) {
         this.mediaModel = mediaModel;
-        this.tubiObservable.setTitle(mediaModel.getMediaName());
+        if (mediaModel.isAd()) {
+            this.tubiObservable.setTitle("");
+        } else {
+            this.tubiObservable.setTitle(mediaModel.getMediaName());
+        }
         this.tubiObservable.setSubtitlesExist(mediaModel.getSubtitlesUrl() != null);
         this.tubiObservable.setMediaModel(mediaModel);
+    }
+
+    public void setAvailableAdLeft(int count) {
+        Resources res = getResources();
+        String numberofAdLeftInString = res.getQuantityString(R.plurals.view_tubi_ad_learn_more_ads_resume_shortly_text, count, count);
+        this.tubiObservable.numberOfAdLeft.set(numberofAdLeftInString);
     }
 }

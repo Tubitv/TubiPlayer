@@ -33,6 +33,7 @@
             tools:text="Ad"/>
         <!--android:text="@{String.format(@string/view_tubi_ad_learn_more_ads_remaining_text, playMedia.adIndex, playMedia.adTotal)}"-->
 
+
         <com.tubitv.ui.VaudTextView
             android:id="@+id/view_tubi_ad_learn_more_ads_resume_shortly"
             android:layout_width="0dp"
@@ -40,7 +41,7 @@
             android:layout_marginLeft="8dp"
             android:layout_marginStart="8dp"
             android:maxLines="1"
-            android:text="@string/view_tubi_ad_learn_more_ads_resume_shortly_text"
+            android:text="@{playMedia.numberOfAdLeft}"
             android:textColor="@android:color/white"
             android:textSize="@dimen/view_tubi_ad_learn_more_text_size"
             app:layout_constraintBottom_toBottomOf="@+id/view_tubi_ad_learn_more_ads_remaining"

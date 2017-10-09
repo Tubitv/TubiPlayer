@@ -674,6 +674,10 @@ public class TubiExoPlayerView extends FrameLayout implements TubiPlaybackContro
         controller.setMediaModel(mediaModel);
     }
 
+    public void setAvailableAdLeft(int count){
+        controller.setAvailableAdLeft(count);
+    }
+
     @Override
     public void onSubtitlesToggle(boolean enabled) {
         View subtitles = getSubtitleView();
