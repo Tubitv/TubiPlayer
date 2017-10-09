@@ -180,7 +180,7 @@ public class TubiPlayerControlView extends ConstraintLayout implements TrackSele
      */
     public void show() {
         if (!isVisible()) {
-            setVisibility(VISIBLE);
+            findViewById(R.id.controller_panel).setVisibility(VISIBLE);
             if (visibilityListener != null) {
                 visibilityListener.onVisibilityChange(getVisibility());
             }
@@ -194,7 +194,7 @@ public class TubiPlayerControlView extends ConstraintLayout implements TrackSele
     public void hide() {
         if (isVisible()) {
             if (tubiObservable == null || !tubiObservable.userInteracting()) {
-                setVisibility(GONE);
+                findViewById(R.id.controller_panel).setVisibility(GONE);
                 if (visibilityListener != null) {
                     visibilityListener.onVisibilityChange(getVisibility());
                 }
@@ -266,7 +266,7 @@ public class TubiPlayerControlView extends ConstraintLayout implements TrackSele
      * Returns whether the controller is currently visible.
      */
     public boolean isVisible() {
-        return getVisibility() == VISIBLE;
+        return findViewById(R.id.controller_panel).getVisibility() == VISIBLE;
     }
 
     public int getShowTimeoutMs() {
