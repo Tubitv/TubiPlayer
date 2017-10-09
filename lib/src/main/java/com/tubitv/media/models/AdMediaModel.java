@@ -37,4 +37,12 @@ public class AdMediaModel {
         }
     }
 
+    public int nubmerOfAd(){
+        if(listOfAds==null){
+            return 0;
+        }else{
+            return listOfAds.size();
+        }
+    }
+
 }

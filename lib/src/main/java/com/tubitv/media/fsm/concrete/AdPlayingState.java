@@ -65,6 +65,8 @@ public class AdPlayingState extends BaseState {
 
         // then setup the player for ad to playe
         MediaModel adMedia = adMediaModel.nextAD();
+
+        //TODO: Handle situation when ad medaia is empty, or invalid urls.
         if (adMedia != null) {
 
             if (adMedia.isVpaid()) {
@@ -81,7 +83,7 @@ public class AdPlayingState extends BaseState {
             boolean haveResumePosition = controller.getAdResumePosition() != C.TIME_UNSET;
 
             //prepare the mediaSource to AdPlayer
-            adPlayer.prepare(adMedia.getMediaSource(), !haveResumePosition, true);
+            adPlayer.prepare(adMedia.getMediaSource() , !haveResumePosition, true);
 
             if (haveResumePosition) {
                 adPlayer.seekTo(adPlayer.getCurrentWindowIndex(), controller.getAdResumePosition());
@@ -91,6 +93,8 @@ public class AdPlayingState extends BaseState {
             TubiExoPlayerView tubiExoPlayerView = (TubiExoPlayerView) controller.getExoPlayerView();
             tubiExoPlayerView.setPlayer(adPlayer, componentController.getTubiPlaybackInterface());
             tubiExoPlayerView.setMediaModel(adMedia, false);
+            //update the numbers of ad left to give user indicator
+            tubiExoPlayerView.setAvailableAdLeft(adMediaModel.nubmerOfAd());
 
             //Player the Ad.
             adPlayer.setPlayWhenReady(true);
