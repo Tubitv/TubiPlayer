@@ -289,6 +289,6 @@
             android:layout_marginRight="8dp"
             android:layout_marginStart="8dp"
             android:layout_marginTop="8dp"
-            app:tubi_loading_toggle="@{playMedia.playbackState == ExoPlayer.STATE_BUFFERING}" />
+            app:tubi_loading_toggle="@{playMedia.playbackState == ExoPlayer.STATE_BUFFERING || playMedia.playbackState == ExoPlayer.STATE_IDLE }" />
     </FrameLayout>
 </layout>
