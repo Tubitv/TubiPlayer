@@ -121,7 +121,7 @@ public class TubiExoPlayerView extends FrameLayout implements TubiPlaybackContro
             return;
         }
 
-        int playerLayoutId = R.layout.exo_simple_player_view;
+        int playerLayoutId = R.layout.tubi_player_view;
         boolean useArtwork = true;
         int defaultArtworkId = 0;
         boolean useController = true;
