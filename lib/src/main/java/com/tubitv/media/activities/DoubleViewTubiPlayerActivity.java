@@ -1,6 +1,7 @@
 package com.tubitv.media.activities;
 
 import android.content.Intent;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -231,6 +232,7 @@ public class DoubleViewTubiPlayerActivity extends TubiPlayerActivity implements 
 
         mTubiPlayerView = (TubiExoPlayerView) findViewById(R.id.tubitv_player);
         vpaidWebView = (WebView) findViewById(R.id.vpaid_webview);
+        vpaidWebView.setBackgroundColor(Color.BLACK);
 
         mTubiPlayerView.requestFocus();
         mTubiPlayerView.setActivity(this);
