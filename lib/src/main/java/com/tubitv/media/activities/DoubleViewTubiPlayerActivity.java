@@ -50,7 +50,7 @@ import javax.inject.Inject;
  */
 public class DoubleViewTubiPlayerActivity extends TubiPlayerActivity implements DoublePlayerInterface {
 
-    private SimpleExoPlayer adPlayer;
+    protected SimpleExoPlayer adPlayer;
 
     protected WebView vpaidWebView;
 
