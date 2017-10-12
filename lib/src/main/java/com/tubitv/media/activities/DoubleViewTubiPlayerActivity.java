@@ -56,7 +56,7 @@ public class DoubleViewTubiPlayerActivity extends TubiPlayerActivity implements 
 
     private static final String TAG = "DoubleViewTubiPlayerAct";
 
-    private TextView cuePointIndictor;
+    protected TextView cuePointIndictor;
 
     @Inject
     FsmPlayer fsmPlayer;
