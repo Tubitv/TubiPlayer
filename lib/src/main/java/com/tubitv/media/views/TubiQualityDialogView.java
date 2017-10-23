@@ -10,6 +10,7 @@ import android.util.Pair;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.LinearLayout;
+import android.widget.Toast;
 
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
@@ -132,6 +133,10 @@ public class TubiQualityDialogView extends LinearLayout implements View.OnClickL
             isDisabled = false;
             @SuppressWarnings("unchecked")
             Pair<Integer, Integer> tag = (Pair<Integer, Integer>) view.getTag();
+            if(tag==null){
+                Toast.makeText(getContext(),"this format is not supported ",Toast.LENGTH_SHORT).show();
+                return;
+            }
             int groupIndex = tag.first;
             int trackIndex = tag.second;
             if (!trackGroupsAdaptive[groupIndex] || override == null
