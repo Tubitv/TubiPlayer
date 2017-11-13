@@ -60,8 +60,6 @@ public class AdPlayingState extends BaseState {
 
         SimpleExoPlayer adPlayer = controller.getAdPlayer();
         SimpleExoPlayer moviePlayer = controller.getContentPlayer();
-        // first need to pause the movie player, and also remember main movie playing position.
-        FsmPlayer.updateMovieResumePostion(controller);
 
         // then setup the player for ad to playe
         MediaModel adMedia = adMediaModel.nextAD();
