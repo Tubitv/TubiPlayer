@@ -111,6 +111,7 @@ public class StateFactory {
         return customStateType.get(cla);
     }
 
+    @NonNull
     public State createState(@NonNull Class classType) {
 
         // null check if there is any custom state class. if there is,

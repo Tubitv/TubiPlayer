@@ -203,7 +203,6 @@ public abstract class FsmPlayer implements Fsm, RetrieveAdCallback, FsmAdControl
 
         } else {
 
-            updateMovieResumePostion(controller);
             /**
              * when transition is null, state change is error, transit to default {@link MoviePlayingState}
              */
@@ -215,6 +214,8 @@ public abstract class FsmPlayer implements Fsm, RetrieveAdCallback, FsmAdControl
             ExoPlayerLogger.e(Constants.FSMPLAYER_TESTING, "FSM flow error:" + "prepare transition to MoviePlayingState");
             currentState = factory.createState(MoviePlayingState.class);
         }
+
+        updateMovieResumePosition(controller);
 
         ExoPlayerLogger.d(Constants.FSMPLAYER_TESTING, "transit to: " + currentState.getClass().getSimpleName());
 
@@ -290,7 +291,7 @@ public abstract class FsmPlayer implements Fsm, RetrieveAdCallback, FsmAdControl
      *
      * @param controller
      */
-    public static void updateMovieResumePostion(PlayerUIController controller) {
+    public static void updateMovieResumePosition(PlayerUIController controller) {
 
         if (controller == null) {
             return;
