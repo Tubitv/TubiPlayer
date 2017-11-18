@@ -57,7 +57,7 @@ public class FSMModuleReal {
     @ActicityScope
     @Provides
     FsmPlayer provideFsmPlayer(StateFactory factory) {
-        return new FsmPlayerImperial(factory){
+        return new FsmPlayerImperial(factory) {
             @Override
             public Class initializeState() {
                 return FetchCuePointState.class;
@@ -73,8 +73,8 @@ public class FSMModuleReal {
 
     @ActicityScope
     @Provides
-    PlayerComponentController provideComponentController(){
-        return new PlayerComponentController(null,null,null,null);
+    PlayerComponentController provideComponentController() {
+        return new PlayerComponentController(null, null, null, null);
     }
 
     @ActicityScope
@@ -85,8 +85,8 @@ public class FSMModuleReal {
 
     @ActicityScope
     @Provides
-    CuePointsRetriever provideCuePointsRetriever(){
-        return  new CuePointsRetriever();
+    CuePointsRetriever provideCuePointsRetriever() {
+        return new CuePointsRetriever();
     }
 
     @ActicityScope
@@ -119,16 +119,17 @@ public class FSMModuleReal {
                 "first ad", false);
 
         MediaModel ad_2 = MediaModel.ad("http://c11.adrise.tv/ads/transcodes/003572/940826/v0329081907-1280x720-HD-,740,1285,1622,2138,3632,k.mp4.m3u8",
-                "second ad",false);
+                "second ad", false);
 
         MediaModel ad_3 = MediaModel.ad("http://c11.adrise.tv/ads/transcodes/003572/940826/v0329081907-1280x720-HD-,740,1285,1622,2138,3632,k.mp4.m3u8",
-                "third ad",true);
+                "third ad", true);
 
         final List<MediaModel> list = new ArrayList<>();
 
-        list.add(ad_1);
-        list.add(ad_2);
 //        list.add(ad_3);
+
+//        list.add(ad_3);
+        list.add(ad_2);
 
         AdMediaModel adMediaModel = new AdMediaModel(list) {
             @Nullable
@@ -149,22 +150,62 @@ public class FSMModuleReal {
         // using the fake generated AdMediaModel to do has the returned data.
         return new AdInterface() {
             @Override
-            public void fetchAd(AdRetriever retriever, RetrieveAdCallback callback) {
-//                Log.d(Constants.FSMPLAYER_TESTING, "On ad receive");
-                callback.onReceiveAd(provideAdMediaModel());
+            public void fetchAd(AdRetriever retriever, final RetrieveAdCallback callback) {
+
+                // post 2000 second delay to emulate networking delay
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+
+                        try {
+                            Thread.sleep(2000);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+
+                        Handler handler = new Handler(Looper.getMainLooper());
+                        handler.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                callback.onReceiveAd(provideAdMediaModel());
+                            }
+                        });
+                    }
+                }).start();
+
             }
 
             @Override
-            public void fetchQuePoint(CuePointsRetriever retriever, CuePointCallBack callBack) {
-//                Log.d(Constants.FSMPLAYER_TESTING, "On ad receive");
-                callBack.onCuePointReceived(new long[]{0,60000, 900000, 1800000, 3600000});
+            public void fetchQuePoint(CuePointsRetriever retriever, final CuePointCallBack callBack) {
+
+                // post 2000 second delay to emulate networking delay
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+
+                        try {
+                            Thread.sleep(2000);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+
+                        Handler handler = new Handler(Looper.getMainLooper());
+                        handler.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                callBack.onCuePointReceived(new long[]{0, 60000, 900000, 1800000, 3600000});
+                            }
+                        });
+                    }
+                }).start();
+
             }
         };
     }
 
     @ActicityScope
     @Provides
-    VpaidClient provideVpaidClient(FsmPlayer player){
-        return new TubiVPAID(webView, new Handler(Looper.getMainLooper()),player);
+    VpaidClient provideVpaidClient(FsmPlayer player) {
+        return new TubiVPAID(webView, new Handler(Looper.getMainLooper()), player);
     }
 }

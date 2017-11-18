@@ -6,11 +6,11 @@
     <Button android:id="@+id/activity_selection_play_hls_1"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Play HLS 1"/>
+        android:text="Play HLS 1(DoubleViewTubiPlayerActivity)"/>
     <Button android:id="@+id/activity_selection_play_hls_2"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Play HLS No Subtitles"/>
+            android:text="Play HLS No Subtitles(DoubleViewTubiPlayerActivity)"/>
 
     <Button android:id="@+id/show_webview"
         android:layout_width="match_parent"
@@ -20,5 +20,5 @@
     <Button android:id="@+id/show_pre_roll_ad"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Play HLS with pre-roll"/>
+        android:text="Play HLS with pre-roll(RealActivity)"/>
 </LinearLayout>
