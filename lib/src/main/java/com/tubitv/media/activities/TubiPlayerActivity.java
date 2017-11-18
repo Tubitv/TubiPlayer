@@ -1,6 +1,5 @@
 package com.tubitv.media.activities;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.os.Bundle;
@@ -43,7 +42,7 @@ import com.tubitv.media.utilities.Utils;
 import com.tubitv.media.views.TubiExoPlayerView;
 import com.tubitv.media.views.TubiPlayerControlView;
 
-public abstract class TubiPlayerActivity extends Activity implements TubiPlayerControlView.VisibilityListener, TubiPlaybackInterface {
+public abstract class TubiPlayerActivity extends LifeCycleActivity implements TubiPlayerControlView.VisibilityListener, TubiPlaybackInterface {
     public static String TUBI_MEDIA_KEY = "tubi_media_key";
 
     protected SimpleExoPlayer mTubiExoPlayer;

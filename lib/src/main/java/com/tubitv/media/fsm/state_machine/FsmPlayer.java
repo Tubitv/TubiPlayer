@@ -1,5 +1,6 @@
 package com.tubitv.media.fsm.state_machine;
 
+import android.arch.lifecycle.Lifecycle;
 import android.support.annotation.NonNull;
 
 import com.google.android.exoplayer2.C;
@@ -82,6 +83,7 @@ public abstract class FsmPlayer implements Fsm, RetrieveAdCallback, FsmAdControl
      */
     private boolean isInitialized = false;
 
+    private Lifecycle mLifecycle;
 
     public FsmPlayer(StateFactory factory) {
         this.factory = factory;
@@ -109,6 +111,14 @@ public abstract class FsmPlayer implements Fsm, RetrieveAdCallback, FsmAdControl
 
     public AdRetriever getAdRetriever() {
         return adRetriever;
+    }
+
+    public Lifecycle getLifecycle() {
+        return mLifecycle;
+    }
+
+    public void setLifecycle(Lifecycle mLifecycle) {
+        this.mLifecycle = mLifecycle;
     }
 
     public boolean hasAdToPlay() {
@@ -177,6 +187,14 @@ public abstract class FsmPlayer implements Fsm, RetrieveAdCallback, FsmAdControl
 
     @Override
     public void transit(Input input) {
+
+        // if the current lifecycle of activity is after on_stop, omit the transition
+        if(getLifecycle()!=null){
+            if(!getLifecycle().getCurrentState().isAtLeast(Lifecycle.State.STARTED)){
+                ExoPlayerLogger.e(Constants.FSMPLAYER_TESTING, "Activity out of lifecycle");
+                return;
+            }
+        }
 
         State transitToState;
 

@@ -7,7 +7,6 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
-import android.view.View;
 import android.webkit.WebBackForwardList;
 import android.webkit.WebHistoryItem;
 import android.webkit.WebView;
@@ -216,6 +215,7 @@ public class DoubleViewTubiPlayerActivity extends TubiPlayerActivity implements 
         playerComponentController.setCuePointMonitor(cuePointMonitor);
         playerComponentController.setVpaidClient(vpaidClient);
         fsmPlayer.setPlayerComponentController(playerComponentController);
+        fsmPlayer.setLifecycle(getLifecycle());
 
         if (fsmPlayer.isInitialized()) {
             fsmPlayer.updateSelf();
@@ -236,12 +236,6 @@ public class DoubleViewTubiPlayerActivity extends TubiPlayerActivity implements 
 
         mTubiPlayerView.requestFocus();
         mTubiPlayerView.setActivity(this);
-        mTubiPlayerView.addOnLayoutChangeListener(new View.OnLayoutChangeListener() {
-            @Override
-            public void onLayoutChange(View v, int left, int top, int right, int bottom, int oldLeft, int oldTop, int oldRight, int oldBottom) {
-
-            }
-        });
     }
 
     @Override
