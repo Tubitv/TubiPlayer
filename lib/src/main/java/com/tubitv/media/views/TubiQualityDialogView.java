@@ -288,9 +288,8 @@ public class TubiQualityDialogView extends LinearLayout implements View.OnClickL
     public static String buildTrackName(Format format) {
         String trackName;
         if (MimeTypes.isVideo(format.sampleMimeType)) {
-            trackName = joinWithSeparator(joinWithSeparator(joinWithSeparator(
-                    buildResolutionString(format), buildBitrateString(format)), buildTrackIdString(format)),
-                    buildSampleMimeTypeString(format));
+            trackName = joinWithSeparator(
+                    buildResolutionString(format), buildBitrateString(format));
         } else if (MimeTypes.isAudio(format.sampleMimeType)) {
             trackName = joinWithSeparator(joinWithSeparator(joinWithSeparator(joinWithSeparator(
                     buildLanguageString(format), buildAudioPropertyString(format)),
