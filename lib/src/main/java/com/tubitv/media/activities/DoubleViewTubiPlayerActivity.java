@@ -101,8 +101,21 @@ public class DoubleViewTubiPlayerActivity extends TubiPlayerActivity implements 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        cuePointIndictor = (TextView) findViewById(R.id.cuepoint_indictor);
         injectDependency();
+    }
+
+    @Override
+    protected void initLayout() {
+        setContentView(R.layout.activity_double_tubi_player);
+
+        mTubiPlayerView = (TubiExoPlayerView) findViewById(R.id.tubitv_player);
+        vpaidWebView = (WebView) findViewById(R.id.vpaid_webview);
+        vpaidWebView.setBackgroundColor(Color.BLACK);
+
+        mTubiPlayerView.requestFocus();
+        mTubiPlayerView.setActivity(this);
+
+        cuePointIndictor = (TextView) findViewById(R.id.cuepoint_indictor);
     }
 
     protected void injectDependency() {
@@ -115,8 +128,8 @@ public class DoubleViewTubiPlayerActivity extends TubiPlayerActivity implements 
     }
 
     @Override
-    protected void initPlayer() {
-        super.initPlayer();
+    protected void initMoviePlayer() {
+        super.initMoviePlayer();
         createMediaSource();
         setupAdPlayer();
     }
@@ -127,8 +140,8 @@ public class DoubleViewTubiPlayerActivity extends TubiPlayerActivity implements 
     }
 
     @Override
-    protected void releasePlayer() {
-        super.releasePlayer();
+    protected void releaseMoviePlayer() {
+        super.releaseMoviePlayer();
         releaseAdPlayer();
     }
 
@@ -170,12 +183,10 @@ public class DoubleViewTubiPlayerActivity extends TubiPlayerActivity implements 
      */
     @Override
     protected void updateResumePosition() {
-        super.updateResumePosition();
-
         //keep track of movie player's position when activity resume back
-        if (mTubiExoPlayer != null && playerUIController != null && mTubiExoPlayer.getPlaybackState() != ExoPlayer.STATE_IDLE) {
-            int resumeWindow = mTubiExoPlayer.getCurrentWindowIndex();
-            long resumePosition = mTubiExoPlayer.isCurrentWindowSeekable() ? Math.max(0, mTubiExoPlayer.getCurrentPosition())
+        if (mMoviePlayer != null && playerUIController != null && mMoviePlayer.getPlaybackState() != ExoPlayer.STATE_IDLE) {
+            int resumeWindow = mMoviePlayer.getCurrentWindowIndex();
+            long resumePosition = mMoviePlayer.isCurrentWindowSeekable() ? Math.max(0, mMoviePlayer.getCurrentPosition())
                     : C.TIME_UNSET;
             playerUIController.setMovieResumeInfo(resumeWindow, resumePosition);
         }
@@ -195,7 +206,7 @@ public class DoubleViewTubiPlayerActivity extends TubiPlayerActivity implements 
     @Override
     public void prepareFSM() {
         //update the playerUIController view, need to update the view everything when two ExoPlayer being recreated in activity lifecycle.
-        playerUIController.setContentPlayer(mTubiExoPlayer);
+        playerUIController.setContentPlayer(mMoviePlayer);
         playerUIController.setAdPlayer(adPlayer);
         playerUIController.setExoPlayerView(mTubiPlayerView);
         playerUIController.setVpaidWebView(vpaidWebView);
@@ -225,18 +236,6 @@ public class DoubleViewTubiPlayerActivity extends TubiPlayerActivity implements 
         }
     }
 
-
-    @Override
-    protected void initLayout() {
-        setContentView(R.layout.activity_double_tubi_player);
-
-        mTubiPlayerView = (TubiExoPlayerView) findViewById(R.id.tubitv_player);
-        vpaidWebView = (WebView) findViewById(R.id.vpaid_webview);
-        vpaidWebView.setBackgroundColor(Color.BLACK);
-
-        mTubiPlayerView.requestFocus();
-        mTubiPlayerView.setActivity(this);
-    }
 
     @Override
     public void onNewIntent(Intent intent) {
