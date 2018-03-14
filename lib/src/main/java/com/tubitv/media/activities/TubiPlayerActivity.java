@@ -42,20 +42,22 @@ import com.tubitv.media.utilities.Utils;
 import com.tubitv.media.views.TubiExoPlayerView;
 import com.tubitv.media.views.TubiPlayerControlView;
 
+/**
+ * This is the base activity that prepare one instance of {@link SimpleExoPlayer} mMoviePlayer, this player is mean to serve as the main player to player content.
+ * Along with some abstract methods to be implemented by subclass for extra functions.
+ *
+ * You can use this class as it is and implement the abstract methods to be a standalone player to player video with customized UI controls and different forms of adaptive streaming.
+ */
 public abstract class TubiPlayerActivity extends LifeCycleActivity implements TubiPlayerControlView.VisibilityListener, TubiPlaybackInterface {
     public static String TUBI_MEDIA_KEY = "tubi_media_key";
 
-    protected SimpleExoPlayer mTubiExoPlayer;
+    protected SimpleExoPlayer mMoviePlayer;
     private Handler mMainHandler;
     protected TubiExoPlayerView mTubiPlayerView;
     private DataSource.Factory mMediaDataSourceFactory;
     protected DefaultTrackSelector mTrackSelector;
     private EventLogger mEventLogger;
     private TrackSelectionHelper mTrackSelectionHelper;
-
-    protected int resumeWindow;
-
-    protected long resumePosition;
 
     protected boolean isActive = false;
 
@@ -67,7 +69,9 @@ public abstract class TubiPlayerActivity extends LifeCycleActivity implements Tu
 
     private static final DefaultBandwidthMeter BANDWIDTH_METER = new DefaultBandwidthMeter();
 
-    protected boolean shouldAutoPlay;
+    protected abstract void onPlayerReady();
+
+    protected abstract void updateResumePosition();
 
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
@@ -78,19 +82,15 @@ public abstract class TubiPlayerActivity extends LifeCycleActivity implements Tu
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        clearResumePosition();
         parseIntent();
         Utils.hideSystemUI(this, true);
-        shouldAutoPlay = true;
         mMediaDataSourceFactory = buildDataSourceFactory(true);
         initLayout();
     }
 
     @Override
     public void onNewIntent(Intent intent) {
-        releasePlayer();
-        clearResumePosition();
-        shouldAutoPlay = true;
+        releaseMoviePlayer();
         setIntent(intent);
     }
 
@@ -105,7 +105,7 @@ public abstract class TubiPlayerActivity extends LifeCycleActivity implements Tu
     @Override
     public void onResume() {
         super.onResume();
-        if ((Util.SDK_INT <= 23 || mTubiExoPlayer == null)) {
+        if ((Util.SDK_INT <= 23 || mMoviePlayer == null)) {
             setupExo();
         }
     }
@@ -114,7 +114,7 @@ public abstract class TubiPlayerActivity extends LifeCycleActivity implements Tu
     public void onPause() {
         super.onPause();
         if (Util.SDK_INT <= 23) {
-            releasePlayer();
+            releaseMoviePlayer();
         }
     }
 
@@ -122,7 +122,7 @@ public abstract class TubiPlayerActivity extends LifeCycleActivity implements Tu
     public void onStop() {
         super.onStop();
         if (Util.SDK_INT > 23) {
-            releasePlayer();
+            releaseMoviePlayer();
         }
     }
 
@@ -155,14 +155,13 @@ public abstract class TubiPlayerActivity extends LifeCycleActivity implements Tu
     }
 
     private void setupExo() {
-        initPlayer();
+        initMoviePlayer();
         isActive = true;
         onPlayerReady();
     }
 
-    protected abstract void onPlayerReady();
 
-    protected void initPlayer() {
+    protected void initMoviePlayer() {
         // 1. Create a default TrackSelector
         mMainHandler = new Handler();
         TrackSelection.Factory videoTrackSelectionFactory =
@@ -172,36 +171,25 @@ public abstract class TubiPlayerActivity extends LifeCycleActivity implements Tu
         mTrackSelectionHelper = new TrackSelectionHelper(this, mTrackSelector,videoTrackSelectionFactory);
 
 
-        // 3. Create the mTubiExoPlayer
-        mTubiExoPlayer = ExoPlayerFactory.newSimpleInstance(this, mTrackSelector);
+        // 3. Create the mMoviePlayer
+        mMoviePlayer = ExoPlayerFactory.newSimpleInstance(this, mTrackSelector);
 
         mEventLogger = new EventLogger(mTrackSelector);
-        mTubiExoPlayer.addListener(mEventLogger);
-        mTubiExoPlayer.setAudioDebugListener(mEventLogger);
-        mTubiExoPlayer.setVideoDebugListener(mEventLogger);
-        mTubiExoPlayer.setMetadataOutput(mEventLogger);
+        mMoviePlayer.addListener(mEventLogger);
+        mMoviePlayer.setAudioDebugListener(mEventLogger);
+        mMoviePlayer.setVideoDebugListener(mEventLogger);
+        mMoviePlayer.setMetadataOutput(mEventLogger);
 
-        mTubiPlayerView.setPlayer(mTubiExoPlayer, this);
+        mTubiPlayerView.setPlayer(mMoviePlayer, this);
         mTubiPlayerView.setMediaModel(mediaModel,true);
         mTubiPlayerView.setTrackSelectionHelper(mTrackSelectionHelper);
     }
 
-    protected void playMedia(MediaSource mediaSource) {
-        boolean haveResumePosition = resumeWindow != C.INDEX_UNSET;
-        if (haveResumePosition) {
-            mTubiExoPlayer.seekTo(resumeWindow, resumePosition);
-        }
-        mTubiExoPlayer.setPlayWhenReady(shouldAutoPlay);
-        mTubiExoPlayer.prepare(mediaSource, !haveResumePosition, false);
-        Utils.hideSystemUI(this, true);
-    }
-
-    protected void releasePlayer() {
-        if (mTubiExoPlayer != null) {
-            shouldAutoPlay = mTubiExoPlayer.getPlayWhenReady();
+    protected void releaseMoviePlayer() {
+        if (mMoviePlayer != null) {
             updateResumePosition();
-            mTubiExoPlayer.release();
-            mTubiExoPlayer = null;
+            mMoviePlayer.release();
+            mMoviePlayer = null;
             mTrackSelector = null;
         }
         isActive = false;
@@ -255,19 +243,6 @@ public abstract class TubiPlayerActivity extends LifeCycleActivity implements Tu
      */
     protected DataSource.Factory buildDataSourceFactory(boolean useBandwidthMeter) {
         return MediaHelper.buildDataSourceFactory(this, useBandwidthMeter ? BANDWIDTH_METER : null);
-    }
-
-    protected void updateResumePosition() {
-        if (mTubiExoPlayer != null) {
-            resumeWindow = mTubiExoPlayer.getCurrentWindowIndex();
-            resumePosition = mTubiExoPlayer.isCurrentWindowSeekable() ? Math.max(0, mTubiExoPlayer.getCurrentPosition())
-                    : C.TIME_UNSET;
-        }
-    }
-
-    protected void clearResumePosition() {
-        resumeWindow = C.INDEX_UNSET;
-        resumePosition = C.TIME_UNSET;
     }
 
     @Override
