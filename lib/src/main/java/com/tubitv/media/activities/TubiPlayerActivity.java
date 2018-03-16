@@ -73,6 +73,8 @@ public abstract class TubiPlayerActivity extends LifeCycleActivity implements Tu
 
     protected abstract void updateResumePosition();
 
+    protected abstract boolean isCaptionPreferenceEnable();
+
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
@@ -86,6 +88,7 @@ public abstract class TubiPlayerActivity extends LifeCycleActivity implements Tu
         Utils.hideSystemUI(this, true);
         mMediaDataSourceFactory = buildDataSourceFactory(true);
         initLayout();
+        setCaption(isCaptionPreferenceEnable());
     }
 
     @Override
@@ -152,6 +155,13 @@ public abstract class TubiPlayerActivity extends LifeCycleActivity implements Tu
 
             }
         });
+    }
+
+    private void setCaption(boolean isOn) {
+        if (mediaModel != null && mediaModel.getSubtitlesUrl() != null && mTubiPlayerView != null && mTubiPlayerView.getControlView() != null) {
+            mTubiPlayerView.getControlView().checkSubtitleIcon(isOn);
+            mTubiPlayerView.getSubtitleView().setVisibility(isOn ? View.VISIBLE : View.GONE);
+        }
     }
 
     private void setupExo() {

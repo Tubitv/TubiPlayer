@@ -175,6 +175,17 @@ public class TubiPlayerControlView extends ConstraintLayout implements TrackSele
     }
 
     /**
+     * manually set the subtitle indicator icon to on, use this for global preference setting.
+     * @param isON
+     */
+    public void checkSubtitleIcon(boolean isON) {
+        if (mBinding.viewTubiControllerSubtitlesIb == null) {
+            return;
+        }
+        mBinding.viewTubiControllerSubtitlesIb.setChecked(isON);
+    }
+
+    /**
      * Shows the playback controls. If {@link #getShowTimeoutMs()} is positive then the controls will
      * be automatically hidden after this duration of time has elapsed without user input.
      */
