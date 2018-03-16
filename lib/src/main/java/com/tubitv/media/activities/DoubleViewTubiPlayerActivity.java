@@ -200,6 +200,11 @@ public class DoubleViewTubiPlayerActivity extends TubiPlayerActivity implements 
         }
     }
 
+    @Override
+    protected boolean isCaptionPreferenceEnable() {
+        return true;
+    }
+
     /**
      * prepare / set up FSM and inject all the elements into the FSM
      */

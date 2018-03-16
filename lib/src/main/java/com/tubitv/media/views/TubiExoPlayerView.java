@@ -244,6 +244,11 @@ public class TubiExoPlayerView extends FrameLayout implements TubiPlaybackContro
 //        }
 //    }
 
+
+    public TubiPlayerControlView getControlView() {
+        return controller;
+    }
+
     /**
      * Returns the player currently set on this view, or null if no player is set.
      */
