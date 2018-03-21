@@ -8,6 +8,7 @@ import android.os.SystemClock;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.constraint.ConstraintLayout;
+import android.support.v7.app.MediaRouteButton;
 import android.util.AttributeSet;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -15,6 +16,7 @@ import android.view.View;
 
 import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.SimpleExoPlayer;
+import com.google.android.gms.cast.framework.CastButtonFactory;
 import com.tubitv.media.R;
 import com.tubitv.media.bindings.TubiObservable;
 import com.tubitv.media.databinding.ViewTubiPlayerControlBinding;
@@ -119,7 +121,6 @@ public class TubiPlayerControlView extends ConstraintLayout implements TrackSele
                 postDelayed(hideAction, delayMs);
             }
         }
-//        updateAll();
     }
 
     @Override
@@ -149,6 +150,10 @@ public class TubiPlayerControlView extends ConstraintLayout implements TrackSele
         mBinding = DataBindingUtil.inflate(inflater, R.layout.view_tubi_player_control, this, true);
         setDescendantFocusability(FOCUS_AFTER_DESCENDANTS);
         mBinding.setController(this);
+
+        MediaRouteButton mMediaRouteButton = (MediaRouteButton) findViewById(R.id.view_tubi_controller_chromecast_ib);
+        CastButtonFactory.setUpMediaRouteButton(getContext(), mMediaRouteButton);
+
     }
 
     @BindingAdapter("bind:tubi_hide_timeout_ms")
@@ -168,7 +173,6 @@ public class TubiPlayerControlView extends ConstraintLayout implements TrackSele
             //Controller doesn't get re-initialized TODO fix instance call
             mBinding.viewTubiControllerSubtitlesIb.clearClickListeners();
             mBinding.viewTubiControllerQualityIb.clearClickListeners();
-            mBinding.viewTubiControllerChromecastIb.clearClickListeners();
             mBinding.viewTubiControllerPlayToggleIb.clearClickListeners();
             mBinding.setPlayMedia(tubiObservable);
         }
@@ -196,7 +200,6 @@ public class TubiPlayerControlView extends ConstraintLayout implements TrackSele
                 visibilityListener.onVisibilityChange(getVisibility());
             }
             alignSubtitlesView(true);
-//            updateAll();
         }
         // Call hideAfterTimeout even if already visible to reset the timeout.
         hideAfterTimeout();
@@ -273,11 +276,16 @@ public class TubiPlayerControlView extends ConstraintLayout implements TrackSele
         return subtitles;
     }
 
+    @NonNull
+    public View getChromeCastButton(){
+        return mBinding.viewTubiControllerChromecastIb;
+    }
+
     /**
      * Returns whether the controller is currently visible.
      */
     public boolean isVisible() {
-        return findViewById(R.id.controller_panel).getVisibility() == VISIBLE;
+        return mBinding.controllerPanel.getVisibility() == VISIBLE;
     }
 
     public int getShowTimeoutMs() {
