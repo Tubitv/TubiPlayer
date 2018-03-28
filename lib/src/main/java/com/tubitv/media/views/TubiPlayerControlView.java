@@ -17,6 +17,7 @@ import android.view.View;
 import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.gms.cast.framework.CastButtonFactory;
+import com.tubitv.casting.GoogleServicesHelper;
 import com.tubitv.media.R;
 import com.tubitv.media.bindings.TubiObservable;
 import com.tubitv.media.databinding.ViewTubiPlayerControlBinding;
@@ -24,6 +25,7 @@ import com.tubitv.media.interfaces.TrackSelectionHelperInterface;
 import com.tubitv.media.interfaces.TubiPlaybackControlInterface;
 import com.tubitv.media.interfaces.TubiPlaybackInterface;
 import com.tubitv.media.models.MediaModel;
+import com.tubitv.media.utilities.ExoPlayerLogger;
 
 /**
  * Created by stoyan on 5/15/17.
@@ -90,6 +92,10 @@ public class TubiPlayerControlView extends ConstraintLayout implements TrackSele
         }
     };
 
+    /**
+     * ChromeCast enabled feature.
+     */
+
     public TubiPlayerControlView(Context context) {
         this(context, null);
     }
@@ -151,9 +157,21 @@ public class TubiPlayerControlView extends ConstraintLayout implements TrackSele
         setDescendantFocusability(FOCUS_AFTER_DESCENDANTS);
         mBinding.setController(this);
 
+        initCast();
+    }
+
+    private void initCast() {
         MediaRouteButton mMediaRouteButton = (MediaRouteButton) findViewById(R.id.view_tubi_controller_chromecast_ib);
         CastButtonFactory.setUpMediaRouteButton(getContext(), mMediaRouteButton);
 
+        if (GoogleServicesHelper.available(getContext())) {
+            try {
+                mMediaRouteButton.setVisibility(VISIBLE);
+
+            } catch (Exception exception) {
+                ExoPlayerLogger.e("ChromeCast", "Cast media route button failed to initialize");
+            }
+        }
     }
 
     @BindingAdapter("bind:tubi_hide_timeout_ms")

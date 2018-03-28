@@ -95,7 +95,7 @@
                     android:layout_weight="1"
                     android:mediaRouteTypes="user"
                     android:layout_gravity="center"
-                    android:visibility="visible"
+                    android:visibility="gone"
                     app:state_checked="@drawable/tubi_tv_drawable_chromecast_on_selector"
                     app:state_not_checked="@drawable/tubi_tv_drawable_chromecast_off_selector" />
 
