@@ -56,6 +56,7 @@
                 android:id="@+id/topper_control_container"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:visibility="@{playMedia.adPlaying? View.GONE : View.VISIBLE}"
                 app:layout_constraintTop_toTopOf="@+id/tubi_tv_controller_guideline_top"
                 app:layout_constraintRight_toLeftOf="@+id/tubi_tv_controller_guideline_right"
                 android:orientation="horizontal">
@@ -82,7 +83,6 @@
                     android:layout_gravity="center"
                     android:background="@drawable/tubi_tv_drawable_quality_off_selector"
                     android:tag="@{TubiObservable.TUBI_QUALITY_TAG}"
-                    android:visibility="@{playMedia.adPlaying? View.GONE : View.VISIBLE}"
                     app:onClickStateImage="@{playMedia}"
                     app:state_checked="@drawable/tubi_tv_drawable_quality_on_selector"
                     app:state_not_checked="@drawable/tubi_tv_drawable_quality_off_selector"
