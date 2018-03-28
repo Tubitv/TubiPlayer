@@ -148,6 +148,8 @@ public class ChromeCastActivity extends FragmentActivity implements SessionManag
     @Override
     public void onSessionStarted(Session session, String s) {
         ExoPlayerLogger.i("casting", "onSessionStarted");
+        startCasting(session);
+        finish();
     }
 
     @Override
@@ -183,6 +185,13 @@ public class ChromeCastActivity extends FragmentActivity implements SessionManag
     @Override
     public void onSessionSuspended(Session session, int i) {
         ExoPlayerLogger.i("casting", "onSessionSuspended");
+    }
+
+    /**
+     * when chromecast connection has established, call this routine; The remote code repository should implement this method.
+     * @param session
+     */
+    protected void startCasting(Session session){
     }
 
 }
