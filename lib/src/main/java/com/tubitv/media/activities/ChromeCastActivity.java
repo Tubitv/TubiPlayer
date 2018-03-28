@@ -1,5 +1,6 @@
 package com.tubitv.media.activities;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentActivity;
@@ -28,34 +29,64 @@ public class ChromeCastActivity extends FragmentActivity implements SessionManag
     private CastContext mCastContext;
     private SessionManager mSessionManager;
 
+    public final static String ENABLE_CHROMECAST = "_enable_chromecast_";
+    private boolean isChromeCastEnable = false;
+
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        initCastConnection();
+        parseIntent();
+
+        if (isChromeCastEnable) {
+            initCastConnection();
+        }
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        if (GoogleServicesHelper.available(this)) {
-            try {
-                //the following line of code will cause fatal exception on old version of google play service,
-                //must surrounded with try catch
-                if (mSessionManager != null) {
-                    mCastSession = mSessionManager.getCurrentCastSession();
+
+        if (isChromeCastEnable) {
+            if (GoogleServicesHelper.available(this)) {
+                try {
+                    //the following line of code will cause fatal exception on old version of google play service,
+                    //must surrounded with try catch
+                    if (mSessionManager != null) {
+                        mCastSession = mSessionManager.getCurrentCastSession();
+                    }
+                } catch (Exception exception) {
+                    ExoPlayerLogger.e(TAG, exception.getMessage());
                 }
-            } catch (Exception exception) {
-                ExoPlayerLogger.e(TAG, exception.getMessage());
             }
+            addCastListeners();
         }
-        addCastListeners();
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        removeCastListeners();
+        if (isChromeCastEnable) {
+            removeCastListeners();
+        }
+    }
+
+    private void parseIntent() {
+
+        Intent intent = getIntent();
+        Bundle bundle = null;
+
+        if (intent != null) {
+            bundle = intent.getExtras();
+        }
+
+        if (bundle != null && bundle.containsKey(ENABLE_CHROMECAST)) {
+            isChromeCastEnable = bundle.getBoolean(ENABLE_CHROMECAST);
+        }
+    }
+
+    protected boolean isChromeCastEnable() {
+        return isChromeCastEnable;
     }
 
     /**
