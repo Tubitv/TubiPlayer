@@ -102,6 +102,7 @@ public class DoubleViewTubiPlayerActivity extends TubiPlayerActivity implements 
         super.onCreate(savedInstanceState);
 
         injectDependency();
+        dependencyPrepare();
     }
 
     @Override
@@ -118,10 +119,18 @@ public class DoubleViewTubiPlayerActivity extends TubiPlayerActivity implements 
         cuePointIndictor = (TextView) findViewById(R.id.cuepoint_indictor);
     }
 
+    /**
+     * this should be the first method the subclass of {@link DoubleViewTubiPlayerActivity} call, before accessing all the different variables.
+     */
     protected void injectDependency() {
         //FSMModuleTesting requirement object such as ExoPlayer haven't been initialized yet
         DaggerFsmComonent.builder().fSMModuleTesting(new FSMModuleTesting(null, null, null, null)).build().inject(this);
     }
+
+    /**
+     * this method is called immediately after {@link DoubleViewTubiPlayerActivity#injectDependency()} for all injected dependencies preparation.
+     */
+    protected void dependencyPrepare() {}
 
     protected FsmPlayer getFsmPlayer() {
         return fsmPlayer;
