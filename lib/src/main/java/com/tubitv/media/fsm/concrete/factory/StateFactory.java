@@ -21,6 +21,9 @@ import java.util.Map;
 
 /**
  * Created by allensun on 7/31/17.
+ *
+ * A factory class that is in charge of initializing {@link State} for {@link com.tubitv.media.fsm.state_machine.FsmPlayer}.
+ *
  * To reuse state instance, we have a caching mechanism to only create one instance of each {@link State},
  * reuse that instance from cached map.
  * <p>
@@ -44,8 +47,11 @@ import java.util.Map;
  * <p>
  * {@link com.tubitv.media.fsm.concrete.VastAdInteractionSandBoxState}
  */
-public class StateFactory {
+ public final class StateFactory {
 
+    /**
+     * map store singleton instance of every types of {@link State},
+     */
     private final Map<Class, State> stateInstance = new HashMap<>();
 
     /**
@@ -63,6 +69,19 @@ public class StateFactory {
     }
 
     /**
+     * convert the default {@link State} into custom State
+     *
+     * @param cla default state type
+     * @return the custom state type
+     */
+    @Nullable
+    private Class convertToCustomClass(@NonNull Class cla) {
+        return customStateType.get(cla);
+    }
+
+    /**
+     * Method should only be called right after initialization, before {@link #createState} ever been called for max state predictability.
+     *
      * @param subClass must be the subclass of {@link com.tubitv.media.fsm.BaseState} to swap original to subclass
      *                 Must be called before any createState method being called.
      */
@@ -100,21 +119,14 @@ public class StateFactory {
         }
     }
 
-    /**
-     * convert the default {@link State} into custom State
-     *
-     * @param cla default state type
-     * @return the custom state type
-     */
-    @Nullable
-    private Class convertToCustomClass(@NonNull Class cla) {
-        return customStateType.get(cla);
-    }
-
     @NonNull
     public State createState(@NonNull Class classType) {
 
-        // null check if there is any custom state class. if there is,
+        if (!State.class.isAssignableFrom(classType)) {
+            throw new IllegalStateException(String.valueOf(classType.getName() + "is not a base class of default State class "));
+        }
+
+            // null check if there is any custom state class. if there is,
         Class finalClassType = convertToCustomClass(classType);
 
         if (finalClassType == null) {
