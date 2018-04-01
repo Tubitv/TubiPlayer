@@ -275,6 +275,13 @@ public class ExoPlayerFactoryTest {
         assertTrue(playerFsm.getCurrentState() instanceof MoviePlayingState);
     }
 
+    @Test(expected = IllegalStateException.class)
+    public void testWrongStateCreating(){
+        StateFactory sf = new StateFactory();
+        //not a child class of State
+        sf.createState(String.class);
+    }
+
     /**
      *  this is for testing custom class of {@link com.tubitv.media.fsm.BaseState} can be swap into {@link StateFactory}
      */
