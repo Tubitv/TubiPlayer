@@ -228,7 +228,6 @@ public class DoubleViewTubiPlayerActivity extends TubiPlayerActivity implements 
         //update the MediaModel
         fsmPlayer.setController(playerUIController);
         fsmPlayer.setMovieMedia(mediaModel);
-//        fsmPlayer.setAdMedia(adMediaModel);
         fsmPlayer.setAdRetriever(adRetriever);
         fsmPlayer.setCuePointsRetriever(cuePointsRetriever);
         fsmPlayer.setAdServerInterface(adInterface);

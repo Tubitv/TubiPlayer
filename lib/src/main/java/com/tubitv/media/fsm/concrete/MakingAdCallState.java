@@ -36,13 +36,8 @@ public class MakingAdCallState extends BaseState {
 
             case PRE_ROLL_AD_RECEIVED:
                 return factory.createState(AdPlayingState.class);
-
-//            /***************below is the error handling******************************************/
-//            case SHOW_ADS:
-//                // ad server hasn't return any ad, can not show ad, this round of ad showing opportunity is over.
-//                return factory.createState(MoviePlayingState.class);
-
         }
+
         return null;
     }
 

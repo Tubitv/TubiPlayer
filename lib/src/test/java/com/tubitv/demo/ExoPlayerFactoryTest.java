@@ -275,6 +275,22 @@ public class ExoPlayerFactoryTest {
         assertTrue(playerFsm.getCurrentState() instanceof MoviePlayingState);
     }
 
+    @Test(expected = IllegalStateException.class)
+    public void testWrongStateCreating(){
+        StateFactory sf = new StateFactory();
+        //not a child class of State
+        sf.createState(String.class);
+    }
+
+    @Test
+    public void testSingleton() {
+        // test if the stateFactory creates singleton objects
+        State movieState_1 = stateFactory.createState(MoviePlayingState.class);
+        State movieState_2 = stateFactory.createState(MoviePlayingState.class);
+
+        assertTrue(movieState_1 == movieState_2);
+    }
+
     /**
      *  this is for testing custom class of {@link com.tubitv.media.fsm.BaseState} can be swap into {@link StateFactory}
      */
