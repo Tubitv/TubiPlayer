@@ -39,7 +39,7 @@ public class MakingPrerollAdCallState extends BaseState {
     }
 
     @Override
-    public void performWorkAndupdatePlayerUI(@Nullable FsmPlayer fsmPlayer, @NonNull PlayerUIController controller, @NonNull PlayerComponentController componentController, @NonNull MediaModel movieMedia, @Nullable AdMediaModel adMedia) {
+    public void performWorkAndUpdatePlayerUI(@Nullable FsmPlayer fsmPlayer, @NonNull PlayerUIController controller, @NonNull PlayerComponentController componentController, @NonNull MediaModel movieMedia, @Nullable AdMediaModel adMedia) {
         // don't do any UI work.
 
         if (isNull(fsmPlayer, controller, componentController, movieMedia, adMedia)) {

@@ -237,7 +237,7 @@ public abstract class FsmPlayer implements Fsm, RetrieveAdCallback, FsmAdControl
 
         ExoPlayerLogger.d(Constants.FSMPLAYER_TESTING, "transit to: " + currentState.getClass().getSimpleName());
 
-        currentState.performWorkAndupdatePlayerUI(this, controller, playerComponentController, movieMedia, adMedia);
+        currentState.performWorkAndUpdatePlayerUI(this, controller, playerComponentController, movieMedia, adMedia);
 
 
     }
@@ -277,7 +277,7 @@ public abstract class FsmPlayer implements Fsm, RetrieveAdCallback, FsmAdControl
     public void updateSelf() {
         if (currentState != null) {
             ExoPlayerLogger.i(Constants.FSMPLAYER_TESTING, "Fsm updates self : " + currentState.getClass().getSimpleName());
-            currentState.performWorkAndupdatePlayerUI(this, controller, playerComponentController, movieMedia, adMedia);
+            currentState.performWorkAndUpdatePlayerUI(this, controller, playerComponentController, movieMedia, adMedia);
         }
     }
 
