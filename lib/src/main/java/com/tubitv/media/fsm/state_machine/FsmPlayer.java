@@ -105,6 +105,10 @@ public abstract class FsmPlayer implements Fsm, RetrieveAdCallback, FsmAdControl
         this.adMedia = adMedia;
     }
 
+    public AdMediaModel getAdMedia() {
+        return adMedia;
+    }
+
     public AdInterface getAdServerInterface() {
         return adServerInterface;
     }
@@ -164,6 +168,10 @@ public abstract class FsmPlayer implements Fsm, RetrieveAdCallback, FsmAdControl
 
     public void setPlayerComponentController(PlayerComponentController playerComponentController) {
         this.playerComponentController = playerComponentController;
+    }
+
+    public PlayerComponentController getPlayerComponentController() {
+        return playerComponentController;
     }
 
     public void setCuePointsRetriever(CuePointsRetriever cuePointsRetriever) {
@@ -237,7 +245,7 @@ public abstract class FsmPlayer implements Fsm, RetrieveAdCallback, FsmAdControl
 
         ExoPlayerLogger.d(Constants.FSMPLAYER_TESTING, "transit to: " + currentState.getClass().getSimpleName());
 
-        currentState.performWorkAndupdatePlayerUI(this, controller, playerComponentController, movieMedia, adMedia);
+        currentState.performWorkAndUpdatePlayerUI(this);
 
 
     }
@@ -277,7 +285,7 @@ public abstract class FsmPlayer implements Fsm, RetrieveAdCallback, FsmAdControl
     public void updateSelf() {
         if (currentState != null) {
             ExoPlayerLogger.i(Constants.FSMPLAYER_TESTING, "Fsm updates self : " + currentState.getClass().getSimpleName());
-            currentState.performWorkAndupdatePlayerUI(this, controller, playerComponentController, movieMedia, adMedia);
+            currentState.performWorkAndUpdatePlayerUI(this);
         }
     }
 
