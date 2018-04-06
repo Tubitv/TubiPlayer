@@ -3,12 +3,8 @@ package com.tubitv.media.fsm;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
-import com.tubitv.media.controller.PlayerComponentController;
-import com.tubitv.media.controller.PlayerUIController;
 import com.tubitv.media.fsm.concrete.factory.StateFactory;
 import com.tubitv.media.fsm.state_machine.FsmPlayer;
-import com.tubitv.media.models.AdMediaModel;
-import com.tubitv.media.models.MediaModel;
 
 /**
  * Created by allensun on 7/27/17.
@@ -27,10 +23,8 @@ public interface State {
 
     /**
      * once the fsm changes states, update player's UI components.
-     * @param controller container/wrapper for all the necessary player UI view
-     * @param movieMedia the source of movie
-     * @param adMedia the source of ad
+     * @param fsmPlayer the state machine itself that contains the UI and Business logic parts.
      */
-    void performWorkAndUpdatePlayerUI(@Nullable FsmPlayer fsmPlayer, @NonNull PlayerUIController controller, @NonNull PlayerComponentController componentController, @NonNull MediaModel movieMedia, @Nullable AdMediaModel adMedia);
+    void performWorkAndUpdatePlayerUI(@NonNull FsmPlayer fsmPlayer);
 
 }
