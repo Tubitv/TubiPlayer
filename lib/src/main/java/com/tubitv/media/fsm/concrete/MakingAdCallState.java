@@ -1,10 +1,7 @@
 package com.tubitv.media.fsm.concrete;
 
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 
-import com.tubitv.media.controller.PlayerComponentController;
-import com.tubitv.media.controller.PlayerUIController;
 import com.tubitv.media.fsm.BaseState;
 import com.tubitv.media.fsm.Input;
 import com.tubitv.media.fsm.State;
@@ -12,9 +9,7 @@ import com.tubitv.media.fsm.callback.AdInterface;
 import com.tubitv.media.fsm.callback.RetrieveAdCallback;
 import com.tubitv.media.fsm.concrete.factory.StateFactory;
 import com.tubitv.media.fsm.state_machine.FsmPlayer;
-import com.tubitv.media.models.AdMediaModel;
 import com.tubitv.media.models.AdRetriever;
-import com.tubitv.media.models.MediaModel;
 import com.tubitv.media.utilities.ExoPlayerLogger;
 
 /**
@@ -42,9 +37,10 @@ public class MakingAdCallState extends BaseState {
     }
 
     @Override
-    public void performWorkAndUpdatePlayerUI(@Nullable FsmPlayer fsmPlayer, @NonNull PlayerUIController controller, @NonNull PlayerComponentController componentController, @NonNull MediaModel movieMedia, @Nullable AdMediaModel adMedia) {
+    public void performWorkAndUpdatePlayerUI(@NonNull FsmPlayer fsmPlayer) {
+        super.performWorkAndUpdatePlayerUI(fsmPlayer);
 
-        if(isNull(fsmPlayer,controller,componentController,movieMedia,adMedia)){
+        if (isNull(fsmPlayer)) {
             return;
         }
 
