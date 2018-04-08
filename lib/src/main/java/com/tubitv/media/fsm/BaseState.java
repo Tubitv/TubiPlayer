@@ -2,7 +2,7 @@ package com.tubitv.media.fsm;
 
 import android.support.annotation.NonNull;
 
-import com.tubitv.media.controller.PlayerComponentController;
+import com.tubitv.media.controller.PlayerAdLogicController;
 import com.tubitv.media.controller.PlayerUIController;
 import com.tubitv.media.fsm.state_machine.FsmPlayer;
 import com.tubitv.media.helpers.Constants;
@@ -18,7 +18,7 @@ public abstract class BaseState implements State {
 
     protected PlayerUIController controller;
 
-    protected PlayerComponentController componentController;
+    protected PlayerAdLogicController componentController;
 
     protected MediaModel movieMedia;
 

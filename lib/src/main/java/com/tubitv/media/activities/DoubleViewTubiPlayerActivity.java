@@ -22,7 +22,7 @@ import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
 import com.google.android.exoplayer2.trackselection.TrackSelection;
 import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter;
 import com.tubitv.media.R;
-import com.tubitv.media.controller.PlayerComponentController;
+import com.tubitv.media.controller.PlayerAdLogicController;
 import com.tubitv.media.controller.PlayerUIController;
 import com.tubitv.media.di.FSMModuleTesting;
 import com.tubitv.media.di.component.DaggerFsmComonent;
@@ -80,7 +80,7 @@ public class DoubleViewTubiPlayerActivity extends TubiPlayerActivity implements 
     AdInterface adInterface;
 
     @Inject
-    PlayerComponentController playerComponentController;
+    PlayerAdLogicController playerComponentController;
 
     @Inject
     VpaidClient vpaidClient;
