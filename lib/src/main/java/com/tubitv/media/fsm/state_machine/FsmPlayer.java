@@ -206,6 +206,9 @@ public abstract class FsmPlayer implements Fsm, RetrieveAdCallback, FsmAdControl
 
         State transitToState;
 
+        /**
+         * make state transition.
+         */
         if (currentState != null) {
             transitToState = currentState.transformToState(input, factory);
         } else {
@@ -216,6 +219,9 @@ public abstract class FsmPlayer implements Fsm, RetrieveAdCallback, FsmAdControl
             ExoPlayerLogger.i(Constants.FSMPLAYER_TESTING, "initialize fsmPlayer");
         }
 
+        /**
+         * check if the transition flow is correct, if not then handle the error case.
+         */
         if (transitToState != null) {
             /**
              * when transition is not null, state change is successful, and transit to a new state
@@ -313,7 +319,7 @@ public abstract class FsmPlayer implements Fsm, RetrieveAdCallback, FsmAdControl
     }
 
     /**
-     * update the resume position of the main movice
+     * update the resume position of the main video
      *
      * @param controller
      */
@@ -330,6 +336,8 @@ public abstract class FsmPlayer implements Fsm, RetrieveAdCallback, FsmAdControl
             long resumePosition = moviePlayer.isCurrentWindowSeekable() ? Math.max(0, moviePlayer.getCurrentPosition())
                     : C.TIME_UNSET;
             controller.setMovieResumeInfo(resumeWindow, resumePosition);
+
+            ExoPlayerLogger.i(Constants.FSMPLAYER_TESTING, resumePosition + "");
         }
     }
 

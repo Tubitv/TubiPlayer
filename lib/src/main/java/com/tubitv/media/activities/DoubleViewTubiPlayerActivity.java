@@ -33,12 +33,14 @@ import com.tubitv.media.fsm.concrete.VpaidState;
 import com.tubitv.media.fsm.listener.AdPlayingMonitor;
 import com.tubitv.media.fsm.listener.CuePointMonitor;
 import com.tubitv.media.fsm.state_machine.FsmPlayer;
+import com.tubitv.media.helpers.Constants;
 import com.tubitv.media.interfaces.DoublePlayerInterface;
 import com.tubitv.media.models.AdMediaModel;
 import com.tubitv.media.models.AdRetriever;
 import com.tubitv.media.models.CuePointsRetriever;
 import com.tubitv.media.models.MediaModel;
 import com.tubitv.media.models.VpaidClient;
+import com.tubitv.media.utilities.ExoPlayerLogger;
 import com.tubitv.media.utilities.Utils;
 import com.tubitv.media.views.TubiExoPlayerView;
 
@@ -198,6 +200,7 @@ public class DoubleViewTubiPlayerActivity extends TubiPlayerActivity implements 
             long resumePosition = mMoviePlayer.isCurrentWindowSeekable() ? Math.max(0, mMoviePlayer.getCurrentPosition())
                     : C.TIME_UNSET;
             playerUIController.setMovieResumeInfo(resumeWindow, resumePosition);
+            ExoPlayerLogger.i(Constants.FSMPLAYER_TESTING, resumePosition + "");
         }
 
         //keep track of ad player's position when activity resume back, only keep track when current state is in AdPlayingState.
