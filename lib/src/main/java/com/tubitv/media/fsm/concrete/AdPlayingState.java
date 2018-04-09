@@ -6,7 +6,7 @@ import android.webkit.WebView;
 
 import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.SimpleExoPlayer;
-import com.tubitv.media.controller.PlayerComponentController;
+import com.tubitv.media.controller.PlayerAdLogicController;
 import com.tubitv.media.controller.PlayerUIController;
 import com.tubitv.media.fsm.BaseState;
 import com.tubitv.media.fsm.Input;
@@ -56,7 +56,7 @@ public class AdPlayingState extends BaseState {
         playingAdAndPauseMovie(controller, adMedia, componentController, fsmPlayer);
     }
 
-    private void playingAdAndPauseMovie(PlayerUIController controller, AdMediaModel adMediaModel, PlayerComponentController componentController, FsmPlayer fsmPlayer) {
+    private void playingAdAndPauseMovie(PlayerUIController controller, AdMediaModel adMediaModel, PlayerAdLogicController componentController, FsmPlayer fsmPlayer) {
 
         SimpleExoPlayer adPlayer = controller.getAdPlayer();
         SimpleExoPlayer moviePlayer = controller.getContentPlayer();

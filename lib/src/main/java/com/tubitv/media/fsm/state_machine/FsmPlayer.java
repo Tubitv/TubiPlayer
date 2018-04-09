@@ -6,7 +6,7 @@ import android.support.annotation.NonNull;
 import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.ExoPlayer;
 import com.google.android.exoplayer2.SimpleExoPlayer;
-import com.tubitv.media.controller.PlayerComponentController;
+import com.tubitv.media.controller.PlayerAdLogicController;
 import com.tubitv.media.controller.PlayerUIController;
 import com.tubitv.media.fsm.Input;
 import com.tubitv.media.fsm.State;
@@ -38,7 +38,7 @@ public abstract class FsmPlayer implements Fsm, RetrieveAdCallback, FsmAdControl
     /**
      * a wrapper class for player logic related component objects.
      */
-    protected PlayerComponentController playerComponentController;
+    protected PlayerAdLogicController playerComponentController;
 
     /**
      * a generic call ad network class
@@ -166,11 +166,11 @@ public abstract class FsmPlayer implements Fsm, RetrieveAdCallback, FsmAdControl
         this.adRetriever = adRetriever;
     }
 
-    public void setPlayerComponentController(PlayerComponentController playerComponentController) {
+    public void setPlayerComponentController(PlayerAdLogicController playerComponentController) {
         this.playerComponentController = playerComponentController;
     }
 
-    public PlayerComponentController getPlayerComponentController() {
+    public PlayerAdLogicController getPlayerComponentController() {
         return playerComponentController;
     }
 

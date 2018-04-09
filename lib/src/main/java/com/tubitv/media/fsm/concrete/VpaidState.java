@@ -5,7 +5,7 @@ import android.view.View;
 import android.webkit.WebView;
 
 import com.google.android.exoplayer2.ExoPlayer;
-import com.tubitv.media.controller.PlayerComponentController;
+import com.tubitv.media.controller.PlayerAdLogicController;
 import com.tubitv.media.controller.PlayerUIController;
 import com.tubitv.media.fsm.BaseState;
 import com.tubitv.media.fsm.Input;
@@ -51,7 +51,7 @@ public class VpaidState extends BaseState {
         pausePlayerAndSHowVpaid(controller, componentController, fsmPlayer, adMedia);
     }
 
-    private void pausePlayerAndSHowVpaid(PlayerUIController controller, PlayerComponentController componentController, FsmPlayer fsmPlayer, AdMediaModel adMedia) {
+    private void pausePlayerAndSHowVpaid(PlayerUIController controller, PlayerAdLogicController componentController, FsmPlayer fsmPlayer, AdMediaModel adMedia) {
 
         ExoPlayer moviePlayer = controller.getContentPlayer();
 

@@ -12,7 +12,7 @@ import com.tubitv.media.models.VpaidClient;
  * Created by allensun on 8/11/17.
  * on Tubitv.com, allengotstuff@gmail.com
  */
-public class PlayerComponentController {
+public class PlayerAdLogicController {
 
     private AdPlayingMonitor adPlayingMonitor;
 
@@ -24,7 +24,7 @@ public class PlayerComponentController {
 
     private VpaidClient vpaidClient;
 
-    public PlayerComponentController(@Nullable AdPlayingMonitor adPlayingMonitor, @Nullable TubiPlaybackInterface tubiPlaybackInterface, @Nullable DoublePlayerInterface doublePlayerInterface, @Nullable CuePointMonitor cuePointMonitor) {
+    public PlayerAdLogicController(@Nullable AdPlayingMonitor adPlayingMonitor, @Nullable TubiPlaybackInterface tubiPlaybackInterface, @Nullable DoublePlayerInterface doublePlayerInterface, @Nullable CuePointMonitor cuePointMonitor) {
         this.adPlayingMonitor = adPlayingMonitor;
         this.tubiPlaybackInterface = tubiPlaybackInterface;
         this.doublePlayerInterface = doublePlayerInterface;
@@ -32,7 +32,7 @@ public class PlayerComponentController {
         this.vpaidClient = null;
     }
 
-    public PlayerComponentController(@Nullable AdPlayingMonitor adPlayingMonitor, @Nullable TubiPlaybackInterface tubiPlaybackInterface, @Nullable DoublePlayerInterface doublePlayerInterface, @Nullable CuePointMonitor cuePointMonitor, @Nullable VpaidClient vpaidClient) {
+    public PlayerAdLogicController(@Nullable AdPlayingMonitor adPlayingMonitor, @Nullable TubiPlaybackInterface tubiPlaybackInterface, @Nullable DoublePlayerInterface doublePlayerInterface, @Nullable CuePointMonitor cuePointMonitor, @Nullable VpaidClient vpaidClient) {
         this.adPlayingMonitor = adPlayingMonitor;
         this.tubiPlaybackInterface = tubiPlaybackInterface;
         this.doublePlayerInterface = doublePlayerInterface;
