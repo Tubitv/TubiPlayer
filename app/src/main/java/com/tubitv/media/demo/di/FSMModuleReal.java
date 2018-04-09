@@ -6,7 +6,7 @@ import android.support.annotation.Nullable;
 import android.view.View;
 import android.webkit.WebView;
 
-import com.tubitv.media.controller.PlayerComponentController;
+import com.tubitv.media.controller.PlayerAdLogicController;
 import com.tubitv.media.controller.PlayerUIController;
 import com.tubitv.media.demo.vpaid_model.TubiVPAID;
 import com.tubitv.media.di.annotation.ActicityScope;
@@ -73,8 +73,8 @@ public class FSMModuleReal {
 
     @ActicityScope
     @Provides
-    PlayerComponentController provideComponentController() {
-        return new PlayerComponentController(null, null, null, null);
+    PlayerAdLogicController provideComponentController() {
+        return new PlayerAdLogicController(null, null, null, null);
     }
 
     @ActicityScope

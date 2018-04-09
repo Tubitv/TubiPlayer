@@ -5,7 +5,7 @@ import android.view.View;
 import android.webkit.WebView;
 
 import com.google.android.exoplayer2.SimpleExoPlayer;
-import com.tubitv.media.controller.PlayerComponentController;
+import com.tubitv.media.controller.PlayerAdLogicController;
 import com.tubitv.media.controller.PlayerUIController;
 import com.tubitv.media.di.annotation.ActicityScope;
 import com.tubitv.media.fsm.callback.AdInterface;
@@ -76,8 +76,8 @@ public class FSMModuleTesting {
 
     @ActicityScope
     @Provides
-    PlayerComponentController provideComponentController() {
-        return new PlayerComponentController(null, null, null, null);
+    PlayerAdLogicController provideComponentController() {
+        return new PlayerAdLogicController(null, null, null, null);
     }
 
     @ActicityScope

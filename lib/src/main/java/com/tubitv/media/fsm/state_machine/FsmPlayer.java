@@ -6,7 +6,7 @@ import android.support.annotation.NonNull;
 import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.ExoPlayer;
 import com.google.android.exoplayer2.SimpleExoPlayer;
-import com.tubitv.media.controller.PlayerComponentController;
+import com.tubitv.media.controller.PlayerAdLogicController;
 import com.tubitv.media.controller.PlayerUIController;
 import com.tubitv.media.fsm.Input;
 import com.tubitv.media.fsm.State;
@@ -38,7 +38,7 @@ public abstract class FsmPlayer implements Fsm, RetrieveAdCallback, FsmAdControl
     /**
      * a wrapper class for player logic related component objects.
      */
-    protected PlayerComponentController playerComponentController;
+    protected PlayerAdLogicController playerComponentController;
 
     /**
      * a generic call ad network class
@@ -105,6 +105,10 @@ public abstract class FsmPlayer implements Fsm, RetrieveAdCallback, FsmAdControl
         this.adMedia = adMedia;
     }
 
+    public AdMediaModel getAdMedia() {
+        return adMedia;
+    }
+
     public AdInterface getAdServerInterface() {
         return adServerInterface;
     }
@@ -162,8 +166,12 @@ public abstract class FsmPlayer implements Fsm, RetrieveAdCallback, FsmAdControl
         this.adRetriever = adRetriever;
     }
 
-    public void setPlayerComponentController(PlayerComponentController playerComponentController) {
+    public void setPlayerComponentController(PlayerAdLogicController playerComponentController) {
         this.playerComponentController = playerComponentController;
+    }
+
+    public PlayerAdLogicController getPlayerComponentController() {
+        return playerComponentController;
     }
 
     public void setCuePointsRetriever(CuePointsRetriever cuePointsRetriever) {
@@ -198,6 +206,9 @@ public abstract class FsmPlayer implements Fsm, RetrieveAdCallback, FsmAdControl
 
         State transitToState;
 
+        /**
+         * make state transition.
+         */
         if (currentState != null) {
             transitToState = currentState.transformToState(input, factory);
         } else {
@@ -208,6 +219,9 @@ public abstract class FsmPlayer implements Fsm, RetrieveAdCallback, FsmAdControl
             ExoPlayerLogger.i(Constants.FSMPLAYER_TESTING, "initialize fsmPlayer");
         }
 
+        /**
+         * check if the transition flow is correct, if not then handle the error case.
+         */
         if (transitToState != null) {
             /**
              * when transition is not null, state change is successful, and transit to a new state
@@ -237,7 +251,7 @@ public abstract class FsmPlayer implements Fsm, RetrieveAdCallback, FsmAdControl
 
         ExoPlayerLogger.d(Constants.FSMPLAYER_TESTING, "transit to: " + currentState.getClass().getSimpleName());
 
-        currentState.performWorkAndupdatePlayerUI(this, controller, playerComponentController, movieMedia, adMedia);
+        currentState.performWorkAndUpdatePlayerUI(this);
 
 
     }
@@ -277,7 +291,7 @@ public abstract class FsmPlayer implements Fsm, RetrieveAdCallback, FsmAdControl
     public void updateSelf() {
         if (currentState != null) {
             ExoPlayerLogger.i(Constants.FSMPLAYER_TESTING, "Fsm updates self : " + currentState.getClass().getSimpleName());
-            currentState.performWorkAndupdatePlayerUI(this, controller, playerComponentController, movieMedia, adMedia);
+            currentState.performWorkAndUpdatePlayerUI(this);
         }
     }
 
@@ -305,7 +319,7 @@ public abstract class FsmPlayer implements Fsm, RetrieveAdCallback, FsmAdControl
     }
 
     /**
-     * update the resume position of the main movice
+     * update the resume position of the main video
      *
      * @param controller
      */
@@ -322,6 +336,8 @@ public abstract class FsmPlayer implements Fsm, RetrieveAdCallback, FsmAdControl
             long resumePosition = moviePlayer.isCurrentWindowSeekable() ? Math.max(0, moviePlayer.getCurrentPosition())
                     : C.TIME_UNSET;
             controller.setMovieResumeInfo(resumeWindow, resumePosition);
+
+            ExoPlayerLogger.i(Constants.FSMPLAYER_TESTING, resumePosition + "");
         }
     }
 

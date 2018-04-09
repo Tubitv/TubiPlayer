@@ -1,9 +1,8 @@
 package com.tubitv.media.fsm;
 
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 
-import com.tubitv.media.controller.PlayerComponentController;
+import com.tubitv.media.controller.PlayerAdLogicController;
 import com.tubitv.media.controller.PlayerUIController;
 import com.tubitv.media.fsm.state_machine.FsmPlayer;
 import com.tubitv.media.helpers.Constants;
@@ -13,21 +12,44 @@ import com.tubitv.media.utilities.ExoPlayerLogger;
 
 /**
  * Created by allensun on 7/31/17.
+ * Base class for {@link State}, preparation method to get the state ready for UI and business rule manipulation.
  */
 public abstract class BaseState implements State {
 
+    protected PlayerUIController controller;
+
+    protected PlayerAdLogicController componentController;
+
+    protected MediaModel movieMedia;
+
+    protected AdMediaModel adMedia;
+
     /**
-     * in every state for the Exoplayer can have out of network fail.
+     * for testing purpose,
+     * @param fsmPlayer
+     * @return
      */
-    public void networkFail() {
+    protected boolean isNull(@NonNull FsmPlayer fsmPlayer) {
+        if (fsmPlayer == null) {
+            throw new IllegalStateException("FsmPlayer can not be null");
+        }
 
-    }
-
-    public boolean isNull(@Nullable FsmPlayer fsmPlayer, @NonNull PlayerUIController controller, @NonNull PlayerComponentController componentController, @NonNull MediaModel movieMedia, @Nullable AdMediaModel adMedia) {
-        if (fsmPlayer == null || controller == null || componentController == null || movieMedia == null) {
-            ExoPlayerLogger.e(Constants.FSMPLAYER_TESTING, "component is null");
+        if (controller == null || componentController == null || movieMedia == null) {
+            ExoPlayerLogger.e(Constants.FSMPLAYER_TESTING, "components are null");
             return true;
         }
+
         return false;
+    }
+
+    @Override
+    public void performWorkAndUpdatePlayerUI(@NonNull FsmPlayer fsmPlayer) {
+        /**
+         * need to get the reference of the UI and Business logic components first.
+         */
+        controller = fsmPlayer.getController();
+        componentController = fsmPlayer.getPlayerComponentController();
+        movieMedia = fsmPlayer.getMovieMedia();
+        adMedia = fsmPlayer.getAdMedia();
     }
 }

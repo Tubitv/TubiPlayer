@@ -16,7 +16,7 @@ public interface Fsm {
 
     void updateSelf();
     /**
-     * this is the begining state of the fsm
+     * this is the beginning state of the fsm
      * @return
      */
     @NonNull
