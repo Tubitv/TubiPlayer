@@ -1,5 +1,6 @@
 package com.tubitv.media.views;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.res.Resources;
 import android.databinding.BindingAdapter;
@@ -12,6 +13,7 @@ import android.support.v7.app.MediaRouteButton;
 import android.util.AttributeSet;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 
 import com.google.android.exoplayer2.C;
@@ -26,6 +28,7 @@ import com.tubitv.media.interfaces.TubiPlaybackControlInterface;
 import com.tubitv.media.interfaces.TubiPlaybackInterface;
 import com.tubitv.media.models.MediaModel;
 import com.tubitv.media.utilities.ExoPlayerLogger;
+import com.tubitv.media.utilities.Utils;
 
 /**
  * Created by stoyan on 5/15/17.
@@ -85,12 +88,24 @@ public class TubiPlayerControlView extends ConstraintLayout implements TrackSele
      */
     private SimpleExoPlayer mPlayer;
 
+    private Context activity;
+
     private final Runnable hideAction = new Runnable() {
         @Override
         public void run() {
             hide();
         }
     };
+
+    private final Runnable hideSystemUI = new Runnable() {
+        @Override
+        public void run() {
+            if (activity != null) {
+                Utils.hideSystemUI((Activity) activity, true);
+            }
+        }
+    };
+
 
     /**
      * ChromeCast enabled feature.
@@ -113,6 +128,7 @@ public class TubiPlayerControlView extends ConstraintLayout implements TrackSele
         }
 
         initLayout();
+        activity = context;
     }
 
     @Override
@@ -133,8 +149,8 @@ public class TubiPlayerControlView extends ConstraintLayout implements TrackSele
     public void onDetachedFromWindow() {
         super.onDetachedFromWindow();
         isAttachedToWindow = false;
-//        removeCallbacks(updateProgressAction);
         removeCallbacks(hideAction);
+        removeCallbacks(hideSystemUI);
     }
 
     @Override
@@ -164,6 +180,13 @@ public class TubiPlayerControlView extends ConstraintLayout implements TrackSele
         MediaRouteButton mMediaRouteButton = (MediaRouteButton) findViewById(R.id.view_tubi_controller_chromecast_ib);
         CastButtonFactory.setUpMediaRouteButton(getContext(), mMediaRouteButton);
 
+        mMediaRouteButton.setOnTouchListener(new OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                postDelayed(hideSystemUI,1000);
+                return false;
+            }
+        });
         if (GoogleServicesHelper.available(getContext())) {
             try {
                 mMediaRouteButton.setVisibility(VISIBLE);
