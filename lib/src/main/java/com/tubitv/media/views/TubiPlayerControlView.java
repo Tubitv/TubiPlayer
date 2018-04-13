@@ -183,6 +183,7 @@ public class TubiPlayerControlView extends ConstraintLayout implements TrackSele
         mMediaRouteButton.setOnTouchListener(new OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
+                removeCallbacks(hideSystemUI);
                 postDelayed(hideSystemUI,1000);
                 return false;
             }
