@@ -1,6 +1,5 @@
 package com.tubitv.media.activities;
 
-import android.app.Activity;
 import android.arch.lifecycle.Lifecycle;
 import android.arch.lifecycle.LifecycleOwner;
 import android.arch.lifecycle.LifecycleRegistry;
@@ -12,7 +11,7 @@ import android.support.annotation.Nullable;
  * Created by allensun on 11/17/17.
  * on Tubitv.com, allengotstuff@gmail.com
  */
-public class LifeCycleActivity extends Activity implements LifecycleOwner {
+public class LifeCycleActivity extends ChromeCastActivity implements LifecycleOwner {
 
     private LifecycleRegistry mLifecycleRegistry;
 
