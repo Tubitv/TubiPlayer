@@ -53,6 +53,9 @@ public class AdPlayingState extends BaseState {
             return;
         }
 
+        //reset the ad player position everytime when a transition to AdPlaying occur
+        controller.clearAdResumeInfo();
+
         playingAdAndPauseMovie(controller, adMedia, componentController, fsmPlayer);
     }
 
