@@ -12,7 +12,6 @@ import com.tubitv.media.fsm.Input;
 import com.tubitv.media.fsm.State;
 import com.tubitv.media.fsm.callback.AdInterface;
 import com.tubitv.media.fsm.callback.RetrieveAdCallback;
-import com.tubitv.media.fsm.concrete.AdPlayingState;
 import com.tubitv.media.fsm.concrete.MakingAdCallState;
 import com.tubitv.media.fsm.concrete.MakingPrerollAdCallState;
 import com.tubitv.media.fsm.concrete.MoviePlayingState;
@@ -227,11 +226,6 @@ public abstract class FsmPlayer implements Fsm, RetrieveAdCallback, FsmAdControl
              * when transition is not null, state change is successful, and transit to a new state
              */
             currentState = transitToState;
-
-            //reset the ad player position everytime when a transition to AdPlaying occur
-            if(currentState instanceof AdPlayingState && controller!=null){
-                controller.clearAdResumeInfo();
-            }
 
         } else {
 
