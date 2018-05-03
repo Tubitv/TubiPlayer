@@ -8,3 +8,6 @@
 * code cleanup and adding documentation 
 ###release-v2.0-chromecast
 * implement chromecast dependencies and adding chromecast feature with tubiplayer
+
+###release-v2.1-chromecast
+* fix chromecast crash with devices that doesn't have google playstore 
