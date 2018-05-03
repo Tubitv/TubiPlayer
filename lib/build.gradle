@@ -10,7 +10,7 @@ buildscript {
     }
 }
 
-def libVersion = "0.0.2-beta"
+def libVersion = "v2.0"
 
 android {
     compileSdkVersion 25
@@ -50,7 +50,7 @@ android {
             def outputFile = output.outputFile
             if (outputFile != null && outputFile.name.endsWith('.aar')) {
 //                def fileName = "${archivesBaseName}-${version}.aar"
-                def fileName = "exoplayer.aar"
+                def fileName = "tubiplayer-" + variant.name + "-" + libVersion + ".aar"
                 output.outputFile = new File(outputFile.parent, fileName)
             }
         }
