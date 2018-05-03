@@ -177,19 +177,20 @@ public class TubiPlayerControlView extends ConstraintLayout implements TrackSele
     }
 
     private void initCast() {
-        MediaRouteButton mMediaRouteButton = (MediaRouteButton) findViewById(R.id.view_tubi_controller_chromecast_ib);
-        CastButtonFactory.setUpMediaRouteButton(getContext(), mMediaRouteButton);
 
-        mMediaRouteButton.setOnTouchListener(new OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                removeCallbacks(hideSystemUI);
-                postDelayed(hideSystemUI,1000);
-                return false;
-            }
-        });
         if (GoogleServicesHelper.available(getContext())) {
             try {
+                MediaRouteButton mMediaRouteButton = (MediaRouteButton) findViewById(R.id.view_tubi_controller_chromecast_ib);
+                CastButtonFactory.setUpMediaRouteButton(getContext(), mMediaRouteButton);
+
+                mMediaRouteButton.setOnTouchListener(new OnTouchListener() {
+                    @Override
+                    public boolean onTouch(View v, MotionEvent event) {
+                        removeCallbacks(hideSystemUI);
+                        postDelayed(hideSystemUI,1000);
+                        return false;
+                    }
+                });
                 mMediaRouteButton.setVisibility(VISIBLE);
 
             } catch (Exception exception) {
