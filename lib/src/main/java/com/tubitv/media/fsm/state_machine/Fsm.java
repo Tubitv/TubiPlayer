@@ -22,4 +22,6 @@ public interface Fsm {
     @NonNull
     Class initializeState();
 
+    void restart();
+
 }

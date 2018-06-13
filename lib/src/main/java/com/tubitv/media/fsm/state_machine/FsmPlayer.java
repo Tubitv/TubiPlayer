@@ -193,6 +193,17 @@ public abstract class FsmPlayer implements Fsm, RetrieveAdCallback, FsmAdControl
     }
 
     @Override
+    public void restart() {
+        getController().getContentPlayer().stop();
+        getController().getContentPlayer().setPlayWhenReady(false);
+        currentState = null;
+        getController().clearMovieResumeInfo();
+
+        getController().getContentPlayer().prepare(movieMedia.getMediaSource());
+        transit(Input.INITIALIZE);
+    }
+
+    @Override
     public void transit(Input input) {
 
         // if the current lifecycle of activity is after on_stop, omit the transition

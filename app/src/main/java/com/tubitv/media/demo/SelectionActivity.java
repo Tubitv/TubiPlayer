@@ -27,10 +27,10 @@ public class SelectionActivity extends Activity {
         playHls1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String url = "http://c13.adrise.tv/v2/sources/content-owners/paramount/322939/v201608180126-1024x576-,362,907,1186,1651,k.mp4.m3u8" + LOGIN_TOKEN;
+                String url = "http://titan.adrise.tv/gravitas/7a10f7f4-7167-4afc-b6d3-245d6b130a80/,zdlo0rzrtw,g4ng3tphz9,hvjhkd1kr2,notk54jpmt,.mp4.m3u8?11peYayRLcUlbjPY9InN5C2QzaVZtqVz92jKbPbIH-QGG_ZmGY9BkePvYpSyVrMeRjTIdc5zxkCboVW2QR23nOEqUU4";
                 String subs = "http://s.adrise.tv/88703acf-66a2-4071-8231-d6cffe579f33.srt";
                 String artwork = "http://images.adrise.tv/6sjdZy7rGz23YZ62_diTF26BfgE=/214x306/smart/img.adrise.tv/4b85521c-c3af-41d5-bf52-40b698c6d56d.jpg";
-                String name = "School of Rock";
+                String name = "longest weekend";
                 Intent intent = new Intent(SelectionActivity.this, DoubleViewTubiPlayerActivity.class);
                 intent.putExtra(TubiPlayerActivity.TUBI_MEDIA_KEY, MediaModel.video(name, url, artwork, subs));
                 startActivity(intent);
