@@ -199,7 +199,7 @@ public abstract class FsmPlayer implements Fsm, RetrieveAdCallback, FsmAdControl
         currentState = null;
         getController().clearMovieResumeInfo();
 
-        getController().getContentPlayer().prepare(movieMedia.getMediaSource());
+        getController().getContentPlayer().prepare(movieMedia.getMediaSource(),true,true);
         transit(Input.INITIALIZE);
     }
 
