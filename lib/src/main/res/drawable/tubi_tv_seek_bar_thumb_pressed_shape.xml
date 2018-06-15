@@ -9,7 +9,7 @@
         android:color="@color/tubi_tv_player_white" />
 
     <size
-        android:height="20dp"
-        android:width="20dp" />
+        android:height="25dp"
+        android:width="25dp" />
 
 </shape>
