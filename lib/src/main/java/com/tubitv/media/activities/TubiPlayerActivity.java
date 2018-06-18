@@ -88,7 +88,6 @@ public abstract class TubiPlayerActivity extends LifeCycleActivity implements Tu
         Utils.hideSystemUI(this, true);
         mMediaDataSourceFactory = buildDataSourceFactory(true);
         initLayout();
-        setCaption(isCaptionPreferenceEnable());
     }
 
     @Override
@@ -165,6 +164,7 @@ public abstract class TubiPlayerActivity extends LifeCycleActivity implements Tu
     }
 
     private void setupExo() {
+        setCaption(isCaptionPreferenceEnable());
         initMoviePlayer();
         isActive = true;
         onPlayerReady();
