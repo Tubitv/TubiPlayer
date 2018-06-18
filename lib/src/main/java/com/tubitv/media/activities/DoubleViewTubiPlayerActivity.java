@@ -34,6 +34,7 @@ import com.tubitv.media.fsm.listener.AdPlayingMonitor;
 import com.tubitv.media.fsm.listener.CuePointMonitor;
 import com.tubitv.media.fsm.state_machine.FsmPlayer;
 import com.tubitv.media.helpers.Constants;
+import com.tubitv.media.interfaces.AutoPlay;
 import com.tubitv.media.interfaces.DoublePlayerInterface;
 import com.tubitv.media.models.AdMediaModel;
 import com.tubitv.media.models.AdRetriever;
@@ -50,7 +51,7 @@ import javax.inject.Inject;
 /**
  * Created by allensun on 7/24/17.
  */
-public class DoubleViewTubiPlayerActivity extends TubiPlayerActivity implements DoublePlayerInterface {
+public class DoubleViewTubiPlayerActivity extends TubiPlayerActivity implements DoublePlayerInterface, AutoPlay {
 
     protected SimpleExoPlayer adPlayer;
 
@@ -141,7 +142,7 @@ public class DoubleViewTubiPlayerActivity extends TubiPlayerActivity implements 
     @Override
     protected void initMoviePlayer() {
         super.initMoviePlayer();
-        createMediaSource();
+        createMediaSource(mediaModel);
         setupAdPlayer();
     }
 
@@ -314,9 +315,9 @@ public class DoubleViewTubiPlayerActivity extends TubiPlayerActivity implements 
      *
      * @return
      */
-    protected void createMediaSource() {
+    protected void createMediaSource(MediaModel videoMediaModel) {
 
-        mediaModel.setMediaSource(buildMediaSource(mediaModel));
+        videoMediaModel.setMediaSource(buildMediaSource(videoMediaModel));
     }
 
     @Override
@@ -388,5 +389,14 @@ public class DoubleViewTubiPlayerActivity extends TubiPlayerActivity implements 
         }
 
         return builder.toString();
+    }
+
+    @Override
+    public void playNext(MediaModel nextVideo) {
+        fsmPlayer.getMovieMedia().getMediaSource().releaseSource();
+
+        createMediaSource(nextVideo);
+        fsmPlayer.setMovieMedia(nextVideo);
+        fsmPlayer.restart();
     }
 }
