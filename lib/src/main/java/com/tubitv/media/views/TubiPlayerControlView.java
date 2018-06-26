@@ -193,7 +193,7 @@ public class TubiPlayerControlView extends ConstraintLayout implements TrackSele
         if (!isVisible()) {
             findViewById(R.id.controller_panel).setVisibility(VISIBLE);
             if (visibilityListener != null) {
-                visibilityListener.onVisibilityChange(getVisibility());
+                visibilityListener.onVisibilityChange(VISIBLE);
             }
             alignSubtitlesView(true);
 //            updateAll();
@@ -207,7 +207,7 @@ public class TubiPlayerControlView extends ConstraintLayout implements TrackSele
             if (tubiObservable == null || !tubiObservable.userInteracting()) {
                 findViewById(R.id.controller_panel).setVisibility(GONE);
                 if (visibilityListener != null) {
-                    visibilityListener.onVisibilityChange(getVisibility());
+                    visibilityListener.onVisibilityChange(GONE);
                 }
                 alignSubtitlesView(false);
 //            removeCallbacks(updateProgressAction);
