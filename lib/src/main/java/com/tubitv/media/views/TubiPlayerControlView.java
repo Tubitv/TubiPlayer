@@ -88,7 +88,10 @@ public class TubiPlayerControlView extends ConstraintLayout implements TrackSele
      */
     private SimpleExoPlayer mPlayer;
 
+    private float seekBarUpperBound = 0f;
     private Context activity;
+
+
 
     private final Runnable hideAction = new Runnable() {
         @Override
@@ -131,6 +134,14 @@ public class TubiPlayerControlView extends ConstraintLayout implements TrackSele
         activity = context;
     }
 
+    /**
+     * get the seekBar upper bound relative to bottom of the screen, for Auto play animation purposes.
+     * @return if return 0f, it mean the view hasn't been created, therefore, should only called this method when view has created on the screen already.
+     */
+    public float getSeekBarUpperBound() {
+        return seekBarUpperBound;
+    }
+
     @Override
     public void onAttachedToWindow() {
         super.onAttachedToWindow();
@@ -143,6 +154,12 @@ public class TubiPlayerControlView extends ConstraintLayout implements TrackSele
                 postDelayed(hideAction, delayMs);
             }
         }
+    }
+
+    @Override
+    protected void onSizeChanged(int w, int h, int oldw, int oldh) {
+        super.onSizeChanged(w, h, oldw, oldh);
+        seekBarUpperBound = calculateSeekBarUpperBound();
     }
 
     @Override
@@ -240,7 +257,7 @@ public class TubiPlayerControlView extends ConstraintLayout implements TrackSele
         if (!isVisible()) {
             findViewById(R.id.controller_panel).setVisibility(VISIBLE);
             if (visibilityListener != null) {
-                visibilityListener.onVisibilityChange(getVisibility());
+                visibilityListener.onVisibilityChange(VISIBLE);
             }
             alignSubtitlesView(true);
         }
@@ -253,7 +270,7 @@ public class TubiPlayerControlView extends ConstraintLayout implements TrackSele
             if (tubiObservable == null || !tubiObservable.userInteracting()) {
                 findViewById(R.id.controller_panel).setVisibility(GONE);
                 if (visibilityListener != null) {
-                    visibilityListener.onVisibilityChange(getVisibility());
+                    visibilityListener.onVisibilityChange(GONE);
                 }
                 alignSubtitlesView(false);
 //            removeCallbacks(updateProgressAction);
@@ -354,5 +371,34 @@ public class TubiPlayerControlView extends ConstraintLayout implements TrackSele
         Resources res = getResources();
         String numberofAdLeftInString = res.getQuantityString(R.plurals.view_tubi_ad_learn_more_ads_resume_shortly_text, count, count);
         this.tubiObservable.numberOfAdLeft.set(numberofAdLeftInString);
+    }
+
+    /**
+     *
+     * @return the upper bound of seek bar relative to the bottom of the screen in px.
+     */
+    public float calculateSeekBarUpperBound() {
+
+        //if the seekBarUpperBound has already been calculated, do not need to calculated the position again,
+        //because the operation is relatively expensive.
+        if(seekBarUpperBound!=0f){
+            return seekBarUpperBound;
+        }
+
+        float positionFromBottom = 0;
+
+        if (mBinding.viewTubiControllerSeekBar != null ) {
+            //because the seekbar visibility is "GONE" when first enter the playback activity, we need a special way to get
+            //control view's height.
+            int widthSpec = MeasureSpec.makeMeasureSpec(mBinding.viewTubiControllerSeekBar.getWidth(), MeasureSpec.EXACTLY);
+            int heightSpec = MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED);
+            mBinding.viewTubiControllerSeekBar.measure(widthSpec, heightSpec);
+            int height = mBinding.viewTubiControllerSeekBar.getMeasuredHeight();
+
+            // the control's view's height + 20dp which is the bottom guideline space.
+            positionFromBottom = height + Utils.pxFromDp(getContext(), 20);
+        }
+
+        return positionFromBottom;
     }
 }
