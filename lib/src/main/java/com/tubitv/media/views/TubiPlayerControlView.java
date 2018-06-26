@@ -112,7 +112,7 @@ public class TubiPlayerControlView extends ConstraintLayout implements TrackSele
 
     /**
      * get the seekBar upper bound relative to bottom of the screen, for Auto play animation purposes.
-     * @return
+     * @return if return 0f, it mean the view hasn't been created, therefore, should only called this method when view has created on the screen already.
      */
     public float getSeekBarUpperBound() {
         return seekBarUpperBound;
