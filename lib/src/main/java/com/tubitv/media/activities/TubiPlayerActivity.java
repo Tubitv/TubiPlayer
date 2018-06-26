@@ -148,12 +148,6 @@ public abstract class TubiPlayerActivity extends LifeCycleActivity implements Tu
         mTubiPlayerView = (TubiExoPlayerView) findViewById(R.id.tubitv_player);
         mTubiPlayerView.requestFocus();
         mTubiPlayerView.setActivity(this);
-        mTubiPlayerView.addOnLayoutChangeListener(new View.OnLayoutChangeListener() {
-            @Override
-            public void onLayoutChange(View v, int left, int top, int right, int bottom, int oldLeft, int oldTop, int oldRight, int oldBottom) {
-
-            }
-        });
     }
 
     private void setCaption(boolean isOn) {

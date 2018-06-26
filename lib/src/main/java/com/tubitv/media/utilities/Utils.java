@@ -1,6 +1,7 @@
 package com.tubitv.media.utilities;
 
 import android.app.Activity;
+import android.content.Context;
 import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -92,5 +93,13 @@ public class Utils {
      */
     public static boolean isEmpty(@Nullable String text){
         return text == null || text.equalsIgnoreCase("");
+    }
+
+    public static float dpFromPx(final Context context, final float px) {
+        return px / context.getResources().getDisplayMetrics().density;
+    }
+
+    public static float pxFromDp(final Context context, final float dp) {
+        return dp * context.getResources().getDisplayMetrics().density;
     }
 }
