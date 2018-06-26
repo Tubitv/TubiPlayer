@@ -11,3 +11,6 @@
 
 ###release-v2.1-chromecast
 * fix chromecast crash with devices that doesn't have google playstore 
+
+
+test
