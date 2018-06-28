@@ -8,7 +8,7 @@ From the technology side of things, in order to implement an android player that
 
 # What Does TubiPlayer Do Well.
 * Native multi-media streaming on Android
-* ndustry standard Ad solutions, including VAST and VPAID
+* Industry standard Ad solutions, including VAST and VPAID
 * Error-handing
 * Seamless UX 
 * Highly customized module
