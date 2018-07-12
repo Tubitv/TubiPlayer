@@ -16,21 +16,17 @@ import android.webkit.WebResourceRequest;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
-
 import com.tubitv.demo.BuildConfig;
 import com.tubitv.media.fsm.state_machine.FsmAdController;
 import com.tubitv.media.fsm.state_machine.FsmPlayer;
 import com.tubitv.media.models.MediaModel;
 import com.tubitv.media.models.VpaidClient;
-
 import java.util.Locale;
-
 
 /**
  * Helper class that contains all the different details we need to play VPAID ads. VPAID ads are
  * designed for mobile-web, so we have to switch into a webview and load a tubitv.com URL that
  * contains the necessary javascript to play vpaid ads.
- * <p>
  * Includes the JS Interface added to a WebView that is meant to play a VPAID ad which helps the
  * JS code communicate with the android code and vice-versa
  */
@@ -42,7 +38,6 @@ public class TubiVPAID implements VpaidClient {
     private Handler mHandler;
     private String vastXml = Vastxml.getAdXmlBody();
     private FsmAdController fsmPlayer;
-
 
     /**
      * @param webView   the webview to displaying vpaid
@@ -130,7 +125,7 @@ public class TubiVPAID implements VpaidClient {
          */
         @Override
         public void onReceivedError(WebView view, int errorCode,
-                                    String description, String failingUrl) {
+                String description, String failingUrl) {
             if (failingUrl.equalsIgnoreCase("about:blank")) // not a real error
                 return;
 
@@ -165,7 +160,6 @@ public class TubiVPAID implements VpaidClient {
                     request.getUrl().toString());
         }
     }
-
 
     /**
      * If we ever want to support real full screen playback in a webview, this is where we need

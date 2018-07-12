@@ -3,7 +3,6 @@ package com.tubitv.media.fsm.concrete;
 import android.support.annotation.NonNull;
 import android.view.View;
 import android.webkit.WebView;
-
 import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.ExoPlayer;
 import com.google.android.exoplayer2.SimpleExoPlayer;
@@ -38,7 +37,7 @@ public class MoviePlayingState extends BaseState {
     }
 
     @Override
-    public void performWorkAndUpdatePlayerUI(@NonNull FsmPlayer fsmPlayer ) {
+    public void performWorkAndUpdatePlayerUI(@NonNull FsmPlayer fsmPlayer) {
         super.performWorkAndUpdatePlayerUI(fsmPlayer);
 
         if (isNull(fsmPlayer)) {
@@ -48,7 +47,8 @@ public class MoviePlayingState extends BaseState {
         stopAdandPlayerMovie(controller, componentController, movieMedia);
     }
 
-    private void stopAdandPlayerMovie(PlayerUIController controller, PlayerAdLogicController componentController, MediaModel movieMedia) {
+    private void stopAdandPlayerMovie(PlayerUIController controller, PlayerAdLogicController componentController,
+            MediaModel movieMedia) {
 
         SimpleExoPlayer adPlayer = controller.getAdPlayer();
         SimpleExoPlayer moviePlayer = controller.getContentPlayer();

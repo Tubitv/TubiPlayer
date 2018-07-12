@@ -2,7 +2,6 @@ package com.tubitv.media.fsm.state_machine;
 
 import android.arch.lifecycle.Lifecycle;
 import android.support.annotation.NonNull;
-
 import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.ExoPlayer;
 import com.google.android.exoplayer2.SimpleExoPlayer;
@@ -30,15 +29,13 @@ import com.tubitv.media.utilities.ExoPlayerLogger;
 public abstract class FsmPlayer implements Fsm, RetrieveAdCallback, FsmAdController {
 
     /**
-     * a wrapper class for player UI related objects
-     */
-    private PlayerUIController controller;
-
-    /**
      * a wrapper class for player logic related component objects.
      */
     protected PlayerAdLogicController playerComponentController;
-
+    /**
+     * a wrapper class for player UI related objects
+     */
+    private PlayerUIController controller;
     /**
      * a generic call ad network class
      */
@@ -88,32 +85,63 @@ public abstract class FsmPlayer implements Fsm, RetrieveAdCallback, FsmAdControl
         this.factory = factory;
     }
 
-    public boolean isInitialized() {
-        return isInitialized;
+    /**
+     * update the resume position of the main video
+     *
+     * @param controller
+     */
+    public static void updateMovieResumePosition(PlayerUIController controller) {
+
+        if (controller == null) {
+            return;
+        }
+
+        SimpleExoPlayer moviePlayer = controller.getContentPlayer();
+
+        if (moviePlayer != null && moviePlayer.getPlaybackState() != ExoPlayer.STATE_IDLE) {
+            int resumeWindow = moviePlayer.getCurrentWindowIndex();
+            long resumePosition = moviePlayer.isCurrentWindowSeekable() ? Math.max(0, moviePlayer.getCurrentPosition())
+                    : C.TIME_UNSET;
+            controller.setMovieResumeInfo(resumeWindow, resumePosition);
+
+            ExoPlayerLogger.i(Constants.FSMPLAYER_TESTING, resumePosition + "");
+        }
     }
 
-    public void setMovieMedia(MediaModel movieMedia) {
-        this.movieMedia = movieMedia;
+    public boolean isInitialized() {
+        return isInitialized;
     }
 
     public MediaModel getMovieMedia() {
         return movieMedia;
     }
 
-    public void setAdMedia(AdMediaModel adMedia) {
-        this.adMedia = adMedia;
+    public void setMovieMedia(MediaModel movieMedia) {
+        this.movieMedia = movieMedia;
     }
 
     public AdMediaModel getAdMedia() {
         return adMedia;
     }
 
+    public void setAdMedia(AdMediaModel adMedia) {
+        this.adMedia = adMedia;
+    }
+
     public AdInterface getAdServerInterface() {
         return adServerInterface;
     }
 
+    public void setAdServerInterface(@NonNull AdInterface adServerInterface) {
+        this.adServerInterface = adServerInterface;
+    }
+
     public AdRetriever getAdRetriever() {
         return adRetriever;
+    }
+
+    public void setAdRetriever(@NonNull AdRetriever adRetriever) {
+        this.adRetriever = adRetriever;
     }
 
     public Lifecycle getLifecycle() {
@@ -149,36 +177,28 @@ public abstract class FsmPlayer implements Fsm, RetrieveAdCallback, FsmAdControl
         return adMedia.nextAD();
     }
 
-    public void setController(@NonNull PlayerUIController controller) {
-        this.controller = controller;
-    }
-
     public PlayerUIController getController() {
         return controller;
     }
 
-    public void setAdServerInterface(@NonNull AdInterface adServerInterface) {
-        this.adServerInterface = adServerInterface;
-    }
-
-    public void setAdRetriever(@NonNull AdRetriever adRetriever) {
-        this.adRetriever = adRetriever;
-    }
-
-    public void setPlayerComponentController(PlayerAdLogicController playerComponentController) {
-        this.playerComponentController = playerComponentController;
+    public void setController(@NonNull PlayerUIController controller) {
+        this.controller = controller;
     }
 
     public PlayerAdLogicController getPlayerComponentController() {
         return playerComponentController;
     }
 
-    public void setCuePointsRetriever(CuePointsRetriever cuePointsRetriever) {
-        this.cuePointsRetriever = cuePointsRetriever;
+    public void setPlayerComponentController(PlayerAdLogicController playerComponentController) {
+        this.playerComponentController = playerComponentController;
     }
 
     public CuePointsRetriever getCuePointsRetriever() {
         return cuePointsRetriever;
+    }
+
+    public void setCuePointsRetriever(CuePointsRetriever cuePointsRetriever) {
+        this.cuePointsRetriever = cuePointsRetriever;
     }
 
     public void updateCuePointForRetriever(long cuepoint) {
@@ -199,7 +219,7 @@ public abstract class FsmPlayer implements Fsm, RetrieveAdCallback, FsmAdControl
         currentState = null;
         getController().clearMovieResumeInfo();
 
-        getController().getContentPlayer().prepare(movieMedia.getMediaSource(),true,true);
+        getController().getContentPlayer().prepare(movieMedia.getMediaSource(), true, true);
         transit(Input.INITIALIZE);
     }
 
@@ -207,8 +227,8 @@ public abstract class FsmPlayer implements Fsm, RetrieveAdCallback, FsmAdControl
     public void transit(Input input) {
 
         // if the current lifecycle of activity is after on_stop, omit the transition
-        if(getLifecycle()!=null){
-            if(!getLifecycle().getCurrentState().isAtLeast(Lifecycle.State.STARTED)){
+        if (getLifecycle() != null) {
+            if (!getLifecycle().getCurrentState().isAtLeast(Lifecycle.State.STARTED)) {
                 ExoPlayerLogger.e(Constants.FSMPLAYER_TESTING, "Activity out of lifecycle");
                 return;
             }
@@ -248,7 +268,8 @@ public abstract class FsmPlayer implements Fsm, RetrieveAdCallback, FsmAdControl
                 return;
             }
 
-            ExoPlayerLogger.e(Constants.FSMPLAYER_TESTING, "FSM flow error:" + "prepare transition to MoviePlayingState");
+            ExoPlayerLogger
+                    .e(Constants.FSMPLAYER_TESTING, "FSM flow error:" + "prepare transition to MoviePlayingState");
             currentState = factory.createState(MoviePlayingState.class);
         }
 
@@ -257,7 +278,6 @@ public abstract class FsmPlayer implements Fsm, RetrieveAdCallback, FsmAdControl
         ExoPlayerLogger.d(Constants.FSMPLAYER_TESTING, "transit to: " + currentState.getClass().getSimpleName());
 
         currentState.performWorkAndUpdatePlayerUI(this);
-
 
     }
 
@@ -295,7 +315,8 @@ public abstract class FsmPlayer implements Fsm, RetrieveAdCallback, FsmAdControl
     @Override
     public void updateSelf() {
         if (currentState != null) {
-            ExoPlayerLogger.i(Constants.FSMPLAYER_TESTING, "Fsm updates self : " + currentState.getClass().getSimpleName());
+            ExoPlayerLogger
+                    .i(Constants.FSMPLAYER_TESTING, "Fsm updates self : " + currentState.getClass().getSimpleName());
             currentState.performWorkAndUpdatePlayerUI(this);
         }
     }
@@ -324,31 +345,7 @@ public abstract class FsmPlayer implements Fsm, RetrieveAdCallback, FsmAdControl
     }
 
     /**
-     * update the resume position of the main video
-     *
-     * @param controller
-     */
-    public static void updateMovieResumePosition(PlayerUIController controller) {
-
-        if (controller == null) {
-            return;
-        }
-
-        SimpleExoPlayer moviePlayer = controller.getContentPlayer();
-
-        if (moviePlayer != null && moviePlayer.getPlaybackState() != ExoPlayer.STATE_IDLE) {
-            int resumeWindow = moviePlayer.getCurrentWindowIndex();
-            long resumePosition = moviePlayer.isCurrentWindowSeekable() ? Math.max(0, moviePlayer.getCurrentPosition())
-                    : C.TIME_UNSET;
-            controller.setMovieResumeInfo(resumeWindow, resumePosition);
-
-            ExoPlayerLogger.i(Constants.FSMPLAYER_TESTING, resumePosition + "");
-        }
-    }
-
-    /**
      * transit to different state, when current state is {@link MakingAdCallState}, then when Ad comes back from server, transit to AD_RECEIVED,which transit current state to {@link com.tubitv.media.fsm.concrete.ReceiveAdState}
-     * <p>
      * if current state is {@link MakingPrerollAdCallState}, then when Ad comes back, transit to PRE_ROLL_AD_RECEIVED, which then transit state to {@link com.tubitv.media.fsm.concrete.AdPlayingState}.
      *
      * @param currentState

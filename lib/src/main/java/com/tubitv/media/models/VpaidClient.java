@@ -8,6 +8,8 @@ import android.webkit.JavascriptInterface;
  */
 public interface VpaidClient {
 
+    String EMPTY_URL = "about:blank";
+
     void init(MediaModel adMediaModel);
 
     @JavascriptInterface
@@ -18,6 +20,4 @@ public interface VpaidClient {
 
     @JavascriptInterface
     String getVastXml();
-
-    String EMPTY_URL = "about:blank";
 }

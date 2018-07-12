@@ -2,7 +2,6 @@ package com.tubitv.media.demo.di;
 
 import com.tubitv.media.demo.RealActivity;
 import com.tubitv.media.di.annotation.ActicityScope;
-
 import dagger.Component;
 
 /**

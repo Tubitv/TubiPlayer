@@ -7,10 +7,8 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.view.View;
 import android.widget.SeekBar;
-
 import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.util.Util;
-
 import java.util.Formatter;
 import java.util.Locale;
 
@@ -73,9 +71,9 @@ public class Utils {
                                 hideSystemUI(activity, false);
                             }
                         };
-                        if(immediate){
+                        if (immediate) {
                             handler.post(runnable);
-                        }else{
+                        } else {
                             handler.postDelayed(runnable, delayMs);
                         }
                     }
@@ -91,7 +89,7 @@ public class Utils {
      * @param text String to check
      * @return True if string is null or ""
      */
-    public static boolean isEmpty(@Nullable String text){
+    public static boolean isEmpty(@Nullable String text) {
         return text == null || text.equalsIgnoreCase("");
     }
 

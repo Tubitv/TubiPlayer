@@ -3,9 +3,7 @@ package com.tubitv.media.models;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-
 import com.google.android.exoplayer2.source.MediaSource;
-
 import java.io.Serializable;
 
 /**
@@ -60,15 +58,8 @@ public class MediaModel implements Serializable {
      */
     private boolean isVpaid;
 
-    public static MediaModel video(@NonNull String mediaName, @NonNull String videoUrl, @NonNull String artworkUrl, @Nullable String subtitlesUrl) {
-        return new MediaModel(mediaName, videoUrl, artworkUrl, subtitlesUrl, null, false,false);
-    }
-
-    public static MediaModel ad(@NonNull String videoUrl, @Nullable String clickThroughUrl, boolean isVpaid) {
-        return new MediaModel(null, videoUrl, null, null, clickThroughUrl, true, isVpaid);
-    }
-
-    public MediaModel(@Nullable String mediaName, @NonNull String videoUrl, @Nullable String artworkUrl, @Nullable String subtitlesUrl, @Nullable String clickThroughUrl, boolean isAd, boolean isVpaid) {
+    public MediaModel(@Nullable String mediaName, @NonNull String videoUrl, @Nullable String artworkUrl,
+            @Nullable String subtitlesUrl, @Nullable String clickThroughUrl, boolean isAd, boolean isVpaid) {
         this.mediaName = mediaName;
         this.videoUrl = videoUrl;
         this.artworkUrl = artworkUrl;
@@ -76,6 +67,15 @@ public class MediaModel implements Serializable {
         this.clickThroughUrl = clickThroughUrl;
         this.isAd = isAd;
         this.isVpaid = isVpaid;
+    }
+
+    public static MediaModel video(@NonNull String mediaName, @NonNull String videoUrl, @NonNull String artworkUrl,
+            @Nullable String subtitlesUrl) {
+        return new MediaModel(mediaName, videoUrl, artworkUrl, subtitlesUrl, null, false, false);
+    }
+
+    public static MediaModel ad(@NonNull String videoUrl, @Nullable String clickThroughUrl, boolean isVpaid) {
+        return new MediaModel(null, videoUrl, null, null, clickThroughUrl, true, isVpaid);
     }
 
     @Nullable

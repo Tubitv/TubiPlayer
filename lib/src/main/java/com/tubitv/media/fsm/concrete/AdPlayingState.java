@@ -3,7 +3,6 @@ package com.tubitv.media.fsm.concrete;
 import android.support.annotation.NonNull;
 import android.view.View;
 import android.webkit.WebView;
-
 import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.tubitv.media.controller.PlayerAdLogicController;
@@ -22,7 +21,6 @@ import com.tubitv.media.views.TubiExoPlayerView;
  * Created by allensun on 7/31/17.
  */
 public class AdPlayingState extends BaseState {
-
 
     @Override
     public State transformToState(Input input, StateFactory factory) {
@@ -59,7 +57,8 @@ public class AdPlayingState extends BaseState {
         playingAdAndPauseMovie(controller, adMedia, componentController, fsmPlayer);
     }
 
-    private void playingAdAndPauseMovie(PlayerUIController controller, AdMediaModel adMediaModel, PlayerAdLogicController componentController, FsmPlayer fsmPlayer) {
+    private void playingAdAndPauseMovie(PlayerUIController controller, AdMediaModel adMediaModel,
+            PlayerAdLogicController componentController, FsmPlayer fsmPlayer) {
 
         SimpleExoPlayer adPlayer = controller.getAdPlayer();
         SimpleExoPlayer moviePlayer = controller.getContentPlayer();
@@ -84,7 +83,7 @@ public class AdPlayingState extends BaseState {
             boolean haveResumePosition = controller.getAdResumePosition() != C.TIME_UNSET;
 
             //prepare the mediaSource to AdPlayer
-            adPlayer.prepare(adMedia.getMediaSource() , !haveResumePosition, true);
+            adPlayer.prepare(adMedia.getMediaSource(), !haveResumePosition, true);
 
             if (haveResumePosition) {
                 adPlayer.seekTo(adPlayer.getCurrentWindowIndex(), controller.getAdResumePosition());

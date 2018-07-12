@@ -7,7 +7,6 @@ import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.text.TextUtils;
 import android.view.View;
-
 import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.ExoPlayerFactory;
 import com.google.android.exoplayer2.Format;
@@ -45,29 +44,25 @@ import com.tubitv.media.views.TubiPlayerControlView;
 /**
  * This is the base activity that prepare one instance of {@link SimpleExoPlayer} mMoviePlayer, this player is mean to serve as the main player to player content.
  * Along with some abstract methods to be implemented by subclass for extra functions.
- *
  * You can use this class as it is and implement the abstract methods to be a standalone player to player video with customized UI controls and different forms of adaptive streaming.
  */
-public abstract class TubiPlayerActivity extends LifeCycleActivity implements TubiPlayerControlView.VisibilityListener, TubiPlaybackInterface {
+public abstract class TubiPlayerActivity extends LifeCycleActivity
+        implements TubiPlayerControlView.VisibilityListener, TubiPlaybackInterface {
+    private static final DefaultBandwidthMeter BANDWIDTH_METER = new DefaultBandwidthMeter();
     public static String TUBI_MEDIA_KEY = "tubi_media_key";
-
     protected SimpleExoPlayer mMoviePlayer;
-    private Handler mMainHandler;
     protected TubiExoPlayerView mTubiPlayerView;
-    private DataSource.Factory mMediaDataSourceFactory;
     protected DefaultTrackSelector mTrackSelector;
-    private EventLogger mEventLogger;
-    private TrackSelectionHelper mTrackSelectionHelper;
-
     protected boolean isActive = false;
-
     /**
      * ideally, only one instance of {@link MediaModel} and its arrtibute {@link MediaSource} for movie should be created throughout the whole movie playing experiences.
      */
     @NonNull
     protected MediaModel mediaModel;
-
-    private static final DefaultBandwidthMeter BANDWIDTH_METER = new DefaultBandwidthMeter();
+    private Handler mMainHandler;
+    private DataSource.Factory mMediaDataSourceFactory;
+    private EventLogger mEventLogger;
+    private TrackSelectionHelper mTrackSelectionHelper;
 
     protected abstract void onPlayerReady();
 
@@ -151,7 +146,8 @@ public abstract class TubiPlayerActivity extends LifeCycleActivity implements Tu
     }
 
     private void setCaption(boolean isOn) {
-        if (mediaModel != null && mediaModel.getSubtitlesUrl() != null && mTubiPlayerView != null && mTubiPlayerView.getControlView() != null) {
+        if (mediaModel != null && mediaModel.getSubtitlesUrl() != null && mTubiPlayerView != null
+                && mTubiPlayerView.getControlView() != null) {
             mTubiPlayerView.getControlView().checkSubtitleIcon(isOn);
             mTubiPlayerView.getSubtitleView().setVisibility(isOn ? View.VISIBLE : View.GONE);
         }
@@ -164,7 +160,6 @@ public abstract class TubiPlayerActivity extends LifeCycleActivity implements Tu
         onPlayerReady();
     }
 
-
     protected void initMoviePlayer() {
         // 1. Create a default TrackSelector
         mMainHandler = new Handler();
@@ -172,8 +167,7 @@ public abstract class TubiPlayerActivity extends LifeCycleActivity implements Tu
                 new AdaptiveTrackSelection.Factory(BANDWIDTH_METER);
         mTrackSelector =
                 new DefaultTrackSelector(videoTrackSelectionFactory);
-        mTrackSelectionHelper = new TrackSelectionHelper(this, mTrackSelector,videoTrackSelectionFactory);
-
+        mTrackSelectionHelper = new TrackSelectionHelper(this, mTrackSelector, videoTrackSelectionFactory);
 
         // 3. Create the mMoviePlayer
         mMoviePlayer = ExoPlayerFactory.newSimpleInstance(this, mTrackSelector);
@@ -185,7 +179,7 @@ public abstract class TubiPlayerActivity extends LifeCycleActivity implements Tu
         mMoviePlayer.setMetadataOutput(mEventLogger);
 
         mTubiPlayerView.setPlayer(mMoviePlayer, this);
-        mTubiPlayerView.setMediaModel(mediaModel,true);
+        mTubiPlayerView.setMediaModel(mediaModel, true);
         mTubiPlayerView.setTrackSelectionHelper(mTrackSelectionHelper);
     }
 
@@ -213,10 +207,12 @@ public abstract class TubiPlayerActivity extends LifeCycleActivity implements Tu
                         new DefaultDashChunkSource.Factory(mMediaDataSourceFactory), mMainHandler, mEventLogger);
                 break;
             case C.TYPE_HLS:
-                mediaSource = new HlsMediaSource(model.getVideoUrl(), mMediaDataSourceFactory, mMainHandler, mEventLogger);
+                mediaSource = new HlsMediaSource(model.getVideoUrl(), mMediaDataSourceFactory, mMainHandler,
+                        mEventLogger);
                 break;
             case C.TYPE_OTHER:
-                mediaSource = new ExtractorMediaSource(model.getVideoUrl(), mMediaDataSourceFactory, new DefaultExtractorsFactory(),
+                mediaSource = new ExtractorMediaSource(model.getVideoUrl(), mMediaDataSourceFactory,
+                        new DefaultExtractorsFactory(),
                         mMainHandler, mEventLogger);
                 break;
             default: {
@@ -228,7 +224,8 @@ public abstract class TubiPlayerActivity extends LifeCycleActivity implements Tu
             MediaSource subtitleSource = new SingleSampleMediaSource(
                     model.getSubtitlesUrl(),
                     buildDataSourceFactory(false),
-                    Format.createTextSampleFormat(null, MimeTypes.APPLICATION_SUBRIP, null, Format.NO_VALUE, C.SELECTION_FLAG_DEFAULT, "en", null, 0),
+                    Format.createTextSampleFormat(null, MimeTypes.APPLICATION_SUBRIP, null, Format.NO_VALUE,
+                            C.SELECTION_FLAG_DEFAULT, "en", null, 0),
                     0);
             // Plays the video with the sideloaded subtitle.
             mediaSource =
@@ -257,6 +254,5 @@ public abstract class TubiPlayerActivity extends LifeCycleActivity implements Tu
     public HttpDataSource.Factory buildHttpDataSourceFactory(DefaultBandwidthMeter bandwidthMeter) {
         return new DefaultHttpDataSourceFactory(Util.getUserAgent(this, "TubiPlayerActivity"), bandwidthMeter);
     }
-
 
 }

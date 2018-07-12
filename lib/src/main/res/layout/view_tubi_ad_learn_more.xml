@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        xmlns:tools="http://schemas.android.com/tools">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
 
     <data>
 
-        <import type="android.view.View"/>
+        <import type="android.view.View" />
 
-        <import type="com.tubitv.media.bindings.TubiObservable"/>
+        <import type="com.tubitv.media.bindings.TubiObservable" />
 
         <variable
             name="playMedia"
-            type="com.tubitv.media.bindings.TubiObservable"/>
+            type="com.tubitv.media.bindings.TubiObservable" />
     </data>
 
     <android.support.constraint.ConstraintLayout
@@ -23,14 +23,14 @@
             android:id="@+id/view_tubi_ad_learn_more_ads_remaining"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:visibility="invisible"
             android:layout_marginTop="8dp"
             android:maxLines="1"
             android:textColor="@color/tubi_tv_golden_gate"
             android:textSize="@dimen/view_tubi_ad_learn_more_text_size"
+            android:visibility="invisible"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            tools:text="Ad"/>
+            tools:text="Ad" />
         <!--android:text="@{String.format(@string/view_tubi_ad_learn_more_ads_remaining_text, playMedia.adIndex, playMedia.adTotal)}"-->
 
 
@@ -47,17 +47,17 @@
             app:layout_constraintBottom_toBottomOf="@+id/view_tubi_ad_learn_more_ads_remaining"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintLeft_toRightOf="@+id/view_tubi_ad_learn_more_ads_remaining"
-            app:layout_constraintTop_toTopOf="@+id/view_tubi_ad_learn_more_ads_remaining"/>
+            app:layout_constraintTop_toTopOf="@+id/view_tubi_ad_learn_more_ads_remaining" />
 
         <android.support.constraint.ConstraintLayout
             android:id="@+id/view_tubi_ad_learn_more_ads_learn_ll"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="@drawable/tubi_tv_player_ad_learn_more_background"
+            android:onClick="@{playMedia.mediaModel.clickThroughUrl != null ? playMedia : null}"
             android:orientation="horizontal"
             android:tag="@{TubiObservable.TUBI_AD_LEARN_MORE_TAG}"
             android:visibility="@{playMedia.mediaModel.clickThroughUrl != null ? View.VISIBLE : View.GONE }"
-            android:onClick="@{playMedia.mediaModel.clickThroughUrl != null ? playMedia : null}"
             app:layout_constraintBottom_toBottomOf="@+id/view_tubi_ad_learn_more_ads_resume_shortly"
             app:layout_constraintRight_toRightOf="parent"
             app:layout_constraintTop_toTopOf="@+id/view_tubi_ad_learn_more_ads_resume_shortly"
@@ -78,7 +78,7 @@
                 app:layout_constraintTop_toTopOf="parent"
                 app:layout_constraintVertical_bias="0.0"
                 app:vaud_typeface="vaud_bold"
-                tools:text="@string/view_tubi_ad_learn_more_ads_learn_more_text"/>
+                tools:text="@string/view_tubi_ad_learn_more_ads_learn_more_text" />
 
             <ImageView
                 android:id="@+id/view_tubi_ad_learn_more_ads_learn_more_icon"
@@ -94,7 +94,7 @@
                 app:layout_constraintLeft_toRightOf="@+id/view_tubi_ad_learn_more_ads_learn_more_text"
                 app:layout_constraintRight_toRightOf="parent"
                 app:layout_constraintTop_toTopOf="@+id/view_tubi_ad_learn_more_ads_learn_more_text"
-                app:layout_constraintVertical_bias="0.5"/>
+                app:layout_constraintVertical_bias="0.5" />
         </android.support.constraint.ConstraintLayout>
 
     </android.support.constraint.ConstraintLayout>

@@ -20,14 +20,12 @@ import com.tubitv.media.fsm.state_machine.FsmPlayer;
 import com.tubitv.media.fsm.state_machine.FsmPlayerImperial;
 import com.tubitv.media.models.AdRetriever;
 import com.tubitv.media.models.MediaModel;
-
+import javax.inject.Inject;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 import org.mockito.Mock;
-
-import javax.inject.Inject;
 
 import static junit.framework.Assert.assertTrue;
 
@@ -56,7 +54,6 @@ public class ExoPlayerFSMTest {
 
     @Inject
     StateFactory factory;
-
 
     FsmComonent comonent;
 
@@ -298,12 +295,11 @@ public class ExoPlayerFSMTest {
         playerFsm.transit(Input.AD_FINISH);
         playerFsm.transit(Input.AD_CLICK);
 
-
         assertTrue(playerFsm.getCurrentState() instanceof MoviePlayingState);
     }
 
     @Test
-    public void testNewFSMFlowWithPreroll(){
+    public void testNewFSMFlowWithPreroll() {
 
         factory = comonent.getStateFactory();
 
@@ -369,7 +365,7 @@ public class ExoPlayerFSMTest {
     }
 
     @Test
-    public void testNewFSMFlowNoPreroll(){
+    public void testNewFSMFlowNoPreroll() {
         factory = comonent.getStateFactory();
 
         playerFsm = new FsmPlayerImperial(factory) {
@@ -386,8 +382,6 @@ public class ExoPlayerFSMTest {
         playerFsm.transit(Input.NO_PREROLL_AD);
 
         assertTrue(playerFsm.getCurrentState() instanceof MoviePlayingState);
-
-
 
         for (int i = 0; i < 10; i++) {
 
@@ -451,6 +445,5 @@ public class ExoPlayerFSMTest {
 
         assertTrue(playerFsm.getCurrentState() instanceof FinishState);
     }
-
 
 }

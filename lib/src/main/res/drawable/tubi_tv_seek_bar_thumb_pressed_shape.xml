@@ -5,8 +5,8 @@
     <solid android:color="@color/tubi_tv_golden_gate" />
 
     <stroke
-        android:width="3dp"
-        android:color="@color/tubi_tv_player_white" />
+        android:color="@color/tubi_tv_player_white"
+        android:width="3dp" />
 
     <size
         android:height="25dp"

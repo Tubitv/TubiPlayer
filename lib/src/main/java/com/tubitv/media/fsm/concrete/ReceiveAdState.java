@@ -1,7 +1,6 @@
 package com.tubitv.media.fsm.concrete;
 
 import android.support.annotation.NonNull;
-
 import com.google.android.exoplayer2.ExoPlayer;
 import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.tubitv.media.fsm.BaseState;
@@ -27,7 +26,7 @@ public class ReceiveAdState extends BaseState {
     }
 
     @Override
-    public void performWorkAndUpdatePlayerUI(@NonNull FsmPlayer fsmPlayer ) {
+    public void performWorkAndUpdatePlayerUI(@NonNull FsmPlayer fsmPlayer) {
         super.performWorkAndUpdatePlayerUI(fsmPlayer);
 
         // doesn't need to do any UI work.
@@ -38,7 +37,7 @@ public class ReceiveAdState extends BaseState {
         SimpleExoPlayer moviePlayer = controller.getContentPlayer();
 
         // this mean, user jump out of the activity lifecycle in ReceivedAdState.
-        if (moviePlayer!=null && moviePlayer.getPlaybackState() == ExoPlayer.STATE_IDLE) {
+        if (moviePlayer != null && moviePlayer.getPlaybackState() == ExoPlayer.STATE_IDLE) {
             fsmPlayer.transit(Input.ERROR);
         }
 

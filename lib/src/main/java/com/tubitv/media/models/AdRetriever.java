@@ -3,7 +3,6 @@ package com.tubitv.media.models;
 /**
  * Created by allensun on 8/3/17.
  * on Tubitv.com, allengotstuff@gmail.com
- *
  * this is the class contains information attribute to send to ad server for ad-fetching
  */
 public class AdRetriever {

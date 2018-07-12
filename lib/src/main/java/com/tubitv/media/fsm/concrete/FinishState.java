@@ -1,7 +1,6 @@
 package com.tubitv.media.fsm.concrete;
 
 import android.support.annotation.NonNull;
-
 import com.tubitv.media.fsm.BaseState;
 import com.tubitv.media.fsm.Input;
 import com.tubitv.media.fsm.State;
