@@ -1,7 +1,6 @@
 package com.tubitv.media.fsm;
 
 import android.support.annotation.NonNull;
-
 import com.tubitv.media.controller.PlayerAdLogicController;
 import com.tubitv.media.controller.PlayerUIController;
 import com.tubitv.media.fsm.state_machine.FsmPlayer;
@@ -26,6 +25,7 @@ public abstract class BaseState implements State {
 
     /**
      * for testing purpose,
+     *
      * @param fsmPlayer
      * @return
      */

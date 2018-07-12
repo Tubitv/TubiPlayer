@@ -4,7 +4,6 @@ import com.tubitv.media.activities.DoubleViewTubiPlayerActivity;
 import com.tubitv.media.di.FSMModuleTesting;
 import com.tubitv.media.di.annotation.ActicityScope;
 import com.tubitv.media.fsm.concrete.factory.StateFactory;
-
 import dagger.Component;
 
 /**

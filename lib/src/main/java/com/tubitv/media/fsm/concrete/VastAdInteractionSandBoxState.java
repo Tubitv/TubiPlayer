@@ -1,7 +1,6 @@
 package com.tubitv.media.fsm.concrete;
 
 import android.support.annotation.NonNull;
-
 import com.tubitv.media.fsm.BaseState;
 import com.tubitv.media.fsm.Input;
 import com.tubitv.media.fsm.State;
@@ -16,7 +15,7 @@ public class VastAdInteractionSandBoxState extends BaseState {
     @Override
     public State transformToState(Input input, StateFactory factory) {
 
-        switch (input){
+        switch (input) {
             case BACK_TO_PLAYER_FROM_VAST_AD:
                 return factory.createState(AdPlayingState.class);
 
@@ -25,8 +24,8 @@ public class VastAdInteractionSandBoxState extends BaseState {
     }
 
     @Override
-    public void performWorkAndUpdatePlayerUI(@NonNull FsmPlayer fsmPlayer ) {
-       super.performWorkAndUpdatePlayerUI(fsmPlayer);
+    public void performWorkAndUpdatePlayerUI(@NonNull FsmPlayer fsmPlayer) {
+        super.performWorkAndUpdatePlayerUI(fsmPlayer);
 
         if (isNull(fsmPlayer)) {
             return;

@@ -14,7 +14,6 @@ import com.tubitv.media.fsm.concrete.VpaidState;
 import com.tubitv.media.fsm.concrete.factory.StateFactory;
 import com.tubitv.media.fsm.state_machine.FsmPlayer;
 import com.tubitv.media.fsm.state_machine.FsmPlayerImperial;
-
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -36,7 +35,6 @@ public class ExoPlayerFactoryTest {
 
     FsmPlayer playerFsm;
 
-
     @Before
     public void setup() {
 
@@ -56,7 +54,6 @@ public class ExoPlayerFactoryTest {
             }
         };
     }
-
 
     @Test
     public void testCustomClass() {
@@ -101,7 +98,6 @@ public class ExoPlayerFactoryTest {
 
         assertThat(state instanceof TestVpadState, is(true));
 
-
         state = stateFactory.createState(MoviePlayingState.class);
 
         assertThat(state instanceof TestMoviePlayingState, is(true));
@@ -129,8 +125,6 @@ public class ExoPlayerFactoryTest {
         state = stateFactory.createState(MakingPrerollAdCallState.class);
 
         assertThat(state instanceof TestMakingPrerollAdCallState, is(true));
-
-
 
     }
 
@@ -271,12 +265,11 @@ public class ExoPlayerFactoryTest {
         playerFsm.transit(Input.AD_FINISH);
         playerFsm.transit(Input.AD_CLICK);
 
-
         assertTrue(playerFsm.getCurrentState() instanceof MoviePlayingState);
     }
 
     @Test(expected = IllegalStateException.class)
-    public void testWrongStateCreating(){
+    public void testWrongStateCreating() {
         StateFactory sf = new StateFactory();
         //not a child class of State
         sf.createState(String.class);
@@ -292,23 +285,32 @@ public class ExoPlayerFactoryTest {
     }
 
     /**
-     *  this is for testing custom class of {@link com.tubitv.media.fsm.BaseState} can be swap into {@link StateFactory}
+     * this is for testing custom class of {@link com.tubitv.media.fsm.BaseState} can be swap into {@link StateFactory}
      */
-    public static class TestMoviePlayingState extends MoviePlayingState {}
+    public static class TestMoviePlayingState extends MoviePlayingState {
+    }
 
-    public static class TestMakingAdCallState extends MakingAdCallState {}
+    public static class TestMakingAdCallState extends MakingAdCallState {
+    }
 
-    public static class TestFinishState extends FinishState {}
+    public static class TestFinishState extends FinishState {
+    }
 
-    public static class TestReceivedState extends ReceiveAdState {}
+    public static class TestReceivedState extends ReceiveAdState {
+    }
 
-    public static class TestAdPlayingState extends AdPlayingState {}
+    public static class TestAdPlayingState extends AdPlayingState {
+    }
 
-    public static class TestVastAdSandBox extends VastAdInteractionSandBoxState {}
+    public static class TestVastAdSandBox extends VastAdInteractionSandBoxState {
+    }
 
-    public static class TestVpadState extends VpaidState {}
+    public static class TestVpadState extends VpaidState {
+    }
 
-    public static class TestFetchCuePointState extends FetchCuePointState {}
+    public static class TestFetchCuePointState extends FetchCuePointState {
+    }
 
-    public static class TestMakingPrerollAdCallState extends MakingPrerollAdCallState {}
+    public static class TestMakingPrerollAdCallState extends MakingPrerollAdCallState {
+    }
 }

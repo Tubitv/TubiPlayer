@@ -1,28 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <declare-styleable name="TubiExoPlayerView">
-        <attr name="use_artwork" format="boolean"/>
-        <attr name="default_artwork" format="reference"/>
-        <attr name="use_controller" format="boolean"/>
-        <attr name="surface_type"/>
-        <attr name="show_timeout"/>
-        <attr name="rewind_increment"/>
-        <attr name="fastforward_increment"/>
-        <attr name="resize_mode"/>
-        <attr name="player_layout_id"/>
-        <attr name="controller_layout_id"/>
+        <attr name="use_artwork" format="boolean" />
+        <attr name="default_artwork" format="reference" />
+        <attr name="use_controller" format="boolean" />
+        <attr name="surface_type" />
+        <attr name="show_timeout" />
+        <attr name="rewind_increment" />
+        <attr name="fastforward_increment" />
+        <attr name="resize_mode" />
+        <attr name="player_layout_id" />
+        <attr name="controller_layout_id" />
     </declare-styleable>
 
     <declare-styleable name="TubiPlayerControlViewOld">
-        <attr name="show_timeout_ms" format="integer"/>
+        <attr name="show_timeout_ms" format="integer" />
     </declare-styleable>
 
     <declare-styleable name="TubiPlayerControlView">
-        <attr name="tubi_hide_timeout_ms" format="integer"/>
+        <attr name="tubi_hide_timeout_ms" format="integer" />
     </declare-styleable>
 
     <declare-styleable name="StateImageButton">
-        <attr name="state_checked" format="reference"/>
-        <attr name="state_not_checked" format="reference"/>
+        <attr name="state_checked" format="reference" />
+        <attr name="state_not_checked" format="reference" />
     </declare-styleable>
 </resources>

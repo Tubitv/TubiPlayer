@@ -9,7 +9,6 @@ import android.support.annotation.RequiresApi;
 import android.util.Log;
 import android.view.View;
 import android.webkit.WebView;
-
 import com.tubitv.demo.R;
 import com.tubitv.media.demo.vpaid_model.TubiVPAID;
 
@@ -19,14 +18,10 @@ import com.tubitv.media.demo.vpaid_model.TubiVPAID;
  */
 public class WebviewActivity extends Activity {
 
-    private TubiVPAID tubiVPAID;
-
-    private Handler myHandler;
-
-    private WebView webView;
-
     private static final String VPAID_URL = "http://tubitv.com/";
-
+    private TubiVPAID tubiVPAID;
+    private Handler myHandler;
+    private WebView webView;
 
     @RequiresApi(Build.VERSION_CODES.KITKAT)
     @Override
@@ -42,7 +37,7 @@ public class WebviewActivity extends Activity {
 
     @RequiresApi(Build.VERSION_CODES.KITKAT)
     private void initVpaidWebview(WebView view, Handler handler) {
-        tubiVPAID = new TubiVPAID(view, handler,null);
+        tubiVPAID = new TubiVPAID(view, handler, null);
 
         tubiVPAID.init(null);
 
@@ -54,9 +49,6 @@ public class WebviewActivity extends Activity {
         webView.loadUrl(VPAID_URL);
 
     }
-
-
-
 
     @Override
     public void onBackPressed() {

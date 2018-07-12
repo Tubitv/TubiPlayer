@@ -8,7 +8,6 @@ import android.support.annotation.Nullable;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.SeekBar;
-
 import com.google.android.exoplayer2.ExoPlaybackException;
 import com.google.android.exoplayer2.ExoPlayer;
 import com.google.android.exoplayer2.PlaybackParameters;
@@ -26,162 +25,142 @@ import com.tubitv.media.views.StateImageButton;
 import static com.google.android.exoplayer2.ExoPlayer.STATE_ENDED;
 import static com.google.android.exoplayer2.ExoPlayer.STATE_READY;
 
-
 /**
  * The observable class for the {@link com.tubitv.media.views.TubiPlayerControlView}
- * <p>
  * Created by stoyan on 5/12/17.
  */
-public class TubiObservable extends BaseObservable implements ExoPlayer.EventListener, SeekBar.OnSeekBarChangeListener, View.OnTouchListener, View.OnClickListener {
+public class TubiObservable extends BaseObservable
+        implements ExoPlayer.EventListener, SeekBar.OnSeekBarChangeListener, View.OnTouchListener,
+        View.OnClickListener {
+    /**
+     * Toggle tag for {@link com.tubitv.media.databinding.ViewTubiPlayerControlBinding#viewTubiControllerPlayToggleIb}
+     */
+    public static final String TUBI_PLAY_TOGGLE_TAG = "TUBI_PLAY_TOGGLE_TAG";
+    /**
+     * Subtitle tag for {@link com.tubitv.media.databinding.ViewTubiPlayerControlBinding#viewTubiControllerSubtitlesIb}
+     */
+    public static final String TUBI_SUBTITLES_TAG = "TUBI_SUBTITLES_TAG";
+    /**
+     * Subtitle tag for {@link com.tubitv.media.databinding.ViewTubiPlayerControlBinding#viewTubiControllerQualityIb}
+     */
+    public static final String TUBI_QUALITY_TAG = "TUBI_QUALITY_TAG";
+    /**
+     * Subtitle tag for {@link com.tubitv.media.databinding.ViewTubiPlayerControlBinding#viewTubiControllerAdDescription}
+     */
+    public static final String TUBI_AD_LEARN_MORE_TAG = "TUBI_AD_LEARN_MORE_TAG";
     /**
      * Tag for logging
      */
     private static final String TAG = TubiObservable.class.getSimpleName();
-
     /**
      * The max progress bar value
      */
     private static final int DEFAULT_PROGRESS_MAX = 1000;
-
     /**
      * The default time to skip in {@link com.tubitv.media.databinding.ViewTubiPlayerControlBinding#viewTubiControllerForwardIb}
      * and {@link com.tubitv.media.databinding.ViewTubiPlayerControlBinding#viewTubiControllerRewindIb}
      */
     private static final int DEFAULT_FAST_FORWARD_MS = 15000;
-
-    /**
-     * Toggle tag for {@link com.tubitv.media.databinding.ViewTubiPlayerControlBinding#viewTubiControllerPlayToggleIb}
-     */
-    public static final String TUBI_PLAY_TOGGLE_TAG = "TUBI_PLAY_TOGGLE_TAG";
-
-    /**
-     * Subtitle tag for {@link com.tubitv.media.databinding.ViewTubiPlayerControlBinding#viewTubiControllerSubtitlesIb}
-     */
-    public static final String TUBI_SUBTITLES_TAG = "TUBI_SUBTITLES_TAG";
-
-    /**
-     * Subtitle tag for {@link com.tubitv.media.databinding.ViewTubiPlayerControlBinding#viewTubiControllerQualityIb}
-     */
-    public static final String TUBI_QUALITY_TAG = "TUBI_QUALITY_TAG";
-
-    /**
-     * Subtitle tag for {@link com.tubitv.media.databinding.ViewTubiPlayerControlBinding#viewTubiControllerAdDescription}
-     */
-    public static final String TUBI_AD_LEARN_MORE_TAG = "TUBI_AD_LEARN_MORE_TAG";
-
+    public final ObservableField<String> numberOfAdLeft = new ObservableField<>("");
     /**
      * The interface from {@link com.tubitv.media.views.TubiPlayerControlView}
      */
     @NonNull
     private final TubiPlaybackControlInterface playbackControlInterface;
-
     /**
      * The interface from the calling activity for hooking general media playback state
      */
     @NonNull
     private final TubiPlaybackInterface playbackInterface;
-
     /**
      * The title of the movie being played
      */
     @NonNull
     public String title;
-
-    /**
-     * The remaining time of the movie in hh:mm:ss
-     */
-    @NonNull
-    private String remainingTime;
-
-    /**
-     * The elapsed time of the movie in hh:mm:ss
-     */
-    @NonNull
-    private String elapsedTime;
-
-    /**
-     * The play state of the video
-     */
-    private boolean isPlaying;
-
-    /**
-     * The state of the subtitles, true if they have been enabled in any language
-     */
-    private boolean subtitlesEnabled;
-
-    /**
-     * The state of the media source tracks, if there are no subtitle tracks, hide the view
-     */
-    private boolean subtitlesExist;
-
-    /**
-     * The state of the quality settings, true if user has defined a quality;
-     * false if the quality is on auto
-     */
-    private boolean qualityEnabled;
-
-    /**
-     * The max for the progress bar
-     */
-    private int progressBarMax = DEFAULT_PROGRESS_MAX;
-
     /**
      * The time in milliseconds that we skip by in {@link com.tubitv.media.databinding.ViewTubiPlayerControlBinding#viewTubiControllerRewindIb}
      * and {@link com.tubitv.media.databinding.ViewTubiPlayerControlBinding#viewTubiControllerForwardIb}
      */
     public int skipBy = DEFAULT_FAST_FORWARD_MS;
-
+    /**
+     * The remaining time of the movie in hh:mm:ss
+     */
+    @NonNull
+    private String remainingTime;
+    /**
+     * The elapsed time of the movie in hh:mm:ss
+     */
+    @NonNull
+    private String elapsedTime;
+    /**
+     * The play state of the video
+     */
+    private boolean isPlaying;
+    /**
+     * The state of the subtitles, true if they have been enabled in any language
+     */
+    private boolean subtitlesEnabled;
+    /**
+     * The state of the media source tracks, if there are no subtitle tracks, hide the view
+     */
+    private boolean subtitlesExist;
+    /**
+     * The state of the quality settings, true if user has defined a quality;
+     * false if the quality is on auto
+     */
+    private boolean qualityEnabled;
+    /**
+     * The max for the progress bar
+     */
+    private int progressBarMax = DEFAULT_PROGRESS_MAX;
     /**
      * The dragging state of the {@link com.tubitv.media.databinding.ViewTubiPlayerControlBinding#viewTubiControllerSeekBar},
      * true when the user is dragging the thumbnail through the video duration
      */
     private boolean draggingSeekBar = false;
-
     /**
      * The value of the progress bar {@link com.tubitv.media.databinding.ViewTubiPlayerControlBinding#viewTubiControllerSeekBar}
      */
     private long progressBarValue;
-
     /**
      * The secondary value of the progress bar {@link com.tubitv.media.databinding.ViewTubiPlayerControlBinding#viewTubiControllerSeekBar}
      */
     private long secondaryProgressBarValue;
-
     /**
      * The playback state of the {@link #player}
      */
     private int playbackState = ExoPlayer.STATE_IDLE;
-
     /**
      * The current ad index
      */
     private int adIndex = 0;
-
     /**
      * The total number of ads for this break
      */
     private int adTotal = 0;
-
     /**
      * Whether the player is currently playing an ad
      */
     private boolean adPlaying;
-
     /**
      * The currently playing media model
      */
     @Nullable
     private MediaModel mediaModel;
-
     /**
      * The exo player that this controller is for
      */
     private SimpleExoPlayer player;
+    private final Runnable updateProgressAction = new Runnable() {
+        @Override
+        public void run() {
+            updateProgress();
+        }
+    };
 
-    public final ObservableField<String> numberOfAdLeft = new ObservableField<>("");
-
-    public TubiObservable(@NonNull SimpleExoPlayer player, @NonNull final TubiPlaybackControlInterface playbackControlInterface,
-                          @NonNull final TubiPlaybackInterface playbackInterface) {
+    public TubiObservable(@NonNull SimpleExoPlayer player,
+            @NonNull final TubiPlaybackControlInterface playbackControlInterface,
+            @NonNull final TubiPlaybackInterface playbackInterface) {
         this.playbackControlInterface = playbackControlInterface;
         this.playbackInterface = playbackInterface;
         setPlayer(player);
@@ -197,7 +176,6 @@ public class TubiObservable extends BaseObservable implements ExoPlayer.EventLis
     public void onLoadingChanged(boolean isLoading) {
 
     }
-
 
     @Override
     public void onPlayerError(ExoPlaybackException error) {
@@ -215,7 +193,7 @@ public class TubiObservable extends BaseObservable implements ExoPlayer.EventLis
     public void onPositionDiscontinuity() {
         setPlaybackState();
         updateProgress();
-//        updateMedia();
+        //        updateMedia();
     }
 
     @Override
@@ -227,7 +205,7 @@ public class TubiObservable extends BaseObservable implements ExoPlayer.EventLis
     public void onTimelineChanged(Timeline timeline, Object manifest) {
         setPlaybackState();
         updateProgress();
-//        updateMedia();
+        //        updateMedia();
     }
 
     @Override
@@ -252,7 +230,6 @@ public class TubiObservable extends BaseObservable implements ExoPlayer.EventLis
         setDraggingSeekBar(true);
         playbackControlInterface.hideAfterTimeout();
     }
-
 
     @Override
     public boolean onTouch(View v, MotionEvent event) {
@@ -359,7 +336,6 @@ public class TubiObservable extends BaseObservable implements ExoPlayer.EventLis
         long bufferedPosition = player == null ? 0 : player.getBufferedPosition();
         setSecondaryProgressBarValue(bufferedPosition);
 
-
         playbackControlInterface.cancelRunnable(updateProgressAction);
         // Schedule an update if necessary.
         int playbackState = player == null ? ExoPlayer.STATE_IDLE : player.getPlaybackState();
@@ -384,29 +360,21 @@ public class TubiObservable extends BaseObservable implements ExoPlayer.EventLis
         setRemainingTime(Utils.getProgressTime(duration - position, true));
     }
 
+    //    private void updateMedia() {
+    ////        setAdPlaying(player.getCurrentWindowIndex() < 2);
+    //        setMediaModel(MediaHelper.getMediaByIndex(player.getCurrentWindowIndex()));
+    //    }
+
     private void updateAll() {
         setIsPlaying();
         setPlaybackState();
         updateProgress();
-//        updateMedia();
+        //        updateMedia();
     }
-
-
-//    private void updateMedia() {
-////        setAdPlaying(player.getCurrentWindowIndex() < 2);
-//        setMediaModel(MediaHelper.getMediaByIndex(player.getCurrentWindowIndex()));
-//    }
 
     public boolean userInteracting() {
         return draggingSeekBar;
     }
-
-    private final Runnable updateProgressAction = new Runnable() {
-        @Override
-        public void run() {
-            updateProgress();
-        }
-    };
 
     private void setIsPlaying() {
         if (player != null) {

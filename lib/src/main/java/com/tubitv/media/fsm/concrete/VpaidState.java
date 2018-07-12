@@ -3,7 +3,6 @@ package com.tubitv.media.fsm.concrete;
 import android.support.annotation.NonNull;
 import android.view.View;
 import android.webkit.WebView;
-
 import com.google.android.exoplayer2.ExoPlayer;
 import com.tubitv.media.controller.PlayerAdLogicController;
 import com.tubitv.media.controller.PlayerUIController;
@@ -51,7 +50,8 @@ public class VpaidState extends BaseState {
         pausePlayerAndSHowVpaid(controller, componentController, fsmPlayer, adMedia);
     }
 
-    private void pausePlayerAndSHowVpaid(PlayerUIController controller, PlayerAdLogicController componentController, FsmPlayer fsmPlayer, AdMediaModel adMedia) {
+    private void pausePlayerAndSHowVpaid(PlayerUIController controller, PlayerAdLogicController componentController,
+            FsmPlayer fsmPlayer, AdMediaModel adMedia) {
 
         ExoPlayer moviePlayer = controller.getContentPlayer();
 
@@ -81,7 +81,6 @@ public class VpaidState extends BaseState {
 
             WebView vpaidWebView = controller.getVpaidWebView();
 
-
             vpaidWebView.setVisibility(View.VISIBLE);
             vpaidWebView.bringToFront();
             vpaidWebView.invalidate();
@@ -93,6 +92,5 @@ public class VpaidState extends BaseState {
         }
 
     }
-
 
 }

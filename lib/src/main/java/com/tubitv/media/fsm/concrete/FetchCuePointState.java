@@ -2,7 +2,6 @@ package com.tubitv.media.fsm.concrete;
 
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-
 import com.tubitv.media.fsm.BaseState;
 import com.tubitv.media.fsm.Input;
 import com.tubitv.media.fsm.State;
@@ -21,7 +20,6 @@ import static com.tubitv.media.helpers.Constants.FSMPLAYER_TESTING;
  * on Tubitv.com, allengotstuff@gmail.com
  */
 public class FetchCuePointState extends BaseState {
-
 
     @Nullable
     @Override
@@ -46,7 +44,8 @@ public class FetchCuePointState extends BaseState {
             return;
         }
         //does nothing with the UI.
-        fetchCuePointCall(fsmPlayer.getAdServerInterface(), fsmPlayer.getCuePointsRetriever(), (FsmPlayerImperial) fsmPlayer);
+        fetchCuePointCall(fsmPlayer.getAdServerInterface(), fsmPlayer.getCuePointsRetriever(),
+                (FsmPlayerImperial) fsmPlayer);
     }
 
     private void fetchCuePointCall(AdInterface adInterface, CuePointsRetriever retriever, CuePointCallBack callBack) {

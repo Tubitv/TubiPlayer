@@ -2,7 +2,6 @@ package com.tubitv.media.di.annotation;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
-
 import javax.inject.Scope;
 
 /**

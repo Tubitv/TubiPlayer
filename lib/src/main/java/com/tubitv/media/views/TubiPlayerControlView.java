@@ -15,7 +15,6 @@ import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
-
 import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.gms.cast.framework.CastButtonFactory;
@@ -39,44 +38,30 @@ public class TubiPlayerControlView extends ConstraintLayout implements TrackSele
      */
     private static final int DEFAULT_HIDE_TIMEOUT_MS = 5000;
 
-
     private ViewTubiPlayerControlBinding mBinding;
     private TubiPlayerControlView.VisibilityListener visibilityListener;
-
-    /**
-     * Listener to be notified about changes of the visibility of the UI control.
-     */
-    public interface VisibilityListener {
-
-        /**
-         * Called when the visibility changes.
-         *
-         * @param visibility The new visibility. Either {@link View#VISIBLE} or {@link View#GONE}.
-         */
-        void onVisibilityChange(int visibility);
-
-    }
-
     /**
      * Attached state of this view
      */
     private boolean isAttachedToWindow;
-
     /**
      * The time out time for the view to be hidden if the user is not interacting with it
      */
     private int showTimeoutMs = DEFAULT_HIDE_TIMEOUT_MS;
-
     /**
      * The time out time for the view to be hidden if the user is not interacting with it
      */
     private long hideAtMs;
-
     /**
      * The binding observable for the control views
      */
     private TubiObservable tubiObservable;
-
+    private final Runnable hideAction = new Runnable() {
+        @Override
+        public void run() {
+            hide();
+        }
+    };
     /**
      * The media model the player is initialized with
      */
@@ -90,16 +75,6 @@ public class TubiPlayerControlView extends ConstraintLayout implements TrackSele
 
     private float seekBarUpperBound = 0f;
     private Context activity;
-
-
-
-    private final Runnable hideAction = new Runnable() {
-        @Override
-        public void run() {
-            hide();
-        }
-    };
-
     private final Runnable hideSystemUI = new Runnable() {
         @Override
         public void run() {
@@ -108,7 +83,6 @@ public class TubiPlayerControlView extends ConstraintLayout implements TrackSele
             }
         }
     };
-
 
     /**
      * ChromeCast enabled feature.
@@ -134,8 +108,14 @@ public class TubiPlayerControlView extends ConstraintLayout implements TrackSele
         activity = context;
     }
 
+    @BindingAdapter("bind:tubi_hide_timeout_ms")
+    public static void setCustomTypeface(TubiPlayerControlView tubiController, int milliseconds) {
+        tubiController.setHideTimeoutMs(milliseconds);
+    }
+
     /**
      * get the seekBar upper bound relative to bottom of the screen, for Auto play animation purposes.
+     *
      * @return if return 0f, it mean the view hasn't been created, therefore, should only called this method when view has created on the screen already.
      */
     public float getSeekBarUpperBound() {
@@ -197,14 +177,15 @@ public class TubiPlayerControlView extends ConstraintLayout implements TrackSele
 
         if (GoogleServicesHelper.available(getContext())) {
             try {
-                MediaRouteButton mMediaRouteButton = (MediaRouteButton) findViewById(R.id.view_tubi_controller_chromecast_ib);
+                MediaRouteButton mMediaRouteButton = (MediaRouteButton) findViewById(
+                        R.id.view_tubi_controller_chromecast_ib);
                 CastButtonFactory.setUpMediaRouteButton(getContext(), mMediaRouteButton);
 
                 mMediaRouteButton.setOnTouchListener(new OnTouchListener() {
                     @Override
                     public boolean onTouch(View v, MotionEvent event) {
                         removeCallbacks(hideSystemUI);
-                        postDelayed(hideSystemUI,1000);
+                        postDelayed(hideSystemUI, 1000);
                         return false;
                     }
                 });
@@ -216,18 +197,13 @@ public class TubiPlayerControlView extends ConstraintLayout implements TrackSele
         }
     }
 
-    @BindingAdapter("bind:tubi_hide_timeout_ms")
-    public static void setCustomTypeface(TubiPlayerControlView tubiController, int milliseconds) {
-        tubiController.setHideTimeoutMs(milliseconds);
-    }
-
     public void setHideTimeoutMs(int hideTimeoutMs) {
         this.hideAtMs = hideTimeoutMs;
     }
 
-
-    public void setPlayer(@NonNull SimpleExoPlayer player, @NonNull final TubiPlaybackControlInterface playbackControlInterface,
-                          @NonNull final TubiPlaybackInterface playbackInterface) {
+    public void setPlayer(@NonNull SimpleExoPlayer player,
+            @NonNull final TubiPlaybackControlInterface playbackControlInterface,
+            @NonNull final TubiPlaybackInterface playbackInterface) {
         if (this.mPlayer == null || this.mPlayer != player) {
             tubiObservable = new TubiObservable(player, playbackControlInterface, playbackInterface);
             //Controller doesn't get re-initialized TODO fix instance call
@@ -240,6 +216,7 @@ public class TubiPlayerControlView extends ConstraintLayout implements TrackSele
 
     /**
      * manually set the subtitle indicator icon to on, use this for global preference setting.
+     *
      * @param isON
      */
     public void checkSubtitleIcon(boolean isON) {
@@ -273,7 +250,7 @@ public class TubiPlayerControlView extends ConstraintLayout implements TrackSele
                     visibilityListener.onVisibilityChange(GONE);
                 }
                 alignSubtitlesView(false);
-//            removeCallbacks(updateProgressAction);
+                //            removeCallbacks(updateProgressAction);
                 removeCallbacks(hideAction);
                 hideAtMs = C.TIME_UNSET;
             } else {
@@ -315,9 +292,9 @@ public class TubiPlayerControlView extends ConstraintLayout implements TrackSele
             int seekBarTop = mBinding.viewTubiControllerSeekBar.getTop();
 
             subtitles.setPadding(0, 0, 0, visible ? getHeight() - seekBarTop : 0);
-//            FrameLayout.LayoutParams lp = new FrameLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
-//            lp.setMargins(0,0,0, visible ? getHeight() - seekBarTop : 0);
-//            subtitles.setLayoutParams(lp);
+            //            FrameLayout.LayoutParams lp = new FrameLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+            //            lp.setMargins(0,0,0, visible ? getHeight() - seekBarTop : 0);
+            //            subtitles.setLayoutParams(lp);
         }
     }
 
@@ -337,7 +314,7 @@ public class TubiPlayerControlView extends ConstraintLayout implements TrackSele
     }
 
     @NonNull
-    public View getChromeCastButton(){
+    public View getChromeCastButton() {
         return mBinding.viewTubiControllerChromecastIb;
     }
 
@@ -369,28 +346,29 @@ public class TubiPlayerControlView extends ConstraintLayout implements TrackSele
 
     public void setAvailableAdLeft(int count) {
         Resources res = getResources();
-        String numberofAdLeftInString = res.getQuantityString(R.plurals.view_tubi_ad_learn_more_ads_resume_shortly_text, count, count);
+        String numberofAdLeftInString = res
+                .getQuantityString(R.plurals.view_tubi_ad_learn_more_ads_resume_shortly_text, count, count);
         this.tubiObservable.numberOfAdLeft.set(numberofAdLeftInString);
     }
 
     /**
-     *
      * @return the upper bound of seek bar relative to the bottom of the screen in px.
      */
     public float calculateSeekBarUpperBound() {
 
         //if the seekBarUpperBound has already been calculated, do not need to calculated the position again,
         //because the operation is relatively expensive.
-        if(seekBarUpperBound!=0f){
+        if (seekBarUpperBound != 0f) {
             return seekBarUpperBound;
         }
 
         float positionFromBottom = 0;
 
-        if (mBinding.viewTubiControllerSeekBar != null ) {
+        if (mBinding.viewTubiControllerSeekBar != null) {
             //because the seekbar visibility is "GONE" when first enter the playback activity, we need a special way to get
             //control view's height.
-            int widthSpec = MeasureSpec.makeMeasureSpec(mBinding.viewTubiControllerSeekBar.getWidth(), MeasureSpec.EXACTLY);
+            int widthSpec = MeasureSpec
+                    .makeMeasureSpec(mBinding.viewTubiControllerSeekBar.getWidth(), MeasureSpec.EXACTLY);
             int heightSpec = MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED);
             mBinding.viewTubiControllerSeekBar.measure(widthSpec, heightSpec);
             int height = mBinding.viewTubiControllerSeekBar.getMeasuredHeight();
@@ -400,5 +378,19 @@ public class TubiPlayerControlView extends ConstraintLayout implements TrackSele
         }
 
         return positionFromBottom;
+    }
+
+    /**
+     * Listener to be notified about changes of the visibility of the UI control.
+     */
+    public interface VisibilityListener {
+
+        /**
+         * Called when the visibility changes.
+         *
+         * @param visibility The new visibility. Either {@link View#VISIBLE} or {@link View#GONE}.
+         */
+        void onVisibilityChange(int visibility);
+
     }
 }
