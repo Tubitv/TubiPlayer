@@ -2,7 +2,6 @@ package com.tubitv.media.interfaces;
 
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-
 import com.tubitv.media.models.MediaModel;
 
 /**

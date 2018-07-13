@@ -10,15 +10,12 @@ import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 import android.view.View;
 import android.widget.ImageButton;
-
 import com.tubitv.media.R;
-
 import java.util.ArrayList;
 import java.util.List;
 
 /**
  * A image button that can transition between multiple states
- *
  * Created by stoyan tubi_tv_quality_on 5/1/17.
  */
 @SuppressLint("AppCompatCustomView")
@@ -60,29 +57,29 @@ public class StateImageButton extends ImageButton implements View.OnClickListene
         init(attrs);
     }
 
-    @Override
-    public void onClick(View v) {
-        toggleCheckState();
-        for(OnClickListener listener : mOnClickListeners){
-            listener.onClick(v);
-        }
-    }
-
     /**
      * Binding adapter to add a {@link android.view.View.OnClickListener} to this views
      * {@link #mOnClickListeners}
      *
      * @param imageButton The view
-     * @param listener The listener to add
+     * @param listener    The listener to add
      */
     @BindingAdapter("bind:onClickStateImage")
-    public static void onClickStateImage(StateImageButton imageButton, OnClickListener listener){
+    public static void onClickStateImage(StateImageButton imageButton, OnClickListener listener) {
         imageButton.addClickListener(listener);
     }
 
     @BindingAdapter("bind:tubi_state_set_checked")
-    public static void onStateChanged(StateImageButton imageButton, boolean checked){
+    public static void onStateChanged(StateImageButton imageButton, boolean checked) {
         imageButton.setChecked(checked);
+    }
+
+    @Override
+    public void onClick(View v) {
+        toggleCheckState();
+        for (OnClickListener listener : mOnClickListeners) {
+            listener.onClick(v);
+        }
     }
 
     /**
@@ -98,8 +95,10 @@ public class StateImageButton extends ImageButton implements View.OnClickListene
             TypedArray a = getContext().getTheme().obtainStyledAttributes(attrs,
                     R.styleable.StateImageButton, 0, 0);
             try {
-                mStateCheckedDrawableId = a.getResourceId(R.styleable.StateImageButton_state_checked, R.drawable.tubi_tv_drawable_subtitles_on_selector);
-                mStateNotCheckedDrawableId = a.getResourceId(R.styleable.StateImageButton_state_not_checked, R.drawable.tubi_tv_drawable_subtitles_off_selector);
+                mStateCheckedDrawableId = a.getResourceId(R.styleable.StateImageButton_state_checked,
+                        R.drawable.tubi_tv_drawable_subtitles_on_selector);
+                mStateNotCheckedDrawableId = a.getResourceId(R.styleable.StateImageButton_state_not_checked,
+                        R.drawable.tubi_tv_drawable_subtitles_off_selector);
             } finally {
                 a.recycle();
             }
@@ -121,22 +120,12 @@ public class StateImageButton extends ImageButton implements View.OnClickListene
      * Sets the background drawable assets based on the checked status
      */
     private void setDrawableSelector() {
-        if(isChecked){
+        if (isChecked) {
             setBackgroundResource(mStateCheckedDrawableId);
-        }else{
+        } else {
             setBackgroundResource(mStateNotCheckedDrawableId);
         }
         invalidate();
-    }
-
-    /**
-     * Set the checked status
-     *
-     * @param checked
-     */
-    public void setChecked(boolean checked){
-        isChecked = checked;
-        setDrawableSelector();
     }
 
     /**
@@ -144,8 +133,18 @@ public class StateImageButton extends ImageButton implements View.OnClickListene
      *
      * @return True if checked, false otherwise
      */
-    public boolean isChecked(){
+    public boolean isChecked() {
         return isChecked;
+    }
+
+    /**
+     * Set the checked status
+     *
+     * @param checked
+     */
+    public void setChecked(boolean checked) {
+        isChecked = checked;
+        setDrawableSelector();
     }
 
     /**
@@ -154,14 +153,14 @@ public class StateImageButton extends ImageButton implements View.OnClickListene
      *
      * @param listener Another listener to be added to the list
      */
-    public void addClickListener(@NonNull OnClickListener listener){
+    public void addClickListener(@NonNull OnClickListener listener) {
         mOnClickListeners.add(listener);
     }
 
     /**
      * Clears all the added listeners in {@link #mOnClickListeners}
      */
-    public void clearClickListeners(){
+    public void clearClickListeners() {
         mOnClickListeners.clear();
     }
 

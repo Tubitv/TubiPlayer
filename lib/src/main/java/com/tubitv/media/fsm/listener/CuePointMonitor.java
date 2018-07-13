@@ -1,7 +1,6 @@
 package com.tubitv.media.fsm.listener;
 
 import android.support.annotation.Nullable;
-
 import com.tubitv.media.fsm.Input;
 import com.tubitv.media.fsm.concrete.AdPlayingState;
 import com.tubitv.media.fsm.concrete.VpaidState;
@@ -12,40 +11,60 @@ import com.tubitv.media.utilities.ExoPlayerLogger;
 /**
  * Created by allensun on 8/7/17.
  * on Tubitv.com, allengotstuff@gmail.com
- * <p>
  * This class monitors the ExoPlayer frame by frame playing progress, and handles {@link com.tubitv.media.fsm.state_machine.FsmPlayer} and its two {@link com.tubitv.media.fsm.Input}
- * <p>
  * 1. somme abstract two start making the network call to the server relative to cue point
- * <p>
  * 2. when at the cue point, show ads.
  */
 public abstract class CuePointMonitor {
 
-    public FsmPlayer fsmPlayer;
-
     private static final String TAG = CuePointMonitor.class.getSimpleName();
-
+    private static final long RANGE_FACTOR = 1500;
+    public FsmPlayer fsmPlayer;
     /**
      * this is the safe check to only call ad work one time given that the range check can make multiple add call for one cuepoint.
      */
     private boolean safeCheckForAdcall = true;
-
     private boolean safeCheckForCue = true;
-
     private long[] cuePoints;
-
     private long[] adCallPoints;
-
     /**
      * keep track of current relevant cue point this time,
      */
     private int currentQueuePointPos = -1;
 
-    public abstract int networkingAhead();
-
     public CuePointMonitor(FsmPlayer fsmPlayer) {
         this.fsmPlayer = fsmPlayer;
     }
+
+    public static int binarySerchWithRange(long[] a, long key) {
+        return binarySearchWithRange(a, 0, a.length, key, RANGE_FACTOR);
+    }
+
+    public static int binarySerchExactly(long[] a, long key) {
+        return binarySearchWithRange(a, 0, a.length, key, 0);
+    }
+
+    // Like public version, but without range checks.
+    private static int binarySearchWithRange(long[] a, int fromIndex, int toIndex,
+            long key, long range_factor) {
+        int low = fromIndex;
+        int high = toIndex - 1;
+
+        while (low <= high) {
+            int mid = (low + high) >>> 1;
+            long midVal = a[mid];
+
+            if (midVal + range_factor < key)
+                low = mid + 1;
+            else if (midVal - range_factor > key)
+                high = mid - 1;
+            else
+                return mid; // key found
+        }
+        return -(low + 1);  // key not found.
+    }
+
+    public abstract int networkingAhead();
 
     public void setQuePoints(@Nullable long[] cuePoints) {
 
@@ -61,10 +80,8 @@ public abstract class CuePointMonitor {
         adCallPoints = getAddCallPoints(cuePoints);
     }
 
-
     /**
      * remove the cuepoint that already shown, only when a add call is finished.
-     *
      * Not used
      */
     public void remoteShowedCuePoints() {
@@ -79,9 +96,9 @@ public abstract class CuePointMonitor {
             return;
         }
 
-        long[] newcuePoints = removeElementFromArray(cuePoints,currentQueuePointPos);
+        long[] newcuePoints = removeElementFromArray(cuePoints, currentQueuePointPos);
 
-        if(newcuePoints!=null){
+        if (newcuePoints != null) {
             setQuePoints(newcuePoints);
         }
     }
@@ -120,7 +137,8 @@ public abstract class CuePointMonitor {
      */
     public void onMovieProgress(long milliseconds, long durationMillis) {
 
-        if (fsmPlayer.getCurrentState() instanceof AdPlayingState || fsmPlayer.getCurrentState() instanceof VpaidState) {
+        if (fsmPlayer.getCurrentState() instanceof AdPlayingState || fsmPlayer
+                .getCurrentState() instanceof VpaidState) {
             // if ad playing, do nothing
             return;
         }
@@ -186,37 +204,6 @@ public abstract class CuePointMonitor {
         return true;
     }
 
-
-    private static final long RANGE_FACTOR = 1500;
-
-    public static int binarySerchWithRange(long[] a, long key) {
-        return binarySearchWithRange(a, 0, a.length, key, RANGE_FACTOR);
-    }
-
-    public static int binarySerchExactly(long[] a, long key) {
-        return binarySearchWithRange(a, 0, a.length, key, 0);
-    }
-
-    // Like public version, but without range checks.
-    private static int binarySearchWithRange(long[] a, int fromIndex, int toIndex,
-                                             long key, long range_factor) {
-        int low = fromIndex;
-        int high = toIndex - 1;
-
-        while (low <= high) {
-            int mid = (low + high) >>> 1;
-            long midVal = a[mid];
-
-            if (midVal + range_factor < key)
-                low = mid + 1;
-            else if (midVal - range_factor > key)
-                high = mid - 1;
-            else
-                return mid; // key found
-        }
-        return -(low + 1);  // key not found.
-    }
-
     /**
      * create add call points array base on queuePoints
      *
@@ -233,6 +220,5 @@ public abstract class CuePointMonitor {
         }//end for
         return array;
     }
-
 
 }

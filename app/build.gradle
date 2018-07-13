@@ -11,12 +11,13 @@ buildscript {
 
 repositories {
     maven { url 'https://maven.fabric.io/public' }
+    flatDir {
+        dirs project(':lib').file('libs')
+    }
 }
 
 apply plugin: 'com.android.application'
 apply plugin: 'io.fabric'
-
-
 
 //repositories {
 //    maven { url 'https://maven.fabric.io/public' }
@@ -37,8 +38,8 @@ apply plugin: 'io.fabric'
 //}
 
 android {
-    compileSdkVersion 25
-    buildToolsVersion "25.0.2"
+    compileSdkVersion 27
+    buildToolsVersion '27.0.3'
     dataBinding {
         enabled = true
     }

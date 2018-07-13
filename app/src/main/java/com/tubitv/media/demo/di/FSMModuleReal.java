@@ -5,7 +5,6 @@ import android.os.Looper;
 import android.support.annotation.Nullable;
 import android.view.View;
 import android.webkit.WebView;
-
 import com.tubitv.media.controller.PlayerAdLogicController;
 import com.tubitv.media.controller.PlayerUIController;
 import com.tubitv.media.demo.vpaid_model.TubiVPAID;
@@ -24,12 +23,10 @@ import com.tubitv.media.models.AdRetriever;
 import com.tubitv.media.models.CuePointsRetriever;
 import com.tubitv.media.models.MediaModel;
 import com.tubitv.media.models.VpaidClient;
-
-import java.util.ArrayList;
-import java.util.List;
-
 import dagger.Module;
 import dagger.Provides;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by allensun on 8/29/17.
@@ -37,7 +34,6 @@ import dagger.Provides;
  */
 @Module
 public class FSMModuleReal {
-
 
     private WebView webView;
 
@@ -106,7 +102,7 @@ public class FSMModuleReal {
             }
         };
 
-//        cuePointMonitor.setQuePoints(new int[]{0, 60000, 900000, 1800000, 3600000});
+        //        cuePointMonitor.setQuePoints(new int[]{0, 60000, 900000, 1800000, 3600000});
 
         return cuePointMonitor;
     }
@@ -115,20 +111,23 @@ public class FSMModuleReal {
     @Provides
     AdMediaModel provideAdMediaModel() {
         // this is the corrupted video source
-        MediaModel ad_1 = MediaModel.ad("http://c13.adrise.tv/ads/transcodes/003121/1163277/v0809172903-640x360-SD-1047k.mp4.m3u8",
-                "first ad", false);
+        MediaModel ad_1 = MediaModel
+                .ad("http://c13.adrise.tv/ads/transcodes/003121/1163277/v0809172903-640x360-SD-1047k.mp4.m3u8",
+                        "first ad", false);
 
-        MediaModel ad_2 = MediaModel.ad("http://c11.adrise.tv/ads/transcodes/003572/940826/v0329081907-1280x720-HD-,740,1285,1622,2138,3632,k.mp4.m3u8",
-                "second ad", false);
+        MediaModel ad_2 = MediaModel
+                .ad("http://c11.adrise.tv/ads/transcodes/003572/940826/v0329081907-1280x720-HD-,740,1285,1622,2138,3632,k.mp4.m3u8",
+                        "second ad", false);
 
-        MediaModel ad_3 = MediaModel.ad("http://c11.adrise.tv/ads/transcodes/003572/940826/v0329081907-1280x720-HD-,740,1285,1622,2138,3632,k.mp4.m3u8",
-                "third ad", true);
+        MediaModel ad_3 = MediaModel
+                .ad("http://c11.adrise.tv/ads/transcodes/003572/940826/v0329081907-1280x720-HD-,740,1285,1622,2138,3632,k.mp4.m3u8",
+                        "third ad", true);
 
         final List<MediaModel> list = new ArrayList<>();
 
-//        list.add(ad_3);
+        //        list.add(ad_3);
 
-//        list.add(ad_3);
+        //        list.add(ad_3);
         list.add(ad_2);
 
         AdMediaModel adMediaModel = new AdMediaModel(list) {
@@ -141,7 +140,6 @@ public class FSMModuleReal {
 
         return adMediaModel;
     }
-
 
     @ActicityScope
     @Provides
@@ -193,7 +191,7 @@ public class FSMModuleReal {
                         handler.post(new Runnable() {
                             @Override
                             public void run() {
-                                callBack.onCuePointReceived(new long[]{0, 60000, 900000, 1800000, 3600000});
+                                callBack.onCuePointReceived(new long[] { 0, 60000, 900000, 1800000, 3600000 });
                             }
                         });
                     }

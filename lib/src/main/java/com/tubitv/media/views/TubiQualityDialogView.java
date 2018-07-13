@@ -11,7 +11,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.Toast;
-
 import com.afollestad.materialdialogs.DialogAction;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.google.android.exoplayer2.Format;
@@ -24,14 +23,14 @@ import com.google.android.exoplayer2.trackselection.TrackSelection;
 import com.google.android.exoplayer2.util.MimeTypes;
 import com.tubitv.media.R;
 import com.tubitv.media.databinding.ViewTubiQualityDialogBinding;
-
 import java.util.Arrays;
 import java.util.Locale;
 
 /**
  * Created by stoyan on 6/2/17.
  */
-public class TubiQualityDialogView extends LinearLayout implements View.OnClickListener, MaterialDialog.SingleButtonCallback {
+public class TubiQualityDialogView extends LinearLayout
+        implements View.OnClickListener, MaterialDialog.SingleButtonCallback {
 
     private static final TrackSelection.Factory FIXED_FACTORY = new FixedTrackSelection.Factory();
 
@@ -94,6 +93,80 @@ public class TubiQualityDialogView extends LinearLayout implements View.OnClickL
         initLayout();
     }
 
+    private static int[] getTracksRemoving(@NonNull MappingTrackSelector.SelectionOverride override, int removedTrack) {
+        int[] tracks = new int[override.length - 1];
+        int trackCount = 0;
+        for (int i = 0; i < tracks.length + 1; i++) {
+            int track = override.tracks[i];
+            if (track != removedTrack) {
+                tracks[trackCount++] = track;
+            }
+        }
+        return tracks;
+    }
+
+    // Track array manipulation.
+    private static int[] getTracksAdding(@NonNull MappingTrackSelector.SelectionOverride override, int addedTrack) {
+        int[] tracks = override.tracks;
+        tracks = Arrays.copyOf(tracks, tracks.length + 1);
+        tracks[tracks.length - 1] = addedTrack;
+        return tracks;
+    }
+
+    public static String buildTrackName(Format format) {
+        String trackName;
+        if (MimeTypes.isVideo(format.sampleMimeType)) {
+            trackName = joinWithSeparator(
+                    buildResolutionString(format), buildBitrateString(format));
+        } else if (MimeTypes.isAudio(format.sampleMimeType)) {
+            trackName = joinWithSeparator(joinWithSeparator(joinWithSeparator(joinWithSeparator(
+                    buildLanguageString(format), buildAudioPropertyString(format)),
+                    buildBitrateString(format)), buildTrackIdString(format)),
+                    buildSampleMimeTypeString(format));
+        } else {
+            trackName = joinWithSeparator(joinWithSeparator(joinWithSeparator(buildLanguageString(format),
+                    buildBitrateString(format)), buildTrackIdString(format)),
+                    buildSampleMimeTypeString(format));
+        }
+        return trackName.length() == 0 ? "unknown" : trackName;
+    }
+
+    private static String buildResolutionString(Format format) {
+        return format.width == Format.NO_VALUE || format.height == Format.NO_VALUE
+                ? "" : format.width + "x" + format.height;
+    }
+
+    private static String buildAudioPropertyString(Format format) {
+        return format.channelCount == Format.NO_VALUE || format.sampleRate == Format.NO_VALUE
+                ? "" : format.channelCount + "ch, " + format.sampleRate + "Hz";
+    }
+
+    private static String buildLanguageString(Format format) {
+        return TextUtils.isEmpty(format.language) || "und".equals(format.language) ? ""
+                : format.language;
+    }
+
+    private static String buildBitrateString(Format format) {
+        return format.bitrate == Format.NO_VALUE ? ""
+                : String.format(Locale.US, "%.2fMbit", format.bitrate / 1000000f);
+    }
+
+    private static String joinWithSeparator(String first, String second) {
+        return first.length() == 0 ? second : (second.length() == 0 ? first : first + ", " + second);
+    }
+
+    private static String buildTrackIdString(Format format) {
+        return format.id == null ? "" : ("id:" + format.id);
+    }
+
+    //    private void setOverride(int group, int... tracks) {
+    //        override = new MappingTrackSelector.SelectionOverride(FIXED_FACTORY, group, tracks);
+    //    }
+
+    private static String buildSampleMimeTypeString(Format format) {
+        return format.sampleMimeType == null ? "" : format.sampleMimeType;
+    }
+
     public void setAdaptiveTrackSelectionFactory(TrackSelection.Factory adaptiveTrackSelectionFactory) {
         this.adaptiveTrackSelectionFactory = adaptiveTrackSelectionFactory;
     }
@@ -109,6 +182,8 @@ public class TubiQualityDialogView extends LinearLayout implements View.OnClickL
         super.onDetachedFromWindow();
         isAttachedToWindow = false;
     }
+
+    // Track name construction.
 
     @Override
     public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
@@ -133,8 +208,8 @@ public class TubiQualityDialogView extends LinearLayout implements View.OnClickL
             isDisabled = false;
             @SuppressWarnings("unchecked")
             Pair<Integer, Integer> tag = (Pair<Integer, Integer>) view.getTag();
-            if(tag==null){
-                Toast.makeText(getContext(),"this format is not supported ",Toast.LENGTH_SHORT).show();
+            if (tag == null) {
+                Toast.makeText(getContext(), "this format is not supported ", Toast.LENGTH_SHORT).show();
                 return;
             }
             int groupIndex = tag.first;
@@ -200,7 +275,6 @@ public class TubiQualityDialogView extends LinearLayout implements View.OnClickL
         setRendererIndex(rendererIndex);
         setSelector(selector);
 
-
         // View for clearing the override to allow the selector to use its default selection logic.
         qualityAutoView = new TubiRadioButton(getContext());
         qualityAutoView.setText(R.string.track_selector_alert_auto);
@@ -248,93 +322,16 @@ public class TubiQualityDialogView extends LinearLayout implements View.OnClickL
         qualityAutoView.setChecked(override == null);
     }
 
-//    private void setOverride(int group, int... tracks) {
-//        override = new MappingTrackSelector.SelectionOverride(FIXED_FACTORY, group, tracks);
-//    }
-
     private void setOverride(int group, int[] tracks) {
         TrackSelection.Factory factory = tracks.length == 1 ? FIXED_FACTORY
                 : adaptiveTrackSelectionFactory;
         override = new MappingTrackSelector.SelectionOverride(factory, group, tracks);
     }
 
-    private static int[] getTracksRemoving(@NonNull MappingTrackSelector.SelectionOverride override, int removedTrack) {
-        int[] tracks = new int[override.length - 1];
-        int trackCount = 0;
-        for (int i = 0; i < tracks.length + 1; i++) {
-            int track = override.tracks[i];
-            if (track != removedTrack) {
-                tracks[trackCount++] = track;
-            }
-        }
-        return tracks;
-    }
-
-    // Track array manipulation.
-    private static int[] getTracksAdding(@NonNull MappingTrackSelector.SelectionOverride override, int addedTrack) {
-        int[] tracks = override.tracks;
-        tracks = Arrays.copyOf(tracks, tracks.length + 1);
-        tracks[tracks.length - 1] = addedTrack;
-        return tracks;
-    }
-
     private void removeAllTracks() {
         selector.clearSelectionOverrides();
         setOverride(selector.getSelectionOverride(rendererIndex, trackGroups));
     }
-
-    // Track name construction.
-
-    public static String buildTrackName(Format format) {
-        String trackName;
-        if (MimeTypes.isVideo(format.sampleMimeType)) {
-            trackName = joinWithSeparator(
-                    buildResolutionString(format), buildBitrateString(format));
-        } else if (MimeTypes.isAudio(format.sampleMimeType)) {
-            trackName = joinWithSeparator(joinWithSeparator(joinWithSeparator(joinWithSeparator(
-                    buildLanguageString(format), buildAudioPropertyString(format)),
-                    buildBitrateString(format)), buildTrackIdString(format)),
-                    buildSampleMimeTypeString(format));
-        } else {
-            trackName = joinWithSeparator(joinWithSeparator(joinWithSeparator(buildLanguageString(format),
-                    buildBitrateString(format)), buildTrackIdString(format)),
-                    buildSampleMimeTypeString(format));
-        }
-        return trackName.length() == 0 ? "unknown" : trackName;
-    }
-
-    private static String buildResolutionString(Format format) {
-        return format.width == Format.NO_VALUE || format.height == Format.NO_VALUE
-                ? "" : format.width + "x" + format.height;
-    }
-
-    private static String buildAudioPropertyString(Format format) {
-        return format.channelCount == Format.NO_VALUE || format.sampleRate == Format.NO_VALUE
-                ? "" : format.channelCount + "ch, " + format.sampleRate + "Hz";
-    }
-
-    private static String buildLanguageString(Format format) {
-        return TextUtils.isEmpty(format.language) || "und".equals(format.language) ? ""
-                : format.language;
-    }
-
-    private static String buildBitrateString(Format format) {
-        return format.bitrate == Format.NO_VALUE ? ""
-                : String.format(Locale.US, "%.2fMbit", format.bitrate / 1000000f);
-    }
-
-    private static String joinWithSeparator(String first, String second) {
-        return first.length() == 0 ? second : (second.length() == 0 ? first : first + ", " + second);
-    }
-
-    private static String buildTrackIdString(Format format) {
-        return format.id == null ? "" : ("id:" + format.id);
-    }
-
-    private static String buildSampleMimeTypeString(Format format) {
-        return format.sampleMimeType == null ? "" : format.sampleMimeType;
-    }
-
 
     private void setSelector(MappingTrackSelector selector) {
         this.selector = selector;
@@ -349,8 +346,8 @@ public class TubiQualityDialogView extends LinearLayout implements View.OnClickL
                     != RendererCapabilities.ADAPTIVE_NOT_SUPPORTED
                     && trackGroups.get(i).length > 1;
         }
-//        isDisabled = selector.getRendererDisabled(rendererIndex);
-//        override = selector.getSelectionOverride(rendererIndex, trackGroups);
+        //        isDisabled = selector.getRendererDisabled(rendererIndex);
+        //        override = selector.getSelectionOverride(rendererIndex, trackGroups);
     }
 
     private void setTrackGroups(@NonNull TrackGroupArray trackGroups) {

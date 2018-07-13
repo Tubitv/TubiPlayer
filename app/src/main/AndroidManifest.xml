@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android"
-          package="com.tubitv.demo">
-    <uses-permission android:name="android.permission.INTERNET"/>
+<manifest package="com.tubitv.demo"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <uses-permission android:name="android.permission.INTERNET" />
     <application
         android:name="com.tubitv.media.demo.DemoApplication"
         android:allowBackup="true"
@@ -16,23 +17,26 @@
             android:launchMode="singleTop"
             android:theme="@style/TubiPlayerTheme">
             <intent-filter>
-                <action android:name="android.intent.action.MAIN"/>
+                <action android:name="android.intent.action.MAIN" />
 
-                <category android:name="android.intent.category.LAUNCHER"/>
+                <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
 
-        <activity android:name="com.tubitv.media.demo.WebviewActivity"
+        <activity
+            android:name="com.tubitv.media.demo.WebviewActivity"
             android:configChanges="keyboard|keyboardHidden|orientation|screenSize|screenLayout|smallestScreenSize|uiMode"
-            android:launchMode="singleTop"
             android:hardwareAccelerated="true"
-            android:theme="@style/TubiPlayerTheme"/>
+            android:launchMode="singleTop"
+            android:theme="@style/TubiPlayerTheme" />
 
-        <activity android:name="com.tubitv.media.demo.RealActivity"
+        <activity
+            android:name="com.tubitv.media.demo.RealActivity"
             android:configChanges="keyboard|keyboardHidden|orientation|screenSize|screenLayout|smallestScreenSize|uiMode"
-            android:launchMode="singleTop"
             android:hardwareAccelerated="true"
-            android:theme="@style/TubiPlayerTheme"/>
+            android:launchMode="singleTop"
+            android:theme="@style/TubiPlayerTheme" />
+
         <meta-data
             android:name="io.fabric.ApiKey"
             android:value="939b44e536bf66a0209a6eff6bce13b5874f7298" />

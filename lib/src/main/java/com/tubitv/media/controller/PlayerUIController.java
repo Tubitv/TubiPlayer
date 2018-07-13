@@ -3,7 +3,6 @@ package com.tubitv.media.controller;
 import android.support.annotation.Nullable;
 import android.view.View;
 import android.webkit.WebView;
-
 import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.SimpleExoPlayer;
 
@@ -33,7 +32,8 @@ public class PlayerUIController {
 
     private long historyPosition = C.TIME_UNSET;
 
-    public PlayerUIController(@Nullable SimpleExoPlayer contentPlayer, @Nullable SimpleExoPlayer adPlayer, @Nullable WebView vpaidWebView, @Nullable View exoPlayerView) {
+    public PlayerUIController(@Nullable SimpleExoPlayer contentPlayer, @Nullable SimpleExoPlayer adPlayer,
+            @Nullable WebView vpaidWebView, @Nullable View exoPlayerView) {
         this.contentPlayer = contentPlayer;
         this.adPlayer = adPlayer;
         this.vpaidWebView = vpaidWebView;
@@ -44,40 +44,53 @@ public class PlayerUIController {
         return contentPlayer;
     }
 
+    public void setContentPlayer(SimpleExoPlayer contentPlayer) {
+        this.contentPlayer = contentPlayer;
+    }
+
     public SimpleExoPlayer getAdPlayer() {
         return adPlayer;
+    }
+
+    public void setAdPlayer(SimpleExoPlayer adPlayer) {
+        this.adPlayer = adPlayer;
     }
 
     public WebView getVpaidWebView() {
         return vpaidWebView;
     }
 
+    public void setVpaidWebView(WebView vpaidWebView) {
+        this.vpaidWebView = vpaidWebView;
+    }
+
     public View getExoPlayerView() {
         return exoPlayerView;
     }
 
-    public void setContentPlayer(SimpleExoPlayer contentPlayer) {
-        this.contentPlayer = contentPlayer;
+    public void setExoPlayerView(View exoPlayerView) {
+        this.exoPlayerView = exoPlayerView;
     }
 
     /**
      * This is set when user want to begin the movie from current position
+     *
      * @param pos
      */
-    public void setPlayFromHistory(long pos){
+    public void setPlayFromHistory(long pos) {
         hasHistory = true;
         historyPosition = pos;
     }
 
-    public boolean hasHistory(){
+    public boolean hasHistory() {
         return hasHistory;
     }
 
-    public long getHistoryPosition(){
+    public long getHistoryPosition() {
         return historyPosition;
     }
 
-    public void clearHistoryRecord(){
+    public void clearHistoryRecord() {
         hasHistory = false;
         historyPosition = C.TIME_UNSET;
     }
@@ -87,8 +100,8 @@ public class PlayerUIController {
         adResumePosition = position;
     }
 
-    public void clearAdResumeInfo(){
-        setAdResumeInfo(C.INDEX_UNSET,C.TIME_UNSET);
+    public void clearAdResumeInfo() {
+        setAdResumeInfo(C.INDEX_UNSET, C.TIME_UNSET);
     }
 
     public void setMovieResumeInfo(int window, long position) {
@@ -96,8 +109,8 @@ public class PlayerUIController {
         movieResumePosition = position;
     }
 
-    public void clearMovieResumeInfo(){
-        setMovieResumeInfo(C.INDEX_UNSET,C.TIME_UNSET);
+    public void clearMovieResumeInfo() {
+        setMovieResumeInfo(C.INDEX_UNSET, C.TIME_UNSET);
     }
 
     public int getAdResumeWindow() {
@@ -114,18 +127,6 @@ public class PlayerUIController {
 
     public long getMovieResumePosition() {
         return movieResumePosition;
-    }
-
-    public void setAdPlayer(SimpleExoPlayer adPlayer) {
-        this.adPlayer = adPlayer;
-    }
-
-    public void setVpaidWebView(WebView vpaidWebView) {
-        this.vpaidWebView = vpaidWebView;
-    }
-
-    public void setExoPlayerView(View exoPlayerView) {
-        this.exoPlayerView = exoPlayerView;
     }
 
     public static class Builder {

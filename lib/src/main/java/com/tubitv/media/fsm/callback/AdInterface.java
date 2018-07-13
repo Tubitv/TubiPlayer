@@ -16,7 +16,6 @@ public interface AdInterface {
      */
     void fetchAd(AdRetriever retriever, RetrieveAdCallback callback);
 
-
     void fetchQuePoint(CuePointsRetriever retriever, CuePointCallBack callBack);
 
 }

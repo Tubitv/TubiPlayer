@@ -2,7 +2,6 @@ package com.tubitv.media.fsm.concrete;
 
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-
 import com.tubitv.media.fsm.BaseState;
 import com.tubitv.media.fsm.Input;
 import com.tubitv.media.fsm.State;
@@ -21,7 +20,6 @@ import static com.tubitv.media.helpers.Constants.FSMPLAYER_TESTING;
  */
 public class MakingPrerollAdCallState extends BaseState {
 
-
     @Nullable
     @Override
     public State transformToState(@NonNull Input input, @NonNull StateFactory factory) {
@@ -35,7 +33,7 @@ public class MakingPrerollAdCallState extends BaseState {
     }
 
     @Override
-    public void performWorkAndUpdatePlayerUI(@NonNull FsmPlayer fsmPlayer ) {
+    public void performWorkAndUpdatePlayerUI(@NonNull FsmPlayer fsmPlayer) {
         super.performWorkAndUpdatePlayerUI(fsmPlayer);
 
         // don't do any UI work.
@@ -51,7 +49,6 @@ public class MakingPrerollAdCallState extends BaseState {
         }
         fetchAd(fsmPlayer.getAdServerInterface(), fsmPlayer.getAdRetriever(), fsmPlayer);
     }
-
 
     private void fetchAd(AdInterface adInterface, AdRetriever retriever, RetrieveAdCallback callback) {
         if (adInterface != null && retriever != null && callback != null) {

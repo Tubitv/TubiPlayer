@@ -3,7 +3,6 @@ package com.tubitv.media.helpers;
 import android.app.Activity;
 import android.content.DialogInterface;
 import android.support.annotation.NonNull;
-
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.google.android.exoplayer2.trackselection.MappingTrackSelector;
 import com.google.android.exoplayer2.trackselection.TrackSelection;
@@ -18,16 +17,21 @@ import com.tubitv.media.views.TubiQualityDialogView;
 public class TrackSelectionHelper implements DialogInterface.OnDismissListener {
 
     /**
+     * The activity that launches this dialog
+     */
+    @NonNull
+    private final Activity mActivity;
+    @NonNull
+    private final TrackSelection.Factory adaptiveTrackSelectionFactory;
+    /**
      * The track selector used to set the video quality
      */
     private MappingTrackSelector selector;
-
     /**
      * The dialog view with layouts for the tracks to be selected
      */
     @NonNull
     private TubiQualityDialogView qualityDialogView;
-
     /**
      * The callback interface when the dialog is dismissed to inform it whether the
      * track selector was overridden
@@ -36,21 +40,13 @@ public class TrackSelectionHelper implements DialogInterface.OnDismissListener {
     private TrackSelectionHelperInterface mCallbackInterface;
 
     /**
-     * The activity that launches this dialog
-     */
-    @NonNull
-    private final Activity mActivity;
-
-    @NonNull
-    private final TrackSelection.Factory adaptiveTrackSelectionFactory;
-
-    /**
      * Constructor for the helper
      *
      * @param activity The parent activity.
      * @param selector The track selector.
      */
-    public TrackSelectionHelper(@NonNull Activity activity, @NonNull MappingTrackSelector selector, @NonNull TrackSelection.Factory adaptiveTrackSelectionFactory) {
+    public TrackSelectionHelper(@NonNull Activity activity, @NonNull MappingTrackSelector selector,
+            @NonNull TrackSelection.Factory adaptiveTrackSelectionFactory) {
         this.mActivity = activity;
         this.selector = selector;
         this.adaptiveTrackSelectionFactory = adaptiveTrackSelectionFactory;
@@ -63,7 +59,6 @@ public class TrackSelectionHelper implements DialogInterface.OnDismissListener {
      * @param callback      The callback interface when the dialog is dismissed
      */
     public void showSelectionDialog(int rendererIndex, @NonNull TrackSelectionHelperInterface callback) {
-
 
         this.mCallbackInterface = callback;
 
@@ -93,6 +88,5 @@ public class TrackSelectionHelper implements DialogInterface.OnDismissListener {
     MappingTrackSelector getSelector() {
         return selector;
     }
-
 
 }
