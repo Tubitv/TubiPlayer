@@ -11,6 +11,9 @@ buildscript {
 
 repositories {
     maven { url 'https://maven.fabric.io/public' }
+    flatDir {
+        dirs project(':lib').file('libs')
+    }
 }
 
 apply plugin: 'com.android.application'
