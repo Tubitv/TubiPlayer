@@ -4,9 +4,10 @@ apply plugin: 'com.novoda.bintray-release' // must be applied after your artifac
 buildscript {
     repositories {
         jcenter()
+        google()
     }
     dependencies {
-        classpath 'com.novoda:bintray-release:0.4.0'
+        classpath 'com.novoda:bintray-release:0.8.0'
     }
 }
 
@@ -32,7 +33,7 @@ android {
 
     defaultConfig {
         minSdkVersion 16
-        targetSdkVersion 23
+        targetSdkVersion 27
         versionCode 1
         versionName libVersion
 
@@ -52,18 +53,19 @@ android {
     }
 
     libraryVariants.all { variant ->
-        variant.outputs.each { output ->
-            def outputFile = output.outputFile
-            if (outputFile != null && outputFile.name.endsWith('.aar')) {
-//                def fileName = "${archivesBaseName}-${version}.aar"
-                def fileName = "exoplayer.aar"
-                output.outputFile = new File(outputFile.parent, fileName)
-            }
+        variant.outputs.all { output ->
+            outputFileName = "tubiplayer-${libVersion}.aar"
         }
     }
 }
 
 dependencies {
+    def supportLibraryVersion = '27.1.1'
+
+    configurations {
+        all*.exclude group: 'com.android.support', module: 'support-v13'
+    }
+
     compile fileTree(dir: 'libs', include: ['*.jar'])
 
     compile(name: 'vaud-text-view-release', ext: 'aar')
@@ -73,9 +75,13 @@ dependencies {
     compile 'com.squareup.picasso:picasso:2.5.2'
 
     compile 'com.google.android.exoplayer:exoplayer:r2.4.2'
-    compile 'com.android.support:appcompat-v7:25.3.1'
+    compile "com.android.support:appcompat-v7:${supportLibraryVersion}"
     compile 'com.android.support.constraint:constraint-layout:1.0.2'
-    compile 'com.android.support:design:25.3.1'
+    compile "com.android.support:design:${supportLibraryVersion}"
+
+    //chromecast
+    compile "com.android.support:mediarouter-v7:${supportLibraryVersion}"
+    compile 'com.google.android.gms:play-services-cast-framework:10.0.1'
 
     //dagger 2
     compile "com.google.dagger:dagger:2.9"
