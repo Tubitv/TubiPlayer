@@ -45,7 +45,7 @@ import com.squareup.picasso.Picasso;
 import com.tubitv.media.R;
 import com.tubitv.media.helpers.TrackSelectionHelper;
 import com.tubitv.media.interfaces.TubiPlaybackControlInterface;
-import com.tubitv.media.interfaces.TubiPlaybackInterface;
+import com.tubitv.media.interfaces.PlaybackActionCallback;
 import com.tubitv.media.models.MediaModel;
 import com.tubitv.ui.VaudTextView;
 import com.tubitv.ui.VaudType;
@@ -87,7 +87,7 @@ public class TubiExoPlayerView extends FrameLayout implements TubiPlaybackContro
      * The interface from the calling activity for hooking general media playback state
      */
     @Nullable
-    private TubiPlaybackInterface playbackInterface;
+    private PlaybackActionCallback playbackActionCallback;
 
     public TubiExoPlayerView(Context context) {
         this(context, null);
@@ -278,8 +278,8 @@ public class TubiExoPlayerView extends FrameLayout implements TubiPlaybackContro
      *
      * @param player The {@link SimpleExoPlayer} to use.
      */
-    public void setPlayer(SimpleExoPlayer player, @NonNull TubiPlaybackInterface playbackInterface) {
-        setPlaybackInterface(playbackInterface);
+    public void setPlayer(SimpleExoPlayer player, @NonNull PlaybackActionCallback playbackActionCallback) {
+        setPlaybackInterface(playbackActionCallback);
         if (this.player == player) {
             return;
         }
@@ -295,7 +295,7 @@ public class TubiExoPlayerView extends FrameLayout implements TubiPlaybackContro
         }
         this.player = player;
         if (useController) {
-            controller.setPlayer(player, this, playbackInterface);
+            controller.setPlayer(player, this, playbackActionCallback);
         }
         if (shutterView != null) {
             shutterView.setVisibility(VISIBLE);
@@ -387,10 +387,10 @@ public class TubiExoPlayerView extends FrameLayout implements TubiPlaybackContro
         }
         this.useController = useController;
         if (useController) {
-            controller.setPlayer(player, this, playbackInterface);
+            controller.setPlayer(player, this, playbackActionCallback);
         } else if (controller != null) {
             controller.hide();
-            controller.setPlayer(null, this, playbackInterface);
+            controller.setPlayer(null, this, playbackActionCallback);
         }
     }
 
@@ -663,8 +663,8 @@ public class TubiExoPlayerView extends FrameLayout implements TubiPlaybackContro
         }
     }
 
-    public void setPlaybackInterface(@Nullable TubiPlaybackInterface playbackInterface) {
-        this.playbackInterface = playbackInterface;
+    public void setPlaybackInterface(@Nullable PlaybackActionCallback playbackActionCallback) {
+        this.playbackActionCallback = playbackActionCallback;
     }
 
     public void setMediaModel(@NonNull MediaModel mediaModel, boolean forceShowArtView) {
@@ -707,10 +707,10 @@ public class TubiExoPlayerView extends FrameLayout implements TubiPlaybackContro
     @Override
     public void postRunnable(@NonNull Runnable runnable, long millisDelay) {
         postDelayed(runnable, millisDelay);
-        if (playbackInterface != null) {
+        if (playbackActionCallback != null) {
 
             if (player != null && player.getPlayWhenReady() == true) {
-                playbackInterface.onProgress(mediaModel, player.getCurrentPosition(), player.getDuration());
+                playbackActionCallback.onProgress(mediaModel, player.getCurrentPosition(), player.getDuration());
             }
         }
 

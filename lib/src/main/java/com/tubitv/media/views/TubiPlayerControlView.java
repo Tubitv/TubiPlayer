@@ -19,7 +19,7 @@ import com.tubitv.media.bindings.TubiObservable;
 import com.tubitv.media.databinding.ViewTubiPlayerControlBinding;
 import com.tubitv.media.interfaces.TrackSelectionHelperInterface;
 import com.tubitv.media.interfaces.TubiPlaybackControlInterface;
-import com.tubitv.media.interfaces.TubiPlaybackInterface;
+import com.tubitv.media.interfaces.PlaybackActionCallback;
 import com.tubitv.media.models.MediaModel;
 import com.tubitv.media.utilities.Utils;
 
@@ -158,9 +158,9 @@ public class TubiPlayerControlView extends ConstraintLayout implements TrackSele
 
     public void setPlayer(@NonNull SimpleExoPlayer player,
             @NonNull final TubiPlaybackControlInterface playbackControlInterface,
-            @NonNull final TubiPlaybackInterface playbackInterface) {
+            @NonNull final PlaybackActionCallback playbackActionCallback) {
         if (this.mPlayer == null || this.mPlayer != player) {
-            tubiObservable = new TubiObservable(player, playbackControlInterface, playbackInterface);
+            tubiObservable = new TubiObservable(player, playbackControlInterface, playbackActionCallback);
             //Controller doesn't get re-initialized TODO fix instance call
             mBinding.viewTubiControllerSubtitlesIb.clearClickListeners();
             mBinding.viewTubiControllerQualityIb.clearClickListeners();

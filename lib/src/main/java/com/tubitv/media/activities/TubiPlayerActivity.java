@@ -34,7 +34,7 @@ import com.google.android.exoplayer2.util.Util;
 import com.tubitv.media.R;
 import com.tubitv.media.helpers.MediaHelper;
 import com.tubitv.media.helpers.TrackSelectionHelper;
-import com.tubitv.media.interfaces.TubiPlaybackInterface;
+import com.tubitv.media.interfaces.PlaybackActionCallback;
 import com.tubitv.media.models.MediaModel;
 import com.tubitv.media.utilities.EventLogger;
 import com.tubitv.media.utilities.Utils;
@@ -47,7 +47,7 @@ import com.tubitv.media.views.TubiPlayerControlView;
  * You can use this class as it is and implement the abstract methods to be a standalone player to player video with customized UI controls and different forms of adaptive streaming.
  */
 public abstract class TubiPlayerActivity extends LifeCycleActivity
-        implements TubiPlayerControlView.VisibilityListener, TubiPlaybackInterface {
+        implements TubiPlayerControlView.VisibilityListener, PlaybackActionCallback {
     private static final DefaultBandwidthMeter BANDWIDTH_METER = new DefaultBandwidthMeter();
     public static String TUBI_MEDIA_KEY = "tubi_media_key";
     protected SimpleExoPlayer mMoviePlayer;

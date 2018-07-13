@@ -17,7 +17,7 @@ import com.google.android.exoplayer2.source.TrackGroupArray;
 import com.google.android.exoplayer2.trackselection.TrackSelectionArray;
 import com.tubitv.media.BR;
 import com.tubitv.media.interfaces.TubiPlaybackControlInterface;
-import com.tubitv.media.interfaces.TubiPlaybackInterface;
+import com.tubitv.media.interfaces.PlaybackActionCallback;
 import com.tubitv.media.models.MediaModel;
 import com.tubitv.media.utilities.Utils;
 import com.tubitv.media.views.StateImageButton;
@@ -71,7 +71,7 @@ public class TubiObservable extends BaseObservable
      * The interface from the calling activity for hooking general media playback state
      */
     @NonNull
-    private final TubiPlaybackInterface playbackInterface;
+    private final PlaybackActionCallback playbackActionCallback;
     /**
      * The title of the movie being played
      */
@@ -160,9 +160,9 @@ public class TubiObservable extends BaseObservable
 
     public TubiObservable(@NonNull SimpleExoPlayer player,
             @NonNull final TubiPlaybackControlInterface playbackControlInterface,
-            @NonNull final TubiPlaybackInterface playbackInterface) {
+            @NonNull final PlaybackActionCallback playbackActionCallback) {
         this.playbackControlInterface = playbackControlInterface;
-        this.playbackInterface = playbackInterface;
+        this.playbackActionCallback = playbackActionCallback;
         setPlayer(player);
         setAdPlaying(false);
     }
@@ -245,7 +245,7 @@ public class TubiObservable extends BaseObservable
                     boolean playing = player.getPlayWhenReady();
                     player.setPlayWhenReady(!playing);
                     if (mediaModel != null) {
-                        playbackInterface.onPlayToggle(mediaModel, !playing);
+                        playbackActionCallback.onPlayToggle(mediaModel, !playing);
                     }
                 }
                 setIsPlaying();
@@ -255,18 +255,18 @@ public class TubiObservable extends BaseObservable
                 boolean enabled = ((StateImageButton) view).isChecked();
                 playbackControlInterface.onSubtitlesToggle(((StateImageButton) view).isChecked());
                 if (mediaModel != null) {
-                    playbackInterface.onSubtitles(mediaModel, enabled);
+                    playbackActionCallback.onSubtitles(mediaModel, enabled);
                 }
                 break;
             case TUBI_QUALITY_TAG:
                 playbackControlInterface.onQualityTrackToggle(((StateImageButton) view).isChecked());
                 if (mediaModel != null) {
-                    playbackInterface.onQuality(mediaModel);
+                    playbackActionCallback.onQuality(mediaModel);
                 }
                 break;
             case TUBI_AD_LEARN_MORE_TAG:
                 if (mediaModel != null) {
-                    playbackInterface.onLearnMoreClick(mediaModel);
+                    playbackActionCallback.onLearnMoreClick(mediaModel);
                 }
                 break;
         }
@@ -299,7 +299,7 @@ public class TubiObservable extends BaseObservable
 
     private void seekTo(int windowIndex, long positionMs) {
         if (player != null) {
-            playbackInterface.onSeek(mediaModel,
+            playbackActionCallback.onSeek(mediaModel,
                     player.getCurrentPosition(), positionMs);
 
             player.seekTo(windowIndex, positionMs);
@@ -349,7 +349,7 @@ public class TubiObservable extends BaseObservable
             } else {
                 delayMs = 1000;
             }
-            if (playbackInterface.isActive()) {
+            if (playbackActionCallback.isActive()) {
                 playbackControlInterface.postRunnable(updateProgressAction, delayMs);
             }
         }

@@ -26,7 +26,7 @@ public class SelectionActivity extends Activity {
         playHls1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String url = "http://titan.adrise.tv/gravitas/7a10f7f4-7167-4afc-b6d3-245d6b130a80/,zdlo0rzrtw,g4ng3tphz9,hvjhkd1kr2,notk54jpmt,.mp4.m3u8?11peYayRLcUlbjPY9InN5C2QzaVZtqVz92jKbPbIH-QGG_ZmGY9BkePvYpSyVrMeRjTIdc5zxkCboVW2QR23nOEqUU4";
+                String url = "http://titan.adrise.tv/indie-rights-films/8723f67f-2149-41d1-a21e-bbecf86d6397/,qw35eigo81,hm59q28xr6,83in27aduh,81du9v0q9x,.mp4.m3u8?DPVkBp6tRZVJTpIKGrfdoay_7E3HXXibPo85UxgrYsba2sga0S0gFdYUMazCC_4OsKgiU6KKHif3rVTBdXKrhuBvg7Q";
                 String subs = "http://s.adrise.tv/88703acf-66a2-4071-8231-d6cffe579f33.srt";
                 String artwork = "http://images.adrise.tv/6sjdZy7rGz23YZ62_diTF26BfgE=/214x306/smart/img.adrise.tv/4b85521c-c3af-41d5-bf52-40b698c6d56d.jpg";
                 String name = "longest weekend";
