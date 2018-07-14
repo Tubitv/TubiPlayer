@@ -1,7 +1,6 @@
 package com.tubitv.media.controller;
 
 import android.support.annotation.Nullable;
-
 import com.tubitv.media.fsm.listener.AdPlayingMonitor;
 import com.tubitv.media.fsm.listener.CuePointMonitor;
 import com.tubitv.media.interfaces.DoublePlayerInterface;
@@ -24,7 +23,9 @@ public class PlayerAdLogicController {
 
     private VpaidClient vpaidClient;
 
-    public PlayerAdLogicController(@Nullable AdPlayingMonitor adPlayingMonitor, @Nullable TubiPlaybackInterface tubiPlaybackInterface, @Nullable DoublePlayerInterface doublePlayerInterface, @Nullable CuePointMonitor cuePointMonitor) {
+    public PlayerAdLogicController(@Nullable AdPlayingMonitor adPlayingMonitor,
+            @Nullable TubiPlaybackInterface tubiPlaybackInterface,
+            @Nullable DoublePlayerInterface doublePlayerInterface, @Nullable CuePointMonitor cuePointMonitor) {
         this.adPlayingMonitor = adPlayingMonitor;
         this.tubiPlaybackInterface = tubiPlaybackInterface;
         this.doublePlayerInterface = doublePlayerInterface;
@@ -32,7 +33,10 @@ public class PlayerAdLogicController {
         this.vpaidClient = null;
     }
 
-    public PlayerAdLogicController(@Nullable AdPlayingMonitor adPlayingMonitor, @Nullable TubiPlaybackInterface tubiPlaybackInterface, @Nullable DoublePlayerInterface doublePlayerInterface, @Nullable CuePointMonitor cuePointMonitor, @Nullable VpaidClient vpaidClient) {
+    public PlayerAdLogicController(@Nullable AdPlayingMonitor adPlayingMonitor,
+            @Nullable TubiPlaybackInterface tubiPlaybackInterface,
+            @Nullable DoublePlayerInterface doublePlayerInterface, @Nullable CuePointMonitor cuePointMonitor,
+            @Nullable VpaidClient vpaidClient) {
         this.adPlayingMonitor = adPlayingMonitor;
         this.tubiPlaybackInterface = tubiPlaybackInterface;
         this.doublePlayerInterface = doublePlayerInterface;
@@ -48,20 +52,20 @@ public class PlayerAdLogicController {
         this.doublePlayerInterface = doublePlayerInterface;
     }
 
-    public void setAdPlayingMonitor(AdPlayingMonitor adPlayingMonitor) {
-        this.adPlayingMonitor = adPlayingMonitor;
-    }
-
-    public void setTubiPlaybackInterface(TubiPlaybackInterface tubiPlaybackInterface) {
-        this.tubiPlaybackInterface = tubiPlaybackInterface;
-    }
-
     public AdPlayingMonitor getAdPlayingMonitor() {
         return adPlayingMonitor;
     }
 
+    public void setAdPlayingMonitor(AdPlayingMonitor adPlayingMonitor) {
+        this.adPlayingMonitor = adPlayingMonitor;
+    }
+
     public TubiPlaybackInterface getTubiPlaybackInterface() {
         return tubiPlaybackInterface;
+    }
+
+    public void setTubiPlaybackInterface(TubiPlaybackInterface tubiPlaybackInterface) {
+        this.tubiPlaybackInterface = tubiPlaybackInterface;
     }
 
     public CuePointMonitor getCuePointMonitor() {

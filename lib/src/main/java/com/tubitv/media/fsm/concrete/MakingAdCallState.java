@@ -1,7 +1,6 @@
 package com.tubitv.media.fsm.concrete;
 
 import android.support.annotation.NonNull;
-
 import com.tubitv.media.fsm.BaseState;
 import com.tubitv.media.fsm.Input;
 import com.tubitv.media.fsm.State;
@@ -44,15 +43,15 @@ public class MakingAdCallState extends BaseState {
             return;
         }
 
-        fetchAd(fsmPlayer.getAdServerInterface(),fsmPlayer.getAdRetriever(),fsmPlayer);
+        fetchAd(fsmPlayer.getAdServerInterface(), fsmPlayer.getAdRetriever(), fsmPlayer);
 
         //in the MadingAdCallState, no UI need to be updated.
 
     }
 
     private void fetchAd(AdInterface adInterface, AdRetriever retriever, RetrieveAdCallback callback) {
-        if (adInterface != null && retriever != null && callback!=null) {
-            adInterface.fetchAd(retriever,callback);
+        if (adInterface != null && retriever != null && callback != null) {
+            adInterface.fetchAd(retriever, callback);
         } else {
             ExoPlayerLogger.e("TAG", "fetchAd fail, adInterface or AdRetriever is empty");
         }

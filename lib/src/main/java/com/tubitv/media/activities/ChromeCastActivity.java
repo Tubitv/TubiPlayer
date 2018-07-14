@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.FragmentActivity;
-
 import com.google.android.gms.cast.framework.CastContext;
 import com.google.android.gms.cast.framework.CastSession;
 import com.google.android.gms.cast.framework.CastStateListener;
@@ -20,6 +19,7 @@ import com.tubitv.media.utilities.ExoPlayerLogger;
  */
 public class ChromeCastActivity extends FragmentActivity implements SessionManagerListener, CastStateListener {
 
+    public final static String ENABLE_CHROMECAST = "_enable_chromecast_";
     /**
      * The session with the cast device, managed by the {@link com.google.android.gms.cast.framework.SessionManager}
      */
@@ -28,10 +28,7 @@ public class ChromeCastActivity extends FragmentActivity implements SessionManag
     private CastSession mCastSession;
     private CastContext mCastContext;
     private SessionManager mSessionManager;
-
-    public final static String ENABLE_CHROMECAST = "_enable_chromecast_";
     private boolean isChromeCastEnable = false;
-
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -189,9 +186,10 @@ public class ChromeCastActivity extends FragmentActivity implements SessionManag
 
     /**
      * when chromecast connection has established, call this routine; The remote code repository should implement this method.
+     *
      * @param session
      */
-    protected void startCasting(Session session){
+    protected void startCasting(Session session) {
     }
 
 }

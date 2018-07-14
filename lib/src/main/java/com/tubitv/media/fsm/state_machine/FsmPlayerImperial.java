@@ -5,13 +5,11 @@ import com.tubitv.media.fsm.callback.CuePointCallBack;
 import com.tubitv.media.fsm.concrete.factory.StateFactory;
 import com.tubitv.media.helpers.Constants;
 import com.tubitv.media.utilities.ExoPlayerLogger;
-
 import java.util.Arrays;
 
 /**
  * Created by allensun on 8/17/17.
  * on Tubitv.com, allengotstuff@gmail.com
- * <p>
  * This fsmPlayer implements the {@link CuePointCallBack} logic.
  */
 public abstract class FsmPlayerImperial extends FsmPlayer implements CuePointCallBack {
@@ -46,7 +44,6 @@ public abstract class FsmPlayerImperial extends FsmPlayer implements CuePointCal
         playerComponentController.getTubiPlaybackInterface().onCuePointReceived(quePoints);
     }
 
-
     @Override
     public void onCuePointError() {
 
@@ -54,7 +51,6 @@ public abstract class FsmPlayerImperial extends FsmPlayer implements CuePointCal
         //TODO: need to handle situation when cuepoint not able to retrieve.
         transit(Input.ERROR);
     }
-
 
     private void updateCuePointsWithRemoveFirstCue(long[] array, boolean yes) {
 

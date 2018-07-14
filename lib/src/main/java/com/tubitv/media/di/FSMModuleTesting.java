@@ -3,7 +3,6 @@ package com.tubitv.media.di;
 import android.support.annotation.Nullable;
 import android.view.View;
 import android.webkit.WebView;
-
 import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.tubitv.media.controller.PlayerAdLogicController;
 import com.tubitv.media.controller.PlayerUIController;
@@ -22,12 +21,10 @@ import com.tubitv.media.models.AdRetriever;
 import com.tubitv.media.models.CuePointsRetriever;
 import com.tubitv.media.models.MediaModel;
 import com.tubitv.media.models.VpaidClient;
-
-import java.util.ArrayList;
-import java.util.List;
-
 import dagger.Module;
 import dagger.Provides;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by allensun on 8/7/17.
@@ -44,7 +41,8 @@ public class FSMModuleTesting {
 
     private View rootView;
 
-    public FSMModuleTesting(@Nullable SimpleExoPlayer mainPlayer, @Nullable SimpleExoPlayer adPlayer, @Nullable WebView webView, @Nullable View rootView) {
+    public FSMModuleTesting(@Nullable SimpleExoPlayer mainPlayer, @Nullable SimpleExoPlayer adPlayer,
+            @Nullable WebView webView, @Nullable View rootView) {
         this.mainPlayer = mainPlayer;
         this.adPlayer = adPlayer;
         this.webView = webView;
@@ -109,7 +107,7 @@ public class FSMModuleTesting {
             }
         };
 
-//        cuePointMonitor.setQuePoints(new int[]{0, 60000, 900000, 1800000, 3600000});
+        //        cuePointMonitor.setQuePoints(new int[]{0, 60000, 900000, 1800000, 3600000});
 
         return cuePointMonitor;
     }
@@ -117,15 +115,16 @@ public class FSMModuleTesting {
     @ActicityScope
     @Provides
     AdMediaModel provideAdMediaModel() {
-        MediaModel ad_1 = MediaModel.ad("http://c13.adrise.tv/ads/transcodes/004130/1050072/v0617070213-640x360-SD-,764,1057,k.mp4.m3u8",
-                "https://github.com/stoyand", false);
+        MediaModel ad_1 = MediaModel
+                .ad("http://c13.adrise.tv/ads/transcodes/004130/1050072/v0617070213-640x360-SD-,764,1057,k.mp4.m3u8",
+                        "https://github.com/stoyand", false);
 
-//        MediaModel ad_2 = MediaModel.ad("http://c11.adrise.tv/ads/transcodes/003572/940826/v0329081907-1280x720-HD-,740,1285,1622,2138,3632,k.mp4.m3u8",
-//                "https://github.com/stoyand",false);
+        //        MediaModel ad_2 = MediaModel.ad("http://c11.adrise.tv/ads/transcodes/003572/940826/v0329081907-1280x720-HD-,740,1285,1622,2138,3632,k.mp4.m3u8",
+        //                "https://github.com/stoyand",false);
 
         final List<MediaModel> list = new ArrayList<>();
         list.add(ad_1);
-//        list.add(ad_2);
+        //        list.add(ad_2);
 
         AdMediaModel adMediaModel = new AdMediaModel(list) {
             @Nullable
@@ -138,7 +137,6 @@ public class FSMModuleTesting {
         return adMediaModel;
     }
 
-
     @ActicityScope
     @Provides
     AdInterface provideAdInterfaceNoPreroll() {
@@ -147,14 +145,14 @@ public class FSMModuleTesting {
         return new AdInterface() {
             @Override
             public void fetchAd(AdRetriever retriever, RetrieveAdCallback callback) {
-//                Log.d(Constants.FSMPLAYER_TESTING, "On ad receive");
+                //                Log.d(Constants.FSMPLAYER_TESTING, "On ad receive");
                 callback.onReceiveAd(provideAdMediaModel());
             }
 
             @Override
             public void fetchQuePoint(CuePointsRetriever retriever, CuePointCallBack callBack) {
-//                Log.d(Constants.FSMPLAYER_TESTING, "On ad receive");
-                callBack.onCuePointReceived(new long[]{60000, 900000, 1800000, 3600000});
+                //                Log.d(Constants.FSMPLAYER_TESTING, "On ad receive");
+                callBack.onCuePointReceived(new long[] { 60000, 900000, 1800000, 3600000 });
 
                 //"AdBreak point at 0s, 1min, 15min, 30min, 60min. With each adbreak showing one ads"
             }
@@ -163,7 +161,7 @@ public class FSMModuleTesting {
 
     @ActicityScope
     @Provides
-    VpaidClient provideVpaidClient(){
+    VpaidClient provideVpaidClient() {
         return new VpaidClient() {
             @Override
             public void init(MediaModel ad) {

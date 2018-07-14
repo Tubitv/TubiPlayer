@@ -2,7 +2,6 @@ package com.tubitv.media.fsm.concrete.factory;
 
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-
 import com.tubitv.media.fsm.State;
 import com.tubitv.media.fsm.concrete.AdPlayingState;
 import com.tubitv.media.fsm.concrete.FetchCuePointState;
@@ -13,7 +12,6 @@ import com.tubitv.media.fsm.concrete.MoviePlayingState;
 import com.tubitv.media.fsm.concrete.ReceiveAdState;
 import com.tubitv.media.fsm.concrete.VastAdInteractionSandBoxState;
 import com.tubitv.media.fsm.concrete.VpaidState;
-
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
@@ -21,33 +19,22 @@ import java.util.Map;
 
 /**
  * Created by allensun on 7/31/17.
- *
  * A factory class that is in charge of initializing {@link State} for {@link com.tubitv.media.fsm.state_machine.FsmPlayer}.
- *
  * To reuse state instance, we have a caching mechanism to only create one instance of each {@link State},
  * reuse that instance from cached map.
- * <p>
  * The default instance of {@link com.tubitv.media.fsm.BaseState} should be created using the below class.
  * * <p>
  * {@link com.tubitv.media.fsm.concrete.FetchCuePointState},
- * <p>
  * {@link com.tubitv.media.fsm.concrete.MakingPrerollAdCallState},
- * <p>
  * {@link com.tubitv.media.fsm.concrete.MakingAdCallState},
- * <p>
  * {@link com.tubitv.media.fsm.concrete.MoviePlayingState}
- * <p>
  * {@link com.tubitv.media.fsm.concrete.FinishState}
- * <p>
  * {@link com.tubitv.media.fsm.concrete.ReceiveAdState}
- * <p>
  * {@link com.tubitv.media.fsm.concrete.AdPlayingState}
- * <p>
  * {@link com.tubitv.media.fsm.concrete.VpaidState}
- * <p>
  * {@link com.tubitv.media.fsm.concrete.VastAdInteractionSandBoxState}
  */
- public final class StateFactory {
+public final class StateFactory {
 
     /**
      * map store singleton instance of every types of {@link State},
@@ -115,7 +102,8 @@ import java.util.Map;
             customStateType.put(MakingPrerollAdCallState.class, subClass);
 
         } else {
-            throw new IllegalStateException(String.valueOf(subClass.getName() + "is not a base class of default State class "));
+            throw new IllegalStateException(
+                    String.valueOf(subClass.getName() + "is not a base class of default State class "));
         }
     }
 
@@ -123,10 +111,11 @@ import java.util.Map;
     public State createState(@NonNull Class classType) {
 
         if (!State.class.isAssignableFrom(classType)) {
-            throw new IllegalStateException(String.valueOf(classType.getName() + "is not a base class of default State class "));
+            throw new IllegalStateException(
+                    String.valueOf(classType.getName() + "is not a base class of default State class "));
         }
 
-            // null check if there is any custom state class. if there is,
+        // null check if there is any custom state class. if there is,
         Class finalClassType = convertToCustomClass(classType);
 
         if (finalClassType == null) {

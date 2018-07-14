@@ -1,17 +1,14 @@
 package com.tubitv.casting;
 
 import android.content.Context;
-
 import com.google.android.gms.cast.framework.CastOptions;
 import com.google.android.gms.cast.framework.OptionsProvider;
 import com.google.android.gms.cast.framework.SessionProvider;
-
 import java.util.List;
 
 /**
  * {@link CastOptions} provider that is set for the cast framework in the {@code AndroidManifest} as
  * a meta attribute
- * <p>
  * Created by stoyan on 11/29/16.
  */
 @SuppressWarnings("unused")

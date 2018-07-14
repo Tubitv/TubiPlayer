@@ -3,12 +3,10 @@ package com.tubitv.demo;
 import android.content.Context;
 import android.support.test.InstrumentationRegistry;
 import android.support.test.runner.AndroidJUnit4;
-
 import com.tubitv.media.fsm.State;
 import com.tubitv.media.fsm.concrete.MoviePlayingState;
 import com.tubitv.media.fsm.concrete.factory.StateFactory;
 import com.tubitv.media.models.MediaModel;
-
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -32,8 +30,8 @@ public class ExampleInstrumentedTest {
     }
 
     @Test
-    public void testStateFactory(){
-        State state =null;
+    public void testStateFactory() {
+        State state = null;
 
         assertNull(state);
 

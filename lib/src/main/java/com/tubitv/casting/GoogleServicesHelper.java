@@ -3,13 +3,11 @@ package com.tubitv.casting;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.util.Log;
-
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 
 /**
  * Helper class encapsulating methods for checking and updating google play services
- * <p>
  * Created by stoyan on 12/14/16.
  */
 public class GoogleServicesHelper {
