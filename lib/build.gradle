@@ -40,6 +40,7 @@ android {
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
 
     }
+
     buildTypes {
         release {
             minifyEnabled false
@@ -50,6 +51,11 @@ android {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
     }
 
     libraryVariants.all { variant ->
@@ -69,7 +75,7 @@ dependencies {
 
     compile fileTree(dir: 'libs', include: ['*.jar'])
 
-    compile(name: 'vaud-text-view-release', ext: 'aar')
+    compile(name: 'vaud-text-view-0.0.2', ext: 'aar')
     compile(name: 'tubi-loading-view-0.0.5', ext: 'aar')
 
     compile 'com.afollestad.material-dialogs:core:0.9.4.5'
