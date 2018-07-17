@@ -1,1 +1,1 @@
-include ':app', ':lib', ':vaud-text-view-release'
+include ':app', ':lib'

@@ -2,6 +2,7 @@ buildscript {
     repositories {
         jcenter()
         maven { url 'https://maven.fabric.io/public' }
+        google()
     }
 
     dependencies {
@@ -11,6 +12,9 @@ buildscript {
 
 repositories {
     maven { url 'https://maven.fabric.io/public' }
+    flatDir {
+        dirs project(':lib').file('libs')
+    }
 }
 
 apply plugin: 'com.android.application'
@@ -35,8 +39,8 @@ apply plugin: 'io.fabric'
 //}
 
 android {
-    compileSdkVersion 25
-    buildToolsVersion "25.0.2"
+    compileSdkVersion 27
+    buildToolsVersion '27.0.3'
     dataBinding {
         enabled = true
     }
@@ -44,11 +48,12 @@ android {
     defaultConfig {
         applicationId "com.tubitv.demo"
         minSdkVersion 16
-        targetSdkVersion 25
+        targetSdkVersion 27
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
     }
+
     buildTypes {
         release {
             minifyEnabled false
@@ -56,11 +61,14 @@ android {
         }
     }
 
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
     applicationVariants.all { variant ->
-        variant.outputs.each { output ->
-            output.outputFile = new File(
-                    output.outputFile.parent,
-                    output.outputFile.name.replace(".apk", "-${variant.versionName}.apk"))
+        variant.outputs.all { output ->
+            outputFileName = "${variant.versionName}.apk"
         }
     }
 }
