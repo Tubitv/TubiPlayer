@@ -95,7 +95,7 @@ dependencies {
     annotationProcessor "com.google.dagger:dagger-compiler:2.9"
     compileOnly 'javax.annotation:jsr250-api:1.0'
 
-    androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
+    androidTestImplementation('com.android.support.test.espresso:espresso-core:2.2.2', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
 
