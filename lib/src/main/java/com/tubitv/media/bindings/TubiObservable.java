@@ -241,14 +241,7 @@ public class TubiObservable extends BaseObservable
     public void onClick(View view) {
         switch ((String) view.getTag()) {
             case TUBI_PLAY_TOGGLE_TAG:
-                if (player != null) {
-                    boolean playing = player.getPlayWhenReady();
-                    player.setPlayWhenReady(!playing);
-                    if (mediaModel != null) {
-                        playbackInterface.onPlayToggle(mediaModel, !playing);
-                    }
-                }
-                setIsPlaying();
+                togglePlay();
                 playbackControlInterface.hideAfterTimeout();
                 break;
             case TUBI_SUBTITLES_TAG:
@@ -304,6 +297,17 @@ public class TubiObservable extends BaseObservable
 
             player.seekTo(windowIndex, positionMs);
         }
+    }
+
+    public void togglePlay() {
+        if (player != null) {
+            boolean playing = player.getPlayWhenReady();
+            player.setPlayWhenReady(!playing);
+            if (mediaModel != null) {
+                playbackInterface.onPlayToggle(mediaModel, !playing);
+            }
+        }
+        setIsPlaying();
     }
 
     public void seekBy(long timeMillis) {

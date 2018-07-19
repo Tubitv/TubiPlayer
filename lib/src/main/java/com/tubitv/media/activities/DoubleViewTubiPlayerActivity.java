@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
+import android.view.KeyEvent;
 import android.webkit.WebBackForwardList;
 import android.webkit.WebHistoryItem;
 import android.webkit.WebView;
@@ -52,6 +53,7 @@ public class DoubleViewTubiPlayerActivity extends TubiPlayerActivity implements 
 
     private static final String TAG = "DoubleViewTubiPlayerAct";
     private static final DefaultBandwidthMeter BANDWIDTH_METER_AD = new DefaultBandwidthMeter();
+
     protected SimpleExoPlayer adPlayer;
     protected WebView vpaidWebView;
     protected TextView cuePointIndictor;
@@ -304,6 +306,15 @@ public class DoubleViewTubiPlayerActivity extends TubiPlayerActivity implements 
     protected void createMediaSource(MediaModel videoMediaModel) {
 
         videoMediaModel.setMediaSource(buildMediaSource(videoMediaModel));
+    }
+
+    @Override
+    public boolean onKeyUp(final int keyCode, final KeyEvent event) {
+        if (mTubiPlayerView != null) {
+            return mTubiPlayerView.onKeyUp(keyCode, event);
+        }
+
+        return super.onKeyUp(keyCode, event);
     }
 
     @Override

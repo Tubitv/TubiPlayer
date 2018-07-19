@@ -11,6 +11,7 @@ import android.graphics.Color;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -551,12 +552,33 @@ public class TubiExoPlayerView extends FrameLayout implements TubiPlaybackContro
         if (!useController || player == null || ev.getActionMasked() != MotionEvent.ACTION_DOWN) {
             return false;
         }
-        if (!controller.isVisible()) {
-            maybeShowController(true);
-        } else if (controllerHideOnTouch) {
-            controller.hide();
-        }
+        toggleControllerVisiblity();
         return true;
+    }
+
+    @Override
+    public boolean onKeyUp(final int keyCode, final KeyEvent event) {
+        Log.d("lhm", "keyCode = " + keyCode);
+        if (!useController || player == null) {
+            return super.onKeyUp(keyCode, event);
+        }
+
+        switch (keyCode) {
+            case KeyEvent.KEYCODE_DPAD_DOWN:
+                toggleControllerVisiblity();
+                return true;
+            case KeyEvent.KEYCODE_DPAD_RIGHT:
+                controller.forward();
+                return true;
+            case KeyEvent.KEYCODE_DPAD_LEFT:
+                controller.rewind();
+                return true;
+            case KeyEvent.KEYCODE_ENTER:
+                controller.togglePlay();
+                return true;
+            default:
+                return super.onKeyUp(keyCode, event);
+        }
     }
 
     @Override
@@ -566,6 +588,14 @@ public class TubiExoPlayerView extends FrameLayout implements TubiPlaybackContro
         }
         maybeShowController(true);
         return true;
+    }
+
+    private void toggleControllerVisiblity() {
+        if (!controller.isVisible()) {
+            maybeShowController(true);
+        } else if (controllerHideOnTouch) {
+            controller.hide();
+        }
     }
 
     private void maybeShowController(boolean isForced) {

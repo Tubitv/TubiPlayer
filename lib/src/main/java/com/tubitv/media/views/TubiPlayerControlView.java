@@ -164,39 +164,6 @@ public class TubiPlayerControlView extends ConstraintLayout implements TrackSele
         tubiObservable.setQualityEnabled(trackSelected);
     }
 
-    private void initLayout() {
-        LayoutInflater inflater = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        mBinding = DataBindingUtil.inflate(inflater, R.layout.view_tubi_player_control, this, true);
-        setDescendantFocusability(FOCUS_AFTER_DESCENDANTS);
-        mBinding.setController(this);
-
-        initCast();
-    }
-
-    private void initCast() {
-
-        if (GoogleServicesHelper.available(getContext())) {
-            try {
-                MediaRouteButton mMediaRouteButton = (MediaRouteButton) findViewById(
-                        R.id.view_tubi_controller_chromecast_ib);
-                CastButtonFactory.setUpMediaRouteButton(getContext(), mMediaRouteButton);
-
-                mMediaRouteButton.setOnTouchListener(new OnTouchListener() {
-                    @Override
-                    public boolean onTouch(View v, MotionEvent event) {
-                        removeCallbacks(hideSystemUI);
-                        postDelayed(hideSystemUI, 1000);
-                        return false;
-                    }
-                });
-                mMediaRouteButton.setVisibility(VISIBLE);
-
-            } catch (Exception exception) {
-                ExoPlayerLogger.e("ChromeCast", "Cast media route button failed to initialize");
-            }
-        }
-    }
-
     public void setHideTimeoutMs(int hideTimeoutMs) {
         this.hideAtMs = hideTimeoutMs;
     }
@@ -277,6 +244,53 @@ public class TubiPlayerControlView extends ConstraintLayout implements TrackSele
 
     public void setVisibilityListener(VisibilityListener visibilityListener) {
         this.visibilityListener = visibilityListener;
+    }
+
+    public void togglePlay() {
+        tubiObservable.togglePlay();
+    }
+
+    public void forward() {
+        tubiObservable.seekBy(tubiObservable.skipBy);
+    }
+
+    public void rewind() {
+        tubiObservable.seekBy((-1) * tubiObservable.skipBy);
+    }
+
+    private void initLayout() {
+        LayoutInflater inflater = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+
+        // TODO temp Android TV change: view_tubi_player_control is swapped by precompile script
+        mBinding = DataBindingUtil.inflate(inflater, R.layout.view_tubi_player_control, this, true);
+        setDescendantFocusability(FOCUS_AFTER_DESCENDANTS);
+        mBinding.setController(this);
+
+        initCast();
+    }
+
+    private void initCast() {
+
+        if (GoogleServicesHelper.available(getContext())) {
+            try {
+                MediaRouteButton mMediaRouteButton = (MediaRouteButton) findViewById(
+                        R.id.view_tubi_controller_chromecast_ib);
+                CastButtonFactory.setUpMediaRouteButton(getContext(), mMediaRouteButton);
+
+                mMediaRouteButton.setOnTouchListener(new OnTouchListener() {
+                    @Override
+                    public boolean onTouch(View v, MotionEvent event) {
+                        removeCallbacks(hideSystemUI);
+                        postDelayed(hideSystemUI, 1000);
+                        return false;
+                    }
+                });
+                mMediaRouteButton.setVisibility(VISIBLE);
+
+            } catch (Exception exception) {
+                ExoPlayerLogger.e("ChromeCast", "Cast media route button failed to initialize");
+            }
+        }
     }
 
     /**
