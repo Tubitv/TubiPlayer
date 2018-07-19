@@ -90,10 +90,6 @@ dependencies {
     implementation "com.android.support:mediarouter-v7:${supportLibraryVersion}"
     implementation "com.google.android.gms:play-services-cast-framework:${playServiceVersion}"
 
-    //chromecast
-    compile 'com.android.support:mediarouter-v7:25.3.1'
-    compile 'com.google.android.gms:play-services-cast-framework:10.0.1'
-
     //dagger 2
     implementation "com.google.dagger:dagger:2.9"
     annotationProcessor "com.google.dagger:dagger-compiler:2.9"
