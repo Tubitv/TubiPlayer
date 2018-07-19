@@ -254,7 +254,6 @@ public class DoubleViewTubiPlayerActivity extends TubiPlayerActivity implements 
 
     @Override
     public void onBackPressed() {
-
         if (fsmPlayer != null && fsmPlayer.getCurrentState() instanceof VpaidState && vpaidWebView != null
                 && vpaidWebView.canGoBack()) {
 
@@ -310,6 +309,11 @@ public class DoubleViewTubiPlayerActivity extends TubiPlayerActivity implements 
 
     @Override
     public boolean onKeyUp(final int keyCode, final KeyEvent event) {
+        if (keyCode == KeyEvent.KEYCODE_BACK) {
+            onBackPressed();
+            return true;
+        }
+
         if (mTubiPlayerView != null) {
             return mTubiPlayerView.onKeyUp(keyCode, event);
         }
