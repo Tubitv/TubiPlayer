@@ -3,6 +3,7 @@ package com.tubitv.media.helpers;
 import android.app.Activity;
 import android.content.DialogInterface;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.google.android.exoplayer2.trackselection.MappingTrackSelector;
 import com.google.android.exoplayer2.trackselection.TrackSelection;
@@ -58,7 +59,7 @@ public class TrackSelectionHelper implements DialogInterface.OnDismissListener {
      * @param rendererIndex The index of the renderer.
      * @param callback      The callback interface when the dialog is dismissed
      */
-    public void showSelectionDialog(int rendererIndex, @NonNull TrackSelectionHelperInterface callback) {
+    public void showSelectionDialog(int rendererIndex, @Nullable TrackSelectionHelperInterface callback) {
 
         this.mCallbackInterface = callback;
 
@@ -79,7 +80,9 @@ public class TrackSelectionHelper implements DialogInterface.OnDismissListener {
     //Perform changes on the dismiss, no need for just ok click
     @Override
     public void onDismiss(DialogInterface dialog) {
-        mCallbackInterface.onTrackSelected(qualityDialogView.onSelection());
+        if (mCallbackInterface != null) {
+            mCallbackInterface.onTrackSelected(qualityDialogView.onSelection());
+        }
         Utils.hideSystemUI(mActivity, false);
     }
 
