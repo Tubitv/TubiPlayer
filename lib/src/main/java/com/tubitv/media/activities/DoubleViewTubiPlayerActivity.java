@@ -104,7 +104,6 @@ public class DoubleViewTubiPlayerActivity extends TubiPlayerActivity implements 
         vpaidWebView.setBackgroundColor(Color.BLACK);
 
         mTubiPlayerView.requestFocus();
-        mTubiPlayerView.setActivity(this);
 
         cuePointIndictor = (TextView) findViewById(R.id.cuepoint_indictor);
     }

@@ -39,7 +39,6 @@ import com.tubitv.media.models.MediaModel;
 import com.tubitv.media.utilities.EventLogger;
 import com.tubitv.media.utilities.Utils;
 import com.tubitv.media.views.TubiExoPlayerView;
-import com.tubitv.media.views.TubiPlayerControlView;
 
 /**
  * This is the base activity that prepare one instance of {@link SimpleExoPlayer} mMoviePlayer, this player is mean to serve as the main player to player content.
@@ -47,7 +46,7 @@ import com.tubitv.media.views.TubiPlayerControlView;
  * You can use this class as it is and implement the abstract methods to be a standalone player to player video with customized UI controls and different forms of adaptive streaming.
  */
 public abstract class TubiPlayerActivity extends LifeCycleActivity
-        implements TubiPlayerControlView.VisibilityListener, PlaybackActionCallback {
+        implements PlaybackActionCallback {
     private static final DefaultBandwidthMeter BANDWIDTH_METER = new DefaultBandwidthMeter();
     public static String TUBI_MEDIA_KEY = "tubi_media_key";
     protected SimpleExoPlayer mMoviePlayer;
@@ -142,13 +141,12 @@ public abstract class TubiPlayerActivity extends LifeCycleActivity
         setContentView(R.layout.activity_tubi_player);
         mTubiPlayerView = (TubiExoPlayerView) findViewById(R.id.tubitv_player);
         mTubiPlayerView.requestFocus();
-        mTubiPlayerView.setActivity(this);
     }
 
     private void setCaption(boolean isOn) {
         if (mediaModel != null && mediaModel.getSubtitlesUrl() != null && mTubiPlayerView != null
                 && mTubiPlayerView.getControlView() != null) {
-            mTubiPlayerView.getControlView().checkSubtitleIcon(isOn);
+            //            mTubiPlayerView.getControlView().checkSubtitleIcon(isOn);
             mTubiPlayerView.getSubtitleView().setVisibility(isOn ? View.VISIBLE : View.GONE);
         }
     }
@@ -246,10 +244,10 @@ public abstract class TubiPlayerActivity extends LifeCycleActivity
         return MediaHelper.buildDataSourceFactory(this, useBandwidthMeter ? BANDWIDTH_METER : null);
     }
 
-    @Override
-    public void onVisibilityChange(int visibility) {
-
-    }
+    //    @Override
+    //    public void onVisibilityChange(int visibility) {
+    //
+    //    }
 
     public HttpDataSource.Factory buildHttpDataSourceFactory(DefaultBandwidthMeter bandwidthMeter) {
         return new DefaultHttpDataSourceFactory(Util.getUserAgent(this, "TubiPlayerActivity"), bandwidthMeter);
