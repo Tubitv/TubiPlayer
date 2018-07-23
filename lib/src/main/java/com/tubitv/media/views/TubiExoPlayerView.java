@@ -8,10 +8,10 @@ import android.content.res.TypedArray;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.os.SystemClock;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.util.TypedValue;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -44,10 +44,13 @@ import com.google.android.exoplayer2.util.Assertions;
 import com.google.android.exoplayer2.util.Util;
 import com.squareup.picasso.Picasso;
 import com.tubitv.media.R;
+import com.tubitv.media.bindings.TubiObservable;
 import com.tubitv.media.helpers.TrackSelectionHelper;
 import com.tubitv.media.interfaces.TubiPlaybackControlInterface;
 import com.tubitv.media.interfaces.TubiPlaybackInterface;
 import com.tubitv.media.models.MediaModel;
+import com.tubitv.media.utilities.ExoPlayerLogger;
+import com.tubitv.media.utilities.SeekCalculator;
 import com.tubitv.ui.VaudTextView;
 import com.tubitv.ui.VaudType;
 import java.util.List;
@@ -57,6 +60,8 @@ import java.util.List;
  */
 @TargetApi(16)
 public class TubiExoPlayerView extends FrameLayout implements TubiPlaybackControlInterface {
+
+    private static final String TAG = TubiExoPlayerView.class.getSimpleName();
 
     private static final int SURFACE_TYPE_NONE = 0;
     private static final int SURFACE_TYPE_SURFACE_VIEW = 1;
@@ -556,28 +561,168 @@ public class TubiExoPlayerView extends FrameLayout implements TubiPlaybackContro
         return true;
     }
 
+    private Long mHoldKeyStartTime = null; // Track how long the key has been holden
+
     @Override
-    public boolean onKeyUp(final int keyCode, final KeyEvent event) {
-        Log.d("lhm", "keyCode = " + keyCode);
-        if (!useController || player == null) {
-            return super.onKeyUp(keyCode, event);
+    public boolean onKeyDown(final int keyCode, final KeyEvent event) {
+
+        if (mHoldKeyStartTime == null) {
+            mHoldKeyStartTime = SystemClock.elapsedRealtime();
         }
 
         switch (keyCode) {
+            case KeyEvent.KEYCODE_DPAD_RIGHT:
+                handleSeekKeyHold(mHoldKeyStartTime, SeekCalculator.FORWARD_DIRECTION);
+                break;
+            case KeyEvent.KEYCODE_DPAD_LEFT:
+                handleSeekKeyHold(mHoldKeyStartTime, SeekCalculator.REWIND_DIRECTION);
+                break;
+        }
+
+        return super.onKeyDown(keyCode, event);
+    }
+
+    @Override
+    public boolean onKeyUp(final int keyCode, final KeyEvent event) {
+        mHoldKeyStartTime = null;
+
+        if (!useController || player == null) {
+            return false;
+        }
+
+        switch (keyCode) {
+            case KeyEvent.KEYCODE_DPAD_UP: // Up should always show the control and focus on caption
+                if (controller.isDuringCustomSeek()) {
+                    handleCancelCustomSeek();
+                    return false;
+                }
+
+                if (!controller.isVisible()) {
+                    toggleControllerVisiblity();
+                }
+
+                if (!controller.getCaptionButton().isFocused()) {
+                    controller.setState(TubiObservable.OPTIONS_CONTROL_STATE);
+                    controller.getCaptionButton().setFocusable(true);
+                    controller.getCaptionButton().requestFocus();
+                    controller.getPlayButton().setFocusable(false);
+                }
+
+                return true;
+
             case KeyEvent.KEYCODE_DPAD_DOWN:
-                toggleControllerVisiblity();
+                if (controller.isVisible()) {
+
+                    switch (controller.getState()) {
+                        case TubiObservable.OPTIONS_CONTROL_STATE:
+                            controller.getCaptionButton().setFocusable(false);
+                            controller.setState(TubiObservable.NORMAL_CONTROL_STATE);
+                            controller.getPlayButton().requestFocus();
+                            break;
+                        case TubiObservable.CUSTOM_SEEK_CONTROL_STATE:
+                        case TubiObservable.EDIT_CUSTOM_SEEK_CONTROL_STATE:
+                            handleCancelCustomSeek();
+                            break;
+                        default:
+                            toggleControllerVisiblity();
+                            break;
+                    }
+
+                } else {
+                    toggleControllerVisiblity();
+                    controller.getPlayButton().requestFocus();
+                }
+
                 return true;
             case KeyEvent.KEYCODE_DPAD_RIGHT:
-                controller.forward();
+                handleSeekKeyUp(SeekCalculator.FORWARD_DIRECTION);
+
                 return true;
             case KeyEvent.KEYCODE_DPAD_LEFT:
-                controller.rewind();
+                handleSeekKeyUp(SeekCalculator.REWIND_DIRECTION);
+
                 return true;
             case KeyEvent.KEYCODE_ENTER:
-                controller.togglePlay();
+                if (controller.isDuringCustomSeek()) {
+                    controller.confirmCustomSeek();
+                    if (!controller.isPlayerPlaying()) {
+                        controller.togglePlay();
+                    }
+                } else {
+                    controller.togglePlay();
+                }
                 return true;
+            case KeyEvent.KEYCODE_BACK:
+                if (controller.isDuringCustomSeek()) {
+                    controller.cancelCustomSeek();
+                    if (!controller.isPlayerPlaying()) {
+                        controller.togglePlay();
+                    }
+                    return true;
+                } else {
+                    return false;
+                }
+
             default:
-                return super.onKeyUp(keyCode, event);
+                return false;
+        }
+    }
+
+    private void handleCancelCustomSeek() {
+        controller.cancelCustomSeek();
+        if (!controller.isPlayerPlaying()) {
+            controller.togglePlay();
+        }
+        toggleControllerVisiblity();
+    }
+
+    private void handleSeekKeyUp(final int direction) {
+
+        switch (controller.getState()) {
+            case TubiObservable.NORMAL_CONTROL_STATE:
+                if (direction == SeekCalculator.FORWARD_DIRECTION) {
+                    controller.forward();
+                } else {
+                    controller.rewind();
+                }
+                break;
+            case TubiObservable.CUSTOM_SEEK_CONTROL_STATE:
+                controller.setState(TubiObservable.EDIT_CUSTOM_SEEK_CONTROL_STATE);
+                break;
+
+            case TubiObservable.EDIT_CUSTOM_SEEK_CONTROL_STATE:
+                controller.updateUIForCustomSeek(
+                        direction * TubiObservable.DEFAULT_FAST_FORWARD_MS);
+                break;
+            case TubiObservable.OPTIONS_CONTROL_STATE:
+                // Do nothing
+                break;
+            default:
+                ExoPlayerLogger.d(TAG, "unhandled player control state = " + controller.getState());
+                break;
+
+        }
+    }
+
+    private void handleSeekKeyHold(final long startTime, final int direction) {
+        if (controller.getCaptionButton().isFocused()) { // Don't handle custom seek if caption is focused
+            return;
+        }
+
+        final long currentTime = SystemClock.elapsedRealtime();
+
+        final long seekDelta = direction * SeekCalculator.getSeekRate(startTime, currentTime);
+
+        controller.updateUIForCustomSeek(seekDelta);
+
+        if (seekDelta != 0) {
+            if (!controller.isVisible()) {
+                maybeShowController(true);
+            }
+
+            if (controller.isPlayerPlaying()) {
+                controller.togglePlay();
+            }
         }
     }
 
@@ -604,7 +749,8 @@ public class TubiExoPlayerView extends FrameLayout implements TubiPlaybackContro
         }
         int playbackState = player.getPlaybackState();
         boolean showIndefinitely = playbackState == ExoPlayer.STATE_IDLE
-                || playbackState == ExoPlayer.STATE_ENDED || !player.getPlayWhenReady();
+                || playbackState == ExoPlayer.STATE_ENDED
+                || !player.getPlayWhenReady();
         boolean wasShowingIndefinitely = controller.isVisible() && controller.getShowTimeoutMs() <= 0;
         controller.setShowTimeoutMs(showIndefinitely ? 0 : controllerShowTimeoutMs);
         if (isForced || showIndefinitely || wasShowingIndefinitely) {

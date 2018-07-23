@@ -59,7 +59,9 @@ public class TubiPlayerControlView extends ConstraintLayout implements TrackSele
     private final Runnable hideAction = new Runnable() {
         @Override
         public void run() {
-            hide();
+            if (!isDuringCustomSeek()) { // only auto hide when it's not in seek mode
+                hide();
+            }
         }
     };
     /**
@@ -178,6 +180,12 @@ public class TubiPlayerControlView extends ConstraintLayout implements TrackSele
             mBinding.viewTubiControllerQualityIb.clearClickListeners();
             mBinding.viewTubiControllerPlayToggleIb.clearClickListeners();
             mBinding.setPlayMedia(tubiObservable);
+
+            // Make sure caption button is not focusable by default
+            mBinding.viewTubiControllerSubtitlesIb.setFocusable(false);
+            // Setup callbacks for tubiObservable
+            tubiObservable.setOnEnterCustomSeek(() -> mBinding.viewTubiControllerSubtitlesIb.setVisibility(INVISIBLE));
+            tubiObservable.setOnBackFromCustomSeek(() -> mBinding.viewTubiControllerSubtitlesIb.setVisibility(VISIBLE));
         }
     }
 
@@ -256,6 +264,42 @@ public class TubiPlayerControlView extends ConstraintLayout implements TrackSele
 
     public void rewind() {
         tubiObservable.seekBy((-1) * tubiObservable.skipBy);
+    }
+
+    public void updateUIForCustomSeek(long timeDelta) {
+        tubiObservable.updateUIForCustomSeek(timeDelta);
+    }
+
+    public boolean isDuringCustomSeek() {
+        return tubiObservable.isDuringCustomSeek();
+    }
+
+    public void confirmCustomSeek() {
+        tubiObservable.confirmCustomSeek();
+    }
+
+    public void cancelCustomSeek() {
+        tubiObservable.cancelCustomSeek();
+    }
+
+    public boolean isPlayerPlaying() {
+        return tubiObservable.isPlaying();
+    }
+
+    public int getState() {
+        return tubiObservable.getState();
+    }
+
+    public void setState(int state) {
+        tubiObservable.setState(state);
+    }
+
+    public StateImageButton getPlayButton() {
+        return mBinding.viewTubiControllerPlayToggleIb;
+    }
+
+    public StateImageButton getCaptionButton() {
+        return mBinding.viewTubiControllerSubtitlesIb;
     }
 
     private void initLayout() {

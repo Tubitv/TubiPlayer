@@ -60,7 +60,7 @@ public class TubiObservable extends BaseObservable
      * The default time to skip in {@link com.tubitv.media.databinding.ViewTubiPlayerControlBinding#viewTubiControllerForwardIb}
      * and {@link com.tubitv.media.databinding.ViewTubiPlayerControlBinding#viewTubiControllerRewindIb}
      */
-    private static final int DEFAULT_FAST_FORWARD_MS = 15000;
+    public static final int DEFAULT_FAST_FORWARD_MS = 15000;
     public final ObservableField<String> numberOfAdLeft = new ObservableField<>("");
     /**
      * The interface from {@link com.tubitv.media.views.TubiPlayerControlView}
@@ -241,8 +241,17 @@ public class TubiObservable extends BaseObservable
     public void onClick(View view) {
         switch ((String) view.getTag()) {
             case TUBI_PLAY_TOGGLE_TAG:
-                togglePlay();
-                playbackControlInterface.hideAfterTimeout();
+                if (isDuringCustomSeek()) {
+                    confirmCustomSeek();
+                    if (!isPlaying) {
+                        togglePlay();
+                        playbackControlInterface.hideAfterTimeout();
+                    }
+                } else {
+                    togglePlay();
+                    playbackControlInterface.hideAfterTimeout();
+                }
+
                 break;
             case TUBI_SUBTITLES_TAG:
                 boolean enabled = ((StateImageButton) view).isChecked();
@@ -329,11 +338,129 @@ public class TubiObservable extends BaseObservable
         }
     }
 
+    public static final int NORMAL_CONTROL_STATE = 1;
+    public static final int CUSTOM_SEEK_CONTROL_STATE = 2;
+    public static final int EDIT_CUSTOM_SEEK_CONTROL_STATE = 3;
+    public static final int OPTIONS_CONTROL_STATE = 4;
+
+    private Long mCustomSeekPosition = null;
+    private int mControlState = NORMAL_CONTROL_STATE;
+    private Runnable mOnEnterCustomSeek;
+    private Runnable mOnBackFromCustomSeek;
+
+    /**
+     * Set callback for enter custom seek
+     *
+     * @param onEnterCustomSeek Call back to run when enter custom seek
+     */
+    public void setOnEnterCustomSeek(final Runnable onEnterCustomSeek) {
+        mOnEnterCustomSeek = onEnterCustomSeek;
+    }
+
+    /**
+     * Set callback for back from custom seek
+     *
+     * @param onBackFromCustomSeek Call back to run when back from custom seek
+     */
+    public void setOnBackFromCustomSeek(final Runnable onBackFromCustomSeek) {
+        mOnBackFromCustomSeek = onBackFromCustomSeek;
+    }
+
+    /**
+     * Update player control progress based on time
+     *
+     * @param timeDelta time since start of custom seek
+     */
+    public void updateUIForCustomSeek(final long timeDelta) {
+        if (timeDelta == 0) {
+            return;
+        }
+
+        if (player != null) {
+
+            if (mCustomSeekPosition == null) {
+                mCustomSeekPosition = player.getCurrentPosition();
+                mControlState = CUSTOM_SEEK_CONTROL_STATE;
+                if (mOnEnterCustomSeek != null) {
+                    mOnEnterCustomSeek.run();
+                }
+            }
+            mCustomSeekPosition += timeDelta;
+            mCustomSeekPosition = Math.max(0, mCustomSeekPosition);
+            mCustomSeekPosition = Math.min(player.getDuration(), mCustomSeekPosition);
+
+            setProgressBarMax((int) player.getDuration());
+            setProgressSeekTime(mCustomSeekPosition, player.getDuration());
+            setProgressBarValue(mCustomSeekPosition);
+        }
+    }
+
+    /**
+     * Check if it is during custom seek
+     *
+     * @return True if custom seek is performing
+     */
+    public boolean isDuringCustomSeek() {
+        return mControlState == CUSTOM_SEEK_CONTROL_STATE || mControlState == EDIT_CUSTOM_SEEK_CONTROL_STATE;
+    }
+
+    /**
+     * Get current player control state
+     *
+     * @return Current control state
+     */
+    public int getState() {
+        return mControlState;
+    }
+
+    /**
+     * Set current player state
+     */
+    public void setState(int state) {
+        mControlState = state;
+    }
+
+    /**
+     * Confirm current custom seek progress
+     */
+    public void confirmCustomSeek() {
+        seekTo(mCustomSeekPosition);
+        setDraggingSeekBar(true);
+        mCustomSeekPosition = null;
+        mControlState = NORMAL_CONTROL_STATE;
+        if (mOnBackFromCustomSeek != null) {
+            mOnBackFromCustomSeek.run();
+        }
+    }
+
+    /**
+     * Cancel custom seek, resume from previous position
+     */
+    public void cancelCustomSeek() {
+        mCustomSeekPosition = null;
+        setProgressBarMax((int) player.getDuration());
+        setProgressSeekTime(player.getCurrentPosition(), player.getDuration());
+        setProgressBarValue(player.getCurrentPosition());
+        mControlState = NORMAL_CONTROL_STATE;
+        if (mOnBackFromCustomSeek != null) {
+            mOnBackFromCustomSeek.run();
+        }
+    }
+
+    /**
+     * Check if player is playing video
+     *
+     * @return True if video is playing
+     */
+    public boolean isPlaying() {
+        return player != null && player.getPlayWhenReady();
+    }
+
     private void updateProgress() {
         long position = player == null ? 0 : player.getCurrentPosition();
         long duration = player == null ? 0 : player.getDuration();
         setProgressBarMax((int) duration);
-        if (!draggingSeekBar) {
+        if (!draggingSeekBar && !isDuringCustomSeek()) {
             setProgressSeekTime(position, duration);
             setProgressBarValue(position);
         }

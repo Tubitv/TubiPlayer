@@ -308,14 +308,25 @@ public class DoubleViewTubiPlayerActivity extends TubiPlayerActivity implements 
     }
 
     @Override
+    public boolean onKeyDown(final int keyCode, final KeyEvent event) {
+
+        if (mTubiPlayerView != null) {
+            return mTubiPlayerView.onKeyDown(keyCode, event);
+        }
+
+        return super.onKeyDown(keyCode, event);
+    }
+
+    @Override
     public boolean onKeyUp(final int keyCode, final KeyEvent event) {
-        if (keyCode == KeyEvent.KEYCODE_BACK) {
-            onBackPressed();
+
+        if (mTubiPlayerView != null && mTubiPlayerView.onKeyUp(keyCode, event)) {
             return true;
         }
 
-        if (mTubiPlayerView != null) {
-            return mTubiPlayerView.onKeyUp(keyCode, event);
+        if (keyCode == KeyEvent.KEYCODE_BACK) {
+            onBackPressed();
+            return true;
         }
 
         return super.onKeyUp(keyCode, event);
