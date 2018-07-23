@@ -4,8 +4,6 @@ import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.res.Resources;
 import android.content.res.TypedArray;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -18,30 +16,26 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
-import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.ExoPlaybackException;
 import com.google.android.exoplayer2.ExoPlayer;
 import com.google.android.exoplayer2.PlaybackParameters;
 import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.Timeline;
-import com.google.android.exoplayer2.metadata.Metadata;
-import com.google.android.exoplayer2.metadata.id3.ApicFrame;
 import com.google.android.exoplayer2.source.TrackGroupArray;
 import com.google.android.exoplayer2.text.CaptionStyleCompat;
 import com.google.android.exoplayer2.text.Cue;
 import com.google.android.exoplayer2.text.TextRenderer;
-import com.google.android.exoplayer2.trackselection.TrackSelection;
 import com.google.android.exoplayer2.trackselection.TrackSelectionArray;
 import com.google.android.exoplayer2.ui.AspectRatioFrameLayout;
 import com.google.android.exoplayer2.ui.PlaybackControlView;
 import com.google.android.exoplayer2.ui.SubtitleView;
 import com.google.android.exoplayer2.util.Assertions;
 import com.google.android.exoplayer2.util.Util;
-import com.squareup.picasso.Picasso;
 import com.tubitv.media.R;
 import com.tubitv.media.bindings.UserController;
 import com.tubitv.media.helpers.TrackSelectionHelper;
 import com.tubitv.media.interfaces.PlaybackActionCallback;
+import com.tubitv.media.interfaces.TubiPlaybackControlInterface;
 import com.tubitv.media.models.MediaModel;
 import com.tubitv.media.utilities.ExoPlayerLogger;
 import com.tubitv.ui.VaudTextView;
@@ -63,14 +57,11 @@ public class TubiExoPlayerView extends FrameLayout {
     private final AspectRatioFrameLayout contentFrame;
     private final View shutterView;
     private final View surfaceView;
-    private final ImageView artworkView;
     private final SubtitleView subtitleView;
     private View mUserInteractionView;
     private final ComponentListener componentListener;
 
     private SimpleExoPlayer player;
-    private boolean useArtwork;
-    private Bitmap defaultArtwork;
 
     private UserController userController;
 
@@ -89,7 +80,6 @@ public class TubiExoPlayerView extends FrameLayout {
             contentFrame = null;
             shutterView = null;
             surfaceView = null;
-            artworkView = null;
             subtitleView = null;
             mUserInteractionView = null;
             componentListener = null;
@@ -157,13 +147,6 @@ public class TubiExoPlayerView extends FrameLayout {
             surfaceView = null;
         }
 
-        // Artwork view.
-        artworkView = (ImageView) findViewById(R.id.exo_artwork);
-        this.useArtwork = useArtwork && artworkView != null;
-        if (defaultArtworkId != 0) {
-            defaultArtwork = BitmapFactory.decodeResource(context.getResources(), defaultArtworkId);
-        }
-
         // Subtitle view.
         subtitleView = (SubtitleView) findViewById(R.id.exo_subtitles);
         if (subtitleView != null) {
@@ -183,8 +166,8 @@ public class TubiExoPlayerView extends FrameLayout {
         userController = new UserController();
     }
 
-    public void addUserInteractionView(View controlVidw) {
-        if (controlVidw == null) {
+    public void addUserInteractionView(@Nullable View controlView) {
+        if (controlView == null) {
             ExoPlayerLogger.e(TAG, "addUserInteractionView()----> adding empty view");
             return;
         }
@@ -193,7 +176,7 @@ public class TubiExoPlayerView extends FrameLayout {
         if (controllerPlaceholder != null) {
             // Note: rewindMs and fastForwardMs are passed via attrs, so we don't need to make explicit
             // calls to set them.
-            mUserInteractionView = controlVidw;
+            mUserInteractionView = controlView;
 
             ViewGroup parent = ((ViewGroup) controllerPlaceholder.getParent());
             int controllerIndex = parent.indexOfChild(controllerPlaceholder);
@@ -223,6 +206,10 @@ public class TubiExoPlayerView extends FrameLayout {
 
     public View getControlView() {
         return mUserInteractionView;
+    }
+
+    public TubiPlaybackControlInterface getPlayerController() {
+        return userController;
     }
 
     /**
@@ -271,10 +258,6 @@ public class TubiExoPlayerView extends FrameLayout {
             player.setVideoListener(componentListener);
             player.setTextOutput(componentListener);
             player.addListener(componentListener);
-            //            maybeShowController(false);
-            updateForCurrentTrackSelections();
-        } else {
-            hideArtwork();
         }
     }
 
@@ -289,46 +272,6 @@ public class TubiExoPlayerView extends FrameLayout {
     }
 
     /**
-     * Returns whether artwork is displayed if present in the media.
-     */
-    public boolean getUseArtwork() {
-        return useArtwork;
-    }
-
-    /**
-     * Sets whether artwork is displayed if present in the media.
-     *
-     * @param useArtwork Whether artwork is displayed.
-     */
-    public void setUseArtwork(boolean useArtwork) {
-        Assertions.checkState(!useArtwork || artworkView != null);
-        if (this.useArtwork != useArtwork) {
-            this.useArtwork = useArtwork;
-            updateForCurrentTrackSelections();
-        }
-    }
-
-    /**
-     * Returns the default artwork to display.
-     */
-    public Bitmap getDefaultArtwork() {
-        return defaultArtwork;
-    }
-
-    /**
-     * Sets the default artwork to display if {@code useArtwork} is {@code true} and no artwork is
-     * present in the media.
-     *
-     * @param defaultArtwork the default artwork to display.
-     */
-    public void setDefaultArtwork(Bitmap defaultArtwork) {
-        if (this.defaultArtwork != defaultArtwork) {
-            this.defaultArtwork = defaultArtwork;
-            updateForCurrentTrackSelections();
-        }
-    }
-
-    /**
      * Gets the {@link SubtitleView}.
      *
      * @return The {@link SubtitleView}, or {@code null} if the layout has been customized and the
@@ -338,90 +281,13 @@ public class TubiExoPlayerView extends FrameLayout {
         return subtitleView;
     }
 
-    private void updateForCurrentTrackSelections() {
-        if (player == null) {
-            return;
-        }
-        TrackSelectionArray selections = player.getCurrentTrackSelections();
-        for (int i = 0; i < selections.length; i++) {
-            if (player.getRendererType(i) == C.TRACK_TYPE_VIDEO && selections.get(i) != null) {
-                // Video enabled so artwork must be hidden. If the shutter is closed, it will be opened in
-                // onRenderedFirstFrame().
-                hideArtwork();
-                return;
-            }
-        }
-        // Video disabled so the shutter must be closed.
-        if (shutterView != null) {
-            shutterView.setVisibility(VISIBLE);
-        }
-        // Display artwork if enabled and available, else hide it.
-        if (useArtwork) {
-            for (int i = 0; i < selections.length; i++) {
-                TrackSelection selection = selections.get(i);
-                if (selection != null) {
-                    for (int j = 0; j < selection.length(); j++) {
-                        Metadata metadata = selection.getFormat(j).metadata;
-                        if (metadata != null && setArtworkFromMetadata(metadata)) {
-                            return;
-                        }
-                    }
-                }
-            }
-            if (setArtworkFromBitmap(defaultArtwork)) {
-                return;
-            }
-        }
-        // Artwork disabled or unavailable.
-        hideArtwork();
-    }
-
     public void setTrackSelectionHelper(@Nullable TrackSelectionHelper trackSelectionHelper) {
         if (userController != null) {
             userController.setTrackSelectionHelper(trackSelectionHelper);
         }
     }
 
-    private boolean setArtworkFromMetadata(Metadata metadata) {
-        for (int i = 0; i < metadata.length(); i++) {
-            Metadata.Entry metadataEntry = metadata.get(i);
-            if (metadataEntry instanceof ApicFrame) {
-                byte[] bitmapData = ((ApicFrame) metadataEntry).pictureData;
-                Bitmap bitmap = BitmapFactory.decodeByteArray(bitmapData, 0, bitmapData.length);
-                return setArtworkFromBitmap(bitmap);
-            }
-        }
-        return false;
-    }
-
-    private boolean setArtworkFromBitmap(Bitmap bitmap) {
-        if (bitmap != null) {
-            int bitmapWidth = bitmap.getWidth();
-            int bitmapHeight = bitmap.getHeight();
-            if (bitmapWidth > 0 && bitmapHeight > 0) {
-                if (contentFrame != null) {
-                    contentFrame.setAspectRatio((float) bitmapWidth / bitmapHeight);
-                }
-                artworkView.setImageBitmap(bitmap);
-                artworkView.setVisibility(VISIBLE);
-                return true;
-            }
-        }
-        return false;
-    }
-
-    private void hideArtwork() {
-        if (artworkView != null) {
-            artworkView.setImageResource(android.R.color.transparent); // Clears any bitmap reference.
-            artworkView.setVisibility(INVISIBLE);
-        }
-    }
-
     public void setMediaModel(@NonNull MediaModel mediaModel, boolean forceShowArtView) {
-        if (!mediaModel.isAd() && forceShowArtView) {
-            artworkView.setVisibility(View.VISIBLE);
-            Picasso.with(getContext()).load(mediaModel.getArtworkUrl()).into(artworkView);
-        }
         if (userController != null) {
             userController.setMediaModel(mediaModel);
         }
@@ -465,7 +331,7 @@ public class TubiExoPlayerView extends FrameLayout {
 
         @Override
         public void onTracksChanged(TrackGroupArray tracks, TrackSelectionArray selections) {
-            updateForCurrentTrackSelections();
+
         }
 
         // ExoPlayer.EventListener implementation

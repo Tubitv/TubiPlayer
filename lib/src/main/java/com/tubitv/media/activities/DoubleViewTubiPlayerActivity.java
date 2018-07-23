@@ -1,16 +1,15 @@
 package com.tubitv.media.activities;
 
 import android.content.Intent;
-import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
+import android.view.View;
 import android.webkit.WebBackForwardList;
 import android.webkit.WebHistoryItem;
 import android.webkit.WebView;
-import android.widget.TextView;
 import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.ExoPlayer;
 import com.google.android.exoplayer2.ExoPlayerFactory;
@@ -20,7 +19,7 @@ import com.google.android.exoplayer2.trackselection.AdaptiveTrackSelection;
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
 import com.google.android.exoplayer2.trackselection.TrackSelection;
 import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter;
-import com.tubitv.media.R;
+import com.tubitv.media.bindings.UserController;
 import com.tubitv.media.controller.PlayerAdLogicController;
 import com.tubitv.media.controller.PlayerUIController;
 import com.tubitv.media.di.FSMModuleTesting;
@@ -42,7 +41,7 @@ import com.tubitv.media.models.MediaModel;
 import com.tubitv.media.models.VpaidClient;
 import com.tubitv.media.utilities.ExoPlayerLogger;
 import com.tubitv.media.utilities.Utils;
-import com.tubitv.media.views.TubiExoPlayerView;
+import com.tubitv.media.views.UIControllerView;
 import javax.inject.Inject;
 
 /**
@@ -53,8 +52,6 @@ public class DoubleViewTubiPlayerActivity extends TubiPlayerActivity implements 
     private static final String TAG = "DoubleViewTubiPlayerAct";
     private static final DefaultBandwidthMeter BANDWIDTH_METER_AD = new DefaultBandwidthMeter();
     protected SimpleExoPlayer adPlayer;
-    protected WebView vpaidWebView;
-    protected TextView cuePointIndictor;
     @Inject
     FsmPlayer fsmPlayer;
     @Inject
@@ -95,17 +92,9 @@ public class DoubleViewTubiPlayerActivity extends TubiPlayerActivity implements 
         dependencyPrepare();
     }
 
-    @Override
-    protected void initLayout() {
-        setContentView(R.layout.activity_double_tubi_player);
-
-        mTubiPlayerView = (TubiExoPlayerView) findViewById(R.id.tubitv_player);
-        vpaidWebView = (WebView) findViewById(R.id.vpaid_webview);
-        vpaidWebView.setBackgroundColor(Color.BLACK);
-
-        mTubiPlayerView.requestFocus();
-
-        cuePointIndictor = (TextView) findViewById(R.id.cuepoint_indictor);
+    @Override public View addUserInteractionView() {
+        return new UIControllerView(getBaseContext())
+                .setUserController((UserController) getPlayerController());
     }
 
     /**

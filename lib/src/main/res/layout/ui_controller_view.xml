@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <Button
+        android:id="@+id/rewind"
+        android:layout_width="100dp"
+        android:layout_height="40dp"
+        android:layout_gravity="center|left"
+        android:tag="rewind"
+        android:text="Rewind" />
+
+    <Button
+        android:id="@+id/play_pause"
+        android:layout_width="100dp"
+        android:layout_height="40dp"
+        android:layout_gravity="center"
+        android:tag="play_pause"
+        android:text="Play/Pause" />
+
+
+    <Button
+        android:id="@+id/fastford"
+        android:layout_width="100dp"
+        android:layout_height="40dp"
+        android:layout_gravity="center|right"
+        android:tag="fastford"
+        android:text="fastford" />
+
+</merge>

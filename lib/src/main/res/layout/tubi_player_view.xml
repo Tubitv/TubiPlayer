@@ -14,11 +14,6 @@
             android:layout_height="match_parent"
             android:background="@android:color/black" />
 
-        <ImageView
-            android:id="@id/exo_artwork"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:scaleType="centerCrop" />
 
         <com.google.android.exoplayer2.ui.SubtitleView
             android:id="@id/exo_subtitles"

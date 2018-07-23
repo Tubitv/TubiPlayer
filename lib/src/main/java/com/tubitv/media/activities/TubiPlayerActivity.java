@@ -2,11 +2,14 @@ package com.tubitv.media.activities;
 
 import android.content.Intent;
 import android.content.res.Configuration;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.text.TextUtils;
 import android.view.View;
+import android.webkit.WebView;
+import android.widget.TextView;
 import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.ExoPlayerFactory;
 import com.google.android.exoplayer2.Format;
@@ -35,6 +38,7 @@ import com.tubitv.media.R;
 import com.tubitv.media.helpers.MediaHelper;
 import com.tubitv.media.helpers.TrackSelectionHelper;
 import com.tubitv.media.interfaces.PlaybackActionCallback;
+import com.tubitv.media.interfaces.TubiPlaybackControlInterface;
 import com.tubitv.media.models.MediaModel;
 import com.tubitv.media.utilities.EventLogger;
 import com.tubitv.media.utilities.Utils;
@@ -51,6 +55,8 @@ public abstract class TubiPlayerActivity extends LifeCycleActivity
     public static String TUBI_MEDIA_KEY = "tubi_media_key";
     protected SimpleExoPlayer mMoviePlayer;
     protected TubiExoPlayerView mTubiPlayerView;
+    protected WebView vpaidWebView;
+    protected TextView cuePointIndictor;
     protected DefaultTrackSelector mTrackSelector;
     protected boolean isActive = false;
     /**
@@ -62,6 +68,8 @@ public abstract class TubiPlayerActivity extends LifeCycleActivity
     private DataSource.Factory mMediaDataSourceFactory;
     private EventLogger mEventLogger;
     private TrackSelectionHelper mTrackSelectionHelper;
+
+    public abstract View addUserInteractionView();
 
     protected abstract void onPlayerReady();
 
@@ -138,9 +146,14 @@ public abstract class TubiPlayerActivity extends LifeCycleActivity
     }
 
     protected void initLayout() {
-        setContentView(R.layout.activity_tubi_player);
+        setContentView(R.layout.activity_double_tubi_player);
         mTubiPlayerView = (TubiExoPlayerView) findViewById(R.id.tubitv_player);
         mTubiPlayerView.requestFocus();
+        vpaidWebView = (WebView) findViewById(R.id.vpaid_webview);
+        vpaidWebView.setBackgroundColor(Color.BLACK);
+
+        cuePointIndictor = (TextView) findViewById(R.id.cuepoint_indictor);
+        mTubiPlayerView.addUserInteractionView(addUserInteractionView());
     }
 
     private void setCaption(boolean isOn) {
@@ -251,6 +264,13 @@ public abstract class TubiPlayerActivity extends LifeCycleActivity
 
     public HttpDataSource.Factory buildHttpDataSourceFactory(DefaultBandwidthMeter bandwidthMeter) {
         return new DefaultHttpDataSourceFactory(Util.getUserAgent(this, "TubiPlayerActivity"), bandwidthMeter);
+    }
+
+    protected TubiPlaybackControlInterface getPlayerController() {
+        if (mTubiPlayerView != null && mTubiPlayerView.getPlayerController() != null) {
+            return mTubiPlayerView.getPlayerController();
+        }
+        return null;
     }
 
 }
