@@ -73,39 +73,39 @@ dependencies {
         all*.exclude group: 'com.android.support', module: 'support-v13'
     }
 
-    compile fileTree(dir: 'libs', include: ['*.jar'])
+    api fileTree(dir: 'libs', include: ['*.jar'])
 
-    compile(name: 'vaud-text-view-0.0.2', ext: 'aar')
-    compile(name: 'tubi-loading-view-0.0.5', ext: 'aar')
+    api(name: 'vaud-text-view-0.0.2', ext: 'aar')
+    api(name: 'tubi-loading-view-0.0.5', ext: 'aar')
 
-    compile 'com.afollestad.material-dialogs:core:0.9.4.5'
-    compile 'com.squareup.picasso:picasso:2.5.2'
+    api 'com.afollestad.material-dialogs:core:0.9.4.5'
+    api 'com.squareup.picasso:picasso:2.5.2'
 
-    compile 'com.google.android.exoplayer:exoplayer:r2.4.2'
-    compile "com.android.support:appcompat-v7:${supportLibraryVersion}"
-    compile 'com.android.support.constraint:constraint-layout:1.0.2'
-    compile "com.android.support:design:${supportLibraryVersion}"
+    api 'com.google.android.exoplayer:exoplayer:r2.4.2'
+    api "com.android.support:appcompat-v7:${supportLibraryVersion}"
+    api 'com.android.support.constraint:constraint-layout:1.0.2'
+    api "com.android.support:design:${supportLibraryVersion}"
 
     //chromecast
-    compile "com.android.support:mediarouter-v7:${supportLibraryVersion}"
-    compile "com.google.android.gms:play-services-cast-framework:${playServiceVersion}"
+    api "com.android.support:mediarouter-v7:${supportLibraryVersion}"
+    api "com.google.android.gms:play-services-cast-framework:${playServiceVersion}"
 
     //dagger 2
-    compile "com.google.dagger:dagger:2.9"
+    api "com.google.dagger:dagger:2.9"
     annotationProcessor "com.google.dagger:dagger-compiler:2.9"
-    provided 'javax.annotation:jsr250-api:1.0'
+    compileOnly 'javax.annotation:jsr250-api:1.0'
 
-    androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
+    androidTestImplementation('com.android.support.test.espresso:espresso-core:2.2.2', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
 
-    compile "android.arch.lifecycle:runtime:1.0.3"
+    api "android.arch.lifecycle:runtime:1.0.3"
 
 //    compile('com.crashlytics.sdk.android:crashlytics:2.6.7@aar') {
 //        transitive = true;
 //    }
-    testCompile 'junit:junit:4.12'
-    testCompile 'org.mockito:mockito-core:1.10.19'
+    testImplementation 'junit:junit:4.12'
+    testImplementation 'org.mockito:mockito-core:1.10.19'
 }
 
 //Properties properties = new Properties()
