@@ -4,7 +4,6 @@ import android.databinding.BaseObservable;
 import android.databinding.ObservableBoolean;
 import android.databinding.ObservableField;
 import android.databinding.ObservableInt;
-import android.databinding.ObservableLong;
 import android.net.Uri;
 import android.os.Handler;
 import android.support.annotation.NonNull;
@@ -52,11 +51,11 @@ public class UserController extends BaseObservable implements TubiPlaybackContro
 
     public final ObservableField<String> videoMetaData = new ObservableField("");
 
-    public final ObservableLong videoDuration = new ObservableLong(0);
+    public final ObservableField<Integer> videoDuration = new ObservableField<>(0);
 
-    public final ObservableLong videoCurrentTime = new ObservableLong(0);
+    public final ObservableField<Integer> videoCurrentTime = new ObservableField<>(0);
 
-    public final ObservableLong videoBufferedPosition = new ObservableLong(0);
+    public final ObservableField<Integer> videoBufferedPosition = new ObservableField<>(0);
 
     /**
      * Ad information
@@ -322,9 +321,9 @@ public class UserController extends BaseObservable implements TubiPlaybackContro
         long duration = mPlayer == null ? 0 : mPlayer.getDuration();
         long bufferedPosition = mPlayer == null ? 0 : mPlayer.getBufferedPosition();
 
-        videoCurrentTime.set(position);
-        videoDuration.set(duration);
-        videoBufferedPosition.set(bufferedPosition);
+        videoCurrentTime.set((int) position);
+        videoDuration.set((int) duration);
+        videoBufferedPosition.set((int) bufferedPosition);
 
         ExoPlayerLogger.i(TAG, "updateProgress:----->" + videoCurrentTime.get());
 

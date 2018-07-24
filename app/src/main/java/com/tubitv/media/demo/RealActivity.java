@@ -1,6 +1,9 @@
 package com.tubitv.media.demo;
 
+import android.view.View;
 import com.tubitv.media.activities.DoubleViewTubiPlayerActivity;
+import com.tubitv.media.bindings.UserController;
+import com.tubitv.media.demo.UI.PlayerControllerUI;
 import com.tubitv.media.demo.di.DaggerFsmComonentReal;
 import com.tubitv.media.demo.di.FSMModuleReal;
 
@@ -15,4 +18,9 @@ public class RealActivity extends DoubleViewTubiPlayerActivity {
         DaggerFsmComonentReal.builder().fSMModuleReal(new FSMModuleReal(vpaidWebView, mTubiPlayerView)).build()
                 .inject(this);
     }
+
+    @Override public View addUserInteractionView() {
+        return new PlayerControllerUI(getBaseContext()).setController((UserController) getPlayerController());
+    }
+
 }
