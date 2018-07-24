@@ -92,7 +92,7 @@ public class AdPlayingState extends BaseState {
             //update the ExoPlayerView with AdPlayer and AdMedia
             TubiExoPlayerView tubiExoPlayerView = (TubiExoPlayerView) controller.getExoPlayerView();
             tubiExoPlayerView.setPlayer(adPlayer, componentController.getTubiPlaybackInterface());
-            tubiExoPlayerView.setMediaModel(adMedia, false);
+            tubiExoPlayerView.setMediaModel(adMedia);
             //update the numbers of ad left to give user indicator
             tubiExoPlayerView.setAvailableAdLeft(adMediaModel.nubmerOfAd());
 

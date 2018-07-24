@@ -79,9 +79,9 @@ public class PlayerControllerUI extends FrameLayout implements View.OnClickListe
 
         binding = DataBindingUtil
                 .inflate(LayoutInflater.from(context), R.layout.example_ui_control, this, true);
-        binding.getRoot().findViewById(com.tubitv.media.R.id.rewind).setOnClickListener(this);
-        binding.getRoot().findViewById(com.tubitv.media.R.id.play_pause).setOnClickListener(this);
-        binding.getRoot().findViewById(com.tubitv.media.R.id.fastford).setOnClickListener(this);
+        binding.getRoot().findViewById(R.id.rewind).setOnClickListener(this);
+        binding.getRoot().findViewById(R.id.play_pause).setOnClickListener(this);
+        binding.getRoot().findViewById(R.id.fastford).setOnClickListener(this);
 
     }
 

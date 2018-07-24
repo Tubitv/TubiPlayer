@@ -23,6 +23,7 @@ import com.tubitv.media.interfaces.PlaybackActionCallback;
 import com.tubitv.media.interfaces.TubiPlaybackControlInterface;
 import com.tubitv.media.models.MediaModel;
 import com.tubitv.media.utilities.ExoPlayerLogger;
+import com.tubitv.media.utilities.Utils;
 import com.tubitv.media.views.TubiExoPlayerView;
 
 import static com.google.android.exoplayer2.ExoPlayer.STATE_ENDED;
@@ -38,7 +39,7 @@ public class UserController extends BaseObservable implements TubiPlaybackContro
     /**
      * video action states
      */
-    public final ObservableInt playerPlaybackState = new ObservableInt(0);
+    public final ObservableInt playerPlaybackState = new ObservableInt(ExoPlayer.STATE_IDLE);
 
     public final ObservableBoolean isVideoPlayWhenReady = new ObservableBoolean(false);
 
@@ -51,11 +52,15 @@ public class UserController extends BaseObservable implements TubiPlaybackContro
 
     public final ObservableField<String> videoMetaData = new ObservableField("");
 
-    public final ObservableField<Integer> videoDuration = new ObservableField<>(0);
+    public final ObservableField<Long> videoDuration = new ObservableField<>(0l);
 
-    public final ObservableField<Integer> videoCurrentTime = new ObservableField<>(0);
+    public final ObservableField<Long> videoCurrentTime = new ObservableField<>(0l);
 
-    public final ObservableField<Integer> videoBufferedPosition = new ObservableField<>(0);
+    public final ObservableField<Long> videoBufferedPosition = new ObservableField<>(0l);
+
+    public final ObservableField<String> videoRemainInString = new ObservableField<>("");
+
+    public final ObservableField<String> videoPositionInString = new ObservableField<>("");
 
     /**
      * Ad information
@@ -116,6 +121,8 @@ public class UserController extends BaseObservable implements TubiPlaybackContro
             if (!TextUtils.isEmpty(mMediaModel.getClickThroughUrl())) {
                 adClickUrl.set(mMediaModel.getClickThroughUrl());
             }
+
+            videoName.set("Commercial");
 
         } else {
 
@@ -321,9 +328,13 @@ public class UserController extends BaseObservable implements TubiPlaybackContro
         long duration = mPlayer == null ? 0 : mPlayer.getDuration();
         long bufferedPosition = mPlayer == null ? 0 : mPlayer.getBufferedPosition();
 
-        videoCurrentTime.set((int) position);
-        videoDuration.set((int) duration);
-        videoBufferedPosition.set((int) bufferedPosition);
+        videoCurrentTime.set(position);
+        videoDuration.set(duration);
+        videoBufferedPosition.set(bufferedPosition);
+
+        //translate the long number into display string
+        videoRemainInString.set(Utils.getProgressTime((duration - position), true));
+        videoPositionInString.set(Utils.getProgressTime(position, false));
 
         ExoPlayerLogger.i(TAG, "updateProgress:----->" + videoCurrentTime.get());
 

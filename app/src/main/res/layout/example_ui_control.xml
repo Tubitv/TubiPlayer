@@ -53,14 +53,14 @@
             android:layout_marginLeft="8dp"
             android:layout_marginRight="8dp"
             android:layout_marginStart="8dp"
-            android:max="@{controller.videoDuration}"
+            android:max="@{(int)controller.videoDuration}"
             android:maxHeight="2dp"
             android:minHeight="2dp"
             android:paddingBottom="@dimen/view_tubi_controller_seek_bar_padding_vertical"
             android:paddingLeft="@dimen/view_tubi_controller_seek_bar_padding_horizontal"
             android:paddingRight="@dimen/view_tubi_controller_seek_bar_padding_horizontal"
             android:paddingTop="@dimen/view_tubi_controller_seek_bar_padding_vertical"
-            android:progress="@{controller.videoCurrentTime}" />
+            android:progress="@{(int)controller.videoCurrentTime}" />
 
 
     </FrameLayout>

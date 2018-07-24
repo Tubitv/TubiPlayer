@@ -190,7 +190,7 @@ public abstract class TubiPlayerActivity extends LifeCycleActivity
         mMoviePlayer.setMetadataOutput(mEventLogger);
 
         mTubiPlayerView.setPlayer(mMoviePlayer, this);
-        mTubiPlayerView.setMediaModel(mediaModel, true);
+        mTubiPlayerView.setMediaModel(mediaModel);
         mTubiPlayerView.setTrackSelectionHelper(mTrackSelectionHelper);
     }
 
