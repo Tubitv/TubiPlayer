@@ -73,25 +73,25 @@ dependencies {
         all*.exclude group: 'com.android.support', module: 'support-v13'
     }
 
-    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    api fileTree(dir: 'libs', include: ['*.jar'])
 
-    implementation(name: 'vaud-text-view-0.0.2', ext: 'aar')
-    implementation(name: 'tubi-loading-view-0.0.5', ext: 'aar')
+    api(name: 'vaud-text-view-0.0.2', ext: 'aar')
+    api(name: 'tubi-loading-view-0.0.5', ext: 'aar')
 
-    implementation 'com.afollestad.material-dialogs:core:0.9.4.5'
-    implementation 'com.squareup.picasso:picasso:2.5.2'
+    api 'com.afollestad.material-dialogs:core:0.9.4.5'
+    api 'com.squareup.picasso:picasso:2.5.2'
 
-    implementation 'com.google.android.exoplayer:exoplayer:r2.4.2'
-    implementation "com.android.support:appcompat-v7:${supportLibraryVersion}"
-    implementation 'com.android.support.constraint:constraint-layout:1.0.2'
-    implementation "com.android.support:design:${supportLibraryVersion}"
+    api 'com.google.android.exoplayer:exoplayer:r2.4.2'
+    api "com.android.support:appcompat-v7:${supportLibraryVersion}"
+    api 'com.android.support.constraint:constraint-layout:1.0.2'
+    api "com.android.support:design:${supportLibraryVersion}"
 
     //chromecast
-    implementation "com.android.support:mediarouter-v7:${supportLibraryVersion}"
-    implementation "com.google.android.gms:play-services-cast-framework:${playServiceVersion}"
+    api "com.android.support:mediarouter-v7:${supportLibraryVersion}"
+    api "com.google.android.gms:play-services-cast-framework:${playServiceVersion}"
 
     //dagger 2
-    implementation "com.google.dagger:dagger:2.9"
+    api "com.google.dagger:dagger:2.9"
     annotationProcessor "com.google.dagger:dagger-compiler:2.9"
     compileOnly 'javax.annotation:jsr250-api:1.0'
 
@@ -99,7 +99,7 @@ dependencies {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
 
-    implementation "android.arch.lifecycle:runtime:1.0.3"
+    api "android.arch.lifecycle:runtime:1.0.3"
 
 //    compile('com.crashlytics.sdk.android:crashlytics:2.6.7@aar') {
 //        transitive = true;
