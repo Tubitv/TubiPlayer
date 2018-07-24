@@ -27,6 +27,7 @@ import com.tubitv.media.interfaces.TubiPlaybackControlInterface;
 import com.tubitv.media.interfaces.TubiPlaybackInterface;
 import com.tubitv.media.models.MediaModel;
 import com.tubitv.media.utilities.ExoPlayerLogger;
+import com.tubitv.media.utilities.SeekCalculator;
 import com.tubitv.media.utilities.Utils;
 
 /**
@@ -186,6 +187,42 @@ public class TubiPlayerControlView extends ConstraintLayout implements TrackSele
             // Setup callbacks for tubiObservable
             tubiObservable.setOnEnterCustomSeek(() -> mBinding.viewTubiControllerSubtitlesIb.setVisibility(INVISIBLE));
             tubiObservable.setOnBackFromCustomSeek(() -> mBinding.viewTubiControllerSubtitlesIb.setVisibility(VISIBLE));
+            tubiObservable.setOnControlStateChange(() -> {
+                switch (tubiObservable.getState()) {
+                    case TubiObservable.NORMAL_CONTROL_STATE:
+                        mBinding.seekSpeedIndicator.setVisibility(GONE);
+                        break;
+                    case TubiObservable.CUSTOM_SEEK_CONTROL_STATE:
+                        // By default clear image
+                        mBinding.seekSpeedIndicator.setImageResource(android.R.color.transparent);
+                        mBinding.seekSpeedIndicator.setVisibility(VISIBLE);
+                        break;
+                    case TubiObservable.EDIT_CUSTOM_SEEK_CONTROL_STATE:
+                        mBinding.seekSpeedIndicator.setVisibility(GONE);
+                        break;
+                }
+            });
+            tubiObservable.setOnCustomSeek(speed -> {
+                if (speed > 0) { // Forward
+
+                    if (speed == SeekCalculator.SEEK_INTERVAL_SHORT) {
+                        mBinding.seekSpeedIndicator.setImageResource(R.drawable.ff_1_normal);
+                    } else if (speed == SeekCalculator.SEEK_INTERVAL_RERGUAR) {
+                        mBinding.seekSpeedIndicator.setImageResource(R.drawable.ff_2_normal);
+                    } else {
+                        mBinding.seekSpeedIndicator.setImageResource(R.drawable.ff_3_normal);
+                    }
+
+                } else { // Rewind
+                    if (speed == SeekCalculator.REWIND_DIRECTION * SeekCalculator.SEEK_INTERVAL_SHORT) {
+                        mBinding.seekSpeedIndicator.setImageResource(R.drawable.rw_1_normal);
+                    } else if (speed == SeekCalculator.REWIND_DIRECTION * SeekCalculator.SEEK_INTERVAL_RERGUAR) {
+                        mBinding.seekSpeedIndicator.setImageResource(R.drawable.rw_2_normal);
+                    } else {
+                        mBinding.seekSpeedIndicator.setImageResource(R.drawable.rw_3_normal);
+                    }
+                }
+            });
         }
     }
 
@@ -263,11 +300,15 @@ public class TubiPlayerControlView extends ConstraintLayout implements TrackSele
     }
 
     public void rewind() {
-        tubiObservable.seekBy((-1) * tubiObservable.skipBy);
+        tubiObservable.seekBy(SeekCalculator.REWIND_DIRECTION * tubiObservable.skipBy);
     }
 
-    public void updateUIForCustomSeek(long timeDelta) {
-        tubiObservable.updateUIForCustomSeek(timeDelta);
+    public void updateUIForCustomSeek(final long seekDelta) {
+        tubiObservable.updateUIForCustomSeek(seekDelta);
+    }
+
+    public void updateUIForCustomSeek(final long seekDelta, final boolean fromLongPress) {
+        tubiObservable.updateUIForCustomSeek(seekDelta, fromLongPress);
     }
 
     public boolean isDuringCustomSeek() {

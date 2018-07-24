@@ -16,6 +16,7 @@ import com.google.android.exoplayer2.Timeline;
 import com.google.android.exoplayer2.source.TrackGroupArray;
 import com.google.android.exoplayer2.trackselection.TrackSelectionArray;
 import com.tubitv.media.BR;
+import com.tubitv.media.interfaces.PlayerConsumer;
 import com.tubitv.media.interfaces.TubiPlaybackControlInterface;
 import com.tubitv.media.interfaces.TubiPlaybackInterface;
 import com.tubitv.media.models.MediaModel;
@@ -339,19 +340,21 @@ public class TubiObservable extends BaseObservable
     }
 
     public static final int NORMAL_CONTROL_STATE = 1;
-    public static final int CUSTOM_SEEK_CONTROL_STATE = 2;
-    public static final int EDIT_CUSTOM_SEEK_CONTROL_STATE = 3;
-    public static final int OPTIONS_CONTROL_STATE = 4;
+    public static final int CUSTOM_SEEK_CONTROL_STATE = 2; // Every time long press left/right will enter this state
+    public static final int EDIT_CUSTOM_SEEK_CONTROL_STATE = 3; // After long press left/right will enter this state
+    public static final int OPTIONS_CONTROL_STATE = 4; // Every time focus on caption button will enter this state
 
     private Long mCustomSeekPosition = null;
     private int mControlState = NORMAL_CONTROL_STATE;
     private Runnable mOnEnterCustomSeek;
     private Runnable mOnBackFromCustomSeek;
+    private Runnable mOnControlStateChange;
+    private PlayerConsumer<Long> mOnCustomSeek;
 
     /**
      * Set callback for enter custom seek
      *
-     * @param onEnterCustomSeek Call back to run when enter custom seek
+     * @param onEnterCustomSeek Callback to run when enter custom seek
      */
     public void setOnEnterCustomSeek(final Runnable onEnterCustomSeek) {
         mOnEnterCustomSeek = onEnterCustomSeek;
@@ -360,19 +363,47 @@ public class TubiObservable extends BaseObservable
     /**
      * Set callback for back from custom seek
      *
-     * @param onBackFromCustomSeek Call back to run when back from custom seek
+     * @param onBackFromCustomSeek Callback to run when back from custom seek
      */
     public void setOnBackFromCustomSeek(final Runnable onBackFromCustomSeek) {
         mOnBackFromCustomSeek = onBackFromCustomSeek;
     }
 
     /**
+     * Set callback for control state change
+     *
+     * @param onControlStateChange Callback to run when control state change
+     */
+    public void setOnControlStateChange(final Runnable onControlStateChange) {
+        mOnControlStateChange = onControlStateChange;
+    }
+
+    /**
+     * Set callback for custom seek
+     *
+     * @param onCustomSeek Callback to run when seekbar move
+     */
+    public void setOnCustomSeek(final PlayerConsumer<Long> onCustomSeek) {
+        mOnCustomSeek = onCustomSeek;
+    }
+
+    /**
      * Update player control progress based on time
      *
-     * @param timeDelta time since start of custom seek
+     * @param seekDelta seek time delta (positive or negative)
      */
-    public void updateUIForCustomSeek(final long timeDelta) {
-        if (timeDelta == 0) {
+    public void updateUIForCustomSeek(final long seekDelta) {
+        updateUIForCustomSeek(seekDelta, false);
+    }
+
+    /**
+     * Update player control progress based on time
+     *
+     * @param seekDelta     seek time delta (positive or negative)
+     * @param fromLongPress True if this update UI come from long press left/right button
+     */
+    public void updateUIForCustomSeek(final long seekDelta, final boolean fromLongPress) {
+        if (seekDelta == 0) {
             return;
         }
 
@@ -380,12 +411,22 @@ public class TubiObservable extends BaseObservable
 
             if (mCustomSeekPosition == null) {
                 mCustomSeekPosition = player.getCurrentPosition();
-                mControlState = CUSTOM_SEEK_CONTROL_STATE;
+
                 if (mOnEnterCustomSeek != null) {
                     mOnEnterCustomSeek.run();
                 }
             }
-            mCustomSeekPosition += timeDelta;
+
+            if (fromLongPress) {
+                setState(CUSTOM_SEEK_CONTROL_STATE);
+            }
+
+            mCustomSeekPosition += seekDelta;
+
+            if (mOnCustomSeek != null) {
+                mOnCustomSeek.accept(seekDelta);
+            }
+
             mCustomSeekPosition = Math.max(0, mCustomSeekPosition);
             mCustomSeekPosition = Math.min(player.getDuration(), mCustomSeekPosition);
 
@@ -416,8 +457,12 @@ public class TubiObservable extends BaseObservable
     /**
      * Set current player state
      */
-    public void setState(int state) {
+    public void setState(final int state) {
         mControlState = state;
+
+        if (mOnControlStateChange != null) {
+            mOnControlStateChange.run();
+        }
     }
 
     /**
@@ -427,7 +472,7 @@ public class TubiObservable extends BaseObservable
         seekTo(mCustomSeekPosition);
         setDraggingSeekBar(true);
         mCustomSeekPosition = null;
-        mControlState = NORMAL_CONTROL_STATE;
+        setState(NORMAL_CONTROL_STATE);
         if (mOnBackFromCustomSeek != null) {
             mOnBackFromCustomSeek.run();
         }
@@ -441,7 +486,7 @@ public class TubiObservable extends BaseObservable
         setProgressBarMax((int) player.getDuration());
         setProgressSeekTime(player.getCurrentPosition(), player.getDuration());
         setProgressBarValue(player.getCurrentPosition());
-        mControlState = NORMAL_CONTROL_STATE;
+        setState(NORMAL_CONTROL_STATE);
         if (mOnBackFromCustomSeek != null) {
             mOnBackFromCustomSeek.run();
         }

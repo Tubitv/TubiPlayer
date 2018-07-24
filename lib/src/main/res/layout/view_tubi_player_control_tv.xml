@@ -72,8 +72,8 @@
                     android:tag="@{TubiObservable.TUBI_SUBTITLES_TAG}"
                     android:visibility="@{playMedia.subtitlesExist &amp;&amp; !playMedia.adPlaying? View.VISIBLE : View.GONE}"
                     app:onClickStateImage="@{playMedia}"
-                    app:state_checked="@drawable/tubi_tv_drawable_subtitles_on_selector"
-                    app:state_not_checked="@drawable/tubi_tv_drawable_subtitles_off_selector" />
+                    app:state_checked="@drawable/tubi_tv_drawable_subtitles_on_selector_tv"
+                    app:state_not_checked="@drawable/tubi_tv_drawable_subtitles_off_selector_tv" />
 
                 <com.tubitv.media.views.StateImageButton
                     android:id="@+id/view_tubi_controller_quality_ib"
@@ -143,10 +143,10 @@
                 app:layout_constraintLeft_toLeftOf="@+id/tubi_tv_controller_guideline_left"
                 app:layout_constraintRight_toLeftOf="@+id/view_tubi_controller_elapsed_time"
                 app:onClickStateImage="@{playMedia}"
-                app:state_checked="@drawable/tubi_tv_drawable_pause_selector"
-                app:state_not_checked="@drawable/tubi_tv_drawable_play_selector"
+                app:state_checked="@drawable/tubi_tv_drawable_pause_selector_tv"
+                app:state_not_checked="@drawable/tubi_tv_drawable_play_selector_tv"
                 app:tubi_state_set_checked="@{playMedia.isPlaying}"
-                tools:background="@drawable/tubi_tv_drawable_play_selector" />
+                tools:background="@drawable/tubi_tv_drawable_play_selector_tv" />
 
             <ImageButton
                 android:id="@+id/view_tubi_controller_forward_ib"
@@ -274,6 +274,16 @@
                 app:layout_constraintGuide_end="84dp"
                 tools:layout_editor_absoluteX="508dp"
                 tools:layout_editor_absoluteY="75dp" />
+
+            <ImageView
+                android:id="@+id/seek_speed_indicator"
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                android:visibility="gone"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
         </android.support.constraint.ConstraintLayout>
 

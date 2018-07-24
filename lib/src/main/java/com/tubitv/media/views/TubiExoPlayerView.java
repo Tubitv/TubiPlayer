@@ -617,6 +617,7 @@ public class TubiExoPlayerView extends FrameLayout implements TubiPlaybackContro
                         case TubiObservable.OPTIONS_CONTROL_STATE:
                             controller.getCaptionButton().setFocusable(false);
                             controller.setState(TubiObservable.NORMAL_CONTROL_STATE);
+                            controller.getPlayButton().setFocusable(true);
                             controller.getPlayButton().requestFocus();
                             break;
                         case TubiObservable.CUSTOM_SEEK_CONTROL_STATE:
@@ -630,6 +631,7 @@ public class TubiExoPlayerView extends FrameLayout implements TubiPlaybackContro
 
                 } else {
                     toggleControllerVisiblity();
+                    controller.getPlayButton().setFocusable(true);
                     controller.getPlayButton().requestFocus();
                 }
 
@@ -713,7 +715,7 @@ public class TubiExoPlayerView extends FrameLayout implements TubiPlaybackContro
 
         final long seekDelta = direction * SeekCalculator.getSeekRate(startTime, currentTime);
 
-        controller.updateUIForCustomSeek(seekDelta);
+        controller.updateUIForCustomSeek(seekDelta, true);
 
         if (seekDelta != 0) {
             if (!controller.isVisible()) {
