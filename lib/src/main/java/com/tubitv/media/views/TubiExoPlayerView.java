@@ -597,9 +597,7 @@ public class TubiExoPlayerView extends FrameLayout implements TubiPlaybackContro
                     return false;
                 }
 
-                if (!controller.isVisible()) {
-                    toggleControllerVisiblity();
-                }
+                maybeShowController(true);
 
                 if (!controller.getCaptionButton().isFocused()) {
                     controller.setState(TubiObservable.OPTIONS_CONTROL_STATE);
@@ -619,6 +617,7 @@ public class TubiExoPlayerView extends FrameLayout implements TubiPlaybackContro
                             controller.setState(TubiObservable.NORMAL_CONTROL_STATE);
                             controller.getPlayButton().setFocusable(true);
                             controller.getPlayButton().requestFocus();
+                            maybeShowController(true);
                             break;
                         case TubiObservable.CUSTOM_SEEK_CONTROL_STATE:
                         case TubiObservable.EDIT_CUSTOM_SEEK_CONTROL_STATE:
@@ -638,11 +637,11 @@ public class TubiExoPlayerView extends FrameLayout implements TubiPlaybackContro
                 return true;
             case KeyEvent.KEYCODE_DPAD_RIGHT:
                 handleSeekKeyUp(SeekCalculator.FORWARD_DIRECTION);
-
+                maybeShowController(true);
                 return true;
             case KeyEvent.KEYCODE_DPAD_LEFT:
                 handleSeekKeyUp(SeekCalculator.REWIND_DIRECTION);
-
+                maybeShowController(true);
                 return true;
             case KeyEvent.KEYCODE_ENTER:
                 if (controller.isDuringCustomSeek()) {
