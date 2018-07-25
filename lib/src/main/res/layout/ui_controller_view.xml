@@ -60,17 +60,9 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:background="@drawable/tubi_tv_drawable_quality_off_selector"
-                app:layout_constraintRight_toLeftOf="@+id/view_tubi_controller_chromecast_ib"
-                app:layout_constraintTop_toTopOf="@+id/tubi_tv_controller_guideline_top" />
-
-            <ImageButton
-                android:id="@+id/view_tubi_controller_chromecast_ib"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:background="@drawable/tubi_tv_drawable_chromecast_off_selector"
-                android:visibility="gone"
                 app:layout_constraintRight_toLeftOf="@+id/tubi_tv_controller_guideline_right"
                 app:layout_constraintTop_toTopOf="@+id/tubi_tv_controller_guideline_top" />
+
 
             <!--<include-->
             <!--android:id="@+id/view_tubi_controller_ad_description"-->
@@ -165,6 +157,9 @@
                 android:max="@{(int)controller.videoDuration}"
                 android:maxHeight="2dp"
                 android:minHeight="2dp"
+                android:onProgressChanged="@{controller::onProgressChanged}"
+                android:onStartTrackingTouch="@{controller::onStartTrackingTouch}"
+                android:onStopTrackingTouch="@{controller::onStopTrackingTouch}"
                 android:paddingBottom="@dimen/view_tubi_controller_seek_bar_padding_vertical"
                 android:paddingLeft="@dimen/view_tubi_controller_seek_bar_padding_horizontal"
                 android:paddingRight="@dimen/view_tubi_controller_seek_bar_padding_horizontal"

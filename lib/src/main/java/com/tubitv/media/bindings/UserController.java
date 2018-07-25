@@ -10,6 +10,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
 import android.view.View;
+import android.widget.SeekBar;
 import com.google.android.exoplayer2.ExoPlaybackException;
 import com.google.android.exoplayer2.ExoPlayer;
 import com.google.android.exoplayer2.PlaybackParameters;
@@ -32,7 +33,8 @@ import static com.google.android.exoplayer2.ExoPlayer.STATE_ENDED;
  * This class contains business logic of user interaction between user and player action. This class will be serving
  * as interface between Player UI and Business logic, such as seek, pause, UI logic for displaying ads vs movie.
  */
-public class UserController extends BaseObservable implements TubiPlaybackControlInterface, ExoPlayer.EventListener {
+public class UserController extends BaseObservable
+        implements TubiPlaybackControlInterface, ExoPlayer.EventListener, SeekBar.OnSeekBarChangeListener {
 
     private static final String TAG = UserController.class.getSimpleName();
 
@@ -72,6 +74,11 @@ public class UserController extends BaseObservable implements TubiPlaybackContro
     public final ObservableInt numberOfAdsLeft = new ObservableInt(0);
 
     public final ObservableBoolean isCurrentVideoAd = new ObservableBoolean(false);
+
+    /**
+     * user interaction attribute
+     */
+    private final ObservableField<Boolean> isDraggingSeekBar = new ObservableField<>(false);
 
     private Handler mProgressUpdateHandler = new Handler();
 
@@ -311,6 +318,33 @@ public class UserController extends BaseObservable implements TubiPlaybackContro
     @Override public void onPlaybackParametersChanged(final PlaybackParameters playbackParameters) {
     }
 
+    //-----------------------------------------SeekBar listener--------------------------------------------------------------//
+    @Override public void onProgressChanged(final SeekBar seekBar, final int progress, final boolean fromUser) {
+
+        if (fromUser) {
+            long position = Utils.progressToMilli(mPlayer.getDuration(), seekBar);
+            long duration = mPlayer == null ? 0 : mPlayer.getDuration();
+            elapsedTimeTextView(position, duration);
+        }
+    }
+
+    @Override public void onStartTrackingTouch(final SeekBar seekBar) {
+        isDraggingSeekBar.set(true);
+        ExoPlayerLogger.i(TAG, "onStartTrackingTouch");
+    }
+
+    @Override public void onStopTrackingTouch(final SeekBar seekBar) {
+
+        if (mPlayer != null) {
+            seekTo(Utils.progressToMilli(mPlayer.getDuration(), seekBar));
+        }
+
+        isDraggingSeekBar.set(false);
+        ExoPlayerLogger.i(TAG, "onStopTrackingTouch");
+    }
+
+    //---------------------------------------private method---------------------------------------------------------------------------//
+
     private void setPlaybackState() {
         int playBackState = mPlayer == null ? ExoPlayer.STATE_IDLE : mPlayer.getPlaybackState();
         playerPlaybackState.set(playBackState);
@@ -328,13 +362,11 @@ public class UserController extends BaseObservable implements TubiPlaybackContro
         long duration = mPlayer == null ? 0 : mPlayer.getDuration();
         long bufferedPosition = mPlayer == null ? 0 : mPlayer.getBufferedPosition();
 
-        videoCurrentTime.set(position);
-        videoDuration.set(duration);
-        videoBufferedPosition.set(bufferedPosition);
-
-        //translate the long number into display string
-        videoRemainInString.set(Utils.getProgressTime((duration - position), true));
-        videoPositionInString.set(Utils.getProgressTime(position, false));
+        //only update the seekBar UI when user are not interacting, to prevent UI interference
+        if (!isDraggingSeekBar.get()) {
+            updateSeekBar(position, duration, bufferedPosition);
+            elapsedTimeTextView(position, duration);
+        }
 
         ExoPlayerLogger.i(TAG, "updateProgress:----->" + videoCurrentTime.get());
 
@@ -345,8 +377,8 @@ public class UserController extends BaseObservable implements TubiPlaybackContro
         mProgressUpdateHandler.removeCallbacks(updateProgressAction);
 
         // Schedule an update if necessary.
-        int playbackState = mPlayer == null ? ExoPlayer.STATE_IDLE : mPlayer.getPlaybackState();
-        if (playbackState != ExoPlayer.STATE_IDLE && playbackState != STATE_ENDED && mPlaybackActionCallback
+        if (playerPlaybackState.get() != ExoPlayer.STATE_IDLE && playerPlaybackState.get() != STATE_ENDED
+                && mPlaybackActionCallback
                 .isActive()) {
 
             //don't post the updateProgress event when user pause the video
@@ -358,4 +390,18 @@ public class UserController extends BaseObservable implements TubiPlaybackContro
             mProgressUpdateHandler.postDelayed(updateProgressAction, delayMs);
         }
     }
+
+    private void updateSeekBar(long position, long duration, long bufferedPosition) {
+        //update progressBar.
+        videoCurrentTime.set(position);
+        videoDuration.set(duration);
+        videoBufferedPosition.set(bufferedPosition);
+    }
+
+    private void elapsedTimeTextView(long position, long duration) {
+        //translate the movie remaining time number into display string, and update the UI
+        videoRemainInString.set(Utils.getProgressTime((duration - position), true));
+        videoPositionInString.set(Utils.getProgressTime(position, false));
+    }
+
 }
