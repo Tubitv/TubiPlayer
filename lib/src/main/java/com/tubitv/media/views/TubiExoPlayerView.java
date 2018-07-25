@@ -565,6 +565,9 @@ public class TubiExoPlayerView extends FrameLayout implements TubiPlaybackContro
 
     @Override
     public boolean onKeyDown(final int keyCode, final KeyEvent event) {
+        if (controller.isAdPlaying()) {
+            return false;
+        }
 
         if (mHoldKeyStartTime == null) {
             mHoldKeyStartTime = SystemClock.elapsedRealtime();
@@ -584,6 +587,10 @@ public class TubiExoPlayerView extends FrameLayout implements TubiPlaybackContro
 
     @Override
     public boolean onKeyUp(final int keyCode, final KeyEvent event) {
+        if (controller.isAdPlaying()) {
+            return false;
+        }
+
         mHoldKeyStartTime = null;
 
         if (!useController || player == null) {
