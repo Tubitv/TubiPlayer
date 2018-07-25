@@ -60,8 +60,11 @@ public class TubiPlayerControlView extends ConstraintLayout implements TrackSele
     private final Runnable hideAction = new Runnable() {
         @Override
         public void run() {
-            if (!isDuringCustomSeek()) { // only auto hide when it's not in seek mode
+            if (!isDuringCustomSeek() && tubiObservable.isPlaying()) { // only auto hide when it's not in seek mode
                 hide();
+
+                // After hidden, we wanna focus on play button
+                focusOnPlayButton();
             }
         }
     };
@@ -339,8 +342,18 @@ public class TubiPlayerControlView extends ConstraintLayout implements TrackSele
         return mBinding.viewTubiControllerPlayToggleIb;
     }
 
+    public void focusOnPlayButton() {
+        getCaptionButton().setFocusable(false);
+        getPlayButton().setFocusable(true);
+        getPlayButton().requestFocus();
+    }
+
     public StateImageButton getCaptionButton() {
         return mBinding.viewTubiControllerSubtitlesIb;
+    }
+
+    public boolean isAdPlaying() {
+        return tubiObservable.isAdPlaying();
     }
 
     private void initLayout() {

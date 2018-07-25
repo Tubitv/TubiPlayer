@@ -620,10 +620,8 @@ public class TubiExoPlayerView extends FrameLayout implements TubiPlaybackContro
 
                     switch (controller.getState()) {
                         case TubiObservable.OPTIONS_CONTROL_STATE:
-                            controller.getCaptionButton().setFocusable(false);
                             controller.setState(TubiObservable.NORMAL_CONTROL_STATE);
-                            controller.getPlayButton().setFocusable(true);
-                            controller.getPlayButton().requestFocus();
+                            controller.focusOnPlayButton();
                             maybeShowController(true);
                             break;
                         case TubiObservable.CUSTOM_SEEK_CONTROL_STATE:
@@ -659,6 +657,12 @@ public class TubiExoPlayerView extends FrameLayout implements TubiPlaybackContro
                 } else {
                     controller.togglePlay();
                 }
+
+                if (!controller.isPlayerPlaying()) {
+                    controller.focusOnPlayButton();
+                    maybeShowController(true);
+                }
+
                 return true;
             case KeyEvent.KEYCODE_BACK:
                 if (controller.isDuringCustomSeek()) {
