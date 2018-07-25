@@ -64,6 +64,8 @@ public class UserController extends BaseObservable
 
     public final ObservableField<String> videoPositionInString = new ObservableField<>("");
 
+    public final ObservableField<Boolean> videoHasSubtitle = new ObservableField<>(false);
+
     /**
      * Ad information
      */
@@ -73,11 +75,13 @@ public class UserController extends BaseObservable
 
     public final ObservableInt numberOfAdsLeft = new ObservableInt(0);
 
-    public final ObservableBoolean isCurrentVideoAd = new ObservableBoolean(false);
+    public final ObservableField<Boolean> isCurrentAd = new ObservableField<>(false);
 
     /**
      * user interaction attribute
      */
+    public final ObservableField<Boolean> isSubtitleEnabled = new ObservableField<>(false);
+
     private final ObservableField<Boolean> isDraggingSeekBar = new ObservableField<>(false);
 
     private Handler mProgressUpdateHandler = new Handler();
@@ -121,15 +125,18 @@ public class UserController extends BaseObservable
 
         this.mMediaModel = mediaModel;
 
-        if (mMediaModel.isAd()) {
+        //mark flag for ads to movie
+        isCurrentAd.set(mMediaModel.isAd());
 
-            isCurrentVideoAd.set(true);
+        if (mMediaModel.isAd()) {
 
             if (!TextUtils.isEmpty(mMediaModel.getClickThroughUrl())) {
                 adClickUrl.set(mMediaModel.getClickThroughUrl());
             }
 
             videoName.set("Commercial");
+
+            videoHasSubtitle.set(false);
 
         } else {
 
@@ -139,6 +146,10 @@ public class UserController extends BaseObservable
 
             if (mMediaModel.getArtworkUrl() != null) {
                 videoPoster.set(mMediaModel.getArtworkUrl());
+            }
+
+            if (mMediaModel.getSubtitlesUrl() != null) {
+                videoHasSubtitle.set(true);
             }
 
         }
@@ -152,8 +163,9 @@ public class UserController extends BaseObservable
      *
      * @param player the current player that is playing the video
      */
-    public void setPlayer(@NonNull SimpleExoPlayer player, @NonNull PlaybackActionCallback playbackActionCallback) {
-        if (player == null) {
+    public void setPlayer(@NonNull SimpleExoPlayer player, @NonNull PlaybackActionCallback playbackActionCallback,
+            @NonNull TubiExoPlayerView tubiExoPlayerView) {
+        if (player == null || tubiExoPlayerView == null) {
             ExoPlayerLogger.e(TAG, "setPlayer is null");
             return;
         }
@@ -161,6 +173,8 @@ public class UserController extends BaseObservable
         if (this.mPlayer == player) {
             return;
         }
+
+        mTubiExoPlayerView = tubiExoPlayerView;
 
         //remove the old listener
         if (mPlayer != null) {
@@ -200,6 +214,8 @@ public class UserController extends BaseObservable
         if (mPlaybackActionCallback != null && mPlaybackActionCallback.isActive()) {
             mPlaybackActionCallback.onSubtitles(mMediaModel, enabled);
         }
+
+        isSubtitleEnabled.set(enabled);
     }
 
     @Override public void triggerQualityTrackToggle() {
@@ -264,12 +280,12 @@ public class UserController extends BaseObservable
         return videoName.get();
     }
 
-    @Override public boolean playReadyToPlay() {
+    @Override public boolean videoReadyToPlay() {
         return isVideoPlayWhenReady.get();
     }
 
     @Override public boolean isCurrentVideoAd() {
-        return isCurrentVideoAd.get();
+        return isCurrentAd.get();
     }
 
     @Override public long currentDuration() {

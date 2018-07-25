@@ -8,6 +8,9 @@
 
         <import type="com.google.android.exoplayer2.ExoPlayer" />
 
+        <import type="android.view.View" />
+
+
         <variable
             name="controller"
             type="com.tubitv.media.bindings.UserController" />
@@ -43,25 +46,32 @@
                 app:vaud_typeface="vaud_regular"
                 tools:text="Escape Plan" />
 
-            <ImageButton
+            <com.tubitv.media.views.StateImageButton
                 android:id="@+id/view_tubi_controller_subtitles_ib"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="16dp"
                 android:layout_marginLeft="8dp"
                 android:layout_marginRight="16dp"
-                android:background="@drawable/tubi_tv_subtitles_off"
+                android:onClick="@{()-> controller.triggerSubtitlesToggle(!controller.isSubtitleEnabled)}"
+                android:visibility="@{controller.videoHasSubtitle &amp;&amp; !controller.isCurrentAd ? View.VISIBLE : View.GONE}"
                 app:layout_constraintLeft_toLeftOf="@+id/tubi_tv_controller_guideline_seek_right"
                 app:layout_constraintRight_toLeftOf="@+id/view_tubi_controller_quality_ib"
-                app:layout_constraintTop_toTopOf="@+id/tubi_tv_controller_guideline_top" />
+                app:layout_constraintTop_toTopOf="@+id/tubi_tv_controller_guideline_top"
+                app:setCheckedState="@{controller.isSubtitleEnabled}"
+                app:state_checked="@drawable/tubi_tv_drawable_subtitles_on_selector"
+                app:state_not_checked="@drawable/tubi_tv_drawable_subtitles_off_selector" />
 
-            <ImageButton
+            <com.tubitv.media.views.StateImageButton
                 android:id="@+id/view_tubi_controller_quality_ib"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:background="@drawable/tubi_tv_drawable_quality_off_selector"
+                android:onClick="@{()-> controller.triggerQualityTrackToggle()}"
+                android:visibility="@{controller.isCurrentAd ?  View.GONE : View.VISIBLE}"
                 app:layout_constraintRight_toLeftOf="@+id/tubi_tv_controller_guideline_right"
-                app:layout_constraintTop_toTopOf="@+id/tubi_tv_controller_guideline_top" />
+                app:layout_constraintTop_toTopOf="@+id/tubi_tv_controller_guideline_top"
+                app:state_checked="@drawable/tubi_tv_drawable_quality_on_selector"
+                app:state_not_checked="@drawable/tubi_tv_drawable_quality_off_selector" />
 
 
             <!--<include-->
@@ -88,12 +98,12 @@
                 android:background="@drawable/tubi_tv_rew_15_selector"
                 android:onClick="@{() -> controller.seekBy(-1500 * 10)}"
                 android:scaleType="fitCenter"
-                android:tag="view_tubi_controller_rewind_ib"
+                android:visibility="@{controller.isCurrentAd ? View.GONE : View.VISIBLE}"
                 app:layout_constraintBottom_toBottomOf="@+id/view_tubi_controller_play_toggle_ib"
                 app:layout_constraintRight_toLeftOf="@+id/view_tubi_controller_play_toggle_ib"
                 app:layout_constraintTop_toTopOf="@+id/view_tubi_controller_play_toggle_ib" />
 
-            <ImageButton
+            <com.tubitv.media.views.StateImageButton
                 android:id="@+id/view_tubi_controller_play_toggle_ib"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -103,13 +113,15 @@
                 android:layout_marginRight="8dp"
                 android:layout_marginStart="8dp"
                 android:layout_marginTop="8dp"
-                android:background="@drawable/tubi_tv_drawable_play_selector"
-                android:onClick="@{() -> controller.triggerPlayOrPause(!controller.isVideoPlayWhenReady) }"
+                android:onClick="@{() -> controller.triggerPlayOrPause(!controller.isVideoPlayWhenReady)}"
                 android:scaleType="fitCenter"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toTopOf="parent"
+                app:setCheckedState="@{controller.isVideoPlayWhenReady}"
+                app:state_checked="@drawable/tubi_tv_drawable_pause_selector"
+                app:state_not_checked="@drawable/tubi_tv_drawable_play_selector" />
 
             <ImageButton
                 android:id="@+id/view_tubi_controller_forward_ib"
@@ -120,7 +132,7 @@
                 android:background="@drawable/tubi_tv_fwd_15_selector"
                 android:onClick="@{() -> controller.seekBy(1500 * 10)}"
                 android:scaleType="fitCenter"
-                android:tag="view_tubi_controller_forward_ib"
+                android:visibility="@{controller.isCurrentAd ? View.INVISIBLE : View.VISIBLE}"
                 app:layout_constraintBottom_toBottomOf="@+id/view_tubi_controller_play_toggle_ib"
                 app:layout_constraintLeft_toRightOf="@+id/view_tubi_controller_play_toggle_ib"
                 app:layout_constraintTop_toTopOf="@+id/view_tubi_controller_play_toggle_ib" />
@@ -160,6 +172,7 @@
                 android:onProgressChanged="@{controller::onProgressChanged}"
                 android:onStartTrackingTouch="@{controller::onStartTrackingTouch}"
                 android:onStopTrackingTouch="@{controller::onStopTrackingTouch}"
+                android:onTouch="@{()-> controller.isCurrentVideoAd}"
                 android:paddingBottom="@dimen/view_tubi_controller_seek_bar_padding_vertical"
                 android:paddingLeft="@dimen/view_tubi_controller_seek_bar_padding_horizontal"
                 android:paddingRight="@dimen/view_tubi_controller_seek_bar_padding_horizontal"
@@ -167,7 +180,6 @@
                 android:progress="@{(int)controller.videoCurrentTime}"
                 android:secondaryProgress="@{(int)controller.videoBufferedPosition}"
                 app:layout_constraintBottom_toTopOf="@+id/tubi_tv_controller_guideline_bottom"
-                app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintLeft_toLeftOf="@+id/tubi_tv_controller_guideline_seek_left"
                 app:layout_constraintRight_toLeftOf="@+id/tubi_tv_controller_guideline_seek_right"
                 tools:progress="50" />

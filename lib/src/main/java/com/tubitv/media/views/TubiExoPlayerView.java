@@ -243,7 +243,7 @@ public class TubiExoPlayerView extends FrameLayout {
         this.player = player;
 
         if (userController != null) {
-            userController.setPlayer(player, playbackActionCallback);
+            userController.setPlayer(player, playbackActionCallback, this);
         }
 
         if (shutterView != null) {
