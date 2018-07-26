@@ -20,6 +20,7 @@ import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.gms.cast.framework.CastButtonFactory;
 import com.tubitv.casting.GoogleServicesHelper;
 import com.tubitv.media.R;
+import com.tubitv.media.activities.ChromeCastActivity;
 import com.tubitv.media.bindings.TubiObservable;
 import com.tubitv.media.databinding.ViewTubiPlayerControlBinding;
 import com.tubitv.media.interfaces.TrackSelectionHelperInterface;
@@ -369,7 +370,9 @@ public class TubiPlayerControlView extends ConstraintLayout implements TrackSele
 
     private void initCast() {
 
-        if (GoogleServicesHelper.available(getContext())) {
+        if (activity instanceof ChromeCastActivity
+                && ((ChromeCastActivity) activity).isChromeCastEnable()
+                && GoogleServicesHelper.available(getContext())) {
             try {
                 MediaRouteButton mMediaRouteButton = (MediaRouteButton) findViewById(
                         R.id.view_tubi_controller_chromecast_ib);
