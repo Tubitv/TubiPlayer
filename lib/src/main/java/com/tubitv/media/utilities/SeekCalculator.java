@@ -11,7 +11,7 @@ public class SeekCalculator {
 
     private static final long FIRST_SPEED_INTERVAL = 1 * 1000; // 1s
     private static final long SECOND_SPEED_INTERVAL = 2 * 1000; // 2s
-    private static final long THIRD_SPEED_INTERVAL = 4 * 1000; // 4s
+    private static final long THIRD_SPEED_INTERVAL = 6 * 1000; // 6s
     private static final int SEEK_FREQUENCY = 1000 / 4; // 4 seeks per second
 
     private static Long sLastUpdateTime = null;
