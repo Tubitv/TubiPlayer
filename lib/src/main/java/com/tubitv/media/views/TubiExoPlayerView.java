@@ -12,6 +12,7 @@ import android.os.SystemClock;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -648,7 +649,10 @@ public class TubiExoPlayerView extends FrameLayout implements TubiPlaybackContro
                 handleSeekKeyUp(SeekCalculator.REWIND_DIRECTION);
                 maybeShowController(true);
                 return true;
+            case KeyEvent.KEYCODE_DPAD_CENTER:
             case KeyEvent.KEYCODE_ENTER:
+            case KeyEvent.KEYCODE_SPACE:
+            case KeyEvent.KEYCODE_NUMPAD_ENTER:
                 if (controller.isDuringCustomSeek()) {
                     controller.confirmCustomSeek();
                     if (!controller.isPlayerPlaying()) {
