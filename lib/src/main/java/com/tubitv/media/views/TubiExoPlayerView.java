@@ -12,7 +12,6 @@ import android.os.SystemClock;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.util.TypedValue;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -51,6 +50,7 @@ import com.tubitv.media.interfaces.TubiPlaybackControlInterface;
 import com.tubitv.media.interfaces.TubiPlaybackInterface;
 import com.tubitv.media.models.MediaModel;
 import com.tubitv.media.utilities.ExoPlayerLogger;
+import com.tubitv.media.utilities.PlayerDeviceUtils;
 import com.tubitv.media.utilities.SeekCalculator;
 import com.tubitv.ui.VaudTextView;
 import com.tubitv.ui.VaudType;
@@ -67,6 +67,7 @@ public class TubiExoPlayerView extends FrameLayout implements TubiPlaybackContro
     private static final int SURFACE_TYPE_NONE = 0;
     private static final int SURFACE_TYPE_SURFACE_VIEW = 1;
     private static final int SURFACE_TYPE_TEXTURE_VIEW = 2;
+    private static final float TV_SUBTITLES_TEXT_SIZE = 24f; // In dp
 
     private final AspectRatioFrameLayout contentFrame;
     private final View shutterView;
@@ -200,8 +201,13 @@ public class TubiExoPlayerView extends FrameLayout implements TubiPlaybackContro
                     CaptionStyleCompat.EDGE_TYPE_NONE,
                     Color.WHITE,
                     VaudTextView.getFont(context, VaudType.VAUD_REGULAR.getAssetFileName())));
-            subtitleView.setFixedTextSize(TypedValue.COMPLEX_UNIT_PX,
-                    getResources().getDimension(R.dimen.view_tubi_exo_player_subtitle_text_size));
+
+            float subtitleTextSize = PlayerDeviceUtils.isTVDevice(this.getContext()) ?
+                    TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, TV_SUBTITLES_TEXT_SIZE,
+                            getResources().getDisplayMetrics())
+                    : getResources().getDimension(R.dimen.view_tubi_exo_player_subtitle_text_size);
+
+            subtitleView.setFixedTextSize(TypedValue.COMPLEX_UNIT_PX, subtitleTextSize);
             subtitleView.setApplyEmbeddedStyles(false);
             subtitleView.setVisibility(View.INVISIBLE);
         }
