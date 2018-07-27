@@ -26,7 +26,8 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:background="@color/tubi_tv_player_controls_overlay"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:visibility="gone">
 
 
             <com.tubitv.ui.VaudTextView
@@ -74,17 +75,17 @@
                 app:state_not_checked="@drawable/tubi_tv_drawable_quality_off_selector" />
 
 
-            <!--<include-->
-            <!--android:id="@+id/view_tubi_controller_ad_description"-->
-            <!--layout="@layout/view_tubi_ad_learn_more"-->
-            <!--android:layout_width="0dp"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:layout_marginLeft="0dp"-->
-            <!--android:layout_marginTop="8dp"-->
-            <!--app:layout_constraintLeft_toRightOf="@+id/tubi_tv_controller_guideline_left"-->
-            <!--app:layout_constraintRight_toLeftOf="@+id/tubi_tv_controller_guideline_right"-->
-            <!--app:layout_constraintTop_toBottomOf="@+id/view_tubi_controller_title"-->
-            <!--app:playMedia="@{playMedia}" />-->
+            <include
+                android:id="@+id/view_tubi_controller_ad_description"
+                layout="@layout/view_tubi_ad_learn_more"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:visibility="@{controller.isCurrentAd ?  View.VISIBLE : View.GONE}"
+                app:controller="@{controller}"
+                app:layout_constraintLeft_toRightOf="@+id/tubi_tv_controller_guideline_left"
+                app:layout_constraintRight_toLeftOf="@+id/tubi_tv_controller_guideline_right"
+                app:layout_constraintTop_toBottomOf="@+id/view_tubi_controller_title" />
 
 
             <ImageButton

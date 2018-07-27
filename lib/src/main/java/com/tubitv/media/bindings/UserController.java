@@ -276,6 +276,15 @@ public class UserController extends BaseObservable
         }
     }
 
+    @Override public void clickCurrentAd() {
+        if (mPlaybackActionCallback == null) {
+            ExoPlayerLogger.w(TAG, "clickCurrentAd params is null");
+            return;
+        }
+
+        mPlaybackActionCallback.onLearnMoreClick(mMediaModel);
+    }
+
     @Override public String getCurrentVideoName() {
         return videoName.get();
     }
@@ -320,15 +329,15 @@ public class UserController extends BaseObservable
 
     @Override
     public void onTracksChanged(final TrackGroupArray trackGroups, final TrackSelectionArray trackSelections) {
-
+        ExoPlayerLogger.i(TAG, "onTracksChanged");
     }
 
     @Override public void onLoadingChanged(final boolean isLoading) {
-
+        ExoPlayerLogger.i(TAG, "onLoadingChanged");
     }
 
     @Override public void onPlayerError(final ExoPlaybackException error) {
-
+        ExoPlayerLogger.i(TAG, "onPlayerError");
     }
 
     @Override public void onPlaybackParametersChanged(final PlaybackParameters playbackParameters) {

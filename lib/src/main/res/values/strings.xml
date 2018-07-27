@@ -14,7 +14,7 @@
     <string name="selection_default_none">Default (none)</string>
 
     <string name="enable_random_adaptation">Enable random adaptation</string>
-    <string name="view_tubi_ad_learn_more_ads_remaining_text">Ad %1$d/%2$d</string>
+    <string name="view_tubi_ad_learn_more_ads_remaining_text">Your title will begin after %1$d ad</string>
     <string name="view_tubi_ad_learn_more_ads_learn_more_text">Learn More</string>
     <plurals name="view_tubi_ad_learn_more_ads_resume_shortly_text">
         <item quantity="one">Your title will begin after %1$d ad</item>
