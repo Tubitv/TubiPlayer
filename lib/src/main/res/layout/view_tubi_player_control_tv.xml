@@ -30,7 +30,7 @@
             android:id="@+id/controller_panel"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@color/tubi_tv_player_controls_overlay"
+            android:background="@drawable/top_bottom_darker_gradient"
             android:orientation="vertical">
 
 
