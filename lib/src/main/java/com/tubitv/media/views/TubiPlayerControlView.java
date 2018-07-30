@@ -39,6 +39,7 @@ public class TubiPlayerControlView extends ConstraintLayout implements TrackSele
      * The default time to hide the this view if the user is not interacting with it
      */
     private static final int DEFAULT_HIDE_TIMEOUT_MS = 5000;
+    private static final int FAST_SEEK_HIDE_DELAY = 800;
 
     private ViewTubiPlayerControlBinding mBinding;
     private TubiPlayerControlView.VisibilityListener visibilityListener;
@@ -69,6 +70,13 @@ public class TubiPlayerControlView extends ConstraintLayout implements TrackSele
             }
         }
     };
+
+    private final Runnable mHideFastSeekIndicator = () -> {
+        if (mBinding != null) {
+            mBinding.faskSeekIndicator.setVisibility(GONE);
+        }
+    };
+
     /**
      * The media model the player is initialized with
      */
@@ -155,6 +163,7 @@ public class TubiPlayerControlView extends ConstraintLayout implements TrackSele
         isAttachedToWindow = false;
         removeCallbacks(hideAction);
         removeCallbacks(hideSystemUI);
+        removeCallbacks(mHideFastSeekIndicator);
     }
 
     @Override
@@ -300,10 +309,12 @@ public class TubiPlayerControlView extends ConstraintLayout implements TrackSele
     }
 
     public void forward() {
+        showFastSeekIndicator(SeekCalculator.FORWARD_DIRECTION);
         tubiObservable.seekBy(tubiObservable.skipBy);
     }
 
     public void rewind() {
+        showFastSeekIndicator(SeekCalculator.REWIND_DIRECTION);
         tubiObservable.seekBy(SeekCalculator.REWIND_DIRECTION * tubiObservable.skipBy);
     }
 
@@ -362,6 +373,20 @@ public class TubiPlayerControlView extends ConstraintLayout implements TrackSele
             setState(TubiObservable.NORMAL_CONTROL_STATE);
             focusOnPlayButton();
         }
+    }
+
+    private void showFastSeekIndicator(final int direction) {
+        if (!isAttachedToWindow) {
+            return;
+        }
+
+        int imageResId = direction == SeekCalculator.FORWARD_DIRECTION ?
+                R.drawable.ff_15 : R.drawable.rw_15;
+
+        mBinding.faskSeekIndicator.setImageResource(imageResId);
+        mBinding.faskSeekIndicator.setVisibility(VISIBLE);
+        removeCallbacks(mHideFastSeekIndicator);
+        postDelayed(mHideFastSeekIndicator, FAST_SEEK_HIDE_DELAY);
     }
 
     private void initLayout() {
