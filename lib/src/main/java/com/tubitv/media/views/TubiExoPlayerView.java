@@ -12,6 +12,7 @@ import android.os.SystemClock;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -587,6 +588,16 @@ public class TubiExoPlayerView extends FrameLayout implements TubiPlaybackContro
             case KeyEvent.KEYCODE_DPAD_LEFT:
                 handleSeekKeyHold(mHoldKeyStartTime, SeekCalculator.REWIND_DIRECTION);
                 break;
+            case KeyEvent.KEYCODE_MEDIA_STEP_FORWARD:
+            case KeyEvent.KEYCODE_MEDIA_FAST_FORWARD:
+                controller.cancelOptionsState();
+                handleSeekKeyHold(mHoldKeyStartTime, SeekCalculator.FORWARD_DIRECTION);
+                break;
+            case KeyEvent.KEYCODE_MEDIA_STEP_BACKWARD:
+            case KeyEvent.KEYCODE_MEDIA_REWIND:
+                controller.cancelOptionsState();
+                handleSeekKeyHold(mHoldKeyStartTime, SeekCalculator.REWIND_DIRECTION);
+                break;
         }
 
         return super.onKeyDown(keyCode, event);
@@ -594,6 +605,8 @@ public class TubiExoPlayerView extends FrameLayout implements TubiPlaybackContro
 
     @Override
     public boolean onKeyUp(final int keyCode, final KeyEvent event) {
+        Log.d(TAG, "onKeyUp  keyCode = " + keyCode);
+
         mHoldKeyStartTime = null;
 
         if (!useController || player == null) {
@@ -649,17 +662,25 @@ public class TubiExoPlayerView extends FrameLayout implements TubiPlaybackContro
 
                 return true;
             case KeyEvent.KEYCODE_DPAD_RIGHT:
+            case KeyEvent.KEYCODE_MEDIA_STEP_FORWARD:
+            case KeyEvent.KEYCODE_MEDIA_FAST_FORWARD:
                 handleSeekKeyUp(SeekCalculator.FORWARD_DIRECTION);
                 maybeShowController(true);
                 return true;
             case KeyEvent.KEYCODE_DPAD_LEFT:
+            case KeyEvent.KEYCODE_MEDIA_STEP_BACKWARD:
+            case KeyEvent.KEYCODE_MEDIA_REWIND:
                 handleSeekKeyUp(SeekCalculator.REWIND_DIRECTION);
                 maybeShowController(true);
                 return true;
+
             case KeyEvent.KEYCODE_DPAD_CENTER:
             case KeyEvent.KEYCODE_ENTER:
             case KeyEvent.KEYCODE_SPACE:
             case KeyEvent.KEYCODE_NUMPAD_ENTER:
+            case KeyEvent.KEYCODE_MEDIA_PLAY_PAUSE:
+            case KeyEvent.KEYCODE_MEDIA_PLAY:
+            case KeyEvent.KEYCODE_MEDIA_PAUSE:
                 if (controller.isDuringCustomSeek()) {
                     controller.confirmCustomSeek();
                     if (!controller.isPlayerPlaying()) {

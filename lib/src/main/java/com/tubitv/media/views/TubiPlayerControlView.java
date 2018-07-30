@@ -357,6 +357,13 @@ public class TubiPlayerControlView extends ConstraintLayout implements TrackSele
         return tubiObservable.isAdPlaying();
     }
 
+    public void cancelOptionsState() {
+        if (getState() == TubiObservable.OPTIONS_CONTROL_STATE) {
+            setState(TubiObservable.NORMAL_CONTROL_STATE);
+            focusOnPlayButton();
+        }
+    }
+
     private void initLayout() {
         LayoutInflater inflater = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
