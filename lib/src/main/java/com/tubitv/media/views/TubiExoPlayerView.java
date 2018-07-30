@@ -872,6 +872,10 @@ public class TubiExoPlayerView extends FrameLayout implements TubiPlaybackContro
 
     public void setMediaModel(@NonNull MediaModel mediaModel, boolean forceShowArtView) {
         this.mediaModel = mediaModel;
+
+        // Update media model for TV
+        this.mediaModel.updateModelForTV(PlayerDeviceUtils.isTVDevice(getContext()));
+
         if (!mediaModel.isAd() && forceShowArtView) {
             artworkView.setVisibility(View.VISIBLE);
             Picasso.with(getContext()).load(mediaModel.getArtworkUrl()).into(artworkView);
