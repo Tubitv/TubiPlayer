@@ -601,7 +601,12 @@ public class TubiExoPlayerView extends FrameLayout implements TubiPlaybackContro
         }
 
         switch (keyCode) {
-            case KeyEvent.KEYCODE_DPAD_UP: // Up should always show the control and focus on caption
+            case KeyEvent.KEYCODE_DPAD_UP: // Up should always show the control, focus on caption when it's not ads
+                if (controller.isAdPlaying()) {
+                    maybeShowController(true);
+                    return false;
+                }
+
                 if (controller.isDuringCustomSeek()) {
                     handleCancelCustomSeek();
                     return false;
