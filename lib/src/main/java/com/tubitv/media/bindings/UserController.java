@@ -218,7 +218,8 @@ public class UserController extends BaseObservable
         isSubtitleEnabled.set(enabled);
     }
 
-    @Override public void triggerQualityTrackToggle() {
+    @Override
+    public void triggerQualityTrackToggle() {
 
         if (mTrackSelectionHelper != null) {
             MappingTrackSelector.MappedTrackInfo mappedTrackInfo = mTrackSelectionHelper.getSelector()
@@ -233,7 +234,8 @@ public class UserController extends BaseObservable
         }
     }
 
-    @Override public void seekBy(final long millisecond) {
+    @Override
+    public void seekBy(final long millisecond) {
         if (mPlayer == null) {
             ExoPlayerLogger.e(TAG, "seekBy() ---> player is empty");
             return;
@@ -255,7 +257,8 @@ public class UserController extends BaseObservable
         seekToPosition(seekPosition);
     }
 
-    @Override public void seekTo(final long millisecond) {
+    @Override
+    public void seekTo(final long millisecond) {
         if (mPlaybackActionCallback != null && mPlaybackActionCallback.isActive()) {
             long currentProgress = mPlayer != null ? mPlayer.getCurrentPosition() : 0;
             mPlaybackActionCallback.onSeek(mMediaModel, currentProgress, millisecond);
@@ -264,7 +267,8 @@ public class UserController extends BaseObservable
         seekToPosition(millisecond);
     }
 
-    @Override public void triggerPlayOrPause(final boolean setPlay) {
+    @Override
+    public void triggerPlayOrPause(final boolean setPlay) {
 
         if (mPlayer != null) {
             mPlayer.setPlayWhenReady(setPlay);
@@ -276,7 +280,8 @@ public class UserController extends BaseObservable
         }
     }
 
-    @Override public void clickCurrentAd() {
+    @Override
+    public void clickCurrentAd() {
         if (mPlaybackActionCallback == null) {
             ExoPlayerLogger.w(TAG, "clickCurrentAd params is null");
             return;
@@ -285,27 +290,33 @@ public class UserController extends BaseObservable
         mPlaybackActionCallback.onLearnMoreClick(mMediaModel);
     }
 
-    @Override public String getCurrentVideoName() {
+    @Override
+    public String getCurrentVideoName() {
         return videoName.get();
     }
 
-    @Override public boolean videoReadyToPlay() {
+    @Override
+    public boolean videoReadyToPlay() {
         return isVideoPlayWhenReady.get();
     }
 
-    @Override public boolean isCurrentVideoAd() {
+    @Override
+    public boolean isCurrentVideoAd() {
         return isCurrentAd.get();
     }
 
-    @Override public long currentDuration() {
+    @Override
+    public long currentDuration() {
         return videoDuration.get();
     }
 
-    @Override public long currentProgressPosition() {
+    @Override
+    public long currentProgressPosition() {
         return videoCurrentTime.get();
     }
 
-    @Override public long currentBufferPosition() {
+    @Override
+    public long currentBufferPosition() {
         return videoBufferedPosition.get();
     }
 
