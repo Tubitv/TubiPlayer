@@ -594,10 +594,6 @@ public class TubiExoPlayerView extends FrameLayout implements TubiPlaybackContro
 
     @Override
     public boolean onKeyUp(final int keyCode, final KeyEvent event) {
-        if (controller.isAdPlaying()) {
-            return false;
-        }
-
         mHoldKeyStartTime = null;
 
         if (!useController || player == null) {
@@ -699,6 +695,10 @@ public class TubiExoPlayerView extends FrameLayout implements TubiPlaybackContro
     }
 
     private void handleSeekKeyUp(final int direction) {
+
+        if (controller.isAdPlaying()) { // No seek when ad is playing
+            return;
+        }
 
         switch (controller.getState()) {
             case TubiObservable.NORMAL_CONTROL_STATE:
