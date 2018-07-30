@@ -138,7 +138,6 @@
                 android:layout_marginTop="8dp"
                 android:scaleType="fitCenter"
                 android:tag="@{TubiObservable.TUBI_PLAY_TOGGLE_TAG}"
-                android:visibility="@{playMedia.playbackState == ExoPlayer.STATE_READY ? View.VISIBLE : View.INVISIBLE}"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintLeft_toLeftOf="@+id/tubi_tv_controller_guideline_left"
                 app:layout_constraintRight_toLeftOf="@+id/view_tubi_controller_elapsed_time"
