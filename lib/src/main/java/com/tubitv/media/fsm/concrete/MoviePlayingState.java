@@ -60,7 +60,7 @@ public class MoviePlayingState extends BaseState {
         //then update the playerView with SimpleExoPlayer and Movie MediaModel
         TubiExoPlayerView tubiExoPlayerView = (TubiExoPlayerView) controller.getExoPlayerView();
         tubiExoPlayerView.setPlayer(moviePlayer, componentController.getTubiPlaybackInterface());
-        tubiExoPlayerView.setMediaModel(movieMedia, false);
+        tubiExoPlayerView.setMediaModel(movieMedia);
 
         //prepare the moviePlayer with data source and set it play
 

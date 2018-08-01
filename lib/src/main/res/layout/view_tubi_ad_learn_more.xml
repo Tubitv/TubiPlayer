@@ -7,17 +7,16 @@
 
         <import type="android.view.View" />
 
-        <import type="com.tubitv.media.bindings.TubiObservable" />
 
         <variable
-            name="playMedia"
-            type="com.tubitv.media.bindings.TubiObservable" />
+            name="controller"
+            type="com.tubitv.media.bindings.UserController" />
+
     </data>
 
     <android.support.constraint.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:visibility="@{playMedia.adPlaying ? View.VISIBLE : View.GONE }">
+        android:layout_height="wrap_content">
 
         <com.tubitv.ui.VaudTextView
             android:id="@+id/view_tubi_ad_learn_more_ads_remaining"
@@ -27,12 +26,9 @@
             android:maxLines="1"
             android:textColor="@color/tubi_tv_golden_gate"
             android:textSize="@dimen/view_tubi_ad_learn_more_text_size"
-            android:visibility="invisible"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             tools:text="Ad" />
-        <!--android:text="@{String.format(@string/view_tubi_ad_learn_more_ads_remaining_text, playMedia.adIndex, playMedia.adTotal)}"-->
-
 
         <com.tubitv.ui.VaudTextView
             android:id="@+id/view_tubi_ad_learn_more_ads_resume_shortly"
@@ -41,7 +37,7 @@
             android:layout_marginLeft="8dp"
             android:layout_marginStart="8dp"
             android:maxLines="1"
-            android:text="@{playMedia.numberOfAdLeft}"
+            android:text="@{String.format(@string/view_tubi_ad_learn_more_ads_remaining_text, controller.numberOfAdsLeft)}"
             android:textColor="@android:color/white"
             android:textSize="@dimen/view_tubi_ad_learn_more_text_size"
             app:layout_constraintBottom_toBottomOf="@+id/view_tubi_ad_learn_more_ads_remaining"
@@ -49,19 +45,18 @@
             app:layout_constraintLeft_toRightOf="@+id/view_tubi_ad_learn_more_ads_remaining"
             app:layout_constraintTop_toTopOf="@+id/view_tubi_ad_learn_more_ads_remaining" />
 
+        <!--clickable learn more button-->
         <android.support.constraint.ConstraintLayout
             android:id="@+id/view_tubi_ad_learn_more_ads_learn_ll"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="@drawable/tubi_tv_player_ad_learn_more_background"
-            android:onClick="@{playMedia.mediaModel.clickThroughUrl != null ? playMedia : null}"
+            android:clickable="true"
+            android:onClick="@{()-> controller.clickCurrentAd()}"
             android:orientation="horizontal"
-            android:tag="@{TubiObservable.TUBI_AD_LEARN_MORE_TAG}"
-            android:visibility="@{playMedia.mediaModel.clickThroughUrl != null ? View.VISIBLE : View.GONE }"
             app:layout_constraintBottom_toBottomOf="@+id/view_tubi_ad_learn_more_ads_resume_shortly"
             app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toTopOf="@+id/view_tubi_ad_learn_more_ads_resume_shortly"
-            app:onClickListener="@{playMedia}">
+            app:layout_constraintTop_toTopOf="@+id/view_tubi_ad_learn_more_ads_resume_shortly">
 
             <com.tubitv.ui.VaudTextView
                 android:id="@+id/view_tubi_ad_learn_more_ads_learn_more_text"

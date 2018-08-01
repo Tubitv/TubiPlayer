@@ -1,19 +1,34 @@
 package com.tubitv.media.interfaces;
 
-import android.support.annotation.NonNull;
-
 /**
  * Created by stoyan tubi_tv_quality_on 4/27/17.
  */
 public interface TubiPlaybackControlInterface {
 
-    void onSubtitlesToggle(boolean enabled);
+    //action control
+    void triggerSubtitlesToggle(boolean enabled);
 
-    void onQualityTrackToggle(boolean enabled);
+    void triggerQualityTrackToggle();
 
-    void cancelRunnable(@NonNull Runnable runnable);
+    void seekBy(long millisecond);
 
-    void postRunnable(@NonNull Runnable runnable, long millisDelay);
+    void seekTo(long millisecond);
 
-    void hideAfterTimeout();
+    void triggerPlayOrPause(boolean setPlay);
+
+    void clickCurrentAd();
+
+    //display control
+    String getCurrentVideoName();
+
+    boolean videoReadyToPlay();
+
+    boolean isCurrentVideoAd();
+
+    long currentDuration();
+
+    long currentProgressPosition();
+
+    long currentBufferPosition();
+
 }

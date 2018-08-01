@@ -2,11 +2,14 @@ package com.tubitv.media.activities;
 
 import android.content.Intent;
 import android.content.res.Configuration;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.text.TextUtils;
 import android.view.View;
+import android.webkit.WebView;
+import android.widget.TextView;
 import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.ExoPlayerFactory;
 import com.google.android.exoplayer2.Format;
@@ -34,12 +37,12 @@ import com.google.android.exoplayer2.util.Util;
 import com.tubitv.media.R;
 import com.tubitv.media.helpers.MediaHelper;
 import com.tubitv.media.helpers.TrackSelectionHelper;
-import com.tubitv.media.interfaces.TubiPlaybackInterface;
+import com.tubitv.media.interfaces.PlaybackActionCallback;
+import com.tubitv.media.interfaces.TubiPlaybackControlInterface;
 import com.tubitv.media.models.MediaModel;
 import com.tubitv.media.utilities.EventLogger;
 import com.tubitv.media.utilities.Utils;
 import com.tubitv.media.views.TubiExoPlayerView;
-import com.tubitv.media.views.TubiPlayerControlView;
 
 /**
  * This is the base activity that prepare one instance of {@link SimpleExoPlayer} mMoviePlayer, this player is mean to serve as the main player to player content.
@@ -47,11 +50,13 @@ import com.tubitv.media.views.TubiPlayerControlView;
  * You can use this class as it is and implement the abstract methods to be a standalone player to player video with customized UI controls and different forms of adaptive streaming.
  */
 public abstract class TubiPlayerActivity extends LifeCycleActivity
-        implements TubiPlayerControlView.VisibilityListener, TubiPlaybackInterface {
+        implements PlaybackActionCallback {
     private static final DefaultBandwidthMeter BANDWIDTH_METER = new DefaultBandwidthMeter();
     public static String TUBI_MEDIA_KEY = "tubi_media_key";
     protected SimpleExoPlayer mMoviePlayer;
     protected TubiExoPlayerView mTubiPlayerView;
+    protected WebView vpaidWebView;
+    protected TextView cuePointIndictor;
     protected DefaultTrackSelector mTrackSelector;
     protected boolean isActive = false;
     /**
@@ -63,6 +68,8 @@ public abstract class TubiPlayerActivity extends LifeCycleActivity
     private DataSource.Factory mMediaDataSourceFactory;
     private EventLogger mEventLogger;
     private TrackSelectionHelper mTrackSelectionHelper;
+
+    public abstract View addUserInteractionView();
 
     protected abstract void onPlayerReady();
 
@@ -142,13 +149,17 @@ public abstract class TubiPlayerActivity extends LifeCycleActivity
         setContentView(R.layout.activity_tubi_player);
         mTubiPlayerView = (TubiExoPlayerView) findViewById(R.id.tubitv_player);
         mTubiPlayerView.requestFocus();
-        mTubiPlayerView.setActivity(this);
+        vpaidWebView = (WebView) findViewById(R.id.vpaid_webview);
+        vpaidWebView.setBackgroundColor(Color.BLACK);
+
+        cuePointIndictor = (TextView) findViewById(R.id.cuepoint_indictor);
+        mTubiPlayerView.addUserInteractionView(addUserInteractionView());
     }
 
     private void setCaption(boolean isOn) {
         if (mediaModel != null && mediaModel.getSubtitlesUrl() != null && mTubiPlayerView != null
                 && mTubiPlayerView.getControlView() != null) {
-            mTubiPlayerView.getControlView().checkSubtitleIcon(isOn);
+            //            mTubiPlayerView.getControlView().checkSubtitleIcon(isOn);
             mTubiPlayerView.getSubtitleView().setVisibility(isOn ? View.VISIBLE : View.GONE);
         }
     }
@@ -179,7 +190,7 @@ public abstract class TubiPlayerActivity extends LifeCycleActivity
         mMoviePlayer.setMetadataOutput(mEventLogger);
 
         mTubiPlayerView.setPlayer(mMoviePlayer, this);
-        mTubiPlayerView.setMediaModel(mediaModel, true);
+        mTubiPlayerView.setMediaModel(mediaModel);
         mTubiPlayerView.setTrackSelectionHelper(mTrackSelectionHelper);
     }
 
@@ -246,13 +257,20 @@ public abstract class TubiPlayerActivity extends LifeCycleActivity
         return MediaHelper.buildDataSourceFactory(this, useBandwidthMeter ? BANDWIDTH_METER : null);
     }
 
-    @Override
-    public void onVisibilityChange(int visibility) {
-
-    }
+    //    @Override
+    //    public void onVisibilityChange(int visibility) {
+    //
+    //    }
 
     public HttpDataSource.Factory buildHttpDataSourceFactory(DefaultBandwidthMeter bandwidthMeter) {
         return new DefaultHttpDataSourceFactory(Util.getUserAgent(this, "TubiPlayerActivity"), bandwidthMeter);
+    }
+
+    protected TubiPlaybackControlInterface getPlayerController() {
+        if (mTubiPlayerView != null && mTubiPlayerView.getPlayerController() != null) {
+            return mTubiPlayerView.getPlayerController();
+        }
+        return null;
     }
 
 }

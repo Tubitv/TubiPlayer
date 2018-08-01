@@ -8,23 +8,23 @@
         android:id="@+id/activity_selection_play_hls_1"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Play HLS 1(DoubleViewTubiPlayerActivity)" />
+        android:text="Default UI" />
 
     <Button
         android:id="@+id/activity_selection_play_hls_2"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Play HLS No Subtitles(DoubleViewTubiPlayerActivity)" />
+        android:text="Custom UI" />
 
-    <Button
-        android:id="@+id/show_webview"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Show Vpaid" />
+    <!--<Button-->
+        <!--android:id="@+id/show_webview"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:text="Show Vpaid" />-->
 
-    <Button
-        android:id="@+id/show_pre_roll_ad"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Play HLS with pre-roll(RealActivity)" />
+    <!--<Button-->
+        <!--android:id="@+id/show_pre_roll_ad"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:text="Play HLS with pre-roll(RealActivity)" />-->
 </LinearLayout>

@@ -6,9 +6,11 @@ import com.tubitv.media.models.MediaModel;
 
 /**
  * Created by stoyan on 6/23/17.
+ * This is an information callback interface, the relative callback will be triggered when certain user/player action has been made,
+ * to update program. all the callback will be called after the matching action has been performed.
  */
 
-public interface TubiPlaybackInterface {
+public interface PlaybackActionCallback {
 
     void onProgress(@Nullable MediaModel mediaModel, long milliseconds, long durationMillis);
 
