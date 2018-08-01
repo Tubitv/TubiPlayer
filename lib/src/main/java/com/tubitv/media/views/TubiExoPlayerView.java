@@ -289,7 +289,7 @@ public class TubiExoPlayerView extends FrameLayout {
 
     public void setMediaModel(@NonNull MediaModel mediaModel) {
         if (userController != null) {
-            userController.setMediaModel(mediaModel);
+            userController.setMediaModel(mediaModel, getContext());
         }
     }
 

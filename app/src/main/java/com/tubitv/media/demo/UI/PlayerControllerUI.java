@@ -16,7 +16,7 @@ public class PlayerControllerUI extends FrameLayout implements View.OnClickListe
 
     private static final String TAG = PlayerControllerUI.class.getSimpleName();
 
-    private UserController userController;
+    private UserController mUserController;
 
     private boolean playOrPause = true;
 
@@ -36,19 +36,19 @@ public class PlayerControllerUI extends FrameLayout implements View.OnClickListe
     }
 
     public View setController(UserController controller) {
-        this.userController = controller;
-        binding.setController(userController);
+        this.mUserController = controller;
+        binding.setController(mUserController);
         return this;
     }
 
     @Override public void onClick(final View v) {
-        if (userController == null) {
+        if (mUserController == null) {
             return;
         }
         switch ((String) v.getTag()) {
             case "rewind":
 
-                userController.seekBy(-15 * 1000);
+                mUserController.seekBy(-15 * 1000);
                 ExoPlayerLogger.i(TAG, "rewind click");
                 printVideoDetail();
                 break;
@@ -56,7 +56,7 @@ public class PlayerControllerUI extends FrameLayout implements View.OnClickListe
             case "play_pause":
 
                 playOrPause = !playOrPause;
-                userController.triggerPlayOrPause(playOrPause);
+                mUserController.triggerPlayOrPause(playOrPause);
 
                 ExoPlayerLogger.i(TAG, "play_pause click");
                 printVideoDetail();
@@ -64,7 +64,7 @@ public class PlayerControllerUI extends FrameLayout implements View.OnClickListe
 
             case "fastford":
 
-                userController.seekBy(15 * 1000);
+                mUserController.seekBy(15 * 1000);
                 ExoPlayerLogger.i(TAG, "fastford click");
                 printVideoDetail();
                 break;
@@ -88,12 +88,12 @@ public class PlayerControllerUI extends FrameLayout implements View.OnClickListe
     private void printVideoDetail() {
         StringBuilder builder = new StringBuilder();
 
-        builder.append(userController.getCurrentVideoName());
+        builder.append(mUserController.getCurrentVideoName());
         builder.append("--");
         builder.append("current_duration-->");
-        builder.append(userController.currentDuration());
+        builder.append(mUserController.currentDuration());
         builder.append(" current_progress-->");
-        builder.append(userController.currentProgressPosition());
+        builder.append(mUserController.currentProgressPosition());
 
         ExoPlayerLogger.i(TAG, builder.toString());
     }

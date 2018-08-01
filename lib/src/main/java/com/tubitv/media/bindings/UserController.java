@@ -1,5 +1,6 @@
 package com.tubitv.media.bindings;
 
+import android.content.Context;
 import android.databinding.BaseObservable;
 import android.databinding.ObservableBoolean;
 import android.databinding.ObservableField;
@@ -19,6 +20,7 @@ import com.google.android.exoplayer2.Timeline;
 import com.google.android.exoplayer2.source.TrackGroupArray;
 import com.google.android.exoplayer2.trackselection.MappingTrackSelector;
 import com.google.android.exoplayer2.trackselection.TrackSelectionArray;
+import com.tubitv.media.R;
 import com.tubitv.media.helpers.TrackSelectionHelper;
 import com.tubitv.media.interfaces.PlaybackActionCallback;
 import com.tubitv.media.interfaces.TubiPlaybackControlInterface;
@@ -117,7 +119,7 @@ public class UserController extends BaseObservable
      *
      * @param mediaModel the current video that will be played by the {@link UserController#mPlayer} instance.
      */
-    public void setMediaModel(@NonNull MediaModel mediaModel) {
+    public void setMediaModel(@NonNull MediaModel mediaModel, Context context) {
         if (mediaModel == null) {
             ExoPlayerLogger.e(TAG, "setMediaModel is null");
             return;
@@ -134,7 +136,7 @@ public class UserController extends BaseObservable
                 adClickUrl.set(mMediaModel.getClickThroughUrl());
             }
 
-            videoName.set("Commercial");
+            videoName.set(context.getString(R.string.commercial));
 
             videoHasSubtitle.set(false);
 

@@ -146,7 +146,7 @@ public abstract class TubiPlayerActivity extends LifeCycleActivity
     }
 
     protected void initLayout() {
-        setContentView(R.layout.activity_double_tubi_player);
+        setContentView(R.layout.activity_tubi_player);
         mTubiPlayerView = (TubiExoPlayerView) findViewById(R.id.tubitv_player);
         mTubiPlayerView.requestFocus();
         vpaidWebView = (WebView) findViewById(R.id.vpaid_webview);

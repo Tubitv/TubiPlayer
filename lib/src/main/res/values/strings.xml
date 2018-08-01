@@ -13,6 +13,8 @@
 
     <string name="selection_default_none">Default (none)</string>
 
+    <string name="commercial">Commercial</string>
+
     <string name="enable_random_adaptation">Enable random adaptation</string>
     <string name="view_tubi_ad_learn_more_ads_remaining_text">Your title will begin after %1$d ad</string>
     <string name="view_tubi_ad_learn_more_ads_learn_more_text">Learn More</string>
