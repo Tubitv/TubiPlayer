@@ -1,18 +1,18 @@
 package com.tubitv.media.activities;
 
-import android.app.Activity;
 import android.arch.lifecycle.Lifecycle;
 import android.arch.lifecycle.LifecycleOwner;
 import android.arch.lifecycle.LifecycleRegistry;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v7.app.AppCompatActivity;
 
 /**
  * Created by allensun on 11/17/17.
  * on Tubitv.com, allengotstuff@gmail.com
  */
-public class LifeCycleActivity extends Activity implements LifecycleOwner {
+public class LifeCycleActivity extends AppCompatActivity implements LifecycleOwner {
 
     private LifecycleRegistry mLifecycleRegistry;
 
