@@ -630,6 +630,8 @@ public class TubiExoPlayerView extends FrameLayout implements TubiPlaybackContro
                     controller.getCaptionButton().setFocusable(true);
                     controller.getCaptionButton().requestFocus();
                     controller.getPlayButton().setFocusable(false);
+                } else {
+                    controller.focusOnPlayButton();
                 }
 
                 maybeShowController(true);
@@ -702,6 +704,14 @@ public class TubiExoPlayerView extends FrameLayout implements TubiPlaybackContro
                     if (!controller.isPlayerPlaying()) {
                         controller.togglePlay();
                     }
+                    return true;
+
+                } else if (controller.isVisible()) {
+                    if (controller.getState() == TubiObservable.OPTIONS_CONTROL_STATE) {
+                        controller.setState(TubiObservable.NORMAL_CONTROL_STATE);
+                        controller.focusOnPlayButton();
+                    }
+                    toggleControllerVisiblity();
                     return true;
                 } else {
                     return false;
