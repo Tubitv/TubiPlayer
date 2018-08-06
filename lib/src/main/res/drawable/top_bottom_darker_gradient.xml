@@ -3,7 +3,7 @@
 
     <gradient
         android:angle="90"
-        android:centerColor="@android:color/transparent"
-        android:endColor="@color/tubi_tv_player_controls_overlay"
-        android:startColor="@color/tubi_tv_player_controls_overlay" />
+        android:centerColor="@color/tubi_tv_player_controls_overlay_light"
+        android:endColor="@color/tubi_tv_player_controls_overlay_dark"
+        android:startColor="@color/tubi_tv_player_controls_overlay_dark" />
 </shape>
