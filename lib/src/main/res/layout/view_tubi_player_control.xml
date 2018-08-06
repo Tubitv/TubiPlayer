@@ -285,8 +285,16 @@
                 tools:layout_editor_absoluteX="508dp"
                 tools:layout_editor_absoluteY="75dp" />
 
+            <!--Unused for mobile-->
             <ImageView
                 android:id="@+id/seek_speed_indicator"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:visibility="gone" />
+
+            <!--Unused for mobile-->
+            <ImageView
+                android:id="@+id/fask_seek_indicator"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:visibility="gone" />
