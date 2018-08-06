@@ -84,7 +84,7 @@ public class UserController extends BaseObservable
      */
     public final ObservableField<Boolean> isSubtitleEnabled = new ObservableField<>(false);
 
-    private final ObservableField<Boolean> isDraggingSeekBar = new ObservableField<>(false);
+    public final ObservableField<Boolean> isDraggingSeekBar = new ObservableField<>(false);
 
     private Handler mProgressUpdateHandler = new Handler();
 
