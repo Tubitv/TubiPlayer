@@ -625,14 +625,14 @@ public class TubiExoPlayerView extends FrameLayout implements TubiPlaybackContro
                     return false;
                 }
 
-                maybeShowController(true);
-
-                if (!controller.getCaptionButton().isFocused()) {
+                if (controller.isVisible() && !controller.getCaptionButton().isFocused()) {
                     controller.setState(TubiObservable.OPTIONS_CONTROL_STATE);
                     controller.getCaptionButton().setFocusable(true);
                     controller.getCaptionButton().requestFocus();
                     controller.getPlayButton().setFocusable(false);
                 }
+
+                maybeShowController(true);
 
                 return true;
 
