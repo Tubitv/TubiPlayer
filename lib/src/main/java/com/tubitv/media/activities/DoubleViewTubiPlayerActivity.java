@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
+import android.view.KeyEvent;
 import android.webkit.WebBackForwardList;
 import android.webkit.WebHistoryItem;
 import android.webkit.WebView;
@@ -41,6 +42,7 @@ import com.tubitv.media.models.CuePointsRetriever;
 import com.tubitv.media.models.MediaModel;
 import com.tubitv.media.models.VpaidClient;
 import com.tubitv.media.utilities.ExoPlayerLogger;
+import com.tubitv.media.utilities.PlayerDeviceUtils;
 import com.tubitv.media.utilities.Utils;
 import com.tubitv.media.views.TubiExoPlayerView;
 import javax.inject.Inject;
@@ -52,6 +54,7 @@ public class DoubleViewTubiPlayerActivity extends TubiPlayerActivity implements 
 
     private static final String TAG = "DoubleViewTubiPlayerAct";
     private static final DefaultBandwidthMeter BANDWIDTH_METER_AD = new DefaultBandwidthMeter();
+
     protected SimpleExoPlayer adPlayer;
     protected WebView vpaidWebView;
     protected TextView cuePointIndictor;
@@ -131,7 +134,9 @@ public class DoubleViewTubiPlayerActivity extends TubiPlayerActivity implements 
     protected void initMoviePlayer() {
         super.initMoviePlayer();
         createMediaSource(mediaModel);
-        setupAdPlayer();
+        if (!PlayerDeviceUtils.useSinglePlayer()) {
+            setupAdPlayer();
+        }
     }
 
     @Override
@@ -142,13 +147,16 @@ public class DoubleViewTubiPlayerActivity extends TubiPlayerActivity implements 
     @Override
     protected void releaseMoviePlayer() {
         super.releaseMoviePlayer();
-        releaseAdPlayer();
+        if (!PlayerDeviceUtils.useSinglePlayer()) {
+            releaseAdPlayer();
+        }
     }
 
     private void setupAdPlayer() {
         TrackSelection.Factory adaptiveTrackSelectionFactory =
                 new AdaptiveTrackSelection.Factory(BANDWIDTH_METER_AD);
         trackSelector_ad = new DefaultTrackSelector(adaptiveTrackSelectionFactory);
+
         adPlayer = ExoPlayerFactory.newSimpleInstance(this, trackSelector_ad);
     }
 
@@ -214,7 +222,11 @@ public class DoubleViewTubiPlayerActivity extends TubiPlayerActivity implements 
     public void prepareFSM() {
         //update the playerUIController view, need to update the view everything when two ExoPlayer being recreated in activity lifecycle.
         playerUIController.setContentPlayer(mMoviePlayer);
-        playerUIController.setAdPlayer(adPlayer);
+
+        if (!PlayerDeviceUtils.useSinglePlayer()) {
+            playerUIController.setAdPlayer(adPlayer);
+        }
+
         playerUIController.setExoPlayerView(mTubiPlayerView);
         playerUIController.setVpaidWebView(vpaidWebView);
 
@@ -252,7 +264,6 @@ public class DoubleViewTubiPlayerActivity extends TubiPlayerActivity implements 
 
     @Override
     public void onBackPressed() {
-
         if (fsmPlayer != null && fsmPlayer.getCurrentState() instanceof VpaidState && vpaidWebView != null
                 && vpaidWebView.canGoBack()) {
 
@@ -304,6 +315,30 @@ public class DoubleViewTubiPlayerActivity extends TubiPlayerActivity implements 
     protected void createMediaSource(MediaModel videoMediaModel) {
 
         videoMediaModel.setMediaSource(buildMediaSource(videoMediaModel));
+    }
+
+    @Override
+    public boolean onKeyDown(final int keyCode, final KeyEvent event) {
+
+        if (mTubiPlayerView != null) {
+            return mTubiPlayerView.onKeyDown(keyCode, event);
+        }
+
+        return super.onKeyDown(keyCode, event);
+    }
+
+    @Override
+    public boolean onKeyUp(final int keyCode, final KeyEvent event) {
+        if (mTubiPlayerView != null && mTubiPlayerView.onKeyUp(keyCode, event)) {
+            return true;
+        }
+
+        if (keyCode == KeyEvent.KEYCODE_BACK) {
+            onBackPressed();
+            return true;
+        }
+
+        return super.onKeyUp(keyCode, event);
     }
 
     @Override
@@ -377,7 +412,8 @@ public class DoubleViewTubiPlayerActivity extends TubiPlayerActivity implements 
 
     @Override
     public void playNext(MediaModel nextVideo) {
-        fsmPlayer.getMovieMedia().getMediaSource().releaseSource();
+        fsmPlayer.getMovieMedia().getMediaSource().releaseSource((source, timeline, manifest) -> {
+        });
 
         createMediaSource(nextVideo);
         fsmPlayer.setMovieMedia(nextVideo);

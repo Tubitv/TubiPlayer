@@ -22,6 +22,7 @@ import com.tubitv.media.models.AdRetriever;
 import com.tubitv.media.models.CuePointsRetriever;
 import com.tubitv.media.models.MediaModel;
 import com.tubitv.media.utilities.ExoPlayerLogger;
+import com.tubitv.media.utilities.PlayerDeviceUtils;
 
 /**
  * Created by allensun on 7/27/17.
@@ -273,7 +274,10 @@ public abstract class FsmPlayer implements Fsm, RetrieveAdCallback, FsmAdControl
             currentState = factory.createState(MoviePlayingState.class);
         }
 
-        updateMovieResumePosition(controller);
+        if (!PlayerDeviceUtils.useSinglePlayer()
+                || !(currentState instanceof MoviePlayingState)) {
+            updateMovieResumePosition(controller);
+        }
 
         ExoPlayerLogger.d(Constants.FSMPLAYER_TESTING, "transit to: " + currentState.getClass().getSimpleName());
 

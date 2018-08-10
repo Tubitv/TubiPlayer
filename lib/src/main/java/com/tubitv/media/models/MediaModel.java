@@ -41,7 +41,7 @@ public class MediaModel implements Serializable {
      * @see #isAd
      */
     @Nullable
-    private final String clickThroughUrl;
+    private String clickThroughUrl;
 
     /**
      * The media source representation of this model
@@ -121,5 +121,11 @@ public class MediaModel implements Serializable {
 
     public boolean isVpaid() {
         return isVpaid;
+    }
+
+    public void updateModelForTV(final boolean isTV) {
+        if (isTV) { // Disable "Learn More" click through for TV
+            clickThroughUrl = null;
+        }
     }
 }

@@ -17,6 +17,7 @@ import com.google.android.exoplayer2.Format;
 import com.google.android.exoplayer2.RendererCapabilities;
 import com.google.android.exoplayer2.source.TrackGroup;
 import com.google.android.exoplayer2.source.TrackGroupArray;
+import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
 import com.google.android.exoplayer2.trackselection.FixedTrackSelection;
 import com.google.android.exoplayer2.trackselection.MappingTrackSelector;
 import com.google.android.exoplayer2.trackselection.TrackSelection;
@@ -48,7 +49,7 @@ public class TubiQualityDialogView extends LinearLayout
 
     private MappingTrackSelector.MappedTrackInfo trackInfo;
 
-    private MappingTrackSelector.SelectionOverride override;
+    private DefaultTrackSelector.SelectionOverride override;
 
     private int rendererIndex;
 
@@ -93,7 +94,7 @@ public class TubiQualityDialogView extends LinearLayout
         initLayout();
     }
 
-    private static int[] getTracksRemoving(@NonNull MappingTrackSelector.SelectionOverride override, int removedTrack) {
+    private static int[] getTracksRemoving(@NonNull DefaultTrackSelector.SelectionOverride override, int removedTrack) {
         int[] tracks = new int[override.length - 1];
         int trackCount = 0;
         for (int i = 0; i < tracks.length + 1; i++) {
@@ -106,7 +107,7 @@ public class TubiQualityDialogView extends LinearLayout
     }
 
     // Track array manipulation.
-    private static int[] getTracksAdding(@NonNull MappingTrackSelector.SelectionOverride override, int addedTrack) {
+    private static int[] getTracksAdding(@NonNull DefaultTrackSelector.SelectionOverride override, int addedTrack) {
         int[] tracks = override.tracks;
         tracks = Arrays.copyOf(tracks, tracks.length + 1);
         tracks[tracks.length - 1] = addedTrack;
@@ -190,12 +191,12 @@ public class TubiQualityDialogView extends LinearLayout
 
         Log.e("Dialog", "positive click");
 
-        selector.setRendererDisabled(rendererIndex, isDisabled);
-        if (override != null) {
-            selector.setSelectionOverride(rendererIndex, trackGroups, override);
-        } else {
-            selector.clearSelectionOverrides(rendererIndex);
-        }
+        //        selector.setRendererDisabled(rendererIndex, isDisabled);
+        //        if (override != null) {
+        //            selector.setSelectionOverride(rendererIndex, trackGroups, override);
+        //        } else {
+        //            selector.clearSelectionOverrides(rendererIndex);
+        //        }
     }
 
     @Override
@@ -216,7 +217,7 @@ public class TubiQualityDialogView extends LinearLayout
             int trackIndex = tag.second;
             if (!trackGroupsAdaptive[groupIndex] || override == null
                     || override.groupIndex != groupIndex) {
-                override = new MappingTrackSelector.SelectionOverride(FIXED_FACTORY, groupIndex, trackIndex);
+                //                override = new DefaultTrackSelector.SelectionOverride(FIXED_FACTORY, groupIndex, trackIndex);
             } else {
                 // The group being modified is adaptive and we already have a non-null override.
                 boolean isEnabled = ((TubiRadioButton) view).isChecked();
@@ -254,10 +255,10 @@ public class TubiQualityDialogView extends LinearLayout
     public boolean onSelection() {
         if (selector != null) {
             if (override != null) {
-                selector.setSelectionOverride(rendererIndex, trackGroups, override);
+                //                selector.setSelectionOverride(rendererIndex, trackGroups, override);
                 return true;
             } else {
-                selector.clearSelectionOverrides(rendererIndex);
+                //                selector.clearSelectionOverrides(rendererIndex);
                 return false;
             }
         }
@@ -325,19 +326,19 @@ public class TubiQualityDialogView extends LinearLayout
     private void setOverride(int group, int[] tracks) {
         TrackSelection.Factory factory = tracks.length == 1 ? FIXED_FACTORY
                 : adaptiveTrackSelectionFactory;
-        override = new MappingTrackSelector.SelectionOverride(factory, group, tracks);
+        //        override = new DefaultTrackSelector.SelectionOverride(factory, group, tracks);
     }
 
     private void removeAllTracks() {
-        selector.clearSelectionOverrides();
-        setOverride(selector.getSelectionOverride(rendererIndex, trackGroups));
+        //        selector.clearSelectionOverrides();
+        //        setOverride(selector.getSelectionOverride(rendererIndex, trackGroups));
     }
 
     private void setSelector(MappingTrackSelector selector) {
         this.selector = selector;
         setTrackInfo(selector.getCurrentMappedTrackInfo());
         setTrackGroups(trackInfo.getTrackGroups(rendererIndex));
-        setOverride(selector.getSelectionOverride(rendererIndex, trackGroups));
+        //        setOverride(selector.getSelectionOverride(rendererIndex, trackGroups));
 
         trackGroupsAdaptive = new boolean[trackGroups.length];
         for (int i = 0; i < trackGroups.length; i++) {
@@ -358,7 +359,7 @@ public class TubiQualityDialogView extends LinearLayout
         this.trackInfo = trackInfo;
     }
 
-    private void setOverride(MappingTrackSelector.SelectionOverride override) {
+    private void setOverride(DefaultTrackSelector.SelectionOverride override) {
         this.override = override;
     }
 

@@ -15,6 +15,7 @@ import com.tubitv.media.fsm.state_machine.FsmPlayer;
 import com.tubitv.media.models.AdMediaModel;
 import com.tubitv.media.models.MediaModel;
 import com.tubitv.media.models.VpaidClient;
+import com.tubitv.media.utilities.PlayerDeviceUtils;
 import com.tubitv.media.views.TubiExoPlayerView;
 
 /**
@@ -78,6 +79,12 @@ public class AdPlayingState extends BaseState {
 
             moviePlayer.setPlayWhenReady(false);
 
+            // We need save movie play position before play ads for single player instance case
+            if (PlayerDeviceUtils.useSinglePlayer()) {
+                long resumePosition = moviePlayer.isCurrentWindowSeekable() ?
+                        Math.max(0, moviePlayer.getCurrentPosition()) : C.TIME_UNSET;
+                controller.setMovieResumeInfo(moviePlayer.getCurrentWindowIndex(), resumePosition);
+            }
             //prepare the moviePlayer with data source and set it play
 
             boolean haveResumePosition = controller.getAdResumePosition() != C.TIME_UNSET;

@@ -82,7 +82,7 @@ public class ChromeCastActivity extends FragmentActivity implements SessionManag
         }
     }
 
-    protected boolean isChromeCastEnable() {
+    public boolean isChromeCastEnable() {
         return isChromeCastEnable;
     }
 

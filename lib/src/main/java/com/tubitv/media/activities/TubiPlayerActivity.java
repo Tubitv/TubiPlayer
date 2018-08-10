@@ -37,6 +37,7 @@ import com.tubitv.media.helpers.TrackSelectionHelper;
 import com.tubitv.media.interfaces.TubiPlaybackInterface;
 import com.tubitv.media.models.MediaModel;
 import com.tubitv.media.utilities.EventLogger;
+import com.tubitv.media.utilities.PlayerDeviceUtils;
 import com.tubitv.media.utilities.Utils;
 import com.tubitv.media.views.TubiExoPlayerView;
 import com.tubitv.media.views.TubiPlayerControlView;
@@ -179,7 +180,7 @@ public abstract class TubiPlayerActivity extends LifeCycleActivity
         mMoviePlayer.setMetadataOutput(mEventLogger);
 
         mTubiPlayerView.setPlayer(mMoviePlayer, this);
-        mTubiPlayerView.setMediaModel(mediaModel, true);
+        mTubiPlayerView.setMediaModel(mediaModel, !PlayerDeviceUtils.isTVDevice(this));
         mTubiPlayerView.setTrackSelectionHelper(mTrackSelectionHelper);
     }
 

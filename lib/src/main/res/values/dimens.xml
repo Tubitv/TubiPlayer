@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="player_dimen_type">base</string>
+
     <dimen name="view_tubi_controller_margin">32dp</dimen>
-    <dimen name="view_tubi_controller_text_size">13sp</dimen>
+    <dimen name="view_tubi_controller_text_size">13dp</dimen>
     <dimen name="view_tubi_controller_play_toggle_size">35dp</dimen>
     <dimen name="view_tubi_controller_play_padding">5dp</dimen>
     <dimen name="view_tubi_controller_seek_bar_layout_margin_left">10dp</dimen>
@@ -23,7 +25,7 @@
     <dimen name="view_tubi_controller_video_button_height">26.4dp</dimen>
     <dimen name="tubi_tv_scrubber_outside_diameter">28dp</dimen>
     <dimen name="tubi_tv_scrubber_inside_diameter">18dp</dimen>
-    <dimen name="view_tubi_exo_player_subtitle_text_size">16sp</dimen>
-    <dimen name="view_tubi_ad_learn_more_text_size">16sp</dimen>
+    <dimen name="view_tubi_exo_player_subtitle_text_size">16dp</dimen>
+    <dimen name="view_tubi_ad_learn_more_text_size">16dp</dimen>
 
 </resources>

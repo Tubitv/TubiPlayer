@@ -8,9 +8,11 @@ import android.content.res.TypedArray;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.os.SystemClock;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -25,6 +27,7 @@ import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.ExoPlaybackException;
 import com.google.android.exoplayer2.ExoPlayer;
 import com.google.android.exoplayer2.PlaybackParameters;
+import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.Timeline;
 import com.google.android.exoplayer2.metadata.Metadata;
@@ -43,10 +46,14 @@ import com.google.android.exoplayer2.util.Assertions;
 import com.google.android.exoplayer2.util.Util;
 import com.squareup.picasso.Picasso;
 import com.tubitv.media.R;
+import com.tubitv.media.bindings.TubiObservable;
 import com.tubitv.media.helpers.TrackSelectionHelper;
 import com.tubitv.media.interfaces.TubiPlaybackControlInterface;
 import com.tubitv.media.interfaces.TubiPlaybackInterface;
 import com.tubitv.media.models.MediaModel;
+import com.tubitv.media.utilities.ExoPlayerLogger;
+import com.tubitv.media.utilities.PlayerDeviceUtils;
+import com.tubitv.media.utilities.SeekCalculator;
 import com.tubitv.ui.VaudTextView;
 import com.tubitv.ui.VaudType;
 import java.util.List;
@@ -57,9 +64,12 @@ import java.util.List;
 @TargetApi(16)
 public class TubiExoPlayerView extends FrameLayout implements TubiPlaybackControlInterface {
 
+    private static final String TAG = TubiExoPlayerView.class.getSimpleName();
+
     private static final int SURFACE_TYPE_NONE = 0;
     private static final int SURFACE_TYPE_SURFACE_VIEW = 1;
     private static final int SURFACE_TYPE_TEXTURE_VIEW = 2;
+    private static final float TV_SUBTITLES_TEXT_SIZE = 24f; // In dp
 
     private final AspectRatioFrameLayout contentFrame;
     private final View shutterView;
@@ -129,19 +139,19 @@ public class TubiExoPlayerView extends FrameLayout implements TubiPlaybackContro
         boolean controllerHideOnTouch = true;
         if (attrs != null) {
             TypedArray a = context.getTheme().obtainStyledAttributes(attrs,
-                    R.styleable.SimpleExoPlayerView, 0, 0);
+                    R.styleable.PlayerView, 0, 0);
             try {
-                playerLayoutId = a.getResourceId(R.styleable.SimpleExoPlayerView_player_layout_id,
+                playerLayoutId = a.getResourceId(R.styleable.PlayerView_player_layout_id,
                         playerLayoutId);
-                useArtwork = a.getBoolean(R.styleable.SimpleExoPlayerView_use_artwork, useArtwork);
-                defaultArtworkId = a.getResourceId(R.styleable.SimpleExoPlayerView_default_artwork,
+                useArtwork = a.getBoolean(R.styleable.PlayerView_use_artwork, useArtwork);
+                defaultArtworkId = a.getResourceId(R.styleable.PlayerView_default_artwork,
                         defaultArtworkId);
-                useController = a.getBoolean(R.styleable.SimpleExoPlayerView_use_controller, useController);
-                surfaceType = a.getInt(R.styleable.SimpleExoPlayerView_surface_type, surfaceType);
-                resizeMode = a.getInt(R.styleable.SimpleExoPlayerView_resize_mode, resizeMode);
-                controllerShowTimeoutMs = a.getInt(R.styleable.SimpleExoPlayerView_show_timeout,
+                useController = a.getBoolean(R.styleable.PlayerView_use_controller, useController);
+                surfaceType = a.getInt(R.styleable.PlayerView_surface_type, surfaceType);
+                resizeMode = a.getInt(R.styleable.PlayerView_resize_mode, resizeMode);
+                controllerShowTimeoutMs = a.getInt(R.styleable.PlayerView_show_timeout,
                         controllerShowTimeoutMs);
-                controllerHideOnTouch = a.getBoolean(R.styleable.SimpleExoPlayerView_hide_on_touch,
+                controllerHideOnTouch = a.getBoolean(R.styleable.PlayerView_hide_on_touch,
                         controllerHideOnTouch);
             } finally {
                 a.recycle();
@@ -193,8 +203,13 @@ public class TubiExoPlayerView extends FrameLayout implements TubiPlaybackContro
                     CaptionStyleCompat.EDGE_TYPE_NONE,
                     Color.WHITE,
                     VaudTextView.getFont(context, VaudType.VAUD_REGULAR.getAssetFileName())));
-            subtitleView.setFixedTextSize(TypedValue.COMPLEX_UNIT_PX,
-                    getResources().getDimension(R.dimen.view_tubi_exo_player_subtitle_text_size));
+
+            float subtitleTextSize = PlayerDeviceUtils.isTVDevice(this.getContext()) ?
+                    TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, TV_SUBTITLES_TEXT_SIZE,
+                            getResources().getDisplayMetrics())
+                    : getResources().getDimension(R.dimen.view_tubi_exo_player_subtitle_text_size);
+
+            subtitleView.setFixedTextSize(TypedValue.COMPLEX_UNIT_PX, subtitleTextSize);
             subtitleView.setApplyEmbeddedStyles(false);
             subtitleView.setVisibility(View.INVISIBLE);
         }
@@ -551,12 +566,224 @@ public class TubiExoPlayerView extends FrameLayout implements TubiPlaybackContro
         if (!useController || player == null || ev.getActionMasked() != MotionEvent.ACTION_DOWN) {
             return false;
         }
-        if (!controller.isVisible()) {
-            maybeShowController(true);
-        } else if (controllerHideOnTouch) {
-            controller.hide();
-        }
+        toggleControllerVisiblity();
         return true;
+    }
+
+    private Long mHoldKeyStartTime = null; // Track how long the key has been holden
+
+    @Override
+    public boolean onKeyDown(final int keyCode, final KeyEvent event) {
+        if (controller.isAdPlaying()) {
+            return false;
+        }
+
+        if (mHoldKeyStartTime == null) {
+            mHoldKeyStartTime = SystemClock.elapsedRealtime();
+        }
+
+        switch (keyCode) {
+            case KeyEvent.KEYCODE_DPAD_RIGHT:
+                handleSeekKeyHold(mHoldKeyStartTime, SeekCalculator.FORWARD_DIRECTION);
+                break;
+            case KeyEvent.KEYCODE_DPAD_LEFT:
+                handleSeekKeyHold(mHoldKeyStartTime, SeekCalculator.REWIND_DIRECTION);
+                break;
+            case KeyEvent.KEYCODE_MEDIA_STEP_FORWARD:
+            case KeyEvent.KEYCODE_MEDIA_FAST_FORWARD:
+                controller.cancelOptionsState();
+                handleSeekKeyHold(mHoldKeyStartTime, SeekCalculator.FORWARD_DIRECTION);
+                break;
+            case KeyEvent.KEYCODE_MEDIA_STEP_BACKWARD:
+            case KeyEvent.KEYCODE_MEDIA_REWIND:
+                controller.cancelOptionsState();
+                handleSeekKeyHold(mHoldKeyStartTime, SeekCalculator.REWIND_DIRECTION);
+                break;
+        }
+
+        return super.onKeyDown(keyCode, event);
+    }
+
+    @Override
+    public boolean onKeyUp(final int keyCode, final KeyEvent event) {
+        Log.d(TAG, "onKeyUp  keyCode = " + keyCode);
+
+        mHoldKeyStartTime = null;
+
+        if (!useController || player == null) {
+            return false;
+        }
+
+        switch (keyCode) {
+            case KeyEvent.KEYCODE_DPAD_UP: // Up should always show the control, focus on caption when it's not ads
+
+                if (controller.isAdPlaying()) {
+                    maybeShowController(true);
+                    return false;
+                }
+
+                if (controller.isDuringCustomSeek()) {
+                    handleCancelCustomSeek();
+                    return false;
+                }
+
+                if (controller.isVisible() && !controller.getCaptionButton().isFocused()) {
+                    controller.setState(TubiObservable.OPTIONS_CONTROL_STATE);
+                    controller.getCaptionButton().setFocusable(true);
+                    controller.getCaptionButton().requestFocus();
+                    controller.getPlayButton().setFocusable(false);
+                } else {
+                    controller.focusOnPlayButton();
+                }
+
+                maybeShowController(true);
+
+                return true;
+
+            case KeyEvent.KEYCODE_DPAD_DOWN:
+                if (controller.isVisible()) {
+
+                    switch (controller.getState()) {
+                        case TubiObservable.OPTIONS_CONTROL_STATE:
+                            controller.setState(TubiObservable.NORMAL_CONTROL_STATE);
+                            controller.focusOnPlayButton();
+                            maybeShowController(true);
+                            break;
+                        case TubiObservable.CUSTOM_SEEK_CONTROL_STATE:
+                        case TubiObservable.EDIT_CUSTOM_SEEK_CONTROL_STATE:
+                            handleCancelCustomSeek();
+                            break;
+                        default:
+                            toggleControllerVisiblity();
+                            break;
+                    }
+
+                } else {
+                    toggleControllerVisiblity();
+                    controller.getPlayButton().setFocusable(true);
+                    controller.getPlayButton().requestFocus();
+                }
+
+                return true;
+            case KeyEvent.KEYCODE_DPAD_RIGHT:
+            case KeyEvent.KEYCODE_MEDIA_STEP_FORWARD:
+            case KeyEvent.KEYCODE_MEDIA_FAST_FORWARD:
+                handleSeekKeyUp(SeekCalculator.FORWARD_DIRECTION);
+                maybeShowController(true);
+                return true;
+            case KeyEvent.KEYCODE_DPAD_LEFT:
+            case KeyEvent.KEYCODE_MEDIA_STEP_BACKWARD:
+            case KeyEvent.KEYCODE_MEDIA_REWIND:
+                handleSeekKeyUp(SeekCalculator.REWIND_DIRECTION);
+                maybeShowController(true);
+                return true;
+
+            case KeyEvent.KEYCODE_DPAD_CENTER:
+            case KeyEvent.KEYCODE_ENTER:
+            case KeyEvent.KEYCODE_SPACE:
+            case KeyEvent.KEYCODE_NUMPAD_ENTER:
+            case KeyEvent.KEYCODE_MEDIA_PLAY_PAUSE:
+            case KeyEvent.KEYCODE_MEDIA_PLAY:
+            case KeyEvent.KEYCODE_MEDIA_PAUSE:
+                if (controller.isDuringCustomSeek()) {
+                    controller.confirmCustomSeek();
+                    if (!controller.isPlayerPlaying()) {
+                        controller.togglePlay();
+                    }
+                } else {
+                    controller.togglePlay();
+                }
+
+                if (!controller.isPlayerPlaying()) {
+                    controller.focusOnPlayButton();
+                    maybeShowController(true);
+                }
+
+                return true;
+            case KeyEvent.KEYCODE_BACK:
+                if (controller.isDuringCustomSeek()) {
+                    controller.cancelCustomSeek();
+                    if (!controller.isPlayerPlaying()) {
+                        controller.togglePlay();
+                    }
+                    return true;
+
+                } else if (controller.isVisible()) {
+                    if (controller.getState() == TubiObservable.OPTIONS_CONTROL_STATE) {
+                        controller.setState(TubiObservable.NORMAL_CONTROL_STATE);
+                        controller.focusOnPlayButton();
+                    }
+                    toggleControllerVisiblity();
+                    return true;
+                } else {
+                    return false;
+                }
+
+            default:
+                return false;
+        }
+    }
+
+    private void handleCancelCustomSeek() {
+        controller.cancelCustomSeek();
+        if (!controller.isPlayerPlaying()) {
+            controller.togglePlay();
+        }
+        toggleControllerVisiblity();
+    }
+
+    private void handleSeekKeyUp(final int direction) {
+
+        if (controller.isAdPlaying()) { // No seek when ad is playing
+            return;
+        }
+
+        switch (controller.getState()) {
+            case TubiObservable.NORMAL_CONTROL_STATE:
+                if (direction == SeekCalculator.FORWARD_DIRECTION) {
+                    controller.forward();
+                } else {
+                    controller.rewind();
+                }
+                break;
+            case TubiObservable.CUSTOM_SEEK_CONTROL_STATE:
+                controller.setState(TubiObservable.EDIT_CUSTOM_SEEK_CONTROL_STATE);
+                break;
+
+            case TubiObservable.EDIT_CUSTOM_SEEK_CONTROL_STATE:
+                controller.updateUIForCustomSeek(
+                        direction * TubiObservable.DEFAULT_FAST_FORWARD_MS);
+                break;
+            case TubiObservable.OPTIONS_CONTROL_STATE:
+                // Do nothing
+                break;
+            default:
+                ExoPlayerLogger.d(TAG, "unhandled player control state = " + controller.getState());
+                break;
+
+        }
+    }
+
+    private void handleSeekKeyHold(final long startTime, final int direction) {
+        if (controller.getCaptionButton().isFocused()) { // Don't handle custom seek if caption is focused
+            return;
+        }
+
+        final long currentTime = SystemClock.elapsedRealtime();
+
+        final long seekDelta = direction * SeekCalculator.getSeekRate(startTime, currentTime);
+
+        controller.updateUIForCustomSeek(seekDelta, true);
+
+        if (seekDelta != 0) {
+            if (!controller.isVisible()) {
+                maybeShowController(true);
+            }
+
+            if (controller.isPlayerPlaying()) {
+                controller.togglePlay();
+            }
+        }
     }
 
     @Override
@@ -568,13 +795,22 @@ public class TubiExoPlayerView extends FrameLayout implements TubiPlaybackContro
         return true;
     }
 
+    private void toggleControllerVisiblity() {
+        if (!controller.isVisible()) {
+            maybeShowController(true);
+        } else if (controllerHideOnTouch) {
+            controller.hide();
+        }
+    }
+
     private void maybeShowController(boolean isForced) {
         if (!useController || player == null) {
             return;
         }
         int playbackState = player.getPlaybackState();
         boolean showIndefinitely = playbackState == ExoPlayer.STATE_IDLE
-                || playbackState == ExoPlayer.STATE_ENDED || !player.getPlayWhenReady();
+                || playbackState == ExoPlayer.STATE_ENDED
+                || !player.getPlayWhenReady();
         boolean wasShowingIndefinitely = controller.isVisible() && controller.getShowTimeoutMs() <= 0;
         controller.setShowTimeoutMs(showIndefinitely ? 0 : controllerShowTimeoutMs);
         if (isForced || showIndefinitely || wasShowingIndefinitely) {
@@ -669,6 +905,10 @@ public class TubiExoPlayerView extends FrameLayout implements TubiPlaybackContro
 
     public void setMediaModel(@NonNull MediaModel mediaModel, boolean forceShowArtView) {
         this.mediaModel = mediaModel;
+
+        // Update media model for TV
+        this.mediaModel.updateModelForTV(PlayerDeviceUtils.isTVDevice(getContext()));
+
         if (!mediaModel.isAd() && forceShowArtView) {
             artworkView.setVisibility(View.VISIBLE);
             Picasso.with(getContext()).load(mediaModel.getArtworkUrl()).into(artworkView);
@@ -769,12 +1009,22 @@ public class TubiExoPlayerView extends FrameLayout implements TubiPlaybackContro
         }
 
         @Override
+        public void onRepeatModeChanged(final int repeatMode) {
+
+        }
+
+        @Override
+        public void onShuffleModeEnabledChanged(final boolean shuffleModeEnabled) {
+
+        }
+
+        @Override
         public void onPlayerError(ExoPlaybackException e) {
             // Do nothing.
         }
 
         @Override
-        public void onPositionDiscontinuity() {
+        public void onPositionDiscontinuity(@Player.DiscontinuityReason int reason) {
             // Do nothing.
         }
 
@@ -784,7 +1034,12 @@ public class TubiExoPlayerView extends FrameLayout implements TubiPlaybackContro
         }
 
         @Override
-        public void onTimelineChanged(Timeline timeline, Object manifest) {
+        public void onSeekProcessed() {
+
+        }
+
+        @Override
+        public void onTimelineChanged(Timeline timeline, Object manifest, @Player.DiscontinuityReason int reason) {
             // Do nothing.
         }
 

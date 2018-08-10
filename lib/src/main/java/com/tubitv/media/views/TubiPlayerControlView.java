@@ -20,6 +20,7 @@ import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.gms.cast.framework.CastButtonFactory;
 import com.tubitv.casting.GoogleServicesHelper;
 import com.tubitv.media.R;
+import com.tubitv.media.activities.ChromeCastActivity;
 import com.tubitv.media.bindings.TubiObservable;
 import com.tubitv.media.databinding.ViewTubiPlayerControlBinding;
 import com.tubitv.media.interfaces.TrackSelectionHelperInterface;
@@ -27,6 +28,7 @@ import com.tubitv.media.interfaces.TubiPlaybackControlInterface;
 import com.tubitv.media.interfaces.TubiPlaybackInterface;
 import com.tubitv.media.models.MediaModel;
 import com.tubitv.media.utilities.ExoPlayerLogger;
+import com.tubitv.media.utilities.SeekCalculator;
 import com.tubitv.media.utilities.Utils;
 
 /**
@@ -37,6 +39,7 @@ public class TubiPlayerControlView extends ConstraintLayout implements TrackSele
      * The default time to hide the this view if the user is not interacting with it
      */
     private static final int DEFAULT_HIDE_TIMEOUT_MS = 5000;
+    private static final int FAST_SEEK_HIDE_DELAY = 800;
 
     private ViewTubiPlayerControlBinding mBinding;
     private TubiPlayerControlView.VisibilityListener visibilityListener;
@@ -59,9 +62,21 @@ public class TubiPlayerControlView extends ConstraintLayout implements TrackSele
     private final Runnable hideAction = new Runnable() {
         @Override
         public void run() {
-            hide();
+            if (!isDuringCustomSeek() && tubiObservable.isPlaying()) { // only auto hide when it's not in seek mode
+                hide();
+
+                // After hidden, we wanna focus on play button
+                focusOnPlayButton();
+            }
         }
     };
+
+    private final Runnable mHideFastSeekIndicator = () -> {
+        if (mBinding != null) {
+            mBinding.faskSeekIndicator.setVisibility(GONE);
+        }
+    };
+
     /**
      * The media model the player is initialized with
      */
@@ -148,6 +163,7 @@ public class TubiPlayerControlView extends ConstraintLayout implements TrackSele
         isAttachedToWindow = false;
         removeCallbacks(hideAction);
         removeCallbacks(hideSystemUI);
+        removeCallbacks(mHideFastSeekIndicator);
     }
 
     @Override
@@ -164,39 +180,6 @@ public class TubiPlayerControlView extends ConstraintLayout implements TrackSele
         tubiObservable.setQualityEnabled(trackSelected);
     }
 
-    private void initLayout() {
-        LayoutInflater inflater = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        mBinding = DataBindingUtil.inflate(inflater, R.layout.view_tubi_player_control, this, true);
-        setDescendantFocusability(FOCUS_AFTER_DESCENDANTS);
-        mBinding.setController(this);
-
-        initCast();
-    }
-
-    private void initCast() {
-
-        if (GoogleServicesHelper.available(getContext())) {
-            try {
-                MediaRouteButton mMediaRouteButton = (MediaRouteButton) findViewById(
-                        R.id.view_tubi_controller_chromecast_ib);
-                CastButtonFactory.setUpMediaRouteButton(getContext(), mMediaRouteButton);
-
-                mMediaRouteButton.setOnTouchListener(new OnTouchListener() {
-                    @Override
-                    public boolean onTouch(View v, MotionEvent event) {
-                        removeCallbacks(hideSystemUI);
-                        postDelayed(hideSystemUI, 1000);
-                        return false;
-                    }
-                });
-                mMediaRouteButton.setVisibility(VISIBLE);
-
-            } catch (Exception exception) {
-                ExoPlayerLogger.e("ChromeCast", "Cast media route button failed to initialize");
-            }
-        }
-    }
-
     public void setHideTimeoutMs(int hideTimeoutMs) {
         this.hideAtMs = hideTimeoutMs;
     }
@@ -211,6 +194,48 @@ public class TubiPlayerControlView extends ConstraintLayout implements TrackSele
             mBinding.viewTubiControllerQualityIb.clearClickListeners();
             mBinding.viewTubiControllerPlayToggleIb.clearClickListeners();
             mBinding.setPlayMedia(tubiObservable);
+
+            // Make sure caption button is not focusable by default
+            mBinding.viewTubiControllerSubtitlesIb.setFocusable(false);
+            // Setup callbacks for tubiObservable
+            tubiObservable.setOnEnterCustomSeek(() -> mBinding.viewTubiControllerSubtitlesIb.setVisibility(INVISIBLE));
+            tubiObservable.setOnBackFromCustomSeek(() -> mBinding.viewTubiControllerSubtitlesIb.setVisibility(VISIBLE));
+            tubiObservable.setOnControlStateChange(() -> {
+                switch (tubiObservable.getState()) {
+                    case TubiObservable.NORMAL_CONTROL_STATE:
+                        mBinding.seekSpeedIndicator.setVisibility(GONE);
+                        break;
+                    case TubiObservable.CUSTOM_SEEK_CONTROL_STATE:
+                        // By default clear image
+                        mBinding.seekSpeedIndicator.setImageResource(android.R.color.transparent);
+                        mBinding.seekSpeedIndicator.setVisibility(VISIBLE);
+                        break;
+                    case TubiObservable.EDIT_CUSTOM_SEEK_CONTROL_STATE:
+                        mBinding.seekSpeedIndicator.setVisibility(GONE);
+                        break;
+                }
+            });
+            tubiObservable.setOnCustomSeek(speed -> {
+                if (speed > 0) { // Forward
+
+                    if (speed == SeekCalculator.SEEK_INTERVAL_SHORT) {
+                        mBinding.seekSpeedIndicator.setImageResource(R.drawable.ff_1_normal);
+                    } else if (speed == SeekCalculator.SEEK_INTERVAL_RERGUAR) {
+                        mBinding.seekSpeedIndicator.setImageResource(R.drawable.ff_2_normal);
+                    } else {
+                        mBinding.seekSpeedIndicator.setImageResource(R.drawable.ff_3_normal);
+                    }
+
+                } else { // Rewind
+                    if (speed == SeekCalculator.REWIND_DIRECTION * SeekCalculator.SEEK_INTERVAL_SHORT) {
+                        mBinding.seekSpeedIndicator.setImageResource(R.drawable.rw_1_normal);
+                    } else if (speed == SeekCalculator.REWIND_DIRECTION * SeekCalculator.SEEK_INTERVAL_RERGUAR) {
+                        mBinding.seekSpeedIndicator.setImageResource(R.drawable.rw_2_normal);
+                    } else {
+                        mBinding.seekSpeedIndicator.setImageResource(R.drawable.rw_3_normal);
+                    }
+                }
+            });
         }
     }
 
@@ -277,6 +302,128 @@ public class TubiPlayerControlView extends ConstraintLayout implements TrackSele
 
     public void setVisibilityListener(VisibilityListener visibilityListener) {
         this.visibilityListener = visibilityListener;
+    }
+
+    public void togglePlay() {
+        tubiObservable.togglePlay();
+    }
+
+    public void forward() {
+        showFastSeekIndicator(SeekCalculator.FORWARD_DIRECTION);
+        tubiObservable.seekBy(tubiObservable.skipBy);
+    }
+
+    public void rewind() {
+        showFastSeekIndicator(SeekCalculator.REWIND_DIRECTION);
+        tubiObservable.seekBy(SeekCalculator.REWIND_DIRECTION * tubiObservable.skipBy);
+    }
+
+    public void updateUIForCustomSeek(final long seekDelta) {
+        tubiObservable.updateUIForCustomSeek(seekDelta);
+    }
+
+    public void updateUIForCustomSeek(final long seekDelta, final boolean fromLongPress) {
+        tubiObservable.updateUIForCustomSeek(seekDelta, fromLongPress);
+    }
+
+    public boolean isDuringCustomSeek() {
+        return tubiObservable.isDuringCustomSeek();
+    }
+
+    public void confirmCustomSeek() {
+        tubiObservable.confirmCustomSeek();
+    }
+
+    public void cancelCustomSeek() {
+        tubiObservable.cancelCustomSeek();
+    }
+
+    public boolean isPlayerPlaying() {
+        return tubiObservable.isPlaying();
+    }
+
+    public int getState() {
+        return tubiObservable.getState();
+    }
+
+    public void setState(int state) {
+        tubiObservable.setState(state);
+    }
+
+    public StateImageButton getPlayButton() {
+        return mBinding.viewTubiControllerPlayToggleIb;
+    }
+
+    public void focusOnPlayButton() {
+        getCaptionButton().setFocusable(false);
+        getPlayButton().setFocusable(true);
+        getPlayButton().requestFocus();
+    }
+
+    public StateImageButton getCaptionButton() {
+        return mBinding.viewTubiControllerSubtitlesIb;
+    }
+
+    public boolean isAdPlaying() {
+        return tubiObservable.isAdPlaying();
+    }
+
+    public void cancelOptionsState() {
+        if (getState() == TubiObservable.OPTIONS_CONTROL_STATE) {
+            setState(TubiObservable.NORMAL_CONTROL_STATE);
+            focusOnPlayButton();
+        }
+    }
+
+    private void showFastSeekIndicator(final int direction) {
+        if (!isAttachedToWindow) {
+            return;
+        }
+
+        int imageResId = direction == SeekCalculator.FORWARD_DIRECTION ?
+                R.drawable.ff_15 : R.drawable.rw_15;
+
+        mBinding.faskSeekIndicator.setImageResource(imageResId);
+        mBinding.faskSeekIndicator.setVisibility(VISIBLE);
+        removeCallbacks(mHideFastSeekIndicator);
+        postDelayed(mHideFastSeekIndicator, FAST_SEEK_HIDE_DELAY);
+    }
+
+    private void initLayout() {
+        LayoutInflater inflater = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+
+        // TODO temp Android TV change: view_tubi_player_control is swapped by precompile script
+        mBinding = DataBindingUtil.inflate(inflater, R.layout.view_tubi_player_control, this, true);
+        setDescendantFocusability(FOCUS_AFTER_DESCENDANTS);
+        mBinding.setController(this);
+
+        initCast();
+    }
+
+    private void initCast() {
+
+        if (activity instanceof ChromeCastActivity
+                && ((ChromeCastActivity) activity).isChromeCastEnable()
+                && GoogleServicesHelper.available(getContext())) {
+            try {
+                MediaRouteButton mMediaRouteButton = (MediaRouteButton) findViewById(
+                        R.id.view_tubi_controller_chromecast_ib);
+                CastButtonFactory.setUpMediaRouteButton(getContext(), mMediaRouteButton);
+
+                mMediaRouteButton.setOnTouchListener(new OnTouchListener() {
+                    @Override
+                    public boolean onTouch(View v, MotionEvent event) {
+                        removeCallbacks(hideSystemUI);
+                        postDelayed(hideSystemUI, 1000);
+                        return false;
+                    }
+                });
+                mMediaRouteButton.setVisibility(VISIBLE);
+
+            } catch (Exception exception) {
+                ExoPlayerLogger.e("ChromeCast", "Cast media route button failed to initialize");
+            }
+        }
     }
 
     /**

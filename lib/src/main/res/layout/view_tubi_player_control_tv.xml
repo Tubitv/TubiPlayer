@@ -30,7 +30,7 @@
             android:id="@+id/controller_panel"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@color/tubi_tv_player_controls_overlay"
+            android:background="@drawable/top_bottom_darker_gradient"
             android:orientation="vertical">
 
 
@@ -72,8 +72,8 @@
                     android:tag="@{TubiObservable.TUBI_SUBTITLES_TAG}"
                     android:visibility="@{playMedia.subtitlesExist &amp;&amp; !playMedia.adPlaying? View.VISIBLE : View.GONE}"
                     app:onClickStateImage="@{playMedia}"
-                    app:state_checked="@drawable/tubi_tv_drawable_subtitles_on_selector"
-                    app:state_not_checked="@drawable/tubi_tv_drawable_subtitles_off_selector" />
+                    app:state_checked="@drawable/tubi_tv_drawable_subtitles_on_selector_tv"
+                    app:state_not_checked="@drawable/tubi_tv_drawable_subtitles_off_selector_tv" />
 
                 <com.tubitv.media.views.StateImageButton
                     android:id="@+id/view_tubi_controller_quality_ib"
@@ -83,6 +83,7 @@
                     android:layout_marginRight="16dp"
                     android:background="@drawable/tubi_tv_drawable_quality_off_selector"
                     android:tag="@{TubiObservable.TUBI_QUALITY_TAG}"
+                    android:visibility="gone"
                     app:onClickStateImage="@{playMedia}"
                     app:state_checked="@drawable/tubi_tv_drawable_quality_on_selector"
                     app:state_not_checked="@drawable/tubi_tv_drawable_quality_off_selector"
@@ -101,7 +102,6 @@
 
             </LinearLayout>
 
-
             <include
                 android:id="@+id/view_tubi_controller_ad_description"
                 layout="@layout/view_tubi_ad_learn_more"
@@ -113,7 +113,6 @@
                 app:layout_constraintRight_toLeftOf="@+id/tubi_tv_controller_guideline_right"
                 app:layout_constraintTop_toBottomOf="@+id/view_tubi_controller_title"
                 app:playMedia="@{playMedia}" />
-
 
             <ImageButton
                 android:id="@+id/view_tubi_controller_rewind_ib"
@@ -127,33 +126,26 @@
                 android:onClick="@{() -> playMedia.seekBy(-1 * playMedia.skipBy)}"
                 android:scaleType="fitCenter"
                 android:tag="view_tubi_controller_rewind_ib"
-                android:visibility="@{(!playMedia.adPlaying &amp;&amp; (playMedia.playbackState == ExoPlayer.STATE_READY || playMedia.draggingSeekBar)) ? View.VISIBLE : View.INVISIBLE}"
-                app:layout_constraintBottom_toBottomOf="@+id/view_tubi_controller_play_toggle_ib"
-                app:layout_constraintRight_toLeftOf="@+id/view_tubi_controller_play_toggle_ib"
-                app:layout_constraintTop_toTopOf="@+id/view_tubi_controller_play_toggle_ib" />
+                android:visibility="gone" />
 
             <com.tubitv.media.views.StateImageButton
                 android:id="@+id/view_tubi_controller_play_toggle_ib"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="8dp"
-                android:layout_marginEnd="8dp"
+                android:layout_marginBottom="10dp"
                 android:layout_marginLeft="8dp"
                 android:layout_marginRight="8dp"
-                android:layout_marginStart="8dp"
                 android:layout_marginTop="8dp"
                 android:scaleType="fitCenter"
                 android:tag="@{TubiObservable.TUBI_PLAY_TOGGLE_TAG}"
-                android:visibility="@{playMedia.playbackState == ExoPlayer.STATE_READY ? View.VISIBLE : View.INVISIBLE}"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintRight_toRightOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintLeft_toLeftOf="@+id/tubi_tv_controller_guideline_left"
+                app:layout_constraintRight_toLeftOf="@+id/view_tubi_controller_elapsed_time"
                 app:onClickStateImage="@{playMedia}"
-                app:state_checked="@drawable/tubi_tv_drawable_pause_selector"
-                app:state_not_checked="@drawable/tubi_tv_drawable_play_selector"
+                app:state_checked="@drawable/tubi_tv_drawable_pause_selector_tv"
+                app:state_not_checked="@drawable/tubi_tv_drawable_play_selector_tv"
                 app:tubi_state_set_checked="@{playMedia.isPlaying}"
-                tools:background="@drawable/tubi_tv_drawable_play_selector" />
+                tools:background="@drawable/tubi_tv_drawable_play_selector_tv" />
 
             <ImageButton
                 android:id="@+id/view_tubi_controller_forward_ib"
@@ -165,17 +157,14 @@
                 android:onClick="@{() -> playMedia.seekBy(playMedia.skipBy)}"
                 android:scaleType="fitCenter"
                 android:tag="view_tubi_controller_forward_ib"
-                android:visibility="@{!playMedia.adPlaying &amp;&amp; ((playMedia.playbackState == ExoPlayer.STATE_READY || playMedia.draggingSeekBar)) ? View.VISIBLE : View.INVISIBLE}"
-                app:layout_constraintBottom_toBottomOf="@+id/view_tubi_controller_play_toggle_ib"
-                app:layout_constraintLeft_toRightOf="@+id/view_tubi_controller_play_toggle_ib"
-                app:layout_constraintTop_toTopOf="@+id/view_tubi_controller_play_toggle_ib" />
+                android:visibility="gone" />
 
             <com.tubitv.ui.VaudTextView
                 android:id="@+id/view_tubi_controller_elapsed_time"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="8dp"
-                android:layout_marginEnd="8dp"
+                android:layout_marginLeft="68dp"
                 android:layout_marginRight="8dp"
                 android:layout_marginTop="8dp"
                 android:includeFontPadding="false"
@@ -199,10 +188,10 @@
                 android:layout_marginLeft="8dp"
                 android:layout_marginRight="8dp"
                 android:layout_marginStart="8dp"
+                android:focusable="false"
                 android:max="@{playMedia.progressBarMax}"
                 android:maxHeight="2dp"
                 android:minHeight="2dp"
-                android:onProgressChanged="@{playMedia::onProgressChanged}"
                 android:onStartTrackingTouch="@{playMedia::onStartTrackingTouch}"
                 android:onStopTrackingTouch="@{playMedia::onStopTrackingTouch}"
                 android:onTouch="@{playMedia.adPlaying ? playMedia::onTouch : null}"
@@ -272,7 +261,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                app:layout_constraintGuide_begin="84dp"
+                app:layout_constraintGuide_begin="144dp"
                 tools:layout_editor_absoluteX="84dp"
                 tools:layout_editor_absoluteY="75dp" />
 
@@ -285,19 +274,25 @@
                 tools:layout_editor_absoluteX="508dp"
                 tools:layout_editor_absoluteY="75dp" />
 
-            <!--Unused for mobile-->
             <ImageView
                 android:id="@+id/seek_speed_indicator"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:visibility="gone" />
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                android:visibility="gone"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
-            <!--Unused for mobile-->
             <ImageView
                 android:id="@+id/fask_seek_indicator"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:visibility="gone" />
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:layout_marginBottom="80dp"
+                android:layout_marginLeft="4dp"
+                android:visibility="gone"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintLeft_toLeftOf="@+id/view_tubi_controller_play_toggle_ib" />
 
         </android.support.constraint.ConstraintLayout>
 
