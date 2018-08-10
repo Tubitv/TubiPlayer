@@ -4,7 +4,7 @@ import android.support.annotation.NonNull;
 import android.view.View;
 import android.webkit.WebView;
 import com.google.android.exoplayer2.C;
-import com.google.android.exoplayer2.ExoPlayer;
+import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.tubitv.media.controller.PlayerAdLogicController;
 import com.tubitv.media.controller.PlayerUIController;
@@ -15,6 +15,7 @@ import com.tubitv.media.fsm.concrete.factory.StateFactory;
 import com.tubitv.media.fsm.state_machine.FsmPlayer;
 import com.tubitv.media.models.MediaModel;
 import com.tubitv.media.models.VpaidClient;
+import com.tubitv.media.utilities.PlayerDeviceUtils;
 import com.tubitv.media.views.TubiExoPlayerView;
 
 /**
@@ -65,7 +66,9 @@ public class MoviePlayingState extends BaseState {
         //prepare the moviePlayer with data source and set it play
 
         boolean haveResumePosition = controller.getMovieResumePosition() != C.TIME_UNSET;
-        if (moviePlayer.getPlaybackState() == ExoPlayer.STATE_IDLE) {
+
+        if (PlayerDeviceUtils.useSinglePlayer()
+                || moviePlayer.getPlaybackState() == Player.STATE_IDLE) {
             moviePlayer.prepare(movieMedia.getMediaSource(), !haveResumePosition, false);
         }
 

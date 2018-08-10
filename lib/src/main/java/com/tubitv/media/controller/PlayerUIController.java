@@ -5,6 +5,7 @@ import android.view.View;
 import android.webkit.WebView;
 import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.SimpleExoPlayer;
+import com.tubitv.media.utilities.PlayerDeviceUtils;
 
 /**
  * Created by allensun on 8/3/17.
@@ -49,6 +50,10 @@ public class PlayerUIController {
     }
 
     public SimpleExoPlayer getAdPlayer() {
+        // We'll reuse content player to play ads for single player instance case
+        if (PlayerDeviceUtils.useSinglePlayer()) {
+            return contentPlayer;
+        }
         return adPlayer;
     }
 

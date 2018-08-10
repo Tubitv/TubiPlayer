@@ -27,6 +27,7 @@ import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.ExoPlaybackException;
 import com.google.android.exoplayer2.ExoPlayer;
 import com.google.android.exoplayer2.PlaybackParameters;
+import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.Timeline;
 import com.google.android.exoplayer2.metadata.Metadata;
@@ -138,19 +139,19 @@ public class TubiExoPlayerView extends FrameLayout implements TubiPlaybackContro
         boolean controllerHideOnTouch = true;
         if (attrs != null) {
             TypedArray a = context.getTheme().obtainStyledAttributes(attrs,
-                    R.styleable.SimpleExoPlayerView, 0, 0);
+                    R.styleable.PlayerView, 0, 0);
             try {
-                playerLayoutId = a.getResourceId(R.styleable.SimpleExoPlayerView_player_layout_id,
+                playerLayoutId = a.getResourceId(R.styleable.PlayerView_player_layout_id,
                         playerLayoutId);
-                useArtwork = a.getBoolean(R.styleable.SimpleExoPlayerView_use_artwork, useArtwork);
-                defaultArtworkId = a.getResourceId(R.styleable.SimpleExoPlayerView_default_artwork,
+                useArtwork = a.getBoolean(R.styleable.PlayerView_use_artwork, useArtwork);
+                defaultArtworkId = a.getResourceId(R.styleable.PlayerView_default_artwork,
                         defaultArtworkId);
-                useController = a.getBoolean(R.styleable.SimpleExoPlayerView_use_controller, useController);
-                surfaceType = a.getInt(R.styleable.SimpleExoPlayerView_surface_type, surfaceType);
-                resizeMode = a.getInt(R.styleable.SimpleExoPlayerView_resize_mode, resizeMode);
-                controllerShowTimeoutMs = a.getInt(R.styleable.SimpleExoPlayerView_show_timeout,
+                useController = a.getBoolean(R.styleable.PlayerView_use_controller, useController);
+                surfaceType = a.getInt(R.styleable.PlayerView_surface_type, surfaceType);
+                resizeMode = a.getInt(R.styleable.PlayerView_resize_mode, resizeMode);
+                controllerShowTimeoutMs = a.getInt(R.styleable.PlayerView_show_timeout,
                         controllerShowTimeoutMs);
-                controllerHideOnTouch = a.getBoolean(R.styleable.SimpleExoPlayerView_hide_on_touch,
+                controllerHideOnTouch = a.getBoolean(R.styleable.PlayerView_hide_on_touch,
                         controllerHideOnTouch);
             } finally {
                 a.recycle();
@@ -615,6 +616,7 @@ public class TubiExoPlayerView extends FrameLayout implements TubiPlaybackContro
 
         switch (keyCode) {
             case KeyEvent.KEYCODE_DPAD_UP: // Up should always show the control, focus on caption when it's not ads
+
                 if (controller.isAdPlaying()) {
                     maybeShowController(true);
                     return false;
@@ -1007,12 +1009,22 @@ public class TubiExoPlayerView extends FrameLayout implements TubiPlaybackContro
         }
 
         @Override
+        public void onRepeatModeChanged(final int repeatMode) {
+
+        }
+
+        @Override
+        public void onShuffleModeEnabledChanged(final boolean shuffleModeEnabled) {
+
+        }
+
+        @Override
         public void onPlayerError(ExoPlaybackException e) {
             // Do nothing.
         }
 
         @Override
-        public void onPositionDiscontinuity() {
+        public void onPositionDiscontinuity(@Player.DiscontinuityReason int reason) {
             // Do nothing.
         }
 
@@ -1022,7 +1034,12 @@ public class TubiExoPlayerView extends FrameLayout implements TubiPlaybackContro
         }
 
         @Override
-        public void onTimelineChanged(Timeline timeline, Object manifest) {
+        public void onSeekProcessed() {
+
+        }
+
+        @Override
+        public void onTimelineChanged(Timeline timeline, Object manifest, @Player.DiscontinuityReason int reason) {
             // Do nothing.
         }
 

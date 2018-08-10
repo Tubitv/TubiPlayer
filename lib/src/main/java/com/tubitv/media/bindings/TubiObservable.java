@@ -11,6 +11,7 @@ import android.widget.SeekBar;
 import com.google.android.exoplayer2.ExoPlaybackException;
 import com.google.android.exoplayer2.ExoPlayer;
 import com.google.android.exoplayer2.PlaybackParameters;
+import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.Timeline;
 import com.google.android.exoplayer2.source.TrackGroupArray;
@@ -190,8 +191,16 @@ public class TubiObservable extends BaseObservable
         updateProgress();
     }
 
+    @Override public void onRepeatModeChanged(final int repeatMode) {
+        
+    }
+
+    @Override public void onShuffleModeEnabledChanged(final boolean shuffleModeEnabled) {
+
+    }
+
     @Override
-    public void onPositionDiscontinuity() {
+    public void onPositionDiscontinuity(@Player.DiscontinuityReason int reason) {
         setPlaybackState();
         updateProgress();
         //        updateMedia();
@@ -202,8 +211,12 @@ public class TubiObservable extends BaseObservable
 
     }
 
+    @Override public void onSeekProcessed() {
+
+    }
+
     @Override
-    public void onTimelineChanged(Timeline timeline, Object manifest) {
+    public void onTimelineChanged(Timeline timeline, Object manifest, @Player.TimelineChangeReason int reason) {
         setPlaybackState();
         updateProgress();
         //        updateMedia();
