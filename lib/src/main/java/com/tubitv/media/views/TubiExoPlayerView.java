@@ -27,17 +27,17 @@ import com.google.android.exoplayer2.text.Cue;
 import com.google.android.exoplayer2.text.TextRenderer;
 import com.google.android.exoplayer2.trackselection.TrackSelectionArray;
 import com.google.android.exoplayer2.ui.AspectRatioFrameLayout;
-import com.google.android.exoplayer2.ui.PlaybackControlView;
+import com.google.android.exoplayer2.ui.PlayerControlView;
 import com.google.android.exoplayer2.ui.SubtitleView;
 import com.google.android.exoplayer2.util.Assertions;
 import com.google.android.exoplayer2.util.Util;
 import com.tubitv.media.R;
 import com.tubitv.media.bindings.UserController;
-import com.tubitv.media.helpers.TrackSelectionHelper;
 import com.tubitv.media.interfaces.PlaybackActionCallback;
 import com.tubitv.media.interfaces.TubiPlaybackControlInterface;
 import com.tubitv.media.models.MediaModel;
 import com.tubitv.media.utilities.ExoPlayerLogger;
+import com.tubitv.media.utilities.PlayerDeviceUtils;
 import com.tubitv.ui.VaudTextView;
 import com.tubitv.ui.VaudType;
 import java.util.List;
@@ -53,6 +53,7 @@ public class TubiExoPlayerView extends FrameLayout {
     private static final int SURFACE_TYPE_NONE = 0;
     private static final int SURFACE_TYPE_SURFACE_VIEW = 1;
     private static final int SURFACE_TYPE_TEXTURE_VIEW = 2;
+    private static final float TV_SUBTITLES_TEXT_SIZE = 24f; // In dp
 
     private final AspectRatioFrameLayout contentFrame;
     private final View shutterView;
@@ -99,23 +100,23 @@ public class TubiExoPlayerView extends FrameLayout {
         boolean useController = true;
         int surfaceType = SURFACE_TYPE_SURFACE_VIEW;
         int resizeMode = AspectRatioFrameLayout.RESIZE_MODE_FIT;
-        int controllerShowTimeoutMs = PlaybackControlView.DEFAULT_SHOW_TIMEOUT_MS;
+        int controllerShowTimeoutMs = PlayerControlView.DEFAULT_SHOW_TIMEOUT_MS;
         boolean controllerHideOnTouch = true;
         if (attrs != null) {
             TypedArray a = context.getTheme().obtainStyledAttributes(attrs,
-                    R.styleable.SimpleExoPlayerView, 0, 0);
+                    R.styleable.PlayerView, 0, 0);
             try {
-                playerLayoutId = a.getResourceId(R.styleable.SimpleExoPlayerView_player_layout_id,
+                playerLayoutId = a.getResourceId(R.styleable.PlayerView_player_layout_id,
                         playerLayoutId);
-                useArtwork = a.getBoolean(R.styleable.SimpleExoPlayerView_use_artwork, useArtwork);
-                defaultArtworkId = a.getResourceId(R.styleable.SimpleExoPlayerView_default_artwork,
+                useArtwork = a.getBoolean(R.styleable.PlayerView_use_artwork, useArtwork);
+                defaultArtworkId = a.getResourceId(R.styleable.PlayerView_default_artwork,
                         defaultArtworkId);
-                useController = a.getBoolean(R.styleable.SimpleExoPlayerView_use_controller, useController);
-                surfaceType = a.getInt(R.styleable.SimpleExoPlayerView_surface_type, surfaceType);
-                resizeMode = a.getInt(R.styleable.SimpleExoPlayerView_resize_mode, resizeMode);
-                controllerShowTimeoutMs = a.getInt(R.styleable.SimpleExoPlayerView_show_timeout,
+                useController = a.getBoolean(R.styleable.PlayerView_use_controller, useController);
+                surfaceType = a.getInt(R.styleable.PlayerView_surface_type, surfaceType);
+                resizeMode = a.getInt(R.styleable.PlayerView_resize_mode, resizeMode);
+                controllerShowTimeoutMs = a.getInt(R.styleable.PlayerView_show_timeout,
                         controllerShowTimeoutMs);
-                controllerHideOnTouch = a.getBoolean(R.styleable.SimpleExoPlayerView_hide_on_touch,
+                controllerHideOnTouch = a.getBoolean(R.styleable.PlayerView_hide_on_touch,
                         controllerHideOnTouch);
             } finally {
                 a.recycle();
@@ -157,8 +158,14 @@ public class TubiExoPlayerView extends FrameLayout {
                     CaptionStyleCompat.EDGE_TYPE_NONE,
                     Color.WHITE,
                     VaudTextView.getFont(context, VaudType.VAUD_REGULAR.getAssetFileName())));
-            subtitleView.setFixedTextSize(TypedValue.COMPLEX_UNIT_PX,
-                    getResources().getDimension(R.dimen.view_tubi_exo_player_subtitle_text_size));
+
+            float subtitleTextSize = PlayerDeviceUtils.isTVDevice(this.getContext()) ?
+                    TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, TV_SUBTITLES_TEXT_SIZE,
+                            getResources().getDisplayMetrics())
+                    : getResources().getDimension(R.dimen.view_tubi_exo_player_subtitle_text_size);
+
+            subtitleView.setFixedTextSize(TypedValue.COMPLEX_UNIT_PX, subtitleTextSize);
+
             subtitleView.setApplyEmbeddedStyles(false);
             subtitleView.setVisibility(View.INVISIBLE);
         }
@@ -281,12 +288,6 @@ public class TubiExoPlayerView extends FrameLayout {
         return subtitleView;
     }
 
-    public void setTrackSelectionHelper(@Nullable TrackSelectionHelper trackSelectionHelper) {
-        if (userController != null) {
-            userController.setTrackSelectionHelper(trackSelectionHelper);
-        }
-    }
-
     public void setMediaModel(@NonNull MediaModel mediaModel) {
         if (userController != null) {
             userController.setMediaModel(mediaModel, getContext());
@@ -347,12 +348,22 @@ public class TubiExoPlayerView extends FrameLayout {
         }
 
         @Override
+        public void onRepeatModeChanged(final int repeatMode) {
+
+        }
+
+        @Override
+        public void onShuffleModeEnabledChanged(final boolean shuffleModeEnabled) {
+
+        }
+
+        @Override
         public void onPlayerError(ExoPlaybackException e) {
             // Do nothing.
         }
 
         @Override
-        public void onPositionDiscontinuity() {
+        public void onPositionDiscontinuity(final int reason) {
             // Do nothing.
         }
 
@@ -362,7 +373,12 @@ public class TubiExoPlayerView extends FrameLayout {
         }
 
         @Override
-        public void onTimelineChanged(Timeline timeline, Object manifest) {
+        public void onSeekProcessed() {
+
+        }
+
+        @Override
+        public void onTimelineChanged(final Timeline timeline, final Object manifest, final int reason) {
             // Do nothing.
         }
 

@@ -8,7 +8,6 @@ import android.databinding.ObservableInt;
 import android.net.Uri;
 import android.os.Handler;
 import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.SeekBar;
@@ -18,14 +17,14 @@ import com.google.android.exoplayer2.PlaybackParameters;
 import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.Timeline;
 import com.google.android.exoplayer2.source.TrackGroupArray;
-import com.google.android.exoplayer2.trackselection.MappingTrackSelector;
 import com.google.android.exoplayer2.trackselection.TrackSelectionArray;
 import com.tubitv.media.R;
-import com.tubitv.media.helpers.TrackSelectionHelper;
 import com.tubitv.media.interfaces.PlaybackActionCallback;
 import com.tubitv.media.interfaces.TubiPlaybackControlInterface;
 import com.tubitv.media.models.MediaModel;
 import com.tubitv.media.utilities.ExoPlayerLogger;
+import com.tubitv.media.utilities.PlayerDeviceUtils;
+import com.tubitv.media.utilities.SeekCalculator;
 import com.tubitv.media.utilities.Utils;
 import com.tubitv.media.views.TubiExoPlayerView;
 
@@ -39,6 +38,13 @@ public class UserController extends BaseObservable
         implements TubiPlaybackControlInterface, ExoPlayer.EventListener, SeekBar.OnSeekBarChangeListener {
 
     private static final String TAG = UserController.class.getSimpleName();
+
+    public static final int NORMAL_CONTROL_STATE = 1;
+    public static final int CUSTOM_SEEK_CONTROL_STATE = 2; // Every time long press left/right will enter this state
+    public static final int EDIT_CUSTOM_SEEK_CONTROL_STATE = 3; // After long press left/right will enter this state
+    public static final int OPTIONS_CONTROL_STATE = 4; // Every time focus on caption button will enter this state
+
+    private static final long DEFAULT_FREQUENCY = 1000;
 
     /**
      * video action states
@@ -88,13 +94,8 @@ public class UserController extends BaseObservable
 
     private Handler mProgressUpdateHandler = new Handler();
 
-    private Runnable updateProgressAction = new Runnable() {
-        @Override public void run() {
-            updateProgress();
-        }
-    };
-
-    private static final long DEFAULT_FREQUENCY = 1000;
+    private Runnable updateProgressAction = () -> updateProgress();
+    private Runnable mOnControlStateChange;
 
     /**
      * the Exoplayer instance which this {@link UserController} is controlling.
@@ -110,7 +111,7 @@ public class UserController extends BaseObservable
 
     private TubiExoPlayerView mTubiExoPlayerView;
 
-    private TrackSelectionHelper mTrackSelectionHelper;
+    private int mControlState = NORMAL_CONTROL_STATE;
 
     /**
      * Every time the {@link com.tubitv.media.fsm.state_machine.FsmPlayer} change states between
@@ -132,7 +133,8 @@ public class UserController extends BaseObservable
 
         if (mMediaModel.isAd()) {
 
-            if (!TextUtils.isEmpty(mMediaModel.getClickThroughUrl())) {
+            if (!PlayerDeviceUtils.isTVDevice(context)
+                    && !TextUtils.isEmpty(mMediaModel.getClickThroughUrl())) {
                 adClickUrl.set(mMediaModel.getClickThroughUrl());
             }
 
@@ -146,7 +148,8 @@ public class UserController extends BaseObservable
                 videoName.set(mMediaModel.getMediaName());
             }
 
-            if (mMediaModel.getArtworkUrl() != null) {
+            if (!PlayerDeviceUtils.isTVDevice(context) // Disable artwork for TV
+                    && mMediaModel.getArtworkUrl() != null) {
                 videoPoster.set(mMediaModel.getArtworkUrl());
             }
 
@@ -196,11 +199,65 @@ public class UserController extends BaseObservable
         numberOfAdsLeft.set(count);
     }
 
-    public void setTrackSelectionHelper(@Nullable TrackSelectionHelper trackSelectionHelper) {
-        this.mTrackSelectionHelper = trackSelectionHelper;
+    public void updateTimeTextViews(long position, long duration) {
+        //translate the movie remaining time number into display string, and update the UI
+        videoRemainInString.set(Utils.getProgressTime((duration - position), true));
+        videoPositionInString.set(Utils.getProgressTime(position, false));
     }
 
-    @Override public void triggerSubtitlesToggle(final boolean enabled) {
+    public void togglePlayPause() {
+        triggerPlayOrPause(!isVideoPlayWhenReady.get());
+    }
+
+    public void fastForward() {
+        seekBy(SeekCalculator.FAST_SEEK_INTERVAL);
+    }
+
+    public void fastRewind() {
+        seekBy(SeekCalculator.REWIND_DIRECTION * SeekCalculator.FAST_SEEK_INTERVAL);
+    }
+
+    /**
+     * Get current player control state
+     *
+     * @return Current control state
+     */
+    public int getState() {
+        return mControlState;
+    }
+
+    /**
+     * Set current player state
+     */
+    public void setState(final int state) {
+        mControlState = state;
+
+        if (mOnControlStateChange != null) {
+            mOnControlStateChange.run();
+        }
+    }
+
+    /**
+     * Check if it is during custom seek
+     *
+     * @return True if custom seek is performing
+     */
+    public boolean isDuringCustomSeek() {
+        return mControlState == CUSTOM_SEEK_CONTROL_STATE || mControlState == EDIT_CUSTOM_SEEK_CONTROL_STATE;
+    }
+
+    /**
+     * Set callback for control state change
+     *
+     * @param onControlStateChange Callback to run when control state change
+     */
+    public void setOnControlStateChange(final Runnable onControlStateChange) {
+        mOnControlStateChange = onControlStateChange;
+    }
+
+    @Override
+
+    public void triggerSubtitlesToggle(final boolean enabled) {
 
         if (mTubiExoPlayerView == null) {
             ExoPlayerLogger.e(TAG, "triggerSubtitlesToggle() --> tubiExoPlayerView is null");
@@ -218,22 +275,6 @@ public class UserController extends BaseObservable
         }
 
         isSubtitleEnabled.set(enabled);
-    }
-
-    @Override
-    public void triggerQualityTrackToggle() {
-
-        if (mTrackSelectionHelper != null) {
-            MappingTrackSelector.MappedTrackInfo mappedTrackInfo = mTrackSelectionHelper.getSelector()
-                    .getCurrentMappedTrackInfo();
-            if (mappedTrackInfo != null) {
-                mTrackSelectionHelper.showSelectionDialog(0, null);
-            }
-        }
-
-        if (mPlaybackActionCallback != null && mPlaybackActionCallback.isActive()) {
-            mPlaybackActionCallback.onQuality(mMediaModel);
-        }
     }
 
     @Override
@@ -298,7 +339,7 @@ public class UserController extends BaseObservable
     }
 
     @Override
-    public boolean videoReadyToPlay() {
+    public boolean isVideoPlaying() {
         return isVideoPlayWhenReady.get();
     }
 
@@ -324,20 +365,33 @@ public class UserController extends BaseObservable
 
     //------------------------------player playback listener-------------------------------------------//
 
-    @Override public void onTimelineChanged(final Timeline timeline, final Object manifest) {
+    @Override
+    public void onTimelineChanged(final Timeline timeline, final Object manifest, final int reason) {
         setPlaybackState();
         updateProgress();
     }
 
-    @Override public void onPositionDiscontinuity() {
+    @Override
+    public void onPositionDiscontinuity(final int reason) {
         setPlaybackState();
         updateProgress();
     }
 
-    @Override public void onPlayerStateChanged(final boolean playWhenReady, final int playbackState) {
+    @Override
+    public void onPlayerStateChanged(final boolean playWhenReady, final int playbackState) {
         playerPlaybackState.set(playbackState);
         isVideoPlayWhenReady.set(playWhenReady);
         updateProgress();
+    }
+
+    @Override
+    public void onRepeatModeChanged(final int repeatMode) {
+
+    }
+
+    @Override
+    public void onShuffleModeEnabledChanged(final boolean shuffleModeEnabled) {
+
     }
 
     @Override
@@ -345,33 +399,44 @@ public class UserController extends BaseObservable
         ExoPlayerLogger.i(TAG, "onTracksChanged");
     }
 
-    @Override public void onLoadingChanged(final boolean isLoading) {
+    @Override
+    public void onLoadingChanged(final boolean isLoading) {
         ExoPlayerLogger.i(TAG, "onLoadingChanged");
     }
 
-    @Override public void onPlayerError(final ExoPlaybackException error) {
+    @Override
+    public void onPlayerError(final ExoPlaybackException error) {
         ExoPlayerLogger.i(TAG, "onPlayerError");
     }
 
-    @Override public void onPlaybackParametersChanged(final PlaybackParameters playbackParameters) {
+    @Override
+    public void onPlaybackParametersChanged(final PlaybackParameters playbackParameters) {
+    }
+
+    @Override
+    public void onSeekProcessed() {
+
     }
 
     //-----------------------------------------SeekBar listener--------------------------------------------------------------//
-    @Override public void onProgressChanged(final SeekBar seekBar, final int progress, final boolean fromUser) {
+    @Override
+    public void onProgressChanged(final SeekBar seekBar, final int progress, final boolean fromUser) {
 
         if (fromUser) {
             long position = Utils.progressToMilli(mPlayer.getDuration(), seekBar);
             long duration = mPlayer == null ? 0 : mPlayer.getDuration();
-            elapsedTimeTextView(position, duration);
+            updateTimeTextViews(position, duration);
         }
     }
 
-    @Override public void onStartTrackingTouch(final SeekBar seekBar) {
+    @Override
+    public void onStartTrackingTouch(final SeekBar seekBar) {
         isDraggingSeekBar.set(true);
         ExoPlayerLogger.i(TAG, "onStartTrackingTouch");
     }
 
-    @Override public void onStopTrackingTouch(final SeekBar seekBar) {
+    @Override
+    public void onStopTrackingTouch(final SeekBar seekBar) {
 
         if (mPlayer != null) {
             seekTo(Utils.progressToMilli(mPlayer.getDuration(), seekBar));
@@ -401,9 +466,9 @@ public class UserController extends BaseObservable
         long bufferedPosition = mPlayer == null ? 0 : mPlayer.getBufferedPosition();
 
         //only update the seekBar UI when user are not interacting, to prevent UI interference
-        if (!isDraggingSeekBar.get()) {
+        if (!isDraggingSeekBar.get() && !isDuringCustomSeek()) {
             updateSeekBar(position, duration, bufferedPosition);
-            elapsedTimeTextView(position, duration);
+            updateTimeTextViews(position, duration);
         }
 
         ExoPlayerLogger.i(TAG, "updateProgress:----->" + videoCurrentTime.get());
@@ -434,12 +499,6 @@ public class UserController extends BaseObservable
         videoCurrentTime.set(position);
         videoDuration.set(duration);
         videoBufferedPosition.set(bufferedPosition);
-    }
-
-    private void elapsedTimeTextView(long position, long duration) {
-        //translate the movie remaining time number into display string, and update the UI
-        videoRemainInString.set(Utils.getProgressTime((duration - position), true));
-        videoPositionInString.set(Utils.getProgressTime(position, false));
     }
 
 }

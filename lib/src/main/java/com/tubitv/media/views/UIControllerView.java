@@ -8,7 +8,7 @@ import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.widget.FrameLayout;
-import com.google.android.exoplayer2.ExoPlayer;
+import com.google.android.exoplayer2.Player;
 import com.tubitv.media.R;
 import com.tubitv.media.bindings.UserController;
 import com.tubitv.media.databinding.UiControllerViewBinding;
@@ -26,7 +26,8 @@ public class UIControllerView extends FrameLayout {
     private Handler countdownHandler;
 
     private Runnable hideUIAction = new Runnable() {
-        @Override public void run() {
+        @Override
+        public void run() {
             binding.controllerPanel.setVisibility(GONE);
         }
     };
@@ -58,19 +59,21 @@ public class UIControllerView extends FrameLayout {
         return this;
     }
 
-    @Override protected void onDetachedFromWindow() {
+    @Override
+    protected void onDetachedFromWindow() {
         super.onDetachedFromWindow();
         ExoPlayerLogger.w(TAG, "onDetachedFromWindow");
         countdownHandler.removeCallbacks(hideUIAction);
     }
 
-    @Override public boolean onTouchEvent(final MotionEvent event) {
+    @Override
+    public boolean onTouchEvent(final MotionEvent event) {
         countdownHandler.removeCallbacks(hideUIAction);
 
         if (binding.controllerPanel.getVisibility() == VISIBLE) {
             binding.controllerPanel.setVisibility(GONE);
         } else {
-            if (userController.playerPlaybackState.get() != ExoPlayer.STATE_IDLE) {
+            if (userController.playerPlaybackState.get() != Player.STATE_IDLE) {
                 binding.controllerPanel.setVisibility(VISIBLE);
                 hideUiTimeout();
             }

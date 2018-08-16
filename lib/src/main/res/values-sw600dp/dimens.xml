@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="player_dimen_type">sw600dp</string>
+
     <dimen name="view_tubi_controller_margin">32dp</dimen>
-    <dimen name="view_tubi_controller_text_size">17sp</dimen>
+    <dimen name="view_tubi_controller_text_size">17dp</dimen>
     <dimen name="view_tubi_controller_play_toggle_size">35dp</dimen>
     <dimen name="view_tubi_controller_play_padding">5dp</dimen>
     <dimen name="view_tubi_controller_seek_bar_layout_margin_left">10dp</dimen>
