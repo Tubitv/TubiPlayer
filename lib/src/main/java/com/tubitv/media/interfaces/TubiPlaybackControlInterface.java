@@ -8,8 +8,6 @@ public interface TubiPlaybackControlInterface {
     //action control
     void triggerSubtitlesToggle(boolean enabled);
 
-    void triggerQualityTrackToggle();
-
     void seekBy(long millisecond);
 
     void seekTo(long millisecond);
@@ -21,7 +19,7 @@ public interface TubiPlaybackControlInterface {
     //display control
     String getCurrentVideoName();
 
-    boolean videoReadyToPlay();
+    boolean isVideoPlaying();
 
     boolean isCurrentVideoAd();
 

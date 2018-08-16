@@ -36,7 +36,6 @@ import com.google.android.exoplayer2.util.MimeTypes;
 import com.google.android.exoplayer2.util.Util;
 import com.tubitv.media.R;
 import com.tubitv.media.helpers.MediaHelper;
-import com.tubitv.media.helpers.TrackSelectionHelper;
 import com.tubitv.media.interfaces.PlaybackActionCallback;
 import com.tubitv.media.interfaces.TubiPlaybackControlInterface;
 import com.tubitv.media.models.MediaModel;
@@ -67,7 +66,6 @@ public abstract class TubiPlayerActivity extends LifeCycleActivity
     private Handler mMainHandler;
     private DataSource.Factory mMediaDataSourceFactory;
     private EventLogger mEventLogger;
-    private TrackSelectionHelper mTrackSelectionHelper;
 
     public abstract View addUserInteractionView();
 
@@ -178,20 +176,16 @@ public abstract class TubiPlayerActivity extends LifeCycleActivity
                 new AdaptiveTrackSelection.Factory(BANDWIDTH_METER);
         mTrackSelector =
                 new DefaultTrackSelector(videoTrackSelectionFactory);
-        mTrackSelectionHelper = new TrackSelectionHelper(this, mTrackSelector, videoTrackSelectionFactory);
 
         // 3. Create the mMoviePlayer
         mMoviePlayer = ExoPlayerFactory.newSimpleInstance(this, mTrackSelector);
 
         mEventLogger = new EventLogger(mTrackSelector);
-        mMoviePlayer.addListener(mEventLogger);
-        mMoviePlayer.setAudioDebugListener(mEventLogger);
-        mMoviePlayer.setVideoDebugListener(mEventLogger);
-        mMoviePlayer.setMetadataOutput(mEventLogger);
+        mMoviePlayer.addAnalyticsListener(mEventLogger);
+        mMoviePlayer.addMetadataOutput(mEventLogger);
 
         mTubiPlayerView.setPlayer(mMoviePlayer, this);
         mTubiPlayerView.setMediaModel(mediaModel);
-        mTubiPlayerView.setTrackSelectionHelper(mTrackSelectionHelper);
     }
 
     protected void releaseMoviePlayer() {
@@ -208,6 +202,8 @@ public abstract class TubiPlayerActivity extends LifeCycleActivity
         MediaSource mediaSource;
         int type = TextUtils.isEmpty(model.getMediaExtension()) ? Util.inferContentType(model.getVideoUrl())
                 : Util.inferContentType("." + model.getMediaExtension());
+
+        // TODO: Replace deprecated constructors with proper factory
         switch (type) {
             case C.TYPE_SS:
                 mediaSource = new SsMediaSource(model.getVideoUrl(), buildDataSourceFactory(false),
