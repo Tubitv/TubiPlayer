@@ -27,7 +27,6 @@ import com.google.android.exoplayer2.text.Cue;
 import com.google.android.exoplayer2.text.TextRenderer;
 import com.google.android.exoplayer2.trackselection.TrackSelectionArray;
 import com.google.android.exoplayer2.ui.AspectRatioFrameLayout;
-import com.google.android.exoplayer2.ui.PlayerControlView;
 import com.google.android.exoplayer2.ui.SubtitleView;
 import com.google.android.exoplayer2.util.Assertions;
 import com.google.android.exoplayer2.util.Util;
@@ -95,29 +94,16 @@ public class TubiExoPlayerView extends FrameLayout {
         }
 
         int playerLayoutId = R.layout.tubi_player_view;
-        boolean useArtwork = true;
-        int defaultArtworkId = 0;
-        boolean useController = true;
         int surfaceType = SURFACE_TYPE_SURFACE_VIEW;
         int resizeMode = AspectRatioFrameLayout.RESIZE_MODE_FIT;
-        int controllerShowTimeoutMs = PlayerControlView.DEFAULT_SHOW_TIMEOUT_MS;
-        boolean controllerHideOnTouch = true;
         if (attrs != null) {
             TypedArray a = context.getTheme().obtainStyledAttributes(attrs,
                     R.styleable.PlayerView, 0, 0);
             try {
                 playerLayoutId = a.getResourceId(R.styleable.PlayerView_player_layout_id,
                         playerLayoutId);
-                useArtwork = a.getBoolean(R.styleable.PlayerView_use_artwork, useArtwork);
-                defaultArtworkId = a.getResourceId(R.styleable.PlayerView_default_artwork,
-                        defaultArtworkId);
-                useController = a.getBoolean(R.styleable.PlayerView_use_controller, useController);
                 surfaceType = a.getInt(R.styleable.PlayerView_surface_type, surfaceType);
                 resizeMode = a.getInt(R.styleable.PlayerView_resize_mode, resizeMode);
-                controllerShowTimeoutMs = a.getInt(R.styleable.PlayerView_show_timeout,
-                        controllerShowTimeoutMs);
-                controllerHideOnTouch = a.getBoolean(R.styleable.PlayerView_hide_on_touch,
-                        controllerHideOnTouch);
             } finally {
                 a.recycle();
             }
@@ -128,7 +114,7 @@ public class TubiExoPlayerView extends FrameLayout {
         setDescendantFocusability(FOCUS_AFTER_DESCENDANTS);
 
         // Content frame.
-        contentFrame = (AspectRatioFrameLayout) findViewById(R.id.exo_content_frame);
+        contentFrame = findViewById(R.id.exo_content_frame);
         if (contentFrame != null) {
             setResizeModeRaw(contentFrame, resizeMode);
         }

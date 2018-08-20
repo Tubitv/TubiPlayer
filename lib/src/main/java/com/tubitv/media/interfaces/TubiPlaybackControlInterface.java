@@ -19,7 +19,7 @@ public interface TubiPlaybackControlInterface {
     //display control
     String getCurrentVideoName();
 
-    boolean isVideoPlaying();
+    boolean isPlayWhenReady();
 
     boolean isCurrentVideoAd();
 

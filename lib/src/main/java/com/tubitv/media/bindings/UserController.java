@@ -339,7 +339,7 @@ public class UserController extends BaseObservable
     }
 
     @Override
-    public boolean isVideoPlaying() {
+    public boolean isPlayWhenReady() {
         return isVideoPlayWhenReady.get();
     }
 

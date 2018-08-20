@@ -234,7 +234,7 @@ public abstract class FsmPlayer implements Fsm, RetrieveAdCallback, FsmAdControl
                 return;
             }
         }
-
+        
         State transitToState;
 
         /**
@@ -274,8 +274,7 @@ public abstract class FsmPlayer implements Fsm, RetrieveAdCallback, FsmAdControl
             currentState = factory.createState(MoviePlayingState.class);
         }
 
-        if (!PlayerDeviceUtils.useSinglePlayer()
-                || !(currentState instanceof MoviePlayingState)) {
+        if (!PlayerDeviceUtils.useSinglePlayer() || !controller.isPlayingAds) {
             updateMovieResumePosition(controller);
         }
 

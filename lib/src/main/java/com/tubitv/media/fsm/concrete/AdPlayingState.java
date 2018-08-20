@@ -80,7 +80,7 @@ public class AdPlayingState extends BaseState {
             moviePlayer.setPlayWhenReady(false);
 
             // We need save movie play position before play ads for single player instance case
-            if (PlayerDeviceUtils.useSinglePlayer()) {
+            if (PlayerDeviceUtils.useSinglePlayer() && !controller.isPlayingAds) {
                 long resumePosition = Math.max(0, moviePlayer.getCurrentPosition());
                 controller.setMovieResumeInfo(moviePlayer.getCurrentWindowIndex(), resumePosition);
             }

@@ -28,11 +28,7 @@ public class AdMediaModel {
 
     public void popFirstAd() {
         if (listOfAds != null && listOfAds.size() > 0) {
-            MediaModel adMediaModel = listOfAds.remove(0);
-            if (adMediaModel.getMediaSource() != null) {
-                adMediaModel.getMediaSource().releaseSource((source, timeline, manifest) -> {
-                });
-            }
+            listOfAds.remove(0);
         }
     }
 
