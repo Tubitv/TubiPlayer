@@ -4,7 +4,7 @@ import android.support.annotation.NonNull;
 import android.view.View;
 import android.webkit.WebView;
 import com.google.android.exoplayer2.C;
-import com.google.android.exoplayer2.ExoPlayer;
+import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.tubitv.media.controller.PlayerAdLogicController;
 import com.tubitv.media.controller.PlayerUIController;
@@ -15,6 +15,7 @@ import com.tubitv.media.fsm.concrete.factory.StateFactory;
 import com.tubitv.media.fsm.state_machine.FsmPlayer;
 import com.tubitv.media.models.MediaModel;
 import com.tubitv.media.models.VpaidClient;
+import com.tubitv.media.utilities.PlayerDeviceUtils;
 import com.tubitv.media.views.TubiExoPlayerView;
 
 /**
@@ -53,9 +54,14 @@ public class MoviePlayingState extends BaseState {
         SimpleExoPlayer adPlayer = controller.getAdPlayer();
         SimpleExoPlayer moviePlayer = controller.getContentPlayer();
 
+        boolean shouldReprepareForSinglePlayer = PlayerDeviceUtils.useSinglePlayer() && controller.isPlayingAds;
+
         //first remove the AdPlayer's listener and pause the player
-        adPlayer.removeListener(componentController.getAdPlayingMonitor());
-        adPlayer.setPlayWhenReady(false);
+        adPlayer.removeAnalyticsListener(componentController.getAdPlayingMonitor());
+
+        if (shouldReprepareForSinglePlayer) {
+            adPlayer.setPlayWhenReady(false);
+        }
 
         //then update the playerView with SimpleExoPlayer and Movie MediaModel
         TubiExoPlayerView tubiExoPlayerView = (TubiExoPlayerView) controller.getExoPlayerView();
@@ -65,13 +71,17 @@ public class MoviePlayingState extends BaseState {
         //prepare the moviePlayer with data source and set it play
 
         boolean haveResumePosition = controller.getMovieResumePosition() != C.TIME_UNSET;
-        if (moviePlayer.getPlaybackState() == ExoPlayer.STATE_IDLE) {
+
+        boolean isPlayerIdle = moviePlayer.getPlaybackState() == Player.STATE_IDLE;
+
+        if (shouldReprepareForSinglePlayer || isPlayerIdle) {
             moviePlayer.prepare(movieMedia.getMediaSource(), !haveResumePosition, false);
+            updatePlayerPosition(moviePlayer, controller);
         }
 
-        updatePlayerPosition(moviePlayer, controller);
-
         moviePlayer.setPlayWhenReady(true);
+
+        controller.isPlayingAds = false;
 
         hideVpaidNShowPlayer(controller);
     }

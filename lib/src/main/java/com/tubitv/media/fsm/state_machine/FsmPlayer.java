@@ -3,7 +3,7 @@ package com.tubitv.media.fsm.state_machine;
 import android.arch.lifecycle.Lifecycle;
 import android.support.annotation.NonNull;
 import com.google.android.exoplayer2.C;
-import com.google.android.exoplayer2.ExoPlayer;
+import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.tubitv.media.controller.PlayerAdLogicController;
 import com.tubitv.media.controller.PlayerUIController;
@@ -22,6 +22,7 @@ import com.tubitv.media.models.AdRetriever;
 import com.tubitv.media.models.CuePointsRetriever;
 import com.tubitv.media.models.MediaModel;
 import com.tubitv.media.utilities.ExoPlayerLogger;
+import com.tubitv.media.utilities.PlayerDeviceUtils;
 
 /**
  * Created by allensun on 7/27/17.
@@ -98,7 +99,7 @@ public abstract class FsmPlayer implements Fsm, RetrieveAdCallback, FsmAdControl
 
         SimpleExoPlayer moviePlayer = controller.getContentPlayer();
 
-        if (moviePlayer != null && moviePlayer.getPlaybackState() != ExoPlayer.STATE_IDLE) {
+        if (moviePlayer != null && moviePlayer.getPlaybackState() != Player.STATE_IDLE) {
             int resumeWindow = moviePlayer.getCurrentWindowIndex();
             long resumePosition = moviePlayer.isCurrentWindowSeekable() ? Math.max(0, moviePlayer.getCurrentPosition())
                     : C.TIME_UNSET;
@@ -233,7 +234,7 @@ public abstract class FsmPlayer implements Fsm, RetrieveAdCallback, FsmAdControl
                 return;
             }
         }
-
+        
         State transitToState;
 
         /**
@@ -273,7 +274,9 @@ public abstract class FsmPlayer implements Fsm, RetrieveAdCallback, FsmAdControl
             currentState = factory.createState(MoviePlayingState.class);
         }
 
-        updateMovieResumePosition(controller);
+        if (!PlayerDeviceUtils.useSinglePlayer() || !controller.isPlayingAds) {
+            updateMovieResumePosition(controller);
+        }
 
         ExoPlayerLogger.d(Constants.FSMPLAYER_TESTING, "transit to: " + currentState.getClass().getSimpleName());
 

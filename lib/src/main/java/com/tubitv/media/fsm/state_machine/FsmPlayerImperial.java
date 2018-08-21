@@ -21,19 +21,19 @@ public abstract class FsmPlayerImperial extends FsmPlayer implements CuePointCal
     }
 
     @Override
-    public void onCuePointReceived(long[] quePoints) {
+    public void onCuePointReceived(long[] cuePoints) {
 
         ExoPlayerLogger.i(Constants.FSMPLAYER_TESTING, "CuePoint received");
 
         //if it has pre-roll in the list of cue points, remove the pre-roll cue point,
         // because the pre-roll should not managed by the CuePointMonitor
-        if (hasPrerollAd(quePoints)) {
+        if (hasPrerollAd(cuePoints)) {
 
-            updateCuePointsWithRemoveFirstCue(quePoints, true);
+            updateCuePointsWithRemoveFirstCue(cuePoints, true);
             transit(Input.HAS_PREROLL_AD);
         } else {
 
-            updateCuePointsWithRemoveFirstCue(quePoints, false);
+            updateCuePointsWithRemoveFirstCue(cuePoints, false);
             transit(Input.NO_PREROLL_AD);
         }
         /**
@@ -41,7 +41,7 @@ public abstract class FsmPlayerImperial extends FsmPlayer implements CuePointCal
          *
          */
 
-        playerComponentController.getTubiPlaybackInterface().onCuePointReceived(quePoints);
+        playerComponentController.getTubiPlaybackInterface().onCuePointReceived(cuePoints);
     }
 
     @Override

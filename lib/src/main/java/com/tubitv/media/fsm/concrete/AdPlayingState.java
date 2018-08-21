@@ -15,6 +15,7 @@ import com.tubitv.media.fsm.state_machine.FsmPlayer;
 import com.tubitv.media.models.AdMediaModel;
 import com.tubitv.media.models.MediaModel;
 import com.tubitv.media.models.VpaidClient;
+import com.tubitv.media.utilities.PlayerDeviceUtils;
 import com.tubitv.media.views.TubiExoPlayerView;
 
 /**
@@ -78,12 +79,19 @@ public class AdPlayingState extends BaseState {
 
             moviePlayer.setPlayWhenReady(false);
 
+            // We need save movie play position before play ads for single player instance case
+            if (PlayerDeviceUtils.useSinglePlayer() && !controller.isPlayingAds) {
+                long resumePosition = Math.max(0, moviePlayer.getCurrentPosition());
+                controller.setMovieResumeInfo(moviePlayer.getCurrentWindowIndex(), resumePosition);
+            }
+
             //prepare the moviePlayer with data source and set it play
 
             boolean haveResumePosition = controller.getAdResumePosition() != C.TIME_UNSET;
 
             //prepare the mediaSource to AdPlayer
             adPlayer.prepare(adMedia.getMediaSource(), !haveResumePosition, true);
+            controller.isPlayingAds = true;
 
             if (haveResumePosition) {
                 adPlayer.seekTo(adPlayer.getCurrentWindowIndex(), controller.getAdResumePosition());
@@ -98,9 +106,7 @@ public class AdPlayingState extends BaseState {
 
             //Player the Ad.
             adPlayer.setPlayWhenReady(true);
-            adPlayer.addListener(componentController.getAdPlayingMonitor());
-            adPlayer.setAudioDebugListener(componentController.getAdPlayingMonitor());
-            adPlayer.setVideoDebugListener(componentController.getAdPlayingMonitor());
+            adPlayer.addAnalyticsListener(componentController.getAdPlayingMonitor());
             adPlayer.setMetadataOutput(componentController.getAdPlayingMonitor());
         }
     }

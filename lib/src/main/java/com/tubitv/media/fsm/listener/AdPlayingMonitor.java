@@ -3,6 +3,7 @@ package com.tubitv.media.fsm.listener;
 import android.support.annotation.NonNull;
 import com.google.android.exoplayer2.ExoPlaybackException;
 import com.google.android.exoplayer2.ExoPlayer;
+import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.tubitv.media.fsm.state_machine.FsmAdController;
 import com.tubitv.media.fsm.state_machine.FsmPlayer;
@@ -22,25 +23,24 @@ public class AdPlayingMonitor extends EventLogger {
     }
 
     @Override
-    public void onPlayerStateChanged(boolean playWhenReady, int playbackState) {
-        super.onPlayerStateChanged(playWhenReady, playbackState);
+    public void onPlayerStateChanged(EventTime eventTime, boolean playWhenReady, int playbackState) {
+        super.onPlayerStateChanged(eventTime, playWhenReady, playbackState);
 
         //the last ad has finish playing.
-        if (playbackState == ExoPlayer.STATE_ENDED && playWhenReady == true) {
+        if (playbackState == Player.STATE_ENDED && playWhenReady == true) {
             fsmPlayer.removePlayedAdAndTransitToNextState();
         }
     }
 
     @Override
-    public void onPlayerError(ExoPlaybackException error) {
-        super.onPlayerError(error);
+    public void onPlayerError(EventTime eventTime, ExoPlaybackException error) {
+        super.onPlayerError(eventTime, error);
         fsmPlayer.removePlayedAdAndTransitToNextState();
     }
 
     @Override
-    public void onDroppedFrames(int count, long elapsed) {
-        super.onDroppedFrames(count, elapsed);
-
+    public void onDroppedVideoFrames(final EventTime eventTime, final int droppedFrames, final long elapsedM) {
+        super.onDroppedVideoFrames(eventTime, droppedFrames, elapsedM);
         seekOrSkip();
     }
 

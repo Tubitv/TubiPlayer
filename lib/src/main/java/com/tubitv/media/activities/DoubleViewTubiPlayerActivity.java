@@ -40,6 +40,7 @@ import com.tubitv.media.models.CuePointsRetriever;
 import com.tubitv.media.models.MediaModel;
 import com.tubitv.media.models.VpaidClient;
 import com.tubitv.media.utilities.ExoPlayerLogger;
+import com.tubitv.media.utilities.PlayerDeviceUtils;
 import com.tubitv.media.utilities.Utils;
 import com.tubitv.media.views.UIControllerView;
 import javax.inject.Inject;
@@ -92,7 +93,8 @@ public class DoubleViewTubiPlayerActivity extends TubiPlayerActivity implements 
         dependencyPrepare();
     }
 
-    @Override public View addUserInteractionView() {
+    @Override
+    public View addUserInteractionView() {
         return new UIControllerView(getBaseContext())
                 .setUserController((UserController) getPlayerController());
     }
@@ -119,7 +121,9 @@ public class DoubleViewTubiPlayerActivity extends TubiPlayerActivity implements 
     protected void initMoviePlayer() {
         super.initMoviePlayer();
         createMediaSource(mediaModel);
-        setupAdPlayer();
+        if (!PlayerDeviceUtils.useSinglePlayer()) {
+            setupAdPlayer();
+        }
     }
 
     @Override
@@ -130,7 +134,9 @@ public class DoubleViewTubiPlayerActivity extends TubiPlayerActivity implements 
     @Override
     protected void releaseMoviePlayer() {
         super.releaseMoviePlayer();
-        releaseAdPlayer();
+        if (!PlayerDeviceUtils.useSinglePlayer()) {
+            releaseAdPlayer();
+        }
     }
 
     private void setupAdPlayer() {
@@ -202,7 +208,11 @@ public class DoubleViewTubiPlayerActivity extends TubiPlayerActivity implements 
     public void prepareFSM() {
         //update the playerUIController view, need to update the view everything when two ExoPlayer being recreated in activity lifecycle.
         playerUIController.setContentPlayer(mMoviePlayer);
-        playerUIController.setAdPlayer(adPlayer);
+
+        if (!PlayerDeviceUtils.useSinglePlayer()) {
+            playerUIController.setAdPlayer(adPlayer);
+        }
+
         playerUIController.setExoPlayerView(mTubiPlayerView);
         playerUIController.setVpaidWebView(vpaidWebView);
 
@@ -325,7 +335,9 @@ public class DoubleViewTubiPlayerActivity extends TubiPlayerActivity implements 
     public void onLearnMoreClick(@NonNull MediaModel mediaModel) {
         //        ExoPlayerLogger.v(TAG, mediaModel.getMediaName() + ": " + mediaModel.toString() + " onLearnMoreClick :" + mediaModel.getClickThroughUrl());
 
-        if (mediaModel != null && !TextUtils.isEmpty(mediaModel.getClickThroughUrl())) {
+        if (!PlayerDeviceUtils.isTVDevice(this)
+                && mediaModel != null
+                && !TextUtils.isEmpty(mediaModel.getClickThroughUrl())) {
             Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(mediaModel.getClickThroughUrl()));
             startActivity(browserIntent);
         }
@@ -365,8 +377,6 @@ public class DoubleViewTubiPlayerActivity extends TubiPlayerActivity implements 
 
     @Override
     public void playNext(MediaModel nextVideo) {
-        fsmPlayer.getMovieMedia().getMediaSource().releaseSource();
-
         createMediaSource(nextVideo);
         fsmPlayer.setMovieMedia(nextVideo);
         fsmPlayer.restart();
