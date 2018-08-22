@@ -256,7 +256,6 @@ public class UserController extends BaseObservable
     }
 
     @Override
-
     public void triggerSubtitlesToggle(final boolean enabled) {
 
         if (mTubiExoPlayerView == null) {
