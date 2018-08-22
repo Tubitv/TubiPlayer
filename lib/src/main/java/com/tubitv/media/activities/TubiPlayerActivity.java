@@ -157,14 +157,13 @@ public abstract class TubiPlayerActivity extends LifeCycleActivity
     private void setCaption(boolean isOn) {
         if (mediaModel != null && mediaModel.getSubtitlesUrl() != null && mTubiPlayerView != null
                 && mTubiPlayerView.getControlView() != null) {
-            //            mTubiPlayerView.getControlView().checkSubtitleIcon(isOn);
-            mTubiPlayerView.getSubtitleView().setVisibility(isOn ? View.VISIBLE : View.GONE);
+            mTubiPlayerView.getPlayerController().triggerSubtitlesToggle(isOn);
         }
     }
 
     private void setupExo() {
-        setCaption(isCaptionPreferenceEnable());
         initMoviePlayer();
+        setCaption(isCaptionPreferenceEnable());
         isActive = true;
         onPlayerReady();
     }
