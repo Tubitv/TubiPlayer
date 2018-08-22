@@ -35,6 +35,7 @@ import com.google.android.exoplayer2.util.Assertions;
 import com.google.android.exoplayer2.util.MimeTypes;
 import com.google.android.exoplayer2.util.Util;
 import com.tubitv.media.R;
+import com.tubitv.media.bindings.UserController;
 import com.tubitv.media.helpers.MediaHelper;
 import com.tubitv.media.interfaces.PlaybackActionCallback;
 import com.tubitv.media.interfaces.TubiPlaybackControlInterface;
@@ -157,7 +158,7 @@ public abstract class TubiPlayerActivity extends LifeCycleActivity
     private void setCaption(boolean isOn) {
         if (mediaModel != null && mediaModel.getSubtitlesUrl() != null && mTubiPlayerView != null
                 && mTubiPlayerView.getControlView() != null) {
-            //            mTubiPlayerView.getControlView().checkSubtitleIcon(isOn);
+            ((UserController) mTubiPlayerView.getPlayerController()).isSubtitleEnabled.set(isOn);
             mTubiPlayerView.getSubtitleView().setVisibility(isOn ? View.VISIBLE : View.GONE);
         }
     }
