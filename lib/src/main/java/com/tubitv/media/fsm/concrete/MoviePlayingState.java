@@ -6,6 +6,7 @@ import android.webkit.WebView;
 import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.SimpleExoPlayer;
+import com.tubitv.media.bindings.UserController;
 import com.tubitv.media.controller.PlayerAdLogicController;
 import com.tubitv.media.controller.PlayerUIController;
 import com.tubitv.media.fsm.BaseState;
@@ -84,6 +85,11 @@ public class MoviePlayingState extends BaseState {
         controller.isPlayingAds = false;
 
         hideVpaidNShowPlayer(controller);
+
+        //when return to the movie playing state, show the subtitle if necessary
+        if (shouldShowSubtitle()) {
+            ((TubiExoPlayerView) controller.getExoPlayerView()).getSubtitleView().setVisibility(View.INVISIBLE);
+        }
     }
 
     private void updatePlayerPosition(SimpleExoPlayer moviePlayer, PlayerUIController controller) {
@@ -111,6 +117,20 @@ public class MoviePlayingState extends BaseState {
             vpaidEWebView.loadUrl(VpaidClient.EMPTY_URL);
             vpaidEWebView.clearHistory();
         }
+    }
+
+    private boolean shouldShowSubtitle() {
+        boolean result = false;
+
+        TubiExoPlayerView view = (TubiExoPlayerView) controller.getExoPlayerView();
+
+        UserController controller = (UserController) view.getPlayerController();
+
+        if (movieMedia.getSubtitlesUrl() != null && controller.isSubtitleEnabled.get()) {
+            return true;
+        }
+
+        return result;
     }
 
 }
