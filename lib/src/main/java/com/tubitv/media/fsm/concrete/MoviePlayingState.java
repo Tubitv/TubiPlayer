@@ -88,7 +88,7 @@ public class MoviePlayingState extends BaseState {
 
         //when return to the movie playing state, show the subtitle if necessary
         if (shouldShowSubtitle()) {
-            ((TubiExoPlayerView) controller.getExoPlayerView()).getSubtitleView().setVisibility(View.INVISIBLE);
+            ((TubiExoPlayerView) controller.getExoPlayerView()).getSubtitleView().setVisibility(View.VISIBLE);
         }
     }
 
