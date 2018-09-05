@@ -16,3 +16,16 @@ From the technology side of things, in order to implement an android player that
 
 # State Machine Diagram
 ![State Machine](https://github.com/Tubitv/TubiPlayer/blob/master/lib/doc/Screen%20Shot%202017-09-18%20at%204.23.53%20PM.png)
+
+# How to use 
+Different application often requires different sets of rules and logic to satisfy business requirements, as the result, Tubiplayer was build to provide high degree of
+customization. However, highly customized code if not managed well can quickly turn into nightmare. Therefore, Tubiplayer leverages a third party Dependency Injection framework: **Dagger** 
+to provide the best of both worlds.(If you are not familiar with using dagger, please take sometime to learn it, because it is a very good tool to reduce complexity, testing, and other software development merits)
+
+There is quick step by step use:
+1. Currently, the whole playback experience is handled within an Activity: ***DoubleViewTubiPlayerActivity***, the idea is that you want to play some source,
+you create a instance of ***MediaModel***, which includes information of the video, and you pass it in as a extra in intent, with the Key **TubiPlayerActivity.TUBI_MEDIA_KEY**
+
+2.
+
+
