@@ -16,6 +16,7 @@ import com.tubitv.media.models.AdMediaModel;
 import com.tubitv.media.models.MediaModel;
 import com.tubitv.media.models.VpaidClient;
 import com.tubitv.media.utilities.ExoPlayerLogger;
+import com.tubitv.media.views.TubiExoPlayerView;
 
 /**
  * Created by allensun on 8/1/17.
@@ -87,6 +88,9 @@ public class VpaidState extends BaseState {
 
             vpaidWebView.addJavascriptInterface(client, "TubiNativeJSInterface");
             vpaidWebView.loadUrl(fsmPlayer.getVPAID_END_POINT());
+
+            //hide the subtitle view when vpaid is playing
+            ((TubiExoPlayerView) controller.getExoPlayerView()).getSubtitleView().setVisibility(View.INVISIBLE);
         } else {
             ExoPlayerLogger.w(Constants.FSMPLAYER_TESTING, "VpaidClient is null");
         }

@@ -108,6 +108,9 @@ public class AdPlayingState extends BaseState {
             adPlayer.setPlayWhenReady(true);
             adPlayer.addAnalyticsListener(componentController.getAdPlayingMonitor());
             adPlayer.setMetadataOutput(componentController.getAdPlayingMonitor());
+
+            //hide the subtitle view when ad is playing
+            ((TubiExoPlayerView) controller.getExoPlayerView()).getSubtitleView().setVisibility(View.INVISIBLE);
         }
     }
 
