@@ -120,17 +120,16 @@ public class MoviePlayingState extends BaseState {
     }
 
     private boolean shouldShowSubtitle() {
-        boolean result = false;
 
         TubiExoPlayerView view = (TubiExoPlayerView) controller.getExoPlayerView();
 
         UserController controller = (UserController) view.getPlayerController();
 
-        if (movieMedia.getSubtitlesUrl() != null && controller.isSubtitleEnabled.get()) {
+        if (controller.videoHasSubtitle.get() && controller.isSubtitleEnabled.get()) {
             return true;
         }
 
-        return result;
+        return false;
     }
 
 }
