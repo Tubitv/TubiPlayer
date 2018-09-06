@@ -3,12 +3,13 @@ package com.tubitv.media.helpers;
 import android.content.Context;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import com.google.android.exoplayer2.ext.okhttp.OkHttpDataSourceFactory;
 import com.google.android.exoplayer2.upstream.DataSource;
 import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter;
 import com.google.android.exoplayer2.upstream.DefaultDataSourceFactory;
-import com.google.android.exoplayer2.upstream.DefaultHttpDataSourceFactory;
 import com.google.android.exoplayer2.upstream.HttpDataSource;
 import com.google.android.exoplayer2.util.Util;
+import okhttp3.OkHttpClient;
 
 /**
  * Created by stoyan on 6/21/17.
@@ -55,20 +56,20 @@ public class MediaHelper {
     //        return linkedList.get(index);
     //    }
 
-    public static
-    @NonNull
-    DataSource.Factory buildDataSourceFactory(@NonNull Context context,
+    public static @NonNull DataSource.Factory buildDataSourceFactory(@NonNull Context context,
             @Nullable DefaultBandwidthMeter bandwidthMeter) {
         return new DefaultDataSourceFactory(context, bandwidthMeter,
                 buildHttpDataSourceFactory(context, bandwidthMeter));
     }
 
     //TODO put user agent in meta or attrs
-    public static
-    @NonNull
-    HttpDataSource.Factory buildHttpDataSourceFactory(@NonNull Context context,
+    public static @NonNull HttpDataSource.Factory buildHttpDataSourceFactory(@NonNull Context context,
             @NonNull DefaultBandwidthMeter bandwidthMeter) {
-        return new DefaultHttpDataSourceFactory(Util.getUserAgent(context, "TubiExoPlayer"), bandwidthMeter);
+        OkHttpClient.Builder clientBuilder = new OkHttpClient.Builder();
+        return new OkHttpDataSourceFactory(
+                clientBuilder.build(),
+                Util.getUserAgent(context, "TubiExoPlayer"),
+                bandwidthMeter);
     }
 
 }
