@@ -27,6 +27,11 @@ public class PlayerDeviceUtils {
      * Single player instance will re-buffer every time when we switch between MediaSource
      */
     public static boolean useSinglePlayer() {
+        // Turn it on for all TV devices
+        if (sIsTVDevice) {
+            return true;
+        }
+
         // Use single player instance for Mi Box, since for 2.8.3 exoplayer it doesn't support more than one player instance
         // When we start second player instance and prepare, we got insufficiant resource error and player stuck
         if (XIAOMI_MANUFACTURER.equals(Util.MANUFACTURER) && MI_BOX_DEVICE.equals(Util.DEVICE)) {
