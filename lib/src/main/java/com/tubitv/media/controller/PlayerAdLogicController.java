@@ -23,6 +23,9 @@ public class PlayerAdLogicController {
 
     private VpaidClient vpaidClient;
 
+    public PlayerAdLogicController() {
+    }
+
     public PlayerAdLogicController(@Nullable AdPlayingMonitor adPlayingMonitor,
             @Nullable PlaybackActionCallback playbackActionCallback,
             @Nullable DoublePlayerInterface doublePlayerInterface, @Nullable CuePointMonitor cuePointMonitor) {

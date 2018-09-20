@@ -19,13 +19,15 @@ From the technology side of things, in order to implement an android player that
 
 # How to use 
 Different application often requires different sets of rules and logic to satisfy business requirements, as the result, Tubiplayer was build to provide high degree of
-customization. However, highly customized code if not managed well can quickly turn into nightmare. Therefore, Tubiplayer leverages a third party Dependency Injection framework: **Dagger** 
+customization. However, highly customized code if not managed well can quickly turn into nightmare. Therefore, Tubiplayer leverages a third party Dependency Injection framework:[Dagger](https://github.com/google/dagger) 
 to provide the best of both worlds.(If you are not familiar with using dagger, please take sometime to learn it, because it is a very good tool to reduce complexity, testing, and other software development merits)
 
-There is quick step by step use:
-1. Currently, the whole playback experience is handled within an Activity: ***DoubleViewTubiPlayerActivity***, the idea is that you want to play some source,
-you create a instance of ***MediaModel***, which includes information of the video, and you pass it in as a extra in intent, with the Key **TubiPlayerActivity.TUBI_MEDIA_KEY**
+### Different use cases:
+1. If you just simply want to play a video without any interruption, simply use **MediaModel.video(name, VIDEO_URL, artwork, subtitle)** to build a mediaModel instance, then pass it in as intent extra with key **TubiPlayerActivity.TUBI_MEDIA_KEY** to start 
+**DoubleViewTubiPlayerActivity**, then the code start a self contained activity to handle your playback experience 
 
-2.
+2. In addition to play a video, if you also want to implement pre-roll, and middle-roll video ads, then there are more steps needed:
+    1. You need to know at which positions to fetch for ads, and how to fetch ads, this is been handled by **AdInterface**, you need to implement your own logic.
+    2. 
 
 
