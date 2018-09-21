@@ -361,6 +361,10 @@ public class DoubleViewTubiPlayerActivity extends TubiPlayerActivity implements 
     }
 
     private String printCuePoints(long[] cuePoints) {
+        if (cuePoints == null) {
+            return "no cuepoints supplied";
+        }
+
         StringBuilder builder = new StringBuilder();
         builder.append("Adbreak will be in : ");
 

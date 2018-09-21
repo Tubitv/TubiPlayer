@@ -128,8 +128,9 @@ public class PlayerModuleDefault {
             @Override
             public void fetchQuePoint(CuePointsRetriever retriever, CuePointCallBack callBack) {
 
-                callBack.onCuePointReceived(new long[] { 60000, 900000, 1800000, 3600000 });
+                callBack.onCuePointReceived(null);
                 //"AdBreak point at 0s, 1min, 15min, 30min, 60min. With each adbreak showing one ads"
+                //new long[] { 60000, 900000, 1800000, 3600000 }
             }
         };
     }

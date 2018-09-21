@@ -23,7 +23,7 @@ upfront.
 Nearly every business related dependencies are managed by [PlayerModuleDefault](./lib/src/main/java/com/tubitv/media/di/PlayerModuleDefault.java), where all the dependencies are being instantiated and being injected into [DoubleViewTubiPlayerActivity](./lib/src/main/java/com/tubitv/media/activities/DoubleViewTubiPlayerActivity.java)
 You can choose to use the default behavior by using the module out of box, but if you have customized business logic, you can directly change the dependencies in ***PlayerModuleDefault*** for customization
 
-## How to use 
+## How to use
 Different application often requires different sets of rules and logic to satisfy business requirements, as the result, Tubiplayer was build to provide high degree of
 customization. However, highly customized code if not managed well can quickly turn into nightmare. Therefore, Tubiplayer leverages a third party Dependency Injection framework:[Dagger](https://github.com/google/dagger) 
 to provide the best of both worlds.(If you are not familiar with using dagger, please take sometime to learn it, because it is a very good tool to reduce complexity, testing, and other software development merits)
@@ -40,9 +40,14 @@ to provide the best of both worlds.(If you are not familiar with using dagger, p
                  startActivity(intent);
 ```
 
-2. In addition to play a video, if you also want to implement pre-roll, and middle-roll video ads, then there are more steps needed:
-    1. You need to know at which positions to fetch for ads, and how to fetch ads, this is been handled by **AdInterface**, you need to implement your own logic.
-    2. 
+2. The playback is still handle by standalone **DoubleViewTubiPlayerActivity** by using the above usage. In addition to play a video, if you also want to implement pre-roll, and middle-roll video ads, then there are more steps needed:
+    1. First the presumption is all the video ads need to be real time and dynamic, meaning all the ads are not fetched until they are needed.
+    2. Therefore, You need to know at beginning of playback at which positions has opportunity to show ads, in another words the list of positions during the main video to fetch ads from server, we called it the ***CuePoints***.
+    3. Then, when the main video proceed to cuepoints, you need to fetch the ads from your desired repository, your repository can return any number of ads to display during this cuepoint. (0 - any)
+    4. The **AdInterface** has two callbacks, since those there are ***RetrieveAdCallback*** callback in method params, you can choose to implement your own **asynchronous** implementation. You can use **AdRetriever** and **CuePointsRetriever** for customized fetching functionality. 
+        1. ***void fetchAd(AdRetriever retriever, RetrieveAdCallback callback)*** 
+        2. ***void fetchQuePoint(CuePointsRetriever retriever, CuePointCallBack callBack)***
+        
 
 
 
