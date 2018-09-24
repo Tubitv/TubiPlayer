@@ -6,7 +6,7 @@ In the industry of streaming free multi-media contents to users, companies choos
 
 From the technology side of things, in order to implement an android player that streams multiple media very well, switches between movies and ads dynamically, and presents users with a seamless user experience, it requires a series of stateful actions that poses a lot of complexities for enginners to manage. **TubiPlayer offers an industry standard, multi-media streaming and ad-supported solution on the Android platform, with highly customized code architecture and implementation**
 
-## What Does TubiPlayer Do Well.
+## What TubiPlayer Does Well.
 * Native multi-media streaming on Android
 * Industry standard Ad solutions, including VAST and VPAID
 * Error-handing
@@ -15,21 +15,23 @@ From the technology side of things, in order to implement an android player that
 
 
 ## Dependency Management
-In order to provide highly customized code base, we have leveraged [Dagger's](https://github.com/google/dagger) dependency management framework to better manage dependencies for your own business logic.(If you are not familiar with using dagger, please take sometime to learn it, because it is a very good tool to reduce complexity, testing, and other software development merits)
-In general, your business requirement may require different logic of showing video ads at different positions, and different types of ads, and so forth. The idea behind Tubiplayer's dependency management is that we provide the basic classes and functionality
-to implement playback experience, and if you have different logic, you just override that particular class or functionality without the need to thoroughly understand the whole code base. As the result, you are able to easily and quickly use TubiPlayer without invest much time 
+In order to provide a highly customized code base, we have leveraged [Dagger's](https://github.com/google/dagger) dependency management framework to better manage dependencies for your own business logic.(We recommend having a decent understanding of how Dagger works before making changes to our code)
+Our goal is to provide flexibility. Let's say your business requires the use of multiple ads of different types, playing at different positions. TubiPlayer's dependency management provides the basic classes and functionality
+to implement a playback experience.
+You can choose to use the default behavior by using the module out of box, but if you need to change how the player is implemented to suit your particular needs, you only need to override the classes or functions relevant to your project's requirements. This way you can use setup and use TubiPlayer quickly and easily without needing to thoroughly understand the entire code base.
+As the result, you are able to easily and quickly use TubiPlayer without invest much time 
 upfront.
 
-Nearly every business related dependencies are managed by [PlayerModuleDefault](./lib/src/main/java/com/tubitv/media/di/PlayerModuleDefault.java), where all the dependencies are being instantiated and being injected into [DoubleViewTubiPlayerActivity](./lib/src/main/java/com/tubitv/media/activities/DoubleViewTubiPlayerActivity.java)
-You can choose to use the default behavior by using the module out of box, but if you have customized business logic, you can directly change the dependencies in ***PlayerModuleDefault*** for customization
+Nearly every business related dependency is managed by [PlayerModuleDefault](./lib/src/main/java/com/tubitv/media/di/PlayerModuleDefault.java), with each dependency being instantiated and being injected into [DoubleViewTubiPlayerActivity](./lib/src/main/java/com/tubitv/media/activities/DoubleViewTubiPlayerActivity.java)
+You can choose to use the default behavior by using the module out of box, but if you have customized business logic, you can directly change the dependencies in [PlayerModuleDefault](./lib/src/main/java/com/tubitv/media/di/PlayerModuleDefault.java).
 
 ## How to use
-Different application often requires different sets of rules and logic to satisfy business requirements, as the result, Tubiplayer was build to provide high degree of
-customization. However, highly customized code if not managed well can quickly turn into nightmare. Therefore, Tubiplayer leverages a third party Dependency Injection framework:[Dagger](https://github.com/google/dagger) 
-to provide the best of both worlds.(If you are not familiar with using dagger, please take sometime to learn it, because it is a very good tool to reduce complexity, testing, and other software development merits)
+Different applications often require different sets of rules and logic to satisfy business requirements. As the result, Tubiplayer was built to provide high degree of
+customization. However, highly customizable code, if not managed well, can quickly turn into nightmare. Therefore, Tubiplayer leverages the third party Dependency Injection framework,[Dagger](https://github.com/google/dagger) 
+to provide the best of both worlds.
 
 ### Different use cases:
-1. If you just simply want to play a video without any interruption, you can just use ***DoubleViewTubiPlayerActivity*** out of box, then the code start a self contained activity to handle your playback experience
+1. If you just simply want to play a video without any forms of interruption, you can just use ***DoubleViewTubiPlayerActivity*** out of box. The code start a self contained activity to handle your playback experience
 ```java
       String subs = "http://put_your_own_subtitle.srt";
                  String artwork = "http://www.put_your_own_art_work.png";
@@ -40,10 +42,11 @@ to provide the best of both worlds.(If you are not familiar with using dagger, p
                  startActivity(intent);
 ```
 
-2. The playback is still handle by standalone **DoubleViewTubiPlayerActivity** by using the above usage. In addition to play a video, if you also want to implement pre-roll, and middle-roll video ads, then there are more steps needed:
-    1. First the presumption is all the video ads need to be real time and dynamic, meaning all the ads are not fetched until they are needed.
-    2. Therefore, You need to know at beginning of playback at which positions has opportunity to show ads, in another words the list of positions during the main video to fetch ads from server, we called it the ***CuePoints***.
-    3. Then, when the main video proceed to cuepoints, you need to fetch the ads from your desired repository, your repository can return any number of ads to display during this cuepoint. (0 - any)
+2. If you want to implement pre-roll or middle-roll video ads, use the DoubleViewTubiPlayerActivity implementation from step 1, and then follow the additional steps:
+    1. First, the presumption is that all the video ads need to be real time and dynamic, meaning all the ads are not fetched until they are needed. If you choose not to do real time, you can hardcode CuePoints or Ad Response for a fixed logic.
+    2. You need to know at beginning of playback at which positions ads may need to show. All the video ads need to be real time and dynamic, meaning they are not fetched until they are needed.
+       We call the list of positions during the main video to fetch ads from server ***CuePoints***.
+    3. When the main video reaches a CuePoint, you need to fetch the ads from your desired repository. It can return any number of ads to display during this CuePoint, including none at all.
     4. The **AdInterface** has two callbacks, since those there are ***RetrieveAdCallback*** callback in method params, you can choose to implement your own **asynchronous** implementation. You can use **AdRetriever** and **CuePointsRetriever** for customized fetching functionality. 
         1. ***void fetchAd(AdRetriever retriever, RetrieveAdCallback callback)*** 
         2. ***void fetchQuePoint(CuePointsRetriever retriever, CuePointCallBack callBack)***
@@ -52,12 +55,12 @@ to provide the best of both worlds.(If you are not familiar with using dagger, p
 
 
 ## Player Lifecycle
-The ExoPlayer needs to create and release resources that binds to Activity's lifecycle, and also you may need to do some customized code logic in player's lifecycle.
+The Tubiplayer's lifecycle is bound to Activity's lifecycle for better resource management. Refer to this chart if you want to add customized business logic in Tubiplayer's lifecycle:
 ![State Machine](./documentation/tubiplayer_lifecycle.png)
 
 ## State Machine Diagram
-The business logic of switching ads are complicated and stateful, in order to provide better state management, this diagrams below demonstrate the state transitions and you can use 
-this diagram to add your customized logic
+The business logic of switching ads is complicated and stateful. In order to provide better state management, the diagrams below demonstrate the state transitions. Refer to this
+this diagram when adding your customized logic:
 ![State Machine](https://github.com/Tubitv/TubiPlayer/blob/master/lib/doc/Screen%20Shot%202017-09-18%20at%204.23.53%20PM.png)
 
 ## License
