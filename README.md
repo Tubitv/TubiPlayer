@@ -46,7 +46,8 @@ to provide the best of both worlds.
     2. You need to know at beginning of playback at which positions ads may need to show. All the video ads need to be real time and dynamic, meaning they are not fetched until they are needed.
        We call the list of positions during the main video to fetch ads from server ***CuePoints***.
     3. When the main video reaches a CuePoint, you need to fetch the ads from your desired repository. It can return any number of ads to display during this CuePoint, including none at all.
-    4. The **AdInterface** has two callbacks, since those there are ***RetrieveAdCallback*** callback in method params, you can choose to implement your own **asynchronous** implementation. You can use **AdRetriever** and **CuePointsRetriever** for customized fetching functionality. 
+    4. Finally, The **[AdInterface](./lib/src/main/java/com/tubitv/media/fsm/callback/AdInterface.java)** is the interface that defines contracts for getting ***Cuepoints*** and ***Ad Responses*** between Tubiplayer core and remote server,
+       you have option to do both ***asynchronous*** and ***synchronous*** operation with it.
         1. ***void fetchAd(AdRetriever retriever, RetrieveAdCallback callback)*** 
         2. ***void fetchQuePoint(CuePointsRetriever retriever, CuePointCallBack callBack)***
         
