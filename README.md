@@ -18,9 +18,8 @@ From the technology side of things, in order to implement an android player that
 In order to provide a highly customized code base, we have leveraged [Dagger's](https://github.com/google/dagger) dependency management framework to better manage dependencies for your own business logic.(We recommend having a decent understanding of how Dagger works before making changes to our code)
 Our goal is to provide flexibility. Let's say your business requires the use of multiple ads of different types, playing at different positions. TubiPlayer's dependency management provides the basic classes and functionality
 to implement a playback experience.
-You can choose to use the default behavior by using the module out of box, but if you need to change how the player is implemented to suit your particular needs, you only need to override the classes or functions relevant to your project's requirements. This way you can use setup and use TubiPlayer quickly and easily without needing to thoroughly understand the entire code base.
-As the result, you are able to easily and quickly use TubiPlayer without invest much time 
-upfront.
+You can choose to use the default behavior by using the module out of box, but if you need to change how the player is implemented to suit your particular needs, you only need to override the classes or functions relevant to your project's requirements. This way you can setup and use TubiPlayer quickly and easily without the need to thoroughly understand the entire code base.
+As the result, you are able to easily and quickly use TubiPlayer without invest much time upfront.
 
 Nearly every business related dependency is managed by [PlayerModuleDefault](./lib/src/main/java/com/tubitv/media/di/PlayerModuleDefault.java), with each dependency being instantiated and being injected into [DoubleViewTubiPlayerActivity](./lib/src/main/java/com/tubitv/media/activities/DoubleViewTubiPlayerActivity.java)
 You can choose to use the default behavior by using the module out of box, but if you have customized business logic, you can directly change the dependencies in [PlayerModuleDefault](./lib/src/main/java/com/tubitv/media/di/PlayerModuleDefault.java).
