@@ -1,7 +1,7 @@
 package com.tubitv.demo;
 
 import com.tubitv.media.controller.PlayerUIController;
-import com.tubitv.media.di.FSMModuleTesting;
+import com.tubitv.media.di.PlayerModuleDefault;
 import com.tubitv.media.di.component.DaggerFsmComonent;
 import com.tubitv.media.di.component.FsmComonent;
 import com.tubitv.media.fsm.Input;
@@ -59,7 +59,8 @@ public class ExoPlayerFSMTest {
 
     @Before
     public void setup() {
-        comonent = DaggerFsmComonent.builder().fSMModuleTesting(new FSMModuleTesting(null, null, null, null)).build();
+        comonent = DaggerFsmComonent.builder().playerModuleDefault(new PlayerModuleDefault(null, null, null, null))
+                .build();
     }
 
     @Test

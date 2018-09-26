@@ -35,6 +35,9 @@ public class PlayerUIController {
 
     private long historyPosition = C.TIME_UNSET;
 
+    public PlayerUIController() {
+    }
+
     public PlayerUIController(@Nullable SimpleExoPlayer contentPlayer, @Nullable SimpleExoPlayer adPlayer,
             @Nullable WebView vpaidWebView, @Nullable View exoPlayerView) {
         this.contentPlayer = contentPlayer;

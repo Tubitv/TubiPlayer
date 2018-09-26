@@ -22,7 +22,7 @@ import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter;
 import com.tubitv.media.bindings.UserController;
 import com.tubitv.media.controller.PlayerAdLogicController;
 import com.tubitv.media.controller.PlayerUIController;
-import com.tubitv.media.di.FSMModuleTesting;
+import com.tubitv.media.di.PlayerModuleDefault;
 import com.tubitv.media.di.component.DaggerFsmComonent;
 import com.tubitv.media.fsm.Input;
 import com.tubitv.media.fsm.callback.AdInterface;
@@ -104,7 +104,8 @@ public class DoubleViewTubiPlayerActivity extends TubiPlayerActivity implements 
      */
     protected void injectDependency() {
         //FSMModuleTesting requirement object such as ExoPlayer haven't been initialized yet
-        DaggerFsmComonent.builder().fSMModuleTesting(new FSMModuleTesting(null, null, null, null)).build().inject(this);
+        DaggerFsmComonent.builder().playerModuleDefault(new PlayerModuleDefault()).build()
+                .inject(this);
     }
 
     /**
@@ -360,6 +361,10 @@ public class DoubleViewTubiPlayerActivity extends TubiPlayerActivity implements 
     }
 
     private String printCuePoints(long[] cuePoints) {
+        if (cuePoints == null) {
+            return "no cuepoints supplied";
+        }
+
         StringBuilder builder = new StringBuilder();
         builder.append("Adbreak will be in : ");
 

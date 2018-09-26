@@ -16,10 +16,7 @@ import com.tubitv.media.models.MediaModel;
  */
 public class SelectionActivity extends Activity {
 
-    private static final String LOGIN_TOKEN = "?pVJiicetIe13CLViqLW3ET8ICu4kSyZBnO7dOxOQ3VZLrcdaRRV9c-BUz03_drbn";
-    private static final String VIDEO_URL =
-            "http://c13.adrise.tv/v2/sources/content-owners/lionsgate/302437/v201703051151-,238,489,779,1138,1345,k.mp4.m3u8"
-                    + LOGIN_TOKEN;
+    private static final String VIDEO_URL = "https://tungsten.aaplimg.com/VOD/bipbop_adv_fmp4_example/master.m3u8";
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
