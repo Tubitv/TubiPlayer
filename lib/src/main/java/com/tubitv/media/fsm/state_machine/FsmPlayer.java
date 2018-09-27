@@ -21,8 +21,8 @@ import com.tubitv.media.models.AdMediaModel;
 import com.tubitv.media.models.AdRetriever;
 import com.tubitv.media.models.CuePointsRetriever;
 import com.tubitv.media.models.MediaModel;
+import com.tubitv.media.player.PlayerContainer;
 import com.tubitv.media.utilities.ExoPlayerLogger;
-import com.tubitv.media.utilities.PlayerDeviceUtils;
 
 /**
  * Created by allensun on 7/27/17.
@@ -97,11 +97,11 @@ public abstract class FsmPlayer implements Fsm, RetrieveAdCallback, FsmAdControl
             return;
         }
 
-        SimpleExoPlayer moviePlayer = controller.getContentPlayer();
+        SimpleExoPlayer player = PlayerContainer.getPlayer();
 
-        if (moviePlayer != null && moviePlayer.getPlaybackState() != Player.STATE_IDLE) {
-            int resumeWindow = moviePlayer.getCurrentWindowIndex();
-            long resumePosition = moviePlayer.isCurrentWindowSeekable() ? Math.max(0, moviePlayer.getCurrentPosition())
+        if (player != null && player.getPlaybackState() != Player.STATE_IDLE) {
+            int resumeWindow = player.getCurrentWindowIndex();
+            long resumePosition = player.isCurrentWindowSeekable() ? Math.max(0, player.getCurrentPosition())
                     : C.TIME_UNSET;
             controller.setMovieResumeInfo(resumeWindow, resumePosition);
 
@@ -215,13 +215,17 @@ public abstract class FsmPlayer implements Fsm, RetrieveAdCallback, FsmAdControl
 
     @Override
     public void restart() {
-        getController().getContentPlayer().stop();
-        getController().getContentPlayer().setPlayWhenReady(false);
-        currentState = null;
-        getController().clearMovieResumeInfo();
+        SimpleExoPlayer player = PlayerContainer.getPlayer();
+        if (player != null) {
 
-        getController().getContentPlayer().prepare(movieMedia.getMediaSource(), true, true);
-        transit(Input.INITIALIZE);
+            player.stop();
+            player.setPlayWhenReady(false);
+            currentState = null;
+            getController().clearMovieResumeInfo();
+
+            player.prepare(movieMedia.getMediaSource(), true, true);
+            transit(Input.INITIALIZE);
+        }
     }
 
     @Override
@@ -234,7 +238,7 @@ public abstract class FsmPlayer implements Fsm, RetrieveAdCallback, FsmAdControl
                 return;
             }
         }
-        
+
         State transitToState;
 
         /**
@@ -274,7 +278,7 @@ public abstract class FsmPlayer implements Fsm, RetrieveAdCallback, FsmAdControl
             currentState = factory.createState(MoviePlayingState.class);
         }
 
-        if (!PlayerDeviceUtils.useSinglePlayer() || !controller.isPlayingAds) {
+        if (!controller.isPlayingAds) {
             updateMovieResumePosition(controller);
         }
 
@@ -329,8 +333,6 @@ public abstract class FsmPlayer implements Fsm, RetrieveAdCallback, FsmAdControl
         ExoPlayerLogger.i(Constants.FSMPLAYER_TESTING, "AdBreak received");
 
         adMedia = mediaModels;
-        // prepare and build the adMediaModel
-        playerComponentController.getDoublePlayerInterface().onPrepareAds(adMedia);
 
         transitToStateBaseOnCurrentState(currentState);
     }

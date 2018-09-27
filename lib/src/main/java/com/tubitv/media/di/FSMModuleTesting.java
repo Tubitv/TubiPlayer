@@ -69,7 +69,7 @@ public class FSMModuleTesting {
     @ActicityScope
     @Provides
     PlayerUIController provideController() {
-        return new PlayerUIController(mainPlayer, adPlayer, webView, rootView);
+        return new PlayerUIController(webView, rootView);
     }
 
     @ActicityScope

@@ -3,13 +3,30 @@ package com.tubitv.media.models;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.text.TextUtils;
+import com.google.android.exoplayer2.C;
+import com.google.android.exoplayer2.Format;
+import com.google.android.exoplayer2.extractor.DefaultExtractorsFactory;
+import com.google.android.exoplayer2.source.ExtractorMediaSource;
 import com.google.android.exoplayer2.source.MediaSource;
+import com.google.android.exoplayer2.source.MergingMediaSource;
+import com.google.android.exoplayer2.source.SingleSampleMediaSource;
+import com.google.android.exoplayer2.source.dash.DashMediaSource;
+import com.google.android.exoplayer2.source.dash.DefaultDashChunkSource;
+import com.google.android.exoplayer2.source.hls.HlsMediaSource;
+import com.google.android.exoplayer2.source.smoothstreaming.DefaultSsChunkSource;
+import com.google.android.exoplayer2.source.smoothstreaming.SsMediaSource;
+import com.google.android.exoplayer2.upstream.DataSource;
+import com.google.android.exoplayer2.util.MimeTypes;
+import com.google.android.exoplayer2.util.Util;
 import java.io.Serializable;
 
 /**
  * Created by stoyan on 6/5/17.
  */
 public class MediaModel implements Serializable {
+    private static final String TAG = MediaModel.class.getSimpleName();
+    private static final String LANGUAGE = "en";
 
     /**
      * The url of the media
@@ -115,11 +132,66 @@ public class MediaModel implements Serializable {
         return mediaSource;
     }
 
-    public void setMediaSource(MediaSource mediaSource) {
-        this.mediaSource = mediaSource;
-    }
-
     public boolean isVpaid() {
         return isVpaid;
+    }
+
+    public boolean isDRM() {
+        return false;
+    }
+
+    public void buildMediaSourceIfNeeded(
+            final android.os.Handler handler,
+            final DataSource.Factory videoFactory,
+            final DataSource.Factory nonVideoFactory,
+            final com.tubitv.media.utilities.EventLogger eventLogger) {
+
+        if (this.mediaSource != null) { // Prevent regenerating MediaSource
+            return;
+        }
+
+        MediaSource mediaSource;
+        int type = TextUtils.isEmpty(getMediaExtension()) ? Util.inferContentType(getVideoUrl())
+                : Util.inferContentType("." + getMediaExtension());
+
+        //        if (!isAds) { // TODO parse video format correctly
+        //            type = C.TYPE_DASH;
+        //        }
+
+        // TODO: Replace deprecated constructors with proper factory
+        switch (type) {
+            case C.TYPE_SS:
+                mediaSource = new SsMediaSource(getVideoUrl(), nonVideoFactory,
+                        new DefaultSsChunkSource.Factory(videoFactory), handler, eventLogger);
+                break;
+            case C.TYPE_DASH:
+                mediaSource = new DashMediaSource(getVideoUrl(), nonVideoFactory,
+                        new DefaultDashChunkSource.Factory(videoFactory), handler, eventLogger);
+                break;
+            case C.TYPE_HLS:
+                mediaSource = new HlsMediaSource(getVideoUrl(), videoFactory, handler, eventLogger);
+                break;
+            case C.TYPE_OTHER:
+                mediaSource = new ExtractorMediaSource(getVideoUrl(), videoFactory, new DefaultExtractorsFactory(),
+                        handler, eventLogger);
+                break;
+            default: {
+                throw new IllegalStateException("Unsupported type: " + type);
+            }
+        }
+
+        if (getSubtitlesUrl() != null) {
+            MediaSource subtitleSource = new SingleSampleMediaSource(
+                    getSubtitlesUrl(),
+                    nonVideoFactory,
+                    Format.createTextSampleFormat(null, MimeTypes.APPLICATION_SUBRIP, null, Format.NO_VALUE,
+                            C.SELECTION_FLAG_DEFAULT, LANGUAGE, null, 0),
+                    0);
+            // Plays the video with the sideloaded subtitle.
+            mediaSource =
+                    new MergingMediaSource(mediaSource, subtitleSource);
+        }
+
+        this.mediaSource = mediaSource;
     }
 }

@@ -15,7 +15,7 @@ import com.tubitv.media.fsm.state_machine.FsmPlayer;
 import com.tubitv.media.models.AdMediaModel;
 import com.tubitv.media.models.MediaModel;
 import com.tubitv.media.models.VpaidClient;
-import com.tubitv.media.utilities.PlayerDeviceUtils;
+import com.tubitv.media.player.PlayerContainer;
 import com.tubitv.media.views.TubiExoPlayerView;
 
 /**
@@ -61,9 +61,6 @@ public class AdPlayingState extends BaseState {
     private void playingAdAndPauseMovie(PlayerUIController controller, AdMediaModel adMediaModel,
             PlayerAdLogicController componentController, FsmPlayer fsmPlayer) {
 
-        SimpleExoPlayer adPlayer = controller.getAdPlayer();
-        SimpleExoPlayer moviePlayer = controller.getContentPlayer();
-
         // then setup the player for ad to playe
         MediaModel adMedia = adMediaModel.nextAD();
 
@@ -77,40 +74,49 @@ public class AdPlayingState extends BaseState {
 
             hideVpaidNShowPlayer(controller);
 
-            moviePlayer.setPlayWhenReady(false);
+            if (PlayerContainer.getPlayer() != null) {
+                PlayerContainer.getPlayer().setPlayWhenReady(false);
 
-            // We need save movie play position before play ads for single player instance case
-            if (PlayerDeviceUtils.useSinglePlayer() && !controller.isPlayingAds) {
-                long resumePosition = Math.max(0, moviePlayer.getCurrentPosition());
-                controller.setMovieResumeInfo(moviePlayer.getCurrentWindowIndex(), resumePosition);
+                // We need save movie play position before play ads for single player instance case
+                if (!controller.isPlayingAds) {
+                    long resumePosition = Math.max(0, PlayerContainer.getPlayer().getCurrentPosition());
+                    controller.setMovieResumeInfo(PlayerContainer.getPlayer().getCurrentWindowIndex(), resumePosition);
+                }
             }
 
-            //prepare the moviePlayer with data source and set it play
+            PlayerContainer.releasePlayer();
 
+            // TODO as current set up, we always clearAdResumeInfo when enter AdPlaying, so this is always false
             boolean haveResumePosition = controller.getAdResumePosition() != C.TIME_UNSET;
 
             //prepare the mediaSource to AdPlayer
-            adPlayer.prepare(adMedia.getMediaSource(), !haveResumePosition, true);
+            PlayerContainer.preparePlayer(adMedia, !haveResumePosition, true, true);
+
             controller.isPlayingAds = true;
 
-            if (haveResumePosition) {
-                adPlayer.seekTo(adPlayer.getCurrentWindowIndex(), controller.getAdResumePosition());
+            SimpleExoPlayer player = PlayerContainer.getPlayer();
+
+            if (player != null) {
+                if (haveResumePosition) {
+                    player.seekTo(player.getCurrentWindowIndex(), controller.getAdResumePosition());
+                }
+
+                //update the ExoPlayerView with AdPlayer and AdMedia
+                TubiExoPlayerView tubiExoPlayerView = (TubiExoPlayerView) controller.getExoPlayerView();
+                tubiExoPlayerView.setPlayer(player, componentController.getTubiPlaybackInterface());
+                tubiExoPlayerView.setMediaModel(adMedia);
+                //update the numbers of ad left to give user indicator
+                tubiExoPlayerView.setAvailableAdLeft(adMediaModel.nubmerOfAd());
+
+                //Player the Ad.
+                player.setPlayWhenReady(true);
+                //TODO move adds monitor to PlayerContainer
+                player.addAnalyticsListener(componentController.getAdPlayingMonitor());
+                player.setMetadataOutput(componentController.getAdPlayingMonitor());
+
+                //hide the subtitle view when ad is playing
+                ((TubiExoPlayerView) controller.getExoPlayerView()).getSubtitleView().setVisibility(View.INVISIBLE);
             }
-
-            //update the ExoPlayerView with AdPlayer and AdMedia
-            TubiExoPlayerView tubiExoPlayerView = (TubiExoPlayerView) controller.getExoPlayerView();
-            tubiExoPlayerView.setPlayer(adPlayer, componentController.getTubiPlaybackInterface());
-            tubiExoPlayerView.setMediaModel(adMedia);
-            //update the numbers of ad left to give user indicator
-            tubiExoPlayerView.setAvailableAdLeft(adMediaModel.nubmerOfAd());
-
-            //Player the Ad.
-            adPlayer.setPlayWhenReady(true);
-            adPlayer.addAnalyticsListener(componentController.getAdPlayingMonitor());
-            adPlayer.setMetadataOutput(componentController.getAdPlayingMonitor());
-
-            //hide the subtitle view when ad is playing
-            ((TubiExoPlayerView) controller.getExoPlayerView()).getSubtitleView().setVisibility(View.INVISIBLE);
         }
     }
 
