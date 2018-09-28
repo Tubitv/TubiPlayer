@@ -234,7 +234,7 @@ public abstract class FsmPlayer implements Fsm, RetrieveAdCallback, FsmAdControl
                 return;
             }
         }
-        
+
         State transitToState;
 
         /**
@@ -274,8 +274,10 @@ public abstract class FsmPlayer implements Fsm, RetrieveAdCallback, FsmAdControl
             currentState = factory.createState(MoviePlayingState.class);
         }
 
-        if (!PlayerDeviceUtils.useSinglePlayer() || !controller.isPlayingAds) {
-            updateMovieResumePosition(controller);
+        if (controller != null) {
+            if (!PlayerDeviceUtils.useSinglePlayer() || !controller.isPlayingAds) {
+                updateMovieResumePosition(controller);
+            }
         }
 
         ExoPlayerLogger.d(Constants.FSMPLAYER_TESTING, "transit to: " + currentState.getClass().getSimpleName());
@@ -319,7 +321,8 @@ public abstract class FsmPlayer implements Fsm, RetrieveAdCallback, FsmAdControl
     public void updateSelf() {
         if (currentState != null) {
             ExoPlayerLogger
-                    .i(Constants.FSMPLAYER_TESTING, "Fsm updates self : " + currentState.getClass().getSimpleName());
+                    .i(Constants.FSMPLAYER_TESTING,
+                            "Fsm updates self : " + currentState.getClass().getSimpleName());
             currentState.performWorkAndUpdatePlayerUI(this);
         }
     }
