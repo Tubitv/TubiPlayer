@@ -59,7 +59,7 @@ public class ExoPlayerFSMTest {
 
     @Before
     public void setup() {
-        comonent = DaggerFsmComonent.builder().playerModuleDefault(new PlayerModuleDefault(null, null, null, null))
+        comonent = DaggerFsmComonent.builder().playerModuleDefault(new PlayerModuleDefault())
                 .build();
     }
 
