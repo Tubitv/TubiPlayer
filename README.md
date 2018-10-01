@@ -61,7 +61,7 @@ to provide the best of both worlds.
        }
    
     ```
-    Then, run the app, and see the testing pre-roll and mid-roll ads in demo.
+    Then, run the demo app, and see the testing pre-roll and mid-roll ads.
         
 
 ## Player Lifecycle
