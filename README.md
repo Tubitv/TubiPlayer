@@ -50,8 +50,19 @@ to provide the best of both worlds.
         1. ***void fetchAd(AdRetriever retriever, RetrieveAdCallback callback)*** 
         2. ***void fetchQuePoint(CuePointsRetriever retriever, CuePointCallBack callBack)***
         
-
-
+    5. If you want to quickly test the pre-roll and mid-roll video ads using the default components, just simply change 1 line of code in [PlayerModuleDefault](lib/src/main/java/com/tubitv/media/di/PlayerModuleDefault.java#L131): <br/>  
+    ```java
+  
+       @Override
+       public void fetchQuePoint(CuePointsRetriever retriever, CuePointCallBack callBack) {
+    
+           callBack.onCuePointReceived(new long[] {0, 60000, 900000, 1800000, 3600000 });
+                //"AdBreak point at 0s, 1min, 15min, 30min, 60min. With each adbreak showing one ads"
+       }
+   
+    ```
+    Then, run the demo app, and see the testing pre-roll and mid-roll ads.
+        
 
 ## Player Lifecycle
 The Tubiplayer's lifecycle is bound to the Activity's lifecycle for better resource management. Refer to this chart if you want to add customized business logic in Tubiplayer's lifecycle:
