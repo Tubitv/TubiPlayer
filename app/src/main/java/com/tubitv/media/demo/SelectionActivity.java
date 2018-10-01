@@ -42,7 +42,7 @@ public class SelectionActivity extends Activity {
 
                 String artwork = "http://images.adrise.tv/q4v7JUQPPHqn8nTmYiudW6l8w_0=/214x306/smart/img.adrise.tv/1c31dfce-5338-4a09-bcb0-f68789153f33.png";
                 String name = "Man on the ledge";
-                Intent intent = new Intent(SelectionActivity.this, RealActivity.class);
+                Intent intent = new Intent(SelectionActivity.this, DoubleViewTubiPlayerActivity.class);
                 intent.putExtra(TubiPlayerActivity.TUBI_MEDIA_KEY, MediaModel.video(name, VIDEO_URL, artwork, null));
                 startActivity(intent);
             }
