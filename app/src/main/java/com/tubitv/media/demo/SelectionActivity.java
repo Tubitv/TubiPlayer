@@ -16,10 +16,7 @@ import com.tubitv.media.models.MediaModel;
  */
 public class SelectionActivity extends Activity {
 
-    private static final String LOGIN_TOKEN = "?pVJiicetIe13CLViqLW3ET8ICu4kSyZBnO7dOxOQ3VZLrcdaRRV9c-BUz03_drbn";
-    private static final String VIDEO_URL =
-            "http://c13.adrise.tv/v2/sources/content-owners/lionsgate/302437/v201703051151-,238,489,779,1138,1345,k.mp4.m3u8"
-                    + LOGIN_TOKEN;
+    private static final String VIDEO_URL = "https://tungsten.aaplimg.com/VOD/bipbop_adv_fmp4_example/master.m3u8";
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -45,7 +42,7 @@ public class SelectionActivity extends Activity {
 
                 String artwork = "http://images.adrise.tv/q4v7JUQPPHqn8nTmYiudW6l8w_0=/214x306/smart/img.adrise.tv/1c31dfce-5338-4a09-bcb0-f68789153f33.png";
                 String name = "Man on the ledge";
-                Intent intent = new Intent(SelectionActivity.this, RealActivity.class);
+                Intent intent = new Intent(SelectionActivity.this, DoubleViewTubiPlayerActivity.class);
                 intent.putExtra(TubiPlayerActivity.TUBI_MEDIA_KEY, MediaModel.video(name, VIDEO_URL, artwork, null));
                 startActivity(intent);
             }

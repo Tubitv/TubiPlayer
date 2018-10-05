@@ -29,6 +29,9 @@ public class PlayerUIController {
 
     private long historyPosition = C.TIME_UNSET;
 
+    public PlayerUIController() {
+    }
+
     public PlayerUIController(@Nullable WebView vpaidWebView, @Nullable View exoPlayerView) {
         this.vpaidWebView = vpaidWebView;
         this.exoPlayerView = exoPlayerView;

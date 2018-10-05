@@ -278,7 +278,7 @@ public abstract class FsmPlayer implements Fsm, RetrieveAdCallback, FsmAdControl
             currentState = factory.createState(MoviePlayingState.class);
         }
 
-        if (!controller.isPlayingAds) {
+        if (controller != null && !controller.isPlayingAds) {
             updateMovieResumePosition(controller);
         }
 
@@ -323,7 +323,8 @@ public abstract class FsmPlayer implements Fsm, RetrieveAdCallback, FsmAdControl
     public void updateSelf() {
         if (currentState != null) {
             ExoPlayerLogger
-                    .i(Constants.FSMPLAYER_TESTING, "Fsm updates self : " + currentState.getClass().getSimpleName());
+                    .i(Constants.FSMPLAYER_TESTING,
+                            "Fsm updates self : " + currentState.getClass().getSimpleName());
             currentState.performWorkAndUpdatePlayerUI(this);
         }
     }
