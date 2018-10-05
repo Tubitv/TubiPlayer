@@ -105,13 +105,19 @@ public class DoubleViewTubiPlayerActivity extends TubiPlayerActivity implements 
     }
 
     @Override
+    protected void initPlayer() {
+        super.initPlayer();
+        PlayerContainer.setFsmPlayer(fsmPlayer);
+    }
+
+    @Override
     protected void onPlayerReady() {
         prepareFSM();
     }
 
     @Override
-    protected void releasePlayer() {
-        super.releasePlayer();
+    protected void cleanUpPlayer() {
+        super.cleanUpPlayer();
         if (vpaidWebView != null) {
             vpaidWebView.loadUrl(VpaidClient.EMPTY_URL);
             vpaidWebView.clearHistory();

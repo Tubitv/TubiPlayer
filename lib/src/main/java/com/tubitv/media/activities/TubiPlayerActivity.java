@@ -66,7 +66,7 @@ public abstract class TubiPlayerActivity extends LifeCycleActivity
 
     @Override
     public void onNewIntent(Intent intent) {
-        releasePlayer();
+        cleanUpPlayer();
         setIntent(intent);
     }
 
@@ -90,7 +90,7 @@ public abstract class TubiPlayerActivity extends LifeCycleActivity
     public void onPause() {
         super.onPause();
         if (Util.SDK_INT <= 23) {
-            releasePlayer();
+            cleanUpPlayer();
         }
     }
 
@@ -98,7 +98,7 @@ public abstract class TubiPlayerActivity extends LifeCycleActivity
     public void onStop() {
         super.onStop();
         if (Util.SDK_INT > 23) {
-            releasePlayer();
+            cleanUpPlayer();
         }
     }
 
@@ -146,9 +146,10 @@ public abstract class TubiPlayerActivity extends LifeCycleActivity
         PlayerContainer.initialize(this, mMainHandler, mediaModel);
     }
 
-    protected void releasePlayer() {
+    protected void cleanUpPlayer() {
         updateResumePosition();
         PlayerContainer.releasePlayer();
+        PlayerContainer.cleanUp();
         isActive = false;
     }
 

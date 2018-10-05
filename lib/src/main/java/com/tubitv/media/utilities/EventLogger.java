@@ -48,6 +48,7 @@ import com.google.android.exoplayer2.trackselection.MappingTrackSelector;
 import com.google.android.exoplayer2.trackselection.MappingTrackSelector.MappedTrackInfo;
 import com.google.android.exoplayer2.trackselection.TrackSelection;
 import com.google.android.exoplayer2.trackselection.TrackSelectionArray;
+import com.tubitv.media.player.PlayerContainer;
 import java.io.IOException;
 import java.text.NumberFormat;
 import java.util.Locale;
@@ -214,6 +215,8 @@ public class EventLogger implements AnalyticsListener,
     @Override
     public void onPlayerError(EventTime eventTime, ExoPlaybackException e) {
         Log.e(TAG, "playerFailed [" + getSessionTimeString() + "]", e);
+        // If this is DRM, we'll just retry next one
+        PlayerContainer.repreparePlayerForNextVideoResource();
     }
 
     @Override

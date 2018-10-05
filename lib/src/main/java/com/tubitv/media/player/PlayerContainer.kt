@@ -12,17 +12,21 @@ import com.google.android.exoplayer2.trackselection.DefaultTrackSelector
 import com.google.android.exoplayer2.upstream.DataSource
 import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter
 import com.google.android.exoplayer2.upstream.HttpDataSource
+import com.tubitv.media.fsm.state_machine.FsmPlayer
 import com.tubitv.media.helpers.MediaHelper
 import com.tubitv.media.models.MediaModel
+import com.tubitv.media.models.PlayerVideoResource
 import com.tubitv.media.utilities.EventLogger
+import com.tubitv.media.utilities.ExoPlayerLogger
 import java.lang.ref.WeakReference
 
+/**
+ * Central Player class that takes care of all player instance related logic
+ */
 class PlayerContainer {
 
     companion object {
-        private const val PLAYREADY_LICENSE_URL =
-                "http://haofei-drm-test.adrise.tv/playready.php"
-        private const val WIDEVINE_LICENSE_URL = "https://wv-keyos.licensekeyserver.com"
+        private val TAG = PlayerContainer::class.simpleName
 
         private val sBandwidthMeter = DefaultBandwidthMeter()
         private val sVideoTrackSelectionFactory = AdaptiveTrackSelection.Factory(sBandwidthMeter)
@@ -47,33 +51,62 @@ class PlayerContainer {
 
         private var sContextRef: WeakReference<Context>? = null
         private var sHandlerRef: WeakReference<Handler>? = null
+        private var sFsmPlayerRef: WeakReference<FsmPlayer>? = null
 
-        @JvmStatic
-        fun initialize(context: Context, handler: Handler) {
-            sContextRef = WeakReference(context)
-            sHandlerRef = WeakReference(handler)
+        private var sMediaModel: MediaModel? = null
+        private var sResetPosition = false
+        private var sResetState = false
+        private var sIsForAds = false
 
-            sDataSourceFactory = MediaHelper.buildDataSourceFactory(context, sBandwidthMeter)
-            sDataSourceFactoryWithoutBandwidthMeter = MediaHelper.buildDataSourceFactory(context, null)
-            sHttpDataSourceFactory = MediaHelper.buildHttpDataSourceFactory(context, sBandwidthMeter)
-        }
+        private var sIsDrmRunning = false
 
+        /**
+         * Initialize player instance and prepare for video
+         *
+         * @param context Activity Context to be used for player instance
+         * @param handler UI thread handler to be used for player
+         * @param mediaModel MediaModel for video
+         */
         @JvmStatic
         fun initialize(context: Context, handler: Handler, mediaModel: MediaModel) {
             initialize(context, handler)
             preparePlayer(mediaModel)
         }
 
+        /**
+         * Set FsmPlayer instance, which will be used for video resource fallback
+         *
+         * @param fsmPlayer FsmPlayer instance
+         */
+        @JvmStatic
+        fun setFsmPlayer(fsmPlayer: FsmPlayer) {
+            sFsmPlayerRef = WeakReference(fsmPlayer)
+        }
+
+        /**
+         * Prepare player instance for MediaModel
+         *
+         * @param mediaModel MediaModel instance
+         */
         @JvmStatic
         fun preparePlayer(mediaModel: MediaModel) {
             preparePlayer(mediaModel, false, false, false)
         }
 
+        /**
+         * Prepare player instance for MediaModel
+         *
+         * @param mediaModel MediaModel instance
+         * @param resetPosition True if video position need to be reset
+         * @param resetState True if player state need to be reset
+         * @param isForAds True if this is preparing for ads
+         */
         @JvmStatic
         fun preparePlayer(mediaModel: MediaModel,
                           resetPosition: Boolean,
                           resetState: Boolean,
                           isForAds: Boolean) {
+
             // Build MediaSource based on created data source factory per context
             mediaModel.buildMediaSourceIfNeeded(
                     sHandlerRef?.get(),
@@ -81,12 +114,12 @@ class PlayerContainer {
                     sDataSourceFactoryWithoutBandwidthMeter,
                     sEventLogger
             )
+            sMediaModel = mediaModel
+            sResetPosition = resetPosition
+            sResetState = resetState
+            sIsForAds = isForAds
 
-            if (!mediaModel.isDRM) {
-                initializeRegularPlayer()
-            } else { // Initialize DRM player accordingly
-
-            }
+            initializePlayer(mediaModel, isForAds)
 
             // Currently ads have separate tracking
             if (!isForAds) {
@@ -101,65 +134,51 @@ class PlayerContainer {
             sPlayer?.prepare(mediaModel.mediaSource, resetPosition, resetState)
         }
 
+        /**
+         * Reprepare player with previous setup, used for DRM fallback
+         * If current content is already non-DRM, do nothing
+         */
+        @JvmStatic
+        fun repreparePlayerForNextVideoResource() {
+            ExoPlayerLogger.d(TAG, "start repreparePlayerForNextVideoResource")
+            // If currently not DRM, no need to try next one
+            if (!sIsDrmRunning) {
+                return
+            }
+
+            releasePlayer()
+            val mediaModel = sMediaModel
+            if (mediaModel != null) {
+                mediaModel.useNextVideoResource()
+                preparePlayer(mediaModel, sResetPosition, sResetState, sIsForAds)
+            }
+
+            val fsmPlayer = sFsmPlayerRef?.get()
+            fsmPlayer?.currentState?.performWorkAndUpdatePlayerUI(fsmPlayer)
+        }
+
+        /**
+         * Add extra EventListener for non-ads content
+         */
         @JvmStatic
         fun addEventListener(eventListener: Player.EventListener) {
             sEventListener = eventListener
             sPlayer?.addListener(sEventListener)
         }
 
-        private fun initializeWidvinePlayer() {
-            sWidevineCallback = HttpMediaDrmCallback(WIDEVINE_LICENSE_URL, sHttpDataSourceFactory)
-
-            val customData =
-                    "PEtleU9TQXV0aGVudGljYXRpb25YTUw+PERhdGE+PEdlbmVyYXRpb25UaW1lPjIwMTgtMDktMjEgMjE6MTM6MDkuNjI3PC9HZW5lcmF0aW9uVGltZT48RXhwaXJhdGlvblRpbWU+MjAxOC0wOS0yMiAyMToxMzowOS42Mjc8L0V4cGlyYXRpb25UaW1lPjxVbmlxdWVJZD44NzU0NDI1Yy1iMGM3LTQxN2MtOTdkNS03ZWNmM2I1YjcyYjE8L1VuaXF1ZUlkPjxSU0FQdWJLZXlJZD45YzZiZjE3M2M4OTM3MmEzOGRkZWUwMWQxMjVjZThhNTwvUlNBUHViS2V5SWQ+PFdpZGV2aW5lUG9saWN5IGZsX0NhblBsYXk9InRydWUiIC8+PFdpZGV2aW5lQ29udGVudEtleVNwZWMgVHJhY2tUeXBlPSJIRCI+PFNlY3VyaXR5TGV2ZWw+MTwvU2VjdXJpdHlMZXZlbD48L1dpZGV2aW5lQ29udGVudEtleVNwZWM+PExpY2Vuc2UgdHlwZT0ic2ltcGxlIiAvPjxGYWlyUGxheVBvbGljeSAvPjwvRGF0YT48U2lnbmF0dXJlPmo1UzJTUFRDd3JZRkY2MmtCNFdRMWxYRDZMaXlYY3VkeTlhQlJLKzlWRzZBcEdFTkR6NjVlTzZ6TTB5b3FEdzdmWTdnT1AxV2tNancvcklWczluQ002dkFyZ0lrYmdRZTNBY3Q3KzJIY1BzN1l4elNaSzk1SFlYVHpLdEYyR3E1c3poWU1pTlF2VVJqamtMV2NBVVc2VXhQRGkxY3hLVWh0Z0Q5Wmtwc2Q5aVVWMTlFQURXMmtPNWVmQ1g3Vm5WNXBoQjN2SU0wbUdENjBESUVpSzNuY1RMa3hRZTI1bEVZc3RLYzdYaUFVNkZyOHY1YUtCOVAxdWY0UXlETFVlNEkwQldmUlhES04yMXZTQ1dYRGh5VlpUb0UvZWh4VG15RTRvNGM1emQ2R1BnNjJPNjBzR3h6NmNDdGIrY0x2TGFuaUxWY2xwR2lnVUMvc1RaUmFEdXlodz09PC9TaWduYXR1cmU+PC9LZXlPU0F1dGhlbnRpY2F0aW9uWE1MPg=="
-
-            val keyRequestProperties = HashMap<String, String>()
-            keyRequestProperties.put("customdata", customData)
-
-            sWidevineCallback?.setKeyRequestProperty("customdata", customData)
-
-            //            DefaultDrmSessionManager.newWidevineInstance(mWidevineCallback, null)
-
-            sWidevineDrmSessionManager = DefaultDrmSessionManager(C.WIDEVINE_UUID,
-                    FrameworkMediaDrm.newInstance(C.WIDEVINE_UUID), sWidevineCallback, keyRequestProperties)
-            if (sContextRef != null && sContextRef?.get() != null) {
-                sPlayer =
-                        ExoPlayerFactory.newSimpleInstance(DefaultRenderersFactory(sContextRef?.get()), sTrackSelector, sWidevineDrmSessionManager)
-            }
-        }
-
-        private fun initializePlayReadyPlayer() {
-            sPlayReadyCallback = HttpMediaDrmCallback(PLAYREADY_LICENSE_URL, sHttpDataSourceFactory)
-
-            val customData =
-                    "PEtleU9TQXV0aGVudGljYXRpb25YTUw+PERhdGE+PEdlbmVyYXRpb25UaW1lPjIwMTgtMDktMjEgMjE6MTM6MDkuNjI3PC9HZW5lcmF0aW9uVGltZT48RXhwaXJhdGlvblRpbWU+MjAxOC0wOS0yMiAyMToxMzowOS42Mjc8L0V4cGlyYXRpb25UaW1lPjxVbmlxdWVJZD44NzU0NDI1Yy1iMGM3LTQxN2MtOTdkNS03ZWNmM2I1YjcyYjE8L1VuaXF1ZUlkPjxSU0FQdWJLZXlJZD45YzZiZjE3M2M4OTM3MmEzOGRkZWUwMWQxMjVjZThhNTwvUlNBUHViS2V5SWQ+PFdpZGV2aW5lUG9saWN5IGZsX0NhblBsYXk9InRydWUiIC8+PFdpZGV2aW5lQ29udGVudEtleVNwZWMgVHJhY2tUeXBlPSJIRCI+PFNlY3VyaXR5TGV2ZWw+MTwvU2VjdXJpdHlMZXZlbD48L1dpZGV2aW5lQ29udGVudEtleVNwZWM+PExpY2Vuc2UgdHlwZT0ic2ltcGxlIiAvPjxGYWlyUGxheVBvbGljeSAvPjwvRGF0YT48U2lnbmF0dXJlPmo1UzJTUFRDd3JZRkY2MmtCNFdRMWxYRDZMaXlYY3VkeTlhQlJLKzlWRzZBcEdFTkR6NjVlTzZ6TTB5b3FEdzdmWTdnT1AxV2tNancvcklWczluQ002dkFyZ0lrYmdRZTNBY3Q3KzJIY1BzN1l4elNaSzk1SFlYVHpLdEYyR3E1c3poWU1pTlF2VVJqamtMV2NBVVc2VXhQRGkxY3hLVWh0Z0Q5Wmtwc2Q5aVVWMTlFQURXMmtPNWVmQ1g3Vm5WNXBoQjN2SU0wbUdENjBESUVpSzNuY1RMa3hRZTI1bEVZc3RLYzdYaUFVNkZyOHY1YUtCOVAxdWY0UXlETFVlNEkwQldmUlhES04yMXZTQ1dYRGh5VlpUb0UvZWh4VG15RTRvNGM1emQ2R1BnNjJPNjBzR3h6NmNDdGIrY0x2TGFuaUxWY2xwR2lnVUMvc1RaUmFEdXlodz09PC9TaWduYXR1cmU+PC9LZXlPU0F1dGhlbnRpY2F0aW9uWE1MPg=="
-
-            val keyRequestProperties = HashMap<String, String>()
-            keyRequestProperties.put("customdata", customData)
-
-            sPlayReadyCallback?.setKeyRequestProperty("customdata", customData)
-
-            sPlayReadyDrmSessionManager = DefaultDrmSessionManager(C.PLAYREADY_UUID,
-                    FrameworkMediaDrm.newInstance(C.PLAYREADY_UUID), sPlayReadyCallback, keyRequestProperties)
-
-
-            if (sContextRef != null && sContextRef?.get() != null) {
-                sPlayer =
-                        ExoPlayerFactory.newSimpleInstance(DefaultRenderersFactory(sContextRef?.get()), sTrackSelector, sPlayReadyDrmSessionManager)
-            }
-        }
-
-        private fun initializeRegularPlayer() {
-            if (sContextRef != null && sContextRef?.get() != null) {
-                sPlayer = ExoPlayerFactory.newSimpleInstance(sContextRef?.get(), sTrackSelector)
-            }
-        }
-
+        /**
+         * Get current player instance
+         *
+         * @return Current player instance
+         */
         @JvmStatic
         fun getPlayer(): SimpleExoPlayer? {
             return sPlayer
         }
 
+        /**
+         * Release current player instance
+         */
         @JvmStatic
         fun releasePlayer() {
             sPlayer?.release()
@@ -170,11 +189,90 @@ class PlayerContainer {
             sWidevineDrmSessionManager = null
         }
 
+        /**
+         * Clean up when video playing is done
+         */
         @JvmStatic
         fun cleanUp() {
             sDataSourceFactory = null
             sDataSourceFactoryWithoutBandwidthMeter = null
             sHttpDataSourceFactory = null
+        }
+
+        private fun initialize(context: Context, handler: Handler) {
+            sContextRef = WeakReference(context)
+            sHandlerRef = WeakReference(handler)
+
+            sDataSourceFactory = MediaHelper.buildDataSourceFactory(context, sBandwidthMeter)
+            sDataSourceFactoryWithoutBandwidthMeter = MediaHelper.buildDataSourceFactory(context, null)
+            sHttpDataSourceFactory = MediaHelper.buildHttpDataSourceFactory(context, sBandwidthMeter)
+        }
+
+        private fun initializePlayer(mediaModel: MediaModel, isForAds: Boolean) {
+            if (isForAds) {
+                initializeRegularPlayer()
+            } else {
+                val videoResource = mediaModel.videoResource
+
+                if (videoResource != null) {
+                    when (videoResource.getType()) {
+                        PlayerVideoResource.DASH_WIDEVINE -> initializeWidevinePlayer(videoResource)
+                        PlayerVideoResource.DASH_PLAYREADY -> initializePlayReadyPlayer(videoResource)
+                        else -> initializeRegularPlayer()
+                    }
+                } else {
+                    initializeRegularPlayer()
+                }
+            }
+        }
+
+        private fun initializeWidevinePlayer(videoResource: PlayerVideoResource) {
+            ExoPlayerLogger.d(TAG, "initialize WidevinePlayer")
+            sIsDrmRunning = true
+
+            sWidevineCallback = HttpMediaDrmCallback(videoResource.getLaUrl(), sHttpDataSourceFactory)
+
+            val keyRequestProperties = HashMap<String, String>()
+            keyRequestProperties[videoResource.getAuthHeaderKey()] = videoResource.getAuthHeaderValue()
+
+            sWidevineCallback?.setKeyRequestProperty(videoResource.getAuthHeaderKey(), videoResource.getAuthHeaderValue())
+
+            sWidevineDrmSessionManager = DefaultDrmSessionManager(C.WIDEVINE_UUID,
+                    FrameworkMediaDrm.newInstance(C.WIDEVINE_UUID), sWidevineCallback, keyRequestProperties)
+            if (sContextRef != null && sContextRef?.get() != null) {
+                sPlayer =
+                        ExoPlayerFactory.newSimpleInstance(DefaultRenderersFactory(sContextRef?.get()), sTrackSelector, sWidevineDrmSessionManager)
+            }
+        }
+
+        private fun initializePlayReadyPlayer(videoResource: PlayerVideoResource) {
+            ExoPlayerLogger.d(TAG, "initialize PlayReadyPlayer")
+            sIsDrmRunning = true
+
+            sPlayReadyCallback = HttpMediaDrmCallback(videoResource.getLaUrl(), sHttpDataSourceFactory)
+
+            val keyRequestProperties = HashMap<String, String>()
+            keyRequestProperties[videoResource.getAuthHeaderKey()] = videoResource.getAuthHeaderValue()
+
+            sPlayReadyCallback?.setKeyRequestProperty(videoResource.getAuthHeaderKey(), videoResource.getAuthHeaderValue())
+
+            sPlayReadyDrmSessionManager = DefaultDrmSessionManager(C.PLAYREADY_UUID,
+                    FrameworkMediaDrm.newInstance(C.PLAYREADY_UUID), sPlayReadyCallback, keyRequestProperties)
+
+            if (sContextRef != null && sContextRef?.get() != null) {
+                sPlayer =
+                        ExoPlayerFactory.newSimpleInstance(DefaultRenderersFactory(sContextRef?.get()), sTrackSelector, sPlayReadyDrmSessionManager)
+            }
+        }
+
+        private fun initializeRegularPlayer() {
+            ExoPlayerLogger.d(TAG, "initialize RegularPlayer")
+
+            sIsDrmRunning = false
+
+            if (sContextRef != null && sContextRef?.get() != null) {
+                sPlayer = ExoPlayerFactory.newSimpleInstance(sContextRef?.get(), sTrackSelector)
+            }
         }
     }
 }
