@@ -1,35 +1,51 @@
-<merge xmlns:android="http://schemas.android.com/apk/res/android">
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
 
-    <com.google.android.exoplayer2.ui.AspectRatioFrameLayout
-        android:id="@id/exo_content_frame"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_gravity="center">
+    <data>
 
-        <!-- Video surface will be inserted as the first child of the content frame. -->
+        <import type="android.view.View" />
 
-        <View
-            android:id="@id/exo_shutter"
+        <variable
+            name="controller"
+            type="com.tubitv.media.bindings.UserController" />
+    </data>
+
+    <merge>
+
+        <com.google.android.exoplayer2.ui.AspectRatioFrameLayout
+            android:id="@id/exo_content_frame"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@android:color/black" />
+            android:layout_gravity="center">
+
+            <!-- Video surface will be inserted as the first child of the content frame. -->
+
+            <View
+                android:id="@id/exo_shutter"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@android:color/black" />
 
 
-        <com.google.android.exoplayer2.ui.SubtitleView
-            android:id="@id/exo_subtitles"
+            <com.google.android.exoplayer2.ui.SubtitleView
+                android:id="@id/exo_subtitles"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:visibility="@{controller.isSubtitleEnabled? View.VISIBLE : View.GONE}" />
+
+        </com.google.android.exoplayer2.ui.AspectRatioFrameLayout>
+
+        <View
+            android:id="@id/exo_controller_placeholder"
             android:layout_width="match_parent"
             android:layout_height="match_parent" />
 
-    </com.google.android.exoplayer2.ui.AspectRatioFrameLayout>
+        <FrameLayout
+            android:id="@id/exo_overlay"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
 
-    <View
-        android:id="@id/exo_controller_placeholder"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent" />
-
-    <FrameLayout
-        android:id="@id/exo_overlay"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent" />
-
-</merge>
+    </merge>
+</layout>

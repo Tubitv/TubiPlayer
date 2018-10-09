@@ -4,6 +4,7 @@ import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.res.Resources;
 import android.content.res.TypedArray;
+import android.databinding.DataBindingUtil;
 import android.graphics.Color;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -32,6 +33,7 @@ import com.google.android.exoplayer2.util.Assertions;
 import com.google.android.exoplayer2.util.Util;
 import com.tubitv.media.R;
 import com.tubitv.media.bindings.UserController;
+import com.tubitv.media.databinding.TubiPlayerViewBinding;
 import com.tubitv.media.interfaces.PlaybackActionCallback;
 import com.tubitv.media.interfaces.TubiPlaybackControlInterface;
 import com.tubitv.media.models.MediaModel;
@@ -64,6 +66,7 @@ public class TubiExoPlayerView extends FrameLayout {
     private SimpleExoPlayer player;
 
     private UserController userController;
+    private TubiPlayerViewBinding binding;
 
     public TubiExoPlayerView(Context context) {
         this(context, null);
@@ -109,7 +112,9 @@ public class TubiExoPlayerView extends FrameLayout {
             }
         }
 
-        LayoutInflater.from(context).inflate(playerLayoutId, this);
+        binding = DataBindingUtil.inflate(LayoutInflater.from(context),
+                playerLayoutId, this, true);
+        //        LayoutInflater.from(context).inflate(playerLayoutId, this);
         componentListener = new ComponentListener();
         setDescendantFocusability(FOCUS_AFTER_DESCENDANTS);
 
@@ -157,6 +162,7 @@ public class TubiExoPlayerView extends FrameLayout {
         }
 
         userController = new UserController();
+        binding.setController(userController);
     }
 
     public void addUserInteractionView(@Nullable View controlView) {
@@ -236,7 +242,7 @@ public class TubiExoPlayerView extends FrameLayout {
         this.player = player;
 
         if (userController != null) {
-            userController.setPlayer(player, playbackActionCallback, this);
+            userController.setPlayer(player, playbackActionCallback);
         }
 
         if (shutterView != null) {
