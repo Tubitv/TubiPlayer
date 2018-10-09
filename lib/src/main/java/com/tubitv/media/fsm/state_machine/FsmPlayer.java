@@ -29,6 +29,8 @@ import com.tubitv.media.utilities.ExoPlayerLogger;
  */
 public abstract class FsmPlayer implements Fsm, RetrieveAdCallback, FsmAdController {
 
+    private static final String TAG = FsmPlayer.class.getSimpleName();
+
     /**
      * a wrapper class for player logic related component objects.
      */
@@ -66,6 +68,8 @@ public abstract class FsmPlayer implements Fsm, RetrieveAdCallback, FsmAdControl
      * the central state representing {@link com.google.android.exoplayer2.ExoPlayer} state at any given time.
      */
     private State currentState = null;
+
+    private State previousState = null;
 
     /**
      * a factory class to create different state when fsm change to a different state.
@@ -213,19 +217,25 @@ public abstract class FsmPlayer implements Fsm, RetrieveAdCallback, FsmAdControl
         return currentState;
     }
 
+    public State getPreviousState() {
+        return previousState;
+    }
+
     @Override
     public void restart() {
+
+        //TODO: need inject PlayerContainer for better testing purposes
         SimpleExoPlayer player = PlayerContainer.getPlayer();
         if (player != null) {
-
             player.stop();
             player.setPlayWhenReady(false);
-            currentState = null;
             getController().clearMovieResumeInfo();
-
-            player.prepare(movieMedia.getMediaSource(), true, true);
-            transit(Input.INITIALIZE);
         }
+
+        currentState = null;
+        isInitialized = false;
+        previousState = null;
+        transit(Input.INITIALIZE);
     }
 
     @Override
@@ -237,6 +247,12 @@ public abstract class FsmPlayer implements Fsm, RetrieveAdCallback, FsmAdControl
                 ExoPlayerLogger.e(Constants.FSMPLAYER_TESTING, "Activity out of lifecycle");
                 return;
             }
+        }
+
+        //maintain a state transition history of previous state of the most current state
+        //don't add the null state when
+        if (isInitialized) {
+            previousState = currentState;
         }
 
         State transitToState;
