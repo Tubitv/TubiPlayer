@@ -49,18 +49,8 @@ public class StateImageButton extends ImageButton {
         init(attrs);
     }
 
-    @BindingAdapter("bind:enabledState")
-    public static void onEnabledStateChanged(StateImageButton imageButton, boolean enabled) {
-        System.out.println("wkwDebug onEnabledStateChanged enabled=" + enabled);
-        if (!enabled) {
-            imageButton.setChecked(false);
-        }
-        imageButton.setEnabled(enabled);
-    }
-
     @BindingAdapter("bind:checkedState")
     public static void onCheckedStateChanged(StateImageButton imageButton, boolean checked) {
-        System.out.println("wkwDebug onCheckedStateChanged checked=" + checked);
         imageButton.setChecked(checked);
     }
 

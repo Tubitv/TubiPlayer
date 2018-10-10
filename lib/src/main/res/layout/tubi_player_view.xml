@@ -33,7 +33,7 @@
                 android:id="@id/exo_subtitles"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:visibility="@{controller.isSubtitleEnabled? View.VISIBLE : View.GONE}" />
+                android:visibility="@{controller.isSubtitleEnabled &amp;&amp; !controller.isCurrentAd? View.VISIBLE : View.GONE}" />
 
         </com.google.android.exoplayer2.ui.AspectRatioFrameLayout>
 
