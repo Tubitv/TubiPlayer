@@ -1,13 +1,14 @@
 package com.tubitv.media.fsm.concrete;
 
 import android.support.annotation.NonNull;
-import com.google.android.exoplayer2.ExoPlayer;
+import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.tubitv.media.fsm.BaseState;
 import com.tubitv.media.fsm.Input;
 import com.tubitv.media.fsm.State;
 import com.tubitv.media.fsm.concrete.factory.StateFactory;
 import com.tubitv.media.fsm.state_machine.FsmPlayer;
+import com.tubitv.media.player.PlayerContainer;
 
 /**
  * Created by allensun on 7/31/17.
@@ -34,10 +35,10 @@ public class ReceiveAdState extends BaseState {
             return;
         }
 
-        SimpleExoPlayer moviePlayer = controller.getContentPlayer();
+        SimpleExoPlayer player = PlayerContainer.getPlayer();
 
         // this mean, user jump out of the activity lifecycle in ReceivedAdState.
-        if (moviePlayer != null && moviePlayer.getPlaybackState() == ExoPlayer.STATE_IDLE) {
+        if (player != null && player.getPlaybackState() == Player.STATE_IDLE) {
             fsmPlayer.transit(Input.ERROR);
         }
 

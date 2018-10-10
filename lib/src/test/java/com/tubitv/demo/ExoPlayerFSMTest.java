@@ -79,57 +79,91 @@ public class ExoPlayerFSMTest {
 
         assertTrue(playerFsm.getCurrentState() instanceof FetchCuePointState);
 
+        assertTrue(playerFsm.getPreviousState() == null);
+
         playerFsm.transit(Input.NO_PREROLL_AD);
 
         assertTrue(playerFsm.getCurrentState() instanceof MoviePlayingState);
 
+        assertTrue(playerFsm.getPreviousState() instanceof FetchCuePointState);
+
         playerFsm.transit(Input.MAKE_AD_CALL);
 
         assertTrue(playerFsm.getCurrentState() instanceof MakingAdCallState);
+
+        assertTrue(playerFsm.getPreviousState() instanceof MoviePlayingState);
 
         playerFsm.transit(Input.AD_RECEIVED);
 
         assertTrue(playerFsm.getCurrentState() instanceof ReceiveAdState);
 
+        assertTrue(playerFsm.getPreviousState() instanceof MakingAdCallState);
+
         playerFsm.transit(Input.SHOW_ADS);
 
         assertTrue(playerFsm.getCurrentState() instanceof AdPlayingState);
+
+        assertTrue(playerFsm.getPreviousState() instanceof ReceiveAdState);
 
         playerFsm.transit(Input.NEXT_AD);
 
         assertTrue(playerFsm.getCurrentState() instanceof AdPlayingState);
 
+        assertTrue(playerFsm.getPreviousState() instanceof AdPlayingState);
+
         playerFsm.transit(Input.AD_CLICK);
 
         assertTrue(playerFsm.getCurrentState() instanceof VastAdInteractionSandBoxState);
+
+        assertTrue(playerFsm.getPreviousState() instanceof AdPlayingState);
 
         playerFsm.transit(Input.BACK_TO_PLAYER_FROM_VAST_AD);
 
         assertTrue(playerFsm.getCurrentState() instanceof AdPlayingState);
 
-        playerFsm.transit(Input.VPAID_MANIFEST);
-
-        assertTrue(playerFsm.getCurrentState() instanceof VpaidState);
+        assertTrue(playerFsm.getPreviousState() instanceof VastAdInteractionSandBoxState);
 
         playerFsm.transit(Input.VPAID_MANIFEST);
 
         assertTrue(playerFsm.getCurrentState() instanceof VpaidState);
+
+        assertTrue(playerFsm.getPreviousState() instanceof AdPlayingState);
+
+        playerFsm.transit(Input.VPAID_MANIFEST);
+
+        assertTrue(playerFsm.getCurrentState() instanceof VpaidState);
+
+        assertTrue(playerFsm.getPreviousState() instanceof VpaidState);
 
         playerFsm.transit(Input.VPAID_FINISH);
 
         assertTrue(playerFsm.getCurrentState() instanceof MoviePlayingState);
 
+        assertTrue(playerFsm.getPreviousState() instanceof VpaidState);
+
         playerFsm.transit(Input.MAKE_AD_CALL);
 
         assertTrue(playerFsm.getCurrentState() instanceof MakingAdCallState);
+
+        assertTrue(playerFsm.getPreviousState() instanceof MoviePlayingState);
 
         playerFsm.transit(Input.EMPTY_AD);
 
         assertTrue(playerFsm.getCurrentState() instanceof MoviePlayingState);
 
+        assertTrue(playerFsm.getPreviousState() instanceof MakingAdCallState);
+
         playerFsm.transit(Input.MOVIE_FINISH);
 
         assertTrue(playerFsm.getCurrentState() instanceof FinishState);
+
+        assertTrue(playerFsm.getPreviousState() instanceof MoviePlayingState);
+
+        playerFsm.restart();
+
+        assertTrue(playerFsm.getCurrentState() instanceof FetchCuePointState);
+
+        assertTrue(playerFsm.getPreviousState() == null);
     }
 
     @Test
@@ -148,73 +182,115 @@ public class ExoPlayerFSMTest {
 
         assertTrue(playerFsm.getCurrentState() instanceof FetchCuePointState);
 
+        assertTrue(playerFsm.getPreviousState() == null);
+
         playerFsm.transit(Input.HAS_PREROLL_AD);
 
         assertTrue(playerFsm.getCurrentState() instanceof MakingPrerollAdCallState);
+
+        assertTrue(playerFsm.getPreviousState() instanceof FetchCuePointState);
 
         playerFsm.transit(Input.PRE_ROLL_AD_RECEIVED);
 
         assertTrue(playerFsm.getCurrentState() instanceof AdPlayingState);
 
+        assertTrue(playerFsm.getPreviousState() instanceof MakingPrerollAdCallState);
+
         playerFsm.transit(Input.NEXT_AD);
 
         assertTrue(playerFsm.getCurrentState() instanceof AdPlayingState);
+
+        assertTrue(playerFsm.getPreviousState() instanceof AdPlayingState);
 
         playerFsm.transit(Input.VPAID_MANIFEST);
 
         assertTrue(playerFsm.getCurrentState() instanceof VpaidState);
 
+        assertTrue(playerFsm.getPreviousState() instanceof AdPlayingState);
+
         playerFsm.transit(Input.VPAID_FINISH);
 
         assertTrue(playerFsm.getCurrentState() instanceof MoviePlayingState);
 
+        assertTrue(playerFsm.getPreviousState() instanceof VpaidState);
+
         playerFsm.transit(Input.MAKE_AD_CALL);
 
         assertTrue(playerFsm.getCurrentState() instanceof MakingAdCallState);
+
+        assertTrue(playerFsm.getPreviousState() instanceof MoviePlayingState);
 
         playerFsm.transit(Input.AD_RECEIVED);
 
         assertTrue(playerFsm.getCurrentState() instanceof ReceiveAdState);
 
+        assertTrue(playerFsm.getPreviousState() instanceof MakingAdCallState);
+
         playerFsm.transit(Input.SHOW_ADS);
 
         assertTrue(playerFsm.getCurrentState() instanceof AdPlayingState);
+
+        assertTrue(playerFsm.getPreviousState() instanceof ReceiveAdState);
 
         playerFsm.transit(Input.NEXT_AD);
 
         assertTrue(playerFsm.getCurrentState() instanceof AdPlayingState);
 
+        assertTrue(playerFsm.getPreviousState() instanceof AdPlayingState);
+
         playerFsm.transit(Input.AD_CLICK);
 
         assertTrue(playerFsm.getCurrentState() instanceof VastAdInteractionSandBoxState);
+
+        assertTrue(playerFsm.getPreviousState() instanceof AdPlayingState);
 
         playerFsm.transit(Input.BACK_TO_PLAYER_FROM_VAST_AD);
 
         assertTrue(playerFsm.getCurrentState() instanceof AdPlayingState);
 
-        playerFsm.transit(Input.VPAID_MANIFEST);
-
-        assertTrue(playerFsm.getCurrentState() instanceof VpaidState);
+        assertTrue(playerFsm.getPreviousState() instanceof VastAdInteractionSandBoxState);
 
         playerFsm.transit(Input.VPAID_MANIFEST);
 
         assertTrue(playerFsm.getCurrentState() instanceof VpaidState);
+
+        assertTrue(playerFsm.getPreviousState() instanceof AdPlayingState);
+
+        playerFsm.transit(Input.VPAID_MANIFEST);
+
+        assertTrue(playerFsm.getCurrentState() instanceof VpaidState);
+
+        assertTrue(playerFsm.getPreviousState() instanceof VpaidState);
 
         playerFsm.transit(Input.VPAID_FINISH);
 
         assertTrue(playerFsm.getCurrentState() instanceof MoviePlayingState);
 
+        assertTrue(playerFsm.getPreviousState() instanceof VpaidState);
+
         playerFsm.transit(Input.MAKE_AD_CALL);
 
         assertTrue(playerFsm.getCurrentState() instanceof MakingAdCallState);
+
+        assertTrue(playerFsm.getPreviousState() instanceof MoviePlayingState);
 
         playerFsm.transit(Input.EMPTY_AD);
 
         assertTrue(playerFsm.getCurrentState() instanceof MoviePlayingState);
 
+        assertTrue(playerFsm.getPreviousState() instanceof MakingAdCallState);
+
         playerFsm.transit(Input.MOVIE_FINISH);
 
         assertTrue(playerFsm.getCurrentState() instanceof FinishState);
+
+        assertTrue(playerFsm.getPreviousState() instanceof MoviePlayingState);
+
+        playerFsm.restart();
+
+        assertTrue(playerFsm.getCurrentState() instanceof FetchCuePointState);
+
+        assertTrue(playerFsm.getPreviousState() == null);
     }
 
     @Test
@@ -240,41 +316,61 @@ public class ExoPlayerFSMTest {
 
             assertTrue(playerFsm.getCurrentState() instanceof ReceiveAdState);
 
+            assertTrue(playerFsm.getPreviousState() instanceof MakingAdCallState);
+
             playerFsm.transit(Input.SHOW_ADS);
 
             assertTrue(playerFsm.getCurrentState() instanceof AdPlayingState);
 
+            assertTrue(playerFsm.getPreviousState() instanceof ReceiveAdState);
+
             playerFsm.transit(Input.NEXT_AD);
 
             assertTrue(playerFsm.getCurrentState() instanceof AdPlayingState);
+
+            assertTrue(playerFsm.getPreviousState() instanceof AdPlayingState);
 
             playerFsm.transit(Input.AD_CLICK);
 
             assertTrue(playerFsm.getCurrentState() instanceof VastAdInteractionSandBoxState);
 
+            assertTrue(playerFsm.getPreviousState() instanceof AdPlayingState);
+
             playerFsm.transit(Input.BACK_TO_PLAYER_FROM_VAST_AD);
 
             assertTrue(playerFsm.getCurrentState() instanceof AdPlayingState);
+
+            assertTrue(playerFsm.getPreviousState() instanceof VastAdInteractionSandBoxState);
 
             playerFsm.transit(Input.AD_CLICK);
 
             assertTrue(playerFsm.getCurrentState() instanceof VastAdInteractionSandBoxState);
 
+            assertTrue(playerFsm.getPreviousState() instanceof AdPlayingState);
+
             playerFsm.transit(Input.BACK_TO_PLAYER_FROM_VAST_AD);
 
             assertTrue(playerFsm.getCurrentState() instanceof AdPlayingState);
 
+            assertTrue(playerFsm.getPreviousState() instanceof VastAdInteractionSandBoxState);
+
             playerFsm.transit(Input.NEXT_AD);
 
             assertTrue(playerFsm.getCurrentState() instanceof AdPlayingState);
+
+            assertTrue(playerFsm.getPreviousState() instanceof AdPlayingState);
 
             playerFsm.transit(Input.VPAID_MANIFEST);
 
             assertTrue(playerFsm.getCurrentState() instanceof VpaidState);
 
+            assertTrue(playerFsm.getPreviousState() instanceof AdPlayingState);
+
             playerFsm.transit(Input.VPAID_FINISH);
 
             assertTrue(playerFsm.getCurrentState() instanceof MoviePlayingState);
+
+            assertTrue(playerFsm.getPreviousState() instanceof VpaidState);
 
             playerFsm.transit(Input.MAKE_AD_CALL);
 
@@ -285,6 +381,12 @@ public class ExoPlayerFSMTest {
         playerFsm.transit(Input.MOVIE_FINISH);
 
         assertTrue(playerFsm.getCurrentState() instanceof FinishState);
+
+        playerFsm.restart();
+
+        assertTrue(playerFsm.getCurrentState() instanceof MoviePlayingState);
+
+        assertTrue(playerFsm.getPreviousState() == null);
     }
 
     @Test

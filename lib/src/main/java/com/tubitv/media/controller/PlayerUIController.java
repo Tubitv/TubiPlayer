@@ -4,21 +4,13 @@ import android.support.annotation.Nullable;
 import android.view.View;
 import android.webkit.WebView;
 import com.google.android.exoplayer2.C;
-import com.google.android.exoplayer2.SimpleExoPlayer;
-import com.tubitv.media.utilities.PlayerDeviceUtils;
 
 /**
  * Created by allensun on 8/3/17.
  * on Tubitv.com, allengotstuff@gmail.com
  */
 public class PlayerUIController {
-
-    public boolean isPlayingAds = false;
-
-    private SimpleExoPlayer contentPlayer;
-
-    private SimpleExoPlayer adPlayer;
-
+    
     private WebView vpaidWebView;
 
     private View exoPlayerView;
@@ -38,32 +30,9 @@ public class PlayerUIController {
     public PlayerUIController() {
     }
 
-    public PlayerUIController(@Nullable SimpleExoPlayer contentPlayer, @Nullable SimpleExoPlayer adPlayer,
-            @Nullable WebView vpaidWebView, @Nullable View exoPlayerView) {
-        this.contentPlayer = contentPlayer;
-        this.adPlayer = adPlayer;
+    public PlayerUIController(@Nullable WebView vpaidWebView, @Nullable View exoPlayerView) {
         this.vpaidWebView = vpaidWebView;
         this.exoPlayerView = exoPlayerView;
-    }
-
-    public SimpleExoPlayer getContentPlayer() {
-        return contentPlayer;
-    }
-
-    public void setContentPlayer(SimpleExoPlayer contentPlayer) {
-        this.contentPlayer = contentPlayer;
-    }
-
-    public SimpleExoPlayer getAdPlayer() {
-        // We'll reuse content player to play ads for single player instance case
-        if (PlayerDeviceUtils.useSinglePlayer()) {
-            return contentPlayer;
-        }
-        return adPlayer;
-    }
-
-    public void setAdPlayer(SimpleExoPlayer adPlayer) {
-        this.adPlayer = adPlayer;
     }
 
     public WebView getVpaidWebView() {
@@ -141,25 +110,11 @@ public class PlayerUIController {
 
     public static class Builder {
 
-        private SimpleExoPlayer contentPlayer = null;
-
-        private SimpleExoPlayer adPlayer = null;
-
         private WebView vpaidWebView = null;
 
         private View exoPlayerView = null;
 
         public Builder() {
-        }
-
-        public Builder setContentPlayer(SimpleExoPlayer contentPlayer) {
-            this.contentPlayer = contentPlayer;
-            return this;
-        }
-
-        public Builder setAdPlayer(SimpleExoPlayer adPlayer) {
-            this.adPlayer = adPlayer;
-            return this;
         }
 
         public Builder setVpaidWebView(WebView vpaidWebView) {
@@ -173,8 +128,7 @@ public class PlayerUIController {
         }
 
         public PlayerUIController build() {
-
-            return new PlayerUIController(contentPlayer, adPlayer, vpaidWebView, exoPlayerView);
+            return new PlayerUIController(vpaidWebView, exoPlayerView);
         }
     }
 

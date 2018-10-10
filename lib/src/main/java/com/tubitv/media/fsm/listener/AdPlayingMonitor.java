@@ -2,11 +2,11 @@ package com.tubitv.media.fsm.listener;
 
 import android.support.annotation.NonNull;
 import com.google.android.exoplayer2.ExoPlaybackException;
-import com.google.android.exoplayer2.ExoPlayer;
 import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.tubitv.media.fsm.state_machine.FsmAdController;
 import com.tubitv.media.fsm.state_machine.FsmPlayer;
+import com.tubitv.media.player.PlayerContainer;
 import com.tubitv.media.utilities.EventLogger;
 
 /**
@@ -52,10 +52,10 @@ public class AdPlayingMonitor extends EventLogger {
 
         if (fsmPlayer instanceof FsmPlayer) {
 
-            if (((FsmPlayer) fsmPlayer).getController() != null) {
-                SimpleExoPlayer adPlayer = ((FsmPlayer) fsmPlayer).getController().getAdPlayer();
+            if (PlayerContainer.getPlayer() != null) {
+                SimpleExoPlayer adPlayer = PlayerContainer.getPlayer();
 
-                if (adPlayer != null && adPlayer.getPlaybackState() == ExoPlayer.STATE_BUFFERING) {
+                if (adPlayer != null && adPlayer.getPlaybackState() == Player.STATE_BUFFERING) {
 
                     long position = adPlayer.getCurrentPosition() + 1000 < adPlayer.getDuration() ?
                             adPlayer.getCurrentPosition() + 1000 :

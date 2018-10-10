@@ -11,6 +11,7 @@ import com.tubitv.media.fsm.Input;
 import com.tubitv.media.fsm.State;
 import com.tubitv.media.fsm.callback.AdInterface;
 import com.tubitv.media.fsm.callback.RetrieveAdCallback;
+import com.tubitv.media.fsm.concrete.AdPlayingState;
 import com.tubitv.media.fsm.concrete.MakingAdCallState;
 import com.tubitv.media.fsm.concrete.MakingPrerollAdCallState;
 import com.tubitv.media.fsm.concrete.MoviePlayingState;
@@ -21,13 +22,15 @@ import com.tubitv.media.models.AdMediaModel;
 import com.tubitv.media.models.AdRetriever;
 import com.tubitv.media.models.CuePointsRetriever;
 import com.tubitv.media.models.MediaModel;
+import com.tubitv.media.player.PlayerContainer;
 import com.tubitv.media.utilities.ExoPlayerLogger;
-import com.tubitv.media.utilities.PlayerDeviceUtils;
 
 /**
  * Created by allensun on 7/27/17.
  */
 public abstract class FsmPlayer implements Fsm, RetrieveAdCallback, FsmAdController {
+
+    private static final String TAG = FsmPlayer.class.getSimpleName();
 
     /**
      * a wrapper class for player logic related component objects.
@@ -67,6 +70,8 @@ public abstract class FsmPlayer implements Fsm, RetrieveAdCallback, FsmAdControl
      */
     private State currentState = null;
 
+    private State previousState = null;
+
     /**
      * a factory class to create different state when fsm change to a different state.
      */
@@ -97,11 +102,11 @@ public abstract class FsmPlayer implements Fsm, RetrieveAdCallback, FsmAdControl
             return;
         }
 
-        SimpleExoPlayer moviePlayer = controller.getContentPlayer();
+        SimpleExoPlayer player = PlayerContainer.getPlayer();
 
-        if (moviePlayer != null && moviePlayer.getPlaybackState() != Player.STATE_IDLE) {
-            int resumeWindow = moviePlayer.getCurrentWindowIndex();
-            long resumePosition = moviePlayer.isCurrentWindowSeekable() ? Math.max(0, moviePlayer.getCurrentPosition())
+        if (player != null && player.getPlaybackState() != Player.STATE_IDLE) {
+            int resumeWindow = player.getCurrentWindowIndex();
+            long resumePosition = player.isCurrentWindowSeekable() ? Math.max(0, player.getCurrentPosition())
                     : C.TIME_UNSET;
             controller.setMovieResumeInfo(resumeWindow, resumePosition);
 
@@ -213,14 +218,32 @@ public abstract class FsmPlayer implements Fsm, RetrieveAdCallback, FsmAdControl
         return currentState;
     }
 
+    public State getPreviousState() {
+        return previousState;
+    }
+
+    public boolean isComingFromAdsState() {
+        if (previousState == null) {
+            return false;
+        }
+
+        return previousState instanceof AdPlayingState || previousState instanceof VpaidState;
+    }
+
     @Override
     public void restart() {
-        getController().getContentPlayer().stop();
-        getController().getContentPlayer().setPlayWhenReady(false);
-        currentState = null;
-        getController().clearMovieResumeInfo();
 
-        getController().getContentPlayer().prepare(movieMedia.getMediaSource(), true, true);
+        //TODO: need inject PlayerContainer for better testing purposes
+        SimpleExoPlayer player = PlayerContainer.getPlayer();
+        if (player != null) {
+            player.stop();
+            player.setPlayWhenReady(false);
+            getController().clearMovieResumeInfo();
+        }
+
+        currentState = null;
+        isInitialized = false;
+        previousState = null;
         transit(Input.INITIALIZE);
     }
 
@@ -233,6 +256,12 @@ public abstract class FsmPlayer implements Fsm, RetrieveAdCallback, FsmAdControl
                 ExoPlayerLogger.e(Constants.FSMPLAYER_TESTING, "Activity out of lifecycle");
                 return;
             }
+        }
+
+        //maintain a state transition history of previous state of the most current state
+        //don't add the null state when
+        if (isInitialized) {
+            previousState = currentState;
         }
 
         State transitToState;
@@ -274,10 +303,9 @@ public abstract class FsmPlayer implements Fsm, RetrieveAdCallback, FsmAdControl
             currentState = factory.createState(MoviePlayingState.class);
         }
 
-        if (controller != null) {
-            if (!PlayerDeviceUtils.useSinglePlayer() || !controller.isPlayingAds) {
-                updateMovieResumePosition(controller);
-            }
+        // Only save movie position when transit from MoviePlayingState to other state
+        if (controller != null && !isComingFromAdsState()) {
+            updateMovieResumePosition(controller);
         }
 
         ExoPlayerLogger.d(Constants.FSMPLAYER_TESTING, "transit to: " + currentState.getClass().getSimpleName());
@@ -332,8 +360,6 @@ public abstract class FsmPlayer implements Fsm, RetrieveAdCallback, FsmAdControl
         ExoPlayerLogger.i(Constants.FSMPLAYER_TESTING, "AdBreak received");
 
         adMedia = mediaModels;
-        // prepare and build the adMediaModel
-        playerComponentController.getDoublePlayerInterface().onPrepareAds(adMedia);
 
         transitToStateBaseOnCurrentState(currentState);
     }

@@ -15,6 +15,7 @@ import com.tubitv.media.helpers.Constants;
 import com.tubitv.media.models.AdMediaModel;
 import com.tubitv.media.models.MediaModel;
 import com.tubitv.media.models.VpaidClient;
+import com.tubitv.media.player.PlayerContainer;
 import com.tubitv.media.utilities.ExoPlayerLogger;
 import com.tubitv.media.views.TubiExoPlayerView;
 
@@ -54,15 +55,10 @@ public class VpaidState extends BaseState {
     private void pausePlayerAndSHowVpaid(PlayerUIController controller, PlayerAdLogicController componentController,
             FsmPlayer fsmPlayer, AdMediaModel adMedia) {
 
-        ExoPlayer moviePlayer = controller.getContentPlayer();
+        ExoPlayer player = PlayerContainer.getPlayer();
 
-        if (moviePlayer != null && moviePlayer.getPlayWhenReady()) {
-            moviePlayer.setPlayWhenReady(false);
-        }
-
-        ExoPlayer adPlayer = controller.getAdPlayer();
-        if (adPlayer != null && adPlayer.getPlayWhenReady()) {
-            adPlayer.setPlayWhenReady(false);
+        if (player != null && player.getPlayWhenReady()) {
+            player.setPlayWhenReady(false);
         }
 
         VpaidClient client = componentController.getVpaidClient();
