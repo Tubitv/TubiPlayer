@@ -3,6 +3,7 @@ package com.tubitv.media.player
 import android.content.Context
 import android.os.Handler
 import com.google.android.exoplayer2.*
+import com.google.android.exoplayer2.analytics.AnalyticsListener
 import com.google.android.exoplayer2.drm.DefaultDrmSessionManager
 import com.google.android.exoplayer2.drm.FrameworkMediaCrypto
 import com.google.android.exoplayer2.drm.FrameworkMediaDrm
@@ -18,6 +19,8 @@ import com.tubitv.media.models.MediaModel
 import com.tubitv.media.models.PlayerVideoResource
 import com.tubitv.media.utilities.EventLogger
 import com.tubitv.media.utilities.ExoPlayerLogger
+import com.tubitv.media.utilities.PlayerLog
+import java.lang.IllegalStateException
 import java.lang.ref.WeakReference
 
 /**
@@ -31,7 +34,14 @@ class PlayerContainer {
         private val sBandwidthMeter = DefaultBandwidthMeter()
         private val sVideoTrackSelectionFactory = AdaptiveTrackSelection.Factory(sBandwidthMeter)
         private val sTrackSelector = DefaultTrackSelector(sVideoTrackSelectionFactory)
-        private val sEventLogger = EventLogger(sTrackSelector)
+        // Override event logger function to have DRM fallback
+        private val sEventLogger = object : EventLogger(sTrackSelector) {
+            override fun onPlayerError(eventTime: AnalyticsListener.EventTime, e: ExoPlaybackException) {
+                super.onPlayerError(eventTime, e)
+                // If this is DRM, we'll just retry next one
+                PlayerContainer.repreparePlayerForNextVideoResource()
+            }
+        }
 
         private var sEventListener: Player.EventListener? = null // Custom listener
 
@@ -60,6 +70,8 @@ class PlayerContainer {
 
         private var sIsDrmRunning = false
 
+        private var sPlayerLog: PlayerLog? = null
+
         /**
          * Initialize player instance and prepare for video
          *
@@ -81,6 +93,11 @@ class PlayerContainer {
         @JvmStatic
         fun setFsmPlayer(fsmPlayer: FsmPlayer) {
             sFsmPlayerRef = WeakReference(fsmPlayer)
+        }
+
+        @JvmStatic
+        fun setPlayerLog(playerLog: PlayerLog) {
+            sPlayerLog = playerLog
         }
 
         /**
@@ -154,6 +171,11 @@ class PlayerContainer {
             }
 
             val fsmPlayer = sFsmPlayerRef?.get()
+
+            if (fsmPlayer == null) {
+                sPlayerLog?.e(IllegalStateException(), "fsmPlayer should not be null")
+            }
+
             fsmPlayer?.currentState?.performWorkAndUpdatePlayerUI(fsmPlayer)
         }
 

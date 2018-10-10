@@ -45,15 +45,14 @@ public class MoviePlayingState extends BaseState {
             return;
         }
 
-        stopAdandPlayerMovie(controller, componentController, movieMedia);
+        stopAdandPlayerMovie(controller, componentController, movieMedia, fsmPlayer.isComingFromAdsState());
     }
 
     private void stopAdandPlayerMovie(PlayerUIController controller, PlayerAdLogicController componentController,
-            MediaModel movieMedia) {
+            MediaModel movieMedia, boolean wasAdsPlaying) {
 
-        if (controller.isPlayingAds) {
-            //first remove the AdPlayer's listener and pause the player
-            PlayerContainer.getPlayer().removeAnalyticsListener(componentController.getAdPlayingMonitor());
+        if (wasAdsPlaying) {
+            //first pause the player
             PlayerContainer.getPlayer().setPlayWhenReady(false);
 
             PlayerContainer.releasePlayer();
@@ -68,8 +67,6 @@ public class MoviePlayingState extends BaseState {
         updatePlayerPosition(PlayerContainer.getPlayer(), controller);
 
         PlayerContainer.getPlayer().setPlayWhenReady(true);
-
-        controller.isPlayingAds = false;
 
         hideVpaidNShowPlayer(controller);
 

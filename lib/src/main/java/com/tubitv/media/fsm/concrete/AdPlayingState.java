@@ -76,12 +76,6 @@ public class AdPlayingState extends BaseState {
 
             if (PlayerContainer.getPlayer() != null) {
                 PlayerContainer.getPlayer().setPlayWhenReady(false);
-
-                // We need save movie play position before play ads for single player instance case
-                if (!controller.isPlayingAds) {
-                    long resumePosition = Math.max(0, PlayerContainer.getPlayer().getCurrentPosition());
-                    controller.setMovieResumeInfo(PlayerContainer.getPlayer().getCurrentWindowIndex(), resumePosition);
-                }
             }
 
             PlayerContainer.releasePlayer();
@@ -91,8 +85,6 @@ public class AdPlayingState extends BaseState {
 
             //prepare the mediaSource to AdPlayer
             PlayerContainer.preparePlayer(adMedia, !haveResumePosition, true, true);
-
-            controller.isPlayingAds = true;
 
             SimpleExoPlayer player = PlayerContainer.getPlayer();
 
@@ -115,7 +107,7 @@ public class AdPlayingState extends BaseState {
                 player.setMetadataOutput(componentController.getAdPlayingMonitor());
 
                 //hide the subtitle view when ad is playing
-                ((TubiExoPlayerView) controller.getExoPlayerView()).getSubtitleView().setVisibility(View.INVISIBLE);
+                tubiExoPlayerView.getSubtitleView().setVisibility(View.INVISIBLE);
             }
         }
     }

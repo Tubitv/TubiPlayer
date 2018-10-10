@@ -10,9 +10,7 @@ import com.google.android.exoplayer2.C;
  * on Tubitv.com, allengotstuff@gmail.com
  */
 public class PlayerUIController {
-
-    public boolean isPlayingAds = false;
-
+    
     private WebView vpaidWebView;
 
     private View exoPlayerView;

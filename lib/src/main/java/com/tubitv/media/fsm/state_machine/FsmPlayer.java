@@ -11,6 +11,7 @@ import com.tubitv.media.fsm.Input;
 import com.tubitv.media.fsm.State;
 import com.tubitv.media.fsm.callback.AdInterface;
 import com.tubitv.media.fsm.callback.RetrieveAdCallback;
+import com.tubitv.media.fsm.concrete.AdPlayingState;
 import com.tubitv.media.fsm.concrete.MakingAdCallState;
 import com.tubitv.media.fsm.concrete.MakingPrerollAdCallState;
 import com.tubitv.media.fsm.concrete.MoviePlayingState;
@@ -221,6 +222,14 @@ public abstract class FsmPlayer implements Fsm, RetrieveAdCallback, FsmAdControl
         return previousState;
     }
 
+    public boolean isComingFromAdsState() {
+        if (previousState == null) {
+            return false;
+        }
+
+        return previousState instanceof AdPlayingState || previousState instanceof VpaidState;
+    }
+
     @Override
     public void restart() {
 
@@ -294,7 +303,8 @@ public abstract class FsmPlayer implements Fsm, RetrieveAdCallback, FsmAdControl
             currentState = factory.createState(MoviePlayingState.class);
         }
 
-        if (controller != null && !controller.isPlayingAds) {
+        // Only save movie position when transit from MoviePlayingState to other state
+        if (controller != null && !isComingFromAdsState()) {
             updateMovieResumePosition(controller);
         }
 

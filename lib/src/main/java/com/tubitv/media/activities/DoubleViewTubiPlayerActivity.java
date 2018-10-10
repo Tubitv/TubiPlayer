@@ -19,6 +19,7 @@ import com.tubitv.media.di.PlayerModuleDefault;
 import com.tubitv.media.di.component.DaggerFsmComonent;
 import com.tubitv.media.fsm.Input;
 import com.tubitv.media.fsm.callback.AdInterface;
+import com.tubitv.media.fsm.concrete.MoviePlayingState;
 import com.tubitv.media.fsm.concrete.VpaidState;
 import com.tubitv.media.fsm.listener.AdPlayingMonitor;
 import com.tubitv.media.fsm.listener.CuePointMonitor;
@@ -133,7 +134,7 @@ public class DoubleViewTubiPlayerActivity extends TubiPlayerActivity implements 
         if (PlayerContainer.getPlayer() != null
                 && playerUIController != null
                 && PlayerContainer.getPlayer().getPlaybackState() != Player.STATE_IDLE
-                && !playerUIController.isPlayingAds) {
+                && fsmPlayer.getCurrentState() instanceof MoviePlayingState) {
 
             int resumeWindow = PlayerContainer.getPlayer().getCurrentWindowIndex();
             long resumePosition = PlayerContainer.getPlayer().isCurrentWindowSeekable() ?
