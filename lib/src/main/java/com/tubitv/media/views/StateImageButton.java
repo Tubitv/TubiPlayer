@@ -49,12 +49,10 @@ public class StateImageButton extends ImageButton {
         init(attrs);
     }
 
-    @BindingAdapter("bind:setCheckedState")
-    public static void onStateChanged(StateImageButton imageButton, boolean checked) {
+    @BindingAdapter("bind:checkedState")
+    public static void onCheckedStateChanged(StateImageButton imageButton, boolean checked) {
         imageButton.setChecked(checked);
     }
-
-
 
     /**
      * Initialize all of the drawables and animations as well as apply attributes if set

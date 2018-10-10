@@ -35,6 +35,7 @@ import com.google.android.exoplayer2.util.Assertions;
 import com.google.android.exoplayer2.util.MimeTypes;
 import com.google.android.exoplayer2.util.Util;
 import com.tubitv.media.R;
+import com.tubitv.media.bindings.UserController;
 import com.tubitv.media.helpers.MediaHelper;
 import com.tubitv.media.interfaces.PlaybackActionCallback;
 import com.tubitv.media.interfaces.TubiPlaybackControlInterface;
@@ -155,9 +156,21 @@ public abstract class TubiPlayerActivity extends LifeCycleActivity
     }
 
     private void setCaption(boolean isOn) {
-        if (mediaModel != null && mediaModel.getSubtitlesUrl() != null && mTubiPlayerView != null
-                && mTubiPlayerView.getControlView() != null) {
-            mTubiPlayerView.getPlayerController().triggerSubtitlesToggle(isOn);
+        if (mediaModel == null || mTubiPlayerView == null || mTubiPlayerView.getControlView() == null) {
+            return;
+        }
+
+        TubiPlaybackControlInterface controller = mTubiPlayerView.getPlayerController();
+        if (mediaModel.getSubtitlesUrl() != null) {
+            controller.triggerSubtitlesToggle(isOn);
+            if (controller instanceof UserController) {
+                ((UserController) controller).videoHasSubtitle.set(true);
+                ((UserController) controller).isSubtitleEnabled.set(isCaptionPreferenceEnable());
+            }
+        } else {
+            if (controller instanceof UserController) {
+                ((UserController) controller).videoHasSubtitle.set(false);
+            }
         }
     }
 

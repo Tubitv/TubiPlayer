@@ -9,7 +9,6 @@ import android.net.Uri;
 import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.text.TextUtils;
-import android.view.View;
 import android.widget.SeekBar;
 import com.google.android.exoplayer2.ExoPlaybackException;
 import com.google.android.exoplayer2.ExoPlayer;
@@ -26,7 +25,6 @@ import com.tubitv.media.utilities.ExoPlayerLogger;
 import com.tubitv.media.utilities.PlayerDeviceUtils;
 import com.tubitv.media.utilities.SeekCalculator;
 import com.tubitv.media.utilities.Utils;
-import com.tubitv.media.views.TubiExoPlayerView;
 
 import static com.google.android.exoplayer2.ExoPlayer.STATE_ENDED;
 
@@ -109,8 +107,6 @@ public class UserController extends BaseObservable
 
     private PlaybackActionCallback mPlaybackActionCallback;
 
-    private TubiExoPlayerView mTubiExoPlayerView;
-
     private int mControlState = NORMAL_CONTROL_STATE;
 
     /**
@@ -168,9 +164,8 @@ public class UserController extends BaseObservable
      *
      * @param player the current player that is playing the video
      */
-    public void setPlayer(@NonNull SimpleExoPlayer player, @NonNull PlaybackActionCallback playbackActionCallback,
-            @NonNull TubiExoPlayerView tubiExoPlayerView) {
-        if (player == null || tubiExoPlayerView == null) {
+    public void setPlayer(@NonNull SimpleExoPlayer player, @NonNull PlaybackActionCallback playbackActionCallback) {
+        if (player == null) {
             ExoPlayerLogger.e(TAG, "setPlayer is null");
             return;
         }
@@ -178,8 +173,6 @@ public class UserController extends BaseObservable
         if (this.mPlayer == player) {
             return;
         }
-
-        mTubiExoPlayerView = tubiExoPlayerView;
 
         //remove the old listener
         if (mPlayer != null) {
@@ -257,18 +250,6 @@ public class UserController extends BaseObservable
 
     @Override
     public void triggerSubtitlesToggle(final boolean enabled) {
-
-        if (mTubiExoPlayerView == null) {
-            ExoPlayerLogger.e(TAG, "triggerSubtitlesToggle() --> tubiExoPlayerView is null");
-            return;
-        }
-
-        //trigger the hide or show subtitles.
-        View subtitles = mTubiExoPlayerView.getSubtitleView();
-        if (subtitles != null) {
-            subtitles.setVisibility(enabled ? View.VISIBLE : View.INVISIBLE);
-        }
-
         if (mPlaybackActionCallback != null && mPlaybackActionCallback.isActive()) {
             mPlaybackActionCallback.onSubtitles(mMediaModel, enabled);
         }
