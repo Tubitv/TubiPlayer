@@ -11,14 +11,7 @@ import android.webkit.WebBackForwardList;
 import android.webkit.WebHistoryItem;
 import android.webkit.WebView;
 import com.google.android.exoplayer2.C;
-import com.google.android.exoplayer2.ExoPlayer;
-import com.google.android.exoplayer2.ExoPlayerFactory;
-import com.google.android.exoplayer2.SimpleExoPlayer;
-import com.google.android.exoplayer2.source.MediaSource;
-import com.google.android.exoplayer2.trackselection.AdaptiveTrackSelection;
-import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
-import com.google.android.exoplayer2.trackselection.TrackSelection;
-import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter;
+import com.google.android.exoplayer2.Player;
 import com.tubitv.media.bindings.UserController;
 import com.tubitv.media.controller.PlayerAdLogicController;
 import com.tubitv.media.controller.PlayerUIController;
@@ -26,20 +19,18 @@ import com.tubitv.media.di.PlayerModuleDefault;
 import com.tubitv.media.di.component.DaggerFsmComonent;
 import com.tubitv.media.fsm.Input;
 import com.tubitv.media.fsm.callback.AdInterface;
-import com.tubitv.media.fsm.concrete.AdPlayingState;
+import com.tubitv.media.fsm.concrete.MoviePlayingState;
 import com.tubitv.media.fsm.concrete.VpaidState;
 import com.tubitv.media.fsm.listener.AdPlayingMonitor;
 import com.tubitv.media.fsm.listener.CuePointMonitor;
 import com.tubitv.media.fsm.state_machine.FsmPlayer;
-import com.tubitv.media.helpers.Constants;
 import com.tubitv.media.interfaces.AutoPlay;
 import com.tubitv.media.interfaces.DoublePlayerInterface;
-import com.tubitv.media.models.AdMediaModel;
 import com.tubitv.media.models.AdRetriever;
 import com.tubitv.media.models.CuePointsRetriever;
 import com.tubitv.media.models.MediaModel;
 import com.tubitv.media.models.VpaidClient;
-import com.tubitv.media.utilities.ExoPlayerLogger;
+import com.tubitv.media.player.PlayerContainer;
 import com.tubitv.media.utilities.PlayerDeviceUtils;
 import com.tubitv.media.utilities.Utils;
 import com.tubitv.media.views.UIControllerView;
@@ -50,9 +41,7 @@ import javax.inject.Inject;
  */
 public class DoubleViewTubiPlayerActivity extends TubiPlayerActivity implements DoublePlayerInterface, AutoPlay {
 
-    private static final String TAG = "DoubleViewTubiPlayerAct";
-    private static final DefaultBandwidthMeter BANDWIDTH_METER_AD = new DefaultBandwidthMeter();
-    protected SimpleExoPlayer adPlayer;
+    private static final String TAG = DoubleViewTubiPlayerActivity.class.getSimpleName();
     @Inject
     FsmPlayer fsmPlayer;
     @Inject
@@ -71,7 +60,6 @@ public class DoubleViewTubiPlayerActivity extends TubiPlayerActivity implements 
     PlayerAdLogicController playerComponentController;
     @Inject
     VpaidClient vpaidClient;
-    private DefaultTrackSelector trackSelector_ad;
 
     protected AdRetriever getAdRetriever() {
         return adRetriever;
@@ -119,12 +107,9 @@ public class DoubleViewTubiPlayerActivity extends TubiPlayerActivity implements 
     }
 
     @Override
-    protected void initMoviePlayer() {
-        super.initMoviePlayer();
-        createMediaSource(mediaModel);
-        if (!PlayerDeviceUtils.useSinglePlayer()) {
-            setupAdPlayer();
-        }
+    protected void initPlayer() {
+        super.initPlayer();
+        PlayerContainer.setFsmPlayer(fsmPlayer);
     }
 
     @Override
@@ -133,40 +118,11 @@ public class DoubleViewTubiPlayerActivity extends TubiPlayerActivity implements 
     }
 
     @Override
-    protected void releaseMoviePlayer() {
-        super.releaseMoviePlayer();
-        if (!PlayerDeviceUtils.useSinglePlayer()) {
-            releaseAdPlayer();
-        }
-    }
-
-    private void setupAdPlayer() {
-        TrackSelection.Factory adaptiveTrackSelectionFactory =
-                new AdaptiveTrackSelection.Factory(BANDWIDTH_METER_AD);
-        trackSelector_ad = new DefaultTrackSelector(adaptiveTrackSelectionFactory);
-        adPlayer = ExoPlayerFactory.newSimpleInstance(this, trackSelector_ad);
-    }
-
-    private void releaseAdPlayer() {
-        if (adPlayer != null) {
-            updateAdResumePosition();
-            adPlayer.release();
-            adPlayer = null;
-            trackSelector_ad = null;
-        }
-
+    protected void cleanUpPlayer() {
+        super.cleanUpPlayer();
         if (vpaidWebView != null) {
             vpaidWebView.loadUrl(VpaidClient.EMPTY_URL);
             vpaidWebView.clearHistory();
-        }
-    }
-
-    private void updateAdResumePosition() {
-        if (adPlayer != null && playerUIController != null) {
-            int adResumeWindow = adPlayer.getCurrentWindowIndex();
-            long adResumePosition = adPlayer.isCurrentWindowSeekable() ? Math.max(0, adPlayer.getCurrentPosition())
-                    : C.TIME_UNSET;
-            playerUIController.setAdResumeInfo(adResumeWindow, adResumePosition);
         }
     }
 
@@ -175,25 +131,16 @@ public class DoubleViewTubiPlayerActivity extends TubiPlayerActivity implements 
      */
     @Override
     protected void updateResumePosition() {
-        //keep track of movie player's position when activity resume back
-        if (mMoviePlayer != null && playerUIController != null
-                && mMoviePlayer.getPlaybackState() != ExoPlayer.STATE_IDLE) {
-            int resumeWindow = mMoviePlayer.getCurrentWindowIndex();
-            long resumePosition = mMoviePlayer.isCurrentWindowSeekable() ?
-                    Math.max(0, mMoviePlayer.getCurrentPosition())
-                    :
-                    C.TIME_UNSET;
-            playerUIController.setMovieResumeInfo(resumeWindow, resumePosition);
-            ExoPlayerLogger.i(Constants.FSMPLAYER_TESTING, resumePosition + "");
-        }
+        if (PlayerContainer.getPlayer() != null
+                && playerUIController != null
+                && PlayerContainer.getPlayer().getPlaybackState() != Player.STATE_IDLE
+                && fsmPlayer.getCurrentState() instanceof MoviePlayingState) {
 
-        //keep track of ad player's position when activity resume back, only keep track when current state is in AdPlayingState.
-        if (fsmPlayer.getCurrentState() instanceof AdPlayingState && adPlayer != null && playerUIController != null
-                && adPlayer.getPlaybackState() != ExoPlayer.STATE_IDLE) {
-            int ad_resumeWindow = adPlayer.getCurrentWindowIndex();
-            long ad_resumePosition = adPlayer.isCurrentWindowSeekable() ? Math.max(0, adPlayer.getCurrentPosition())
-                    : C.TIME_UNSET;
-            playerUIController.setAdResumeInfo(ad_resumeWindow, ad_resumePosition);
+            int resumeWindow = PlayerContainer.getPlayer().getCurrentWindowIndex();
+            long resumePosition = PlayerContainer.getPlayer().isCurrentWindowSeekable() ?
+                    Math.max(0, PlayerContainer.getPlayer().getCurrentPosition()) : C.TIME_UNSET;
+
+            playerUIController.setMovieResumeInfo(resumeWindow, resumePosition);
         }
     }
 
@@ -208,12 +155,6 @@ public class DoubleViewTubiPlayerActivity extends TubiPlayerActivity implements 
     @Override
     public void prepareFSM() {
         //update the playerUIController view, need to update the view everything when two ExoPlayer being recreated in activity lifecycle.
-        playerUIController.setContentPlayer(mMoviePlayer);
-
-        if (!PlayerDeviceUtils.useSinglePlayer()) {
-            playerUIController.setAdPlayer(adPlayer);
-        }
-
         playerUIController.setExoPlayerView(mTubiPlayerView);
         playerUIController.setVpaidWebView(vpaidWebView);
 
@@ -295,25 +236,6 @@ public class DoubleViewTubiPlayerActivity extends TubiPlayerActivity implements 
         return false;
     }
 
-    /**
-     * creating the {@link MediaSource} for the Exoplayer, recreate it everytime when new {@link SimpleExoPlayer} has been initialized
-     *
-     * @return
-     */
-    protected void createMediaSource(MediaModel videoMediaModel) {
-
-        videoMediaModel.setMediaSource(buildMediaSource(videoMediaModel));
-    }
-
-    @Override
-    public void onPrepareAds(@Nullable AdMediaModel adMediaModel) {
-
-        for (MediaModel singleMedia : adMediaModel.getListOfAds()) {
-            MediaSource adMediaSource = buildMediaSource(singleMedia);
-            singleMedia.setMediaSource(adMediaSource);
-        }
-    }
-
     @Override
     public void onProgress(@Nullable MediaModel mediaModel, long milliseconds, long durationMillis) {
         //        ExoPlayerLogger.v(TAG, mediaModel.getMediaName() + ": " + mediaModel.toString() + " onProgress: " + "milliseconds: " + milliseconds + " durationMillis: " + durationMillis);
@@ -382,8 +304,11 @@ public class DoubleViewTubiPlayerActivity extends TubiPlayerActivity implements 
 
     @Override
     public void playNext(MediaModel nextVideo) {
-        createMediaSource(nextVideo);
-        fsmPlayer.setMovieMedia(nextVideo);
-        fsmPlayer.restart();
+        PlayerContainer.getPlayer().setPlayWhenReady(false);
+        PlayerContainer.releasePlayer();
+        PlayerContainer.preparePlayer(nextVideo);
+        mediaModel = nextVideo;
+        setCaption(isCaptionPreferenceEnable());
+        prepareFSM();
     }
 }

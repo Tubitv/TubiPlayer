@@ -64,7 +64,7 @@ public class FSMModuleReal {
     @ActicityScope
     @Provides
     PlayerUIController provideController() {
-        return new PlayerUIController(null, null, webView, rootView);
+        return new PlayerUIController(webView, rootView);
     }
 
     @ActicityScope
