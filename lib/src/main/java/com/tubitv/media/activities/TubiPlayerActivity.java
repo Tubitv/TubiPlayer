@@ -128,7 +128,7 @@ public abstract class TubiPlayerActivity extends LifeCycleActivity
         mTubiPlayerView.addUserInteractionView(addUserInteractionView());
     }
 
-    private void setCaption(boolean isOn) {
+    protected void setCaption(boolean isOn) {
         if (mediaModel != null && mediaModel.getSubtitlesUrl() != null && mTubiPlayerView != null
                 && mTubiPlayerView.getControlView() != null) {
             mTubiPlayerView.getPlayerController().triggerSubtitlesToggle(isOn);

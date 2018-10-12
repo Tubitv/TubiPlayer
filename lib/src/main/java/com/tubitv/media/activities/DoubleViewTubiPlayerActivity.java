@@ -304,8 +304,11 @@ public class DoubleViewTubiPlayerActivity extends TubiPlayerActivity implements 
 
     @Override
     public void playNext(MediaModel nextVideo) {
+        PlayerContainer.getPlayer().setPlayWhenReady(false);
+        PlayerContainer.releasePlayer();
         PlayerContainer.preparePlayer(nextVideo);
-        fsmPlayer.setMovieMedia(nextVideo);
-        fsmPlayer.restart();
+        mediaModel = nextVideo;
+        setCaption(isCaptionPreferenceEnable());
+        prepareFSM();
     }
 }
