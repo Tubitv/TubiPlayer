@@ -80,7 +80,6 @@ dependencies {
     api(name: 'vaud-text-view-0.0.2', ext: 'aar')
     api(name: 'tubi-loading-view-0.0.5', ext: 'aar')
 
-    api 'com.afollestad.material-dialogs:core:0.9.4.5'
     api 'com.squareup.picasso:picasso:2.5.2'
 
     api 'com.google.android.exoplayer:exoplayer:2.8.4'
