@@ -4,8 +4,8 @@ apply plugin: 'kotlin-android'
 
 buildscript {
     repositories {
-        jcenter()
         google()
+        jcenter()
     }
     dependencies {
         classpath 'com.novoda:bintray-release:0.8.0'
