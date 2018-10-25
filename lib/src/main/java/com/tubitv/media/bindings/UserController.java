@@ -161,6 +161,10 @@ public class UserController extends BaseObservable
 
     }
 
+    public MediaModel getMediaModel() {
+        return mMediaModel;
+    }
+
     /**
      * Every time the {@link com.tubitv.media.fsm.state_machine.FsmPlayer} change states between
      * {@link com.tubitv.media.fsm.concrete.AdPlayingState} and {@link com.tubitv.media.fsm.concrete.MoviePlayingState},

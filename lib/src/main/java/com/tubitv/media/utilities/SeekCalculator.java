@@ -6,6 +6,7 @@ public class SeekCalculator {
     public static final int FORWARD_DIRECTION = 1;
     public static final int REWIND_DIRECTION = -1;
     public static final long FAST_SEEK_INTERVAL = 15 * 1000; // 15 secs
+    public static final long PREVIEW_SEEK_INTERVAL = 10 * 1000; // 10 secs
     public static final long SEEK_INTERVAL_SHORT = 8 * 1000; // 8s
     public static final long SEEK_INTERVAL_RERGUAR = 64 * 1000; // 64s
     public static final long SEEK_INTERVAL_LONG = 256 * 1000; // 256s
