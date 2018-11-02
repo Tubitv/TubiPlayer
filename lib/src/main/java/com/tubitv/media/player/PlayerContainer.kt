@@ -123,12 +123,11 @@ class PlayerContainer {
                           resetPosition: Boolean,
                           resetState: Boolean,
                           isForAds: Boolean) {
-
-            // Build MediaSource based on created data source factory per context
+            // Build MediaSource per context if needed
             mediaModel.buildMediaSourceIfNeeded(
+                    sContextRef?.get(),
                     sHandlerRef?.get(),
-                    sDataSourceFactory,
-                    sDataSourceFactoryWithoutBandwidthMeter,
+                    sBandwidthMeter,
                     sEventLogger
             )
             sMediaModel = mediaModel
@@ -225,8 +224,6 @@ class PlayerContainer {
             sContextRef = WeakReference(context)
             sHandlerRef = WeakReference(handler)
 
-            sDataSourceFactory = MediaHelper.buildDataSourceFactory(context, sBandwidthMeter)
-            sDataSourceFactoryWithoutBandwidthMeter = MediaHelper.buildDataSourceFactory(context, null)
             sHttpDataSourceFactory = MediaHelper.buildHttpDataSourceFactory(context, sBandwidthMeter)
         }
 
