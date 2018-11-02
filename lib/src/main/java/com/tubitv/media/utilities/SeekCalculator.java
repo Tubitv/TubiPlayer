@@ -10,6 +10,9 @@ public class SeekCalculator {
     public static final long SEEK_INTERVAL_SHORT = 8 * 1000; // 8s
     public static final long SEEK_INTERVAL_RERGUAR = 64 * 1000; // 64s
     public static final long SEEK_INTERVAL_LONG = 256 * 1000; // 256s
+    public static final long PREVIEW_SEEK_INTERVAL_SHORT = 10 * 1000; // 10s
+    public static final long PREVIEW_SEEK_INTERVAL_RERGUAR = 60 * 1000; // 60s
+    public static final long PREVIEW_SEEK_INTERVAL_LONG = 250 * 1000; // 250s
 
     private static final long FIRST_SPEED_INTERVAL = 1 * 1000; // 1s
     private static final long SECOND_SPEED_INTERVAL = 2 * 1000; // 2s
@@ -28,6 +31,10 @@ public class SeekCalculator {
      * @return Current seek rate either 0 or positive number
      */
     public static long getSeekRate(final long startTime, final long currentTime) {
+        return getSeekRate(startTime, currentTime, false);
+    }
+
+    public static long getSeekRate(final long startTime, final long currentTime, final boolean isPreview) {
 
         if (sLastUpdateTime == null) {
             sLastUpdateTime = startTime;
@@ -41,19 +48,19 @@ public class SeekCalculator {
 
         sLastUpdateTime = currentTime;
 
-        return getCurrentSeekRate(startTime, currentTime);
+        return getCurrentSeekRate(startTime, currentTime, isPreview);
     }
 
-    private static long getCurrentSeekRate(final long startTime, final long currentTime) {
+    private static long getCurrentSeekRate(final long startTime, final long currentTime, final boolean isPreview) {
         final long interval = currentTime - startTime;
         if (interval < FIRST_SPEED_INTERVAL) {
             return 0;
         } else if (interval < SECOND_SPEED_INTERVAL) {
-            return SEEK_INTERVAL_SHORT;
+            return isPreview ? PREVIEW_SEEK_INTERVAL_SHORT : SEEK_INTERVAL_SHORT;
         } else if (interval < THIRD_SPEED_INTERVAL) {
-            return SEEK_INTERVAL_RERGUAR;
+            return isPreview ? PREVIEW_SEEK_INTERVAL_RERGUAR : SEEK_INTERVAL_RERGUAR;
         } else {
-            return SEEK_INTERVAL_LONG;
+            return isPreview ? PREVIEW_SEEK_INTERVAL_LONG : SEEK_INTERVAL_LONG;
         }
     }
 }
