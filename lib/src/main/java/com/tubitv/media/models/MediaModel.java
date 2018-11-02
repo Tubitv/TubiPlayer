@@ -1,5 +1,6 @@
 package com.tubitv.media.models;
 
+import android.content.Context;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -17,8 +18,11 @@ import com.google.android.exoplayer2.source.hls.HlsMediaSource;
 import com.google.android.exoplayer2.source.smoothstreaming.DefaultSsChunkSource;
 import com.google.android.exoplayer2.source.smoothstreaming.SsMediaSource;
 import com.google.android.exoplayer2.upstream.DataSource;
+import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter;
 import com.google.android.exoplayer2.util.MimeTypes;
 import com.google.android.exoplayer2.util.Util;
+import com.tubitv.media.helpers.MediaHelper;
+import com.tubitv.media.utilities.ExoPlayerLogger;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
@@ -200,20 +204,27 @@ public class MediaModel implements Serializable {
     /**
      * Build MediaSource if it hasn't been built before
      *
-     * @param handler         UI thread handler
-     * @param videoFactory    DataSource factory for video content
-     * @param nonVideoFactory DataSource factory for non-video content
-     * @param eventLogger     Event listener for content
+     * @param context        Context to create DataSource.Factory
+     * @param handler        UI thread handler
+     * @param bandwidthMeter BandwidthMeter for video DataSource.Factory
+     * @param eventLogger    Event listener for content
      */
     public void buildMediaSourceIfNeeded(
+            final Context context,
             final android.os.Handler handler,
-            final DataSource.Factory videoFactory,
-            final DataSource.Factory nonVideoFactory,
+            final DefaultBandwidthMeter bandwidthMeter,
             final com.tubitv.media.utilities.EventLogger eventLogger) {
 
         if (this.mediaSource != null) { // Prevent regenerating MediaSource
             return;
         }
+
+        if (context == null || handler == null) {
+            ExoPlayerLogger.d(TAG, "build media source fail due to context or handler is null");
+        }
+
+        DataSource.Factory videoFactory = MediaHelper.buildDataSourceFactory(context, bandwidthMeter);
+        DataSource.Factory nonVideoFactory = MediaHelper.buildDataSourceFactory(context, null);
 
         buildMediaSource(handler, videoFactory, nonVideoFactory, eventLogger);
     }
