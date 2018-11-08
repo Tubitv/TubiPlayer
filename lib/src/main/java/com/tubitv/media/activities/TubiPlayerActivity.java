@@ -6,6 +6,7 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
+import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.webkit.WebView;
 import android.widget.TextView;
@@ -27,7 +28,7 @@ import com.tubitv.media.views.TubiExoPlayerView;
  * Along with some abstract methods to be implemented by subclass for extra functions.
  * You can use this class as it is and implement the abstract methods to be a standalone player to player video with customized UI controls and different forms of adaptive streaming.
  */
-public abstract class TubiPlayerActivity extends LifeCycleActivity
+public abstract class TubiPlayerActivity extends AppCompatActivity
         implements PlaybackActionCallback {
     private static final DefaultBandwidthMeter BANDWIDTH_METER = new DefaultBandwidthMeter();
     public static String TUBI_MEDIA_KEY = "tubi_media_key";

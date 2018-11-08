@@ -252,7 +252,7 @@ public abstract class FsmPlayer implements Fsm, RetrieveAdCallback, FsmAdControl
 
         // if the current lifecycle of activity is after on_stop, omit the transition
         if (getLifecycle() != null) {
-            if (!getLifecycle().getCurrentState().isAtLeast(Lifecycle.State.STARTED)) {
+            if (!getLifecycle().getCurrentState().isAtLeast(Lifecycle.State.CREATED)) {
                 ExoPlayerLogger.e(Constants.FSMPLAYER_TESTING, "Activity out of lifecycle");
                 return;
             }
