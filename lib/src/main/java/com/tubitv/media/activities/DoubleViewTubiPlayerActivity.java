@@ -42,6 +42,7 @@ import javax.inject.Inject;
 public class DoubleViewTubiPlayerActivity extends TubiPlayerActivity implements DoublePlayerInterface, AutoPlay {
 
     private static final String TAG = DoubleViewTubiPlayerActivity.class.getSimpleName();
+
     @Inject
     FsmPlayer fsmPlayer;
     @Inject
@@ -282,6 +283,19 @@ public class DoubleViewTubiPlayerActivity extends TubiPlayerActivity implements 
         cuePointIndictor.setText(printCuePoints(cuePoints));
     }
 
+    @Override
+    public void playNext(final MediaModel nextVideo, final String publishId, final String videoId) {
+        PlayerContainer.getPlayer().setPlayWhenReady(false);
+        PlayerContainer.releasePlayer();
+        PlayerContainer.preparePlayer(nextVideo);
+        mediaModel = nextVideo;
+        setCaption(isCaptionPreferenceEnable());
+        fsmPlayer.setMovieMedia(mediaModel);
+        updateCuePointRetriever(publishId, videoId);
+        updateAdRetriever(publishId, videoId);
+        fsmPlayer.restart();
+    }
+
     private String printCuePoints(long[] cuePoints) {
         if (cuePoints == null) {
             return "no cuepoints supplied";
@@ -302,13 +316,21 @@ public class DoubleViewTubiPlayerActivity extends TubiPlayerActivity implements 
         return builder.toString();
     }
 
-    @Override
-    public void playNext(MediaModel nextVideo) {
-        PlayerContainer.getPlayer().setPlayWhenReady(false);
-        PlayerContainer.releasePlayer();
-        PlayerContainer.preparePlayer(nextVideo);
-        mediaModel = nextVideo;
-        setCaption(isCaptionPreferenceEnable());
-        prepareFSM();
+    protected void updateCuePointRetriever(String publisherId, String videoId) {
+        CuePointsRetriever cuePointsRetrieve = getCuePointsRetriever();
+
+        if (cuePointsRetrieve != null) {
+            cuePointsRetrieve.setPublisherId(publisherId);
+            cuePointsRetrieve.setVideoId(videoId);
+        }
+    }
+
+    protected void updateAdRetriever(String publisherId, String videoId) {
+        AdRetriever adRetriever = getAdRetriever();
+
+        if (adRetriever != null) {
+            adRetriever.setPublisherId(publisherId);
+            adRetriever.setVideoId(videoId);
+        }
     }
 }
