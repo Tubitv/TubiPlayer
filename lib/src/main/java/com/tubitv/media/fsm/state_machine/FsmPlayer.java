@@ -232,11 +232,13 @@ public abstract class FsmPlayer implements Fsm, RetrieveAdCallback, FsmAdControl
 
     @Override
     public void restart() {
-        
+
         // Make sure we clear all models in controller
-        getController().clearHistoryRecord();
-        getController().clearAdResumeInfo();
-        getController().clearMovieResumeInfo();
+        if (getController() != null) {
+            getController().clearHistoryRecord();
+            getController().clearAdResumeInfo();
+            getController().clearMovieResumeInfo();
+        }
 
         currentState = null;
         isInitialized = false;
