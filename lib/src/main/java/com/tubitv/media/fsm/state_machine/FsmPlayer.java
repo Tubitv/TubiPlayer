@@ -232,14 +232,11 @@ public abstract class FsmPlayer implements Fsm, RetrieveAdCallback, FsmAdControl
 
     @Override
     public void restart() {
-
-        //TODO: need inject PlayerContainer for better testing purposes
-        SimpleExoPlayer player = PlayerContainer.getPlayer();
-        if (player != null) {
-            player.stop();
-            player.setPlayWhenReady(false);
-            getController().clearMovieResumeInfo();
-        }
+        
+        // Make sure we clear all models in controller
+        getController().clearHistoryRecord();
+        getController().clearAdResumeInfo();
+        getController().clearMovieResumeInfo();
 
         currentState = null;
         isInitialized = false;

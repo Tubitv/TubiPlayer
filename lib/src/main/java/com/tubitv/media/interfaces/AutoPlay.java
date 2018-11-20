@@ -7,5 +7,5 @@ import com.tubitv.media.models.MediaModel;
  * on Tubitv.com, allengotstuff@gmail.com
  */
 public interface AutoPlay {
-    void playNext(MediaModel nextVideo);
+    void playNext(MediaModel nextVideo, final String publishId, final String videoId);
 }
