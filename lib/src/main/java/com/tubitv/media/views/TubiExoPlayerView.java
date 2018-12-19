@@ -248,7 +248,7 @@ public class TubiExoPlayerView extends FrameLayout {
             } else if (surfaceView instanceof SurfaceView) {
                 player.setVideoSurfaceView((SurfaceView) surfaceView);
             }
-            player.setVideoListener(componentListener);
+            player.addVideoListener(componentListener);
             player.setTextOutput(componentListener);
             player.addListener(componentListener);
         }
@@ -262,6 +262,10 @@ public class TubiExoPlayerView extends FrameLayout {
     public void setResizeMode(@AspectRatioFrameLayout.ResizeMode int resizeMode) {
         Assertions.checkState(contentFrame != null);
         contentFrame.setResizeMode(resizeMode);
+    }
+
+    public void setAspectRatio(float widthHeightRatio){
+        contentFrame.setAspectRatio(widthHeightRatio);
     }
 
     /**

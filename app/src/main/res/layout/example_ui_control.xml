@@ -15,6 +15,41 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
+        <TextView
+            android:id="@+id/video_scale_button"
+            android:layout_width="100dp"
+            android:layout_height="40dp"
+            android:background="@color/colorAccent"
+            android:clickable="true"
+            android:gravity="center"
+            android:text="Origin"
+            android:tag="scale"
+            android:textColor="@color/tubi_tv_player_white" />
+
+        <TextView
+            android:id="@+id/video_speed_x2_button"
+            android:layout_width="100dp"
+            android:layout_height="40dp"
+            android:layout_marginLeft="150dp"
+            android:background="@color/colorAccent"
+            android:clickable="true"
+            android:gravity="center"
+            android:text="speed X2"
+            android:tag="speedx2"
+            android:textColor="@color/tubi_tv_player_white" />
+
+        <TextView
+            android:id="@+id/video_speed_x4_button"
+            android:layout_width="100dp"
+            android:layout_height="40dp"
+            android:layout_marginLeft="300dp"
+            android:background="@color/colorAccent"
+            android:clickable="true"
+            android:gravity="center"
+            android:text="speed X4"
+            android:tag="speedx4"
+            android:textColor="@color/tubi_tv_player_white" />
+
         <Button
             android:id="@+id/rewind"
             android:layout_width="100dp"

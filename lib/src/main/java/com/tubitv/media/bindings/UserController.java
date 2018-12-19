@@ -18,6 +18,7 @@ import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.Timeline;
 import com.google.android.exoplayer2.source.TrackGroupArray;
 import com.google.android.exoplayer2.trackselection.TrackSelectionArray;
+import com.google.android.exoplayer2.video.VideoListener;
 import com.tubitv.media.R;
 import com.tubitv.media.interfaces.PlaybackActionCallback;
 import com.tubitv.media.interfaces.TubiPlaybackControlInterface;
@@ -113,6 +114,21 @@ public class UserController extends BaseObservable
 
     private int mControlState = NORMAL_CONTROL_STATE;
 
+    private float mInitVideoAspectRatio;
+
+    private VideoListener mVideoListener = new VideoListener() {
+        @Override
+        public void onVideoSizeChanged(final int width, final int height, final int unappliedRotationDegrees,
+                final float pixelWidthHeightRatio) {
+            ExoPlayerLogger.d(TAG, "onVideoSizeChanged");
+            mInitVideoAspectRatio = height == 0 ? 1 : (width * pixelWidthHeightRatio) / height;
+        }
+
+        @Override public void onRenderedFirstFrame() {
+            ExoPlayerLogger.d(TAG, "onRenderedFirstFrame");
+        }
+    };
+
     /**
      * Every time the {@link com.tubitv.media.fsm.state_machine.FsmPlayer} change states between
      * {@link com.tubitv.media.fsm.concrete.AdPlayingState} and {@link com.tubitv.media.fsm.concrete.MoviePlayingState},
@@ -189,6 +205,7 @@ public class UserController extends BaseObservable
         this.mPlayer = player;
 
         mPlayer.addListener(this);
+        mPlayer.addVideoListener(mVideoListener);
         playerPlaybackState.set(mPlayer.getPlaybackState());
         mPlaybackActionCallback = playbackActionCallback;
         updateProgress();
@@ -443,6 +460,29 @@ public class UserController extends BaseObservable
 
         isDraggingSeekBar.set(false);
         ExoPlayerLogger.i(TAG, "onStopTrackingTouch");
+    }
+
+    @Override public void setVideoAspectRatio(float widthHeightRatio) {
+        if (mTubiExoPlayerView != null) {
+            mTubiExoPlayerView.setAspectRatio(widthHeightRatio);
+        }
+        ExoPlayerLogger.i(TAG, "setVideoAspectRatio " + widthHeightRatio);
+
+    }
+
+    @Override public float getInitVideoAspectRatio() {
+        ExoPlayerLogger.i(TAG, "getInitVideoAspectRatio " + mInitVideoAspectRatio);
+        return mInitVideoAspectRatio;
+    }
+
+    @Override public void setResizeMode(final int resizeMode) {
+        if (mTubiExoPlayerView != null) {
+            mTubiExoPlayerView.setResizeMode(resizeMode);
+        }
+    }
+
+    @Override public void setPlaybackSpeed(final float speed) {
+        mPlayer.setPlaybackParameters(new PlaybackParameters(speed));
     }
 
     //---------------------------------------private method---------------------------------------------------------------------------//
