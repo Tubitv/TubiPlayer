@@ -1,12 +1,16 @@
 package com.tubitv.media.activities;
 
+import android.app.PictureInPictureParams;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.graphics.Color;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
+import android.support.annotation.RequiresApi;
 import android.text.TextUtils;
+import android.util.Rational;
 import android.view.View;
 import android.webkit.WebView;
 import android.widget.TextView;
@@ -43,6 +47,9 @@ import com.tubitv.media.utilities.EventLogger;
 import com.tubitv.media.utilities.Utils;
 import com.tubitv.media.views.TubiExoPlayerView;
 
+import static com.tubitv.media.helpers.Constants.PIP_ENABLE_KET;
+import static com.tubitv.media.helpers.Constants.PIP_ENABLE_VALUE_DEFAULT;
+
 /**
  * This is the base activity that prepare one instance of {@link SimpleExoPlayer} mMoviePlayer, this player is mean to serve as the main player to player content.
  * Along with some abstract methods to be implemented by subclass for extra functions.
@@ -58,6 +65,7 @@ public abstract class TubiPlayerActivity extends LifeCycleActivity
     protected TextView cuePointIndictor;
     protected DefaultTrackSelector mTrackSelector;
     protected boolean isActive = false;
+    protected boolean mPIPEnable = PIP_ENABLE_VALUE_DEFAULT;
     /**
      * ideally, only one instance of {@link MediaModel} and its arrtibute {@link MediaSource} for movie should be created throughout the whole movie playing experiences.
      */
@@ -74,6 +82,9 @@ public abstract class TubiPlayerActivity extends LifeCycleActivity
     protected abstract void updateResumePosition();
 
     protected abstract boolean isCaptionPreferenceEnable();
+
+    @RequiresApi(api = Build.VERSION_CODES.O)
+    private final PictureInPictureParams.Builder mPictureInPictureParamsBuilder = new PictureInPictureParams.Builder();
 
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
@@ -133,6 +144,15 @@ public abstract class TubiPlayerActivity extends LifeCycleActivity
         return isActive;
     }
 
+    @Override
+    public void onPictureInPictureModeChanged(final boolean isInPictureInPictureMode, final Configuration newConfig) {
+        if (isInPictureInPictureMode) {
+            // TODO: 2018/12/19  hide the controls in pip
+        } else {
+            //restore playback UI
+        }
+    }
+
     @SuppressWarnings("ConstantConditions")
     protected void parseIntent() {
         String errorNoMediaMessage = getResources().getString(R.string.activity_tubi_player_no_media_error_message);
@@ -141,6 +161,7 @@ public abstract class TubiPlayerActivity extends LifeCycleActivity
         mediaModel = (MediaModel) getIntent().getExtras().getSerializable(TUBI_MEDIA_KEY);
         Assertions.checkState(mediaModel != null,
                 errorNoMediaMessage);
+        setPIPEnable(getIntent().getBooleanExtra(PIP_ENABLE_KET, PIP_ENABLE_VALUE_DEFAULT));
     }
 
     protected void initLayout() {
@@ -268,4 +289,19 @@ public abstract class TubiPlayerActivity extends LifeCycleActivity
         return null;
     }
 
+    public boolean isPIPEnable() {
+        return mPIPEnable && Build.VERSION.SDK_INT >= Build.VERSION_CODES.O;
+    }
+
+    public void setPIPEnable(final boolean pIPEnable) {
+        this.mPIPEnable = pIPEnable;
+    }
+
+    protected void enterPIP(int numerator, int denominator) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            final Rational rational = new Rational(numerator, denominator);
+            mPictureInPictureParamsBuilder.setAspectRatio(rational).build();
+            enterPictureInPictureMode(mPictureInPictureParamsBuilder.build());
+        }
+    }
 }

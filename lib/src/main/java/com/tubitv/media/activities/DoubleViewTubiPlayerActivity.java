@@ -45,6 +45,9 @@ import com.tubitv.media.utilities.Utils;
 import com.tubitv.media.views.UIControllerView;
 import javax.inject.Inject;
 
+import static com.tubitv.media.helpers.Constants.PIP_DENOMINATOR_DEFAULT;
+import static com.tubitv.media.helpers.Constants.PIP_NUMERATOR_DEFAULT;
+
 /**
  * Created by allensun on 7/24/17.
  */
@@ -121,6 +124,7 @@ public class DoubleViewTubiPlayerActivity extends TubiPlayerActivity implements 
     @Override
     protected void initMoviePlayer() {
         super.initMoviePlayer();
+        setPIPEnable(true);
         createMediaSource(mediaModel);
         if (!PlayerDeviceUtils.useSinglePlayer()) {
             setupAdPlayer();
@@ -262,10 +266,15 @@ public class DoubleViewTubiPlayerActivity extends TubiPlayerActivity implements 
             }
 
             vpaidWebView.goBack();
-
-        } else {
-            super.onBackPressed();
+            return;
         }
+
+        if (isPIPEnable()) {
+            enterPIP(PIP_NUMERATOR_DEFAULT, PIP_DENOMINATOR_DEFAULT);
+            return;
+        }
+
+        super.onBackPressed();
     }
 
     //when the last item is "about:blank", ingore the back navigation for webview.
