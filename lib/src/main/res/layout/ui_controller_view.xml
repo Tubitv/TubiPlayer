@@ -25,7 +25,6 @@
             android:id="@+id/controller_panel"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@color/tubi_tv_player_controls_overlay"
             android:orientation="vertical"
             android:visibility="gone">
 
@@ -42,26 +41,45 @@
                 android:textSize="18sp"
                 app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintLeft_toLeftOf="@+id/tubi_tv_controller_guideline_left"
-                app:layout_constraintRight_toLeftOf="@+id/view_tubi_controller_subtitles_ib"
+                app:layout_constraintRight_toLeftOf="@+id/right_container"
                 app:layout_constraintTop_toTopOf="@+id/tubi_tv_controller_guideline_top"
                 app:vaud_typeface="vaud_regular"
                 tools:text="Escape Plan" />
 
-            <com.tubitv.media.views.StateImageButton
-                android:id="@+id/view_tubi_controller_subtitles_ib"
+            <LinearLayout
+                android:id="@+id/right_container"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginEnd="16dp"
-                android:layout_marginLeft="8dp"
-                android:layout_marginRight="16dp"
-                android:onClick="@{()-> controller.triggerSubtitlesToggle(!controller.isSubtitleEnabled)}"
-                android:visibility="@{controller.videoHasSubtitle &amp;&amp; !controller.isCurrentAd ? View.VISIBLE : View.GONE}"
+                android:orientation="horizontal"
                 app:layout_constraintLeft_toLeftOf="@+id/tubi_tv_controller_guideline_seek_right"
-                app:layout_constraintRight_toLeftOf="@+id/view_tubi_controller_quality_ib"
-                app:layout_constraintTop_toTopOf="@+id/tubi_tv_controller_guideline_top"
-                app:setCheckedState="@{controller.isSubtitleEnabled}"
-                app:state_checked="@drawable/tubi_tv_drawable_subtitles_on_selector"
-                app:state_not_checked="@drawable/tubi_tv_drawable_subtitles_off_selector" />
+                app:layout_constraintTop_toTopOf="@+id/tubi_tv_controller_guideline_top">
+
+                <com.tubitv.media.views.StateImageButton
+                    android:id="@+id/view_tubi_controller_subtitles_ib"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="16dp"
+                    android:layout_marginLeft="8dp"
+                    android:layout_marginRight="16dp"
+                    android:onClick="@{()-> controller.triggerSubtitlesToggle(!controller.isSubtitleEnabled)}"
+                    android:visibility="@{controller.videoHasSubtitle &amp;&amp; !controller.isCurrentAd ? View.VISIBLE : View.GONE}"
+                    app:setCheckedState="@{controller.isSubtitleEnabled}"
+                    app:state_checked="@drawable/tubi_tv_drawable_subtitles_on_selector"
+                    app:state_not_checked="@drawable/tubi_tv_drawable_subtitles_off_selector" />
+
+                <com.tubitv.media.views.StateImageButton
+                    android:id="@+id/view_tubi_track_selection"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="16dp"
+                    android:layout_marginLeft="8dp"
+                    android:layout_marginRight="16dp"
+                    android:visibility="@{!controller.isCurrentAd ? View.VISIBLE : View.GONE}"
+                    app:setCheckedState="@{controller.isSubtitleEnabled}"
+                    app:state_checked="@drawable/tubi_tv_drawable_quality_on_selector"
+                    app:state_not_checked="@drawable/tubi_tv_drawable_quality_off_selector" />
+
+            </LinearLayout>
 
             <include
                 android:id="@+id/view_tubi_controller_ad_description"

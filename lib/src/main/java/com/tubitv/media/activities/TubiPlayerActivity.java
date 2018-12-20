@@ -57,6 +57,7 @@ public abstract class TubiPlayerActivity extends LifeCycleActivity
     protected WebView vpaidWebView;
     protected TextView cuePointIndictor;
     protected DefaultTrackSelector mTrackSelector;
+    private DefaultTrackSelector.Parameters trackSelectorParameters;
     protected boolean isActive = false;
     /**
      * ideally, only one instance of {@link MediaModel} and its arrtibute {@link MediaSource} for movie should be created throughout the whole movie playing experiences.
@@ -88,6 +89,7 @@ public abstract class TubiPlayerActivity extends LifeCycleActivity
         Utils.hideSystemUI(this, true);
         mMediaDataSourceFactory = buildDataSourceFactory(true);
         initLayout();
+        trackSelectorParameters = new DefaultTrackSelector.ParametersBuilder().build();
     }
 
     @Override
@@ -175,6 +177,7 @@ public abstract class TubiPlayerActivity extends LifeCycleActivity
                 new AdaptiveTrackSelection.Factory(BANDWIDTH_METER);
         mTrackSelector =
                 new DefaultTrackSelector(videoTrackSelectionFactory);
+        mTrackSelector.setParameters(trackSelectorParameters);
 
         // 3. Create the mMoviePlayer
         mMoviePlayer = ExoPlayerFactory.newSimpleInstance(this, mTrackSelector);
@@ -267,5 +270,4 @@ public abstract class TubiPlayerActivity extends LifeCycleActivity
         }
         return null;
     }
-
 }

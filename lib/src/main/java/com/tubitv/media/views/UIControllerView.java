@@ -1,5 +1,6 @@
 package com.tubitv.media.views;
 
+import android.app.Activity;
 import android.content.Context;
 import android.databinding.DataBindingUtil;
 import android.os.Handler;
@@ -25,6 +26,8 @@ public class UIControllerView extends FrameLayout {
 
     private Handler countdownHandler;
 
+    private Activity mActivity;
+
     private Runnable hideUIAction = new Runnable() {
         @Override
         public void run() {
@@ -43,6 +46,11 @@ public class UIControllerView extends FrameLayout {
     public UIControllerView(final Context context, @Nullable final AttributeSet attrs, final int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         initLayout(context);
+    }
+
+    public UIControllerView setActivity(final Activity mActivity) {
+        this.mActivity = mActivity;
+        return this;
     }
 
     public UIControllerView setUserController(UserController userController) {
@@ -86,6 +94,10 @@ public class UIControllerView extends FrameLayout {
         binding = DataBindingUtil
                 .inflate(LayoutInflater.from(context), R.layout.ui_controller_view, this, true);
         countdownHandler = new Handler();
+        binding.viewTubiTrackSelection
+                .setOnClickListener(view -> {
+                    boolean isShowed = userController.openTrackSelectionPopUp(0, mActivity);
+                });
     }
 
     private void hideUiTimeout() {

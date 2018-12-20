@@ -95,7 +95,7 @@ public class DoubleViewTubiPlayerActivity extends TubiPlayerActivity implements 
 
     @Override
     public View addUserInteractionView() {
-        return new UIControllerView(getBaseContext())
+        return new UIControllerView(getBaseContext()).setActivity(this)
                 .setUserController((UserController) getPlayerController());
     }
 
@@ -125,6 +125,9 @@ public class DoubleViewTubiPlayerActivity extends TubiPlayerActivity implements 
         if (!PlayerDeviceUtils.useSinglePlayer()) {
             setupAdPlayer();
         }
+
+        //new initialize new player instance, also need to update the trackSelector instance in Usercontroller.
+        ((UserController) getPlayerController()).setTrackSelector(mTrackSelector);
     }
 
     @Override

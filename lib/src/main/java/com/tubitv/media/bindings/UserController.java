@@ -1,5 +1,7 @@
 package com.tubitv.media.bindings;
 
+import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
 import android.databinding.BaseObservable;
 import android.databinding.ObservableBoolean;
@@ -9,15 +11,20 @@ import android.net.Uri;
 import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.text.TextUtils;
+import android.util.Pair;
 import android.view.View;
 import android.widget.SeekBar;
+import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.ExoPlaybackException;
 import com.google.android.exoplayer2.ExoPlayer;
 import com.google.android.exoplayer2.PlaybackParameters;
 import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.Timeline;
 import com.google.android.exoplayer2.source.TrackGroupArray;
+import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
+import com.google.android.exoplayer2.trackselection.MappingTrackSelector;
 import com.google.android.exoplayer2.trackselection.TrackSelectionArray;
+import com.google.android.exoplayer2.ui.TrackSelectionView;
 import com.tubitv.media.R;
 import com.tubitv.media.interfaces.PlaybackActionCallback;
 import com.tubitv.media.interfaces.TubiPlaybackControlInterface;
@@ -111,6 +118,8 @@ public class UserController extends BaseObservable
 
     private TubiExoPlayerView mTubiExoPlayerView;
 
+    private DefaultTrackSelector mTrackSelector;
+
     private int mControlState = NORMAL_CONTROL_STATE;
 
     /**
@@ -159,6 +168,15 @@ public class UserController extends BaseObservable
 
         }
 
+    }
+
+    /**
+     * Set selector to be able to let user select tracks
+     *
+     * @param mTrackSelector
+     */
+    public void setTrackSelector(final DefaultTrackSelector mTrackSelector) {
+        this.mTrackSelector = mTrackSelector;
     }
 
     /**
@@ -330,6 +348,46 @@ public class UserController extends BaseObservable
         }
 
         mPlaybackActionCallback.onLearnMoreClick(mMediaModel);
+    }
+
+    public boolean openTrackSelectionPopUp(final int index, Activity context) {
+        if (mTrackSelector == null || context == null) {
+            return false;
+        }
+        MappingTrackSelector.MappedTrackInfo mappedTrackInfo = mTrackSelector.getCurrentMappedTrackInfo();
+        if (mappedTrackInfo != null) {
+            int rendererIndex = index;
+            CharSequence title;
+            switch (rendererIndex) {
+                case 0:
+                    title = context.getString(R.string.exo_track_selection_title_video);
+                    break;
+                case 1:
+                    title = context.getString(R.string.exo_track_selection_title_audio);
+                    break;
+
+                case 2:
+                    title = context.getString(R.string.exo_track_selection_title_text);
+                    break;
+
+                default:
+                    title = "unknown track";
+                    break;
+            }
+            int rendererType = mappedTrackInfo.getRendererType(rendererIndex);
+            boolean allowAdaptiveSelections =
+                    rendererType == C.TRACK_TYPE_VIDEO
+                            || (rendererType == C.TRACK_TYPE_AUDIO
+                            && mappedTrackInfo.getTypeSupport(C.TRACK_TYPE_VIDEO)
+                            == MappingTrackSelector.MappedTrackInfo.RENDERER_SUPPORT_NO_TRACKS);
+            Pair<AlertDialog, TrackSelectionView> dialogPair =
+                    TrackSelectionView.getDialog(context, title, mTrackSelector, rendererIndex);
+            dialogPair.second.setShowDisableOption(true);
+            dialogPair.second.setAllowAdaptiveSelections(allowAdaptiveSelections);
+            dialogPair.first.show();
+            return true;
+        }
+        return false;
     }
 
     @Override

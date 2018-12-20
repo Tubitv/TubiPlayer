@@ -16,7 +16,7 @@ import com.tubitv.media.models.MediaModel;
  */
 public class SelectionActivity extends Activity {
 
-    private static final String VIDEO_URL = "https://tungsten.aaplimg.com/VOD/bipbop_adv_fmp4_example/master.m3u8";
+    private static final String VIDEO_URL = "http://frqj.adrise.tv/75626cce-e375-49f7-a515-b37e5a261333/gujzqhhol1.m3u8?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJwbGF0Zm9ybSI6ImFuZHJvaWQiLCJleHAiOjE1NDU5MTIwMDB9.zbaI5uVH0UZHO3SMYYF7kJLspetxl782Vg8xs5zeTE4";
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
