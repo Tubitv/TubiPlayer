@@ -2,6 +2,7 @@ package com.tubitv.media.activities;
 
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
@@ -19,6 +20,7 @@ import com.google.android.exoplayer2.trackselection.AdaptiveTrackSelection;
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector;
 import com.google.android.exoplayer2.trackselection.TrackSelection;
 import com.google.android.exoplayer2.upstream.DefaultBandwidthMeter;
+import com.tubitv.media.R;
 import com.tubitv.media.bindings.UserController;
 import com.tubitv.media.controller.PlayerAdLogicController;
 import com.tubitv.media.controller.PlayerUIController;
@@ -134,6 +136,9 @@ public class DoubleViewTubiPlayerActivity extends TubiPlayerActivity implements 
     @Override
     protected void onPlayerReady() {
         prepareFSM();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            updatePictureInPictureActions(R.drawable.exo_controls_pause, "pause", CONTROL_TYPE_PAUSE, REQUEST_PAUSE);
+        }
     }
 
     @Override
@@ -339,6 +344,14 @@ public class DoubleViewTubiPlayerActivity extends TubiPlayerActivity implements 
     @Override
     public void onPlayToggle(@Nullable MediaModel mediaModel, boolean playing) {
         //        ExoPlayerLogger.v(TAG, mediaModel.getMediaName() + ": " + mediaModel.toString() + " onPlayToggle :");
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            if (playing) {
+                updatePictureInPictureActions(R.drawable.exo_controls_pause, "pause", CONTROL_TYPE_PAUSE, REQUEST_PAUSE);
+            } else {
+                updatePictureInPictureActions(R.drawable.exo_controls_play, "play", CONTROL_TYPE_PLAY, REQUEST_PLAY);
+            }
+        }
     }
 
     @Override

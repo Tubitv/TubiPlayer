@@ -1,12 +1,19 @@
 package com.tubitv.media.activities;
 
+import android.app.PendingIntent;
 import android.app.PictureInPictureParams;
+import android.app.RemoteAction;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.res.Configuration;
 import android.graphics.Color;
+import android.graphics.drawable.Icon;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.annotation.DrawableRes;
 import android.support.annotation.NonNull;
 import android.support.annotation.RequiresApi;
 import android.text.TextUtils;
@@ -46,6 +53,7 @@ import com.tubitv.media.models.MediaModel;
 import com.tubitv.media.utilities.EventLogger;
 import com.tubitv.media.utilities.Utils;
 import com.tubitv.media.views.TubiExoPlayerView;
+import java.util.ArrayList;
 
 import static com.tubitv.media.helpers.Constants.PIP_ENABLE_KET;
 import static com.tubitv.media.helpers.Constants.PIP_ENABLE_VALUE_DEFAULT;
@@ -74,6 +82,36 @@ public abstract class TubiPlayerActivity extends LifeCycleActivity
     private Handler mMainHandler;
     private DataSource.Factory mMediaDataSourceFactory;
     private EventLogger mEventLogger;
+    /**
+     * Intent action for media controls from Picture-in-Picture mode.
+     */
+    protected static final String ACTION_MEDIA_CONTROL = "media_control";
+
+    /**
+     * Intent extra for media controls from Picture-in-Picture mode.
+     */
+    protected static final String EXTRA_CONTROL_TYPE = "control_type";
+
+    /**
+     * The request code for play action PendingIntent.
+     */
+    protected static final int REQUEST_PLAY = 1;
+
+    /**
+     * The request code for pause action PendingIntent.
+     */
+    protected static final int REQUEST_PAUSE = 2;
+
+    /**
+     * The intent extra value for play action.
+     */
+    protected static final int CONTROL_TYPE_PLAY = 1;
+
+    /**
+     * The intent extra value for pause action.
+     */
+    protected static final int CONTROL_TYPE_PAUSE = 2;
+    private BroadcastReceiver mReceiver;
 
     public abstract View addUserInteractionView();
 
@@ -99,6 +137,9 @@ public abstract class TubiPlayerActivity extends LifeCycleActivity
         Utils.hideSystemUI(this, true);
         mMediaDataSourceFactory = buildDataSourceFactory(true);
         initLayout();
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            setUpPIPActionReceiver();
+        }
     }
 
     @Override
@@ -146,11 +187,37 @@ public abstract class TubiPlayerActivity extends LifeCycleActivity
 
     @Override
     public void onPictureInPictureModeChanged(final boolean isInPictureInPictureMode, final Configuration newConfig) {
+        final View controlView = mTubiPlayerView.getControlView();
         if (isInPictureInPictureMode) {
-            // TODO: 2018/12/19  hide the controls in pip
+            if (controlView.getVisibility() == View.VISIBLE) {
+                controlView.setVisibility(View.GONE);
+            }
+            registerReceiver(mReceiver, new IntentFilter(ACTION_MEDIA_CONTROL));
         } else {
-            //restore playback UI
+            if (controlView.getVisibility() == View.GONE) {
+                controlView.setVisibility(View.VISIBLE);
+            }
+            unregisterReceiver(mReceiver);
         }
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.O)
+    protected void updatePictureInPictureActions(@DrawableRes int iconId, String title, int controlType,
+            int requestCode) {
+        final ArrayList<RemoteAction> actions = new ArrayList<>();
+
+        final PendingIntent intent =
+                PendingIntent.getBroadcast(
+                        TubiPlayerActivity.this,
+                        requestCode,
+                        new Intent(ACTION_MEDIA_CONTROL).putExtra(EXTRA_CONTROL_TYPE, controlType),
+                        0);
+        final Icon icon = Icon.createWithResource(TubiPlayerActivity.this, iconId);
+        actions.add(new RemoteAction(icon, title, title, intent));
+
+        mPictureInPictureParamsBuilder.setActions(actions);
+
+        setPictureInPictureParams(mPictureInPictureParamsBuilder.build());
     }
 
     @SuppressWarnings("ConstantConditions")
@@ -173,6 +240,28 @@ public abstract class TubiPlayerActivity extends LifeCycleActivity
 
         cuePointIndictor = (TextView) findViewById(R.id.cuepoint_indictor);
         mTubiPlayerView.addUserInteractionView(addUserInteractionView());
+    }
+
+    private void setUpPIPActionReceiver() {
+        mReceiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                if (intent == null
+                        || !ACTION_MEDIA_CONTROL.equals(intent.getAction())) {
+                    return;
+                }
+
+                final int controlType = intent.getIntExtra(EXTRA_CONTROL_TYPE, 0);
+                switch (controlType) {
+                    case CONTROL_TYPE_PLAY:
+                        mTubiPlayerView.getPlayerController().triggerPlayOrPause(true);
+                        break;
+                    case CONTROL_TYPE_PAUSE:
+                        mTubiPlayerView.getPlayerController().triggerPlayOrPause(false);
+                        break;
+                }
+            }
+        };
     }
 
     private void setCaption(boolean isOn) {
