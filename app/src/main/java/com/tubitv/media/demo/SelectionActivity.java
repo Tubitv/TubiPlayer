@@ -11,7 +11,7 @@ import com.tubitv.media.activities.DoubleViewTubiPlayerActivity;
 import com.tubitv.media.activities.TubiPlayerActivity;
 import com.tubitv.media.models.MediaModel;
 
-import static com.tubitv.media.helpers.Constants.PIP_ENABLE_KET;
+import static com.tubitv.media.helpers.Constants.PIP_ENABLE_KEY;
 import static com.tubitv.media.helpers.Constants.PIP_ENABLE_VALUE_DEFAULT;
 
 /**
@@ -34,7 +34,7 @@ public class SelectionActivity extends Activity {
                 String name = "longest weekend";
                 Intent intent = new Intent(SelectionActivity.this, DoubleViewTubiPlayerActivity.class);
                 intent.putExtra(TubiPlayerActivity.TUBI_MEDIA_KEY, MediaModel.video(name, VIDEO_URL, artwork, null));
-                intent.putExtra(PIP_ENABLE_KET, PIP_ENABLE_VALUE_DEFAULT);
+                intent.putExtra(PIP_ENABLE_KEY, PIP_ENABLE_VALUE_DEFAULT);
                 startActivity(intent);
             }
         });
@@ -48,7 +48,7 @@ public class SelectionActivity extends Activity {
                 String name = "Man on the ledge";
                 Intent intent = new Intent(SelectionActivity.this, DoubleViewTubiPlayerActivity.class);
                 intent.putExtra(TubiPlayerActivity.TUBI_MEDIA_KEY, MediaModel.video(name, VIDEO_URL, artwork, null));
-                intent.putExtra(PIP_ENABLE_KET, PIP_ENABLE_VALUE_DEFAULT);
+                intent.putExtra(PIP_ENABLE_KEY, PIP_ENABLE_VALUE_DEFAULT);
                 startActivity(intent);
             }
         });

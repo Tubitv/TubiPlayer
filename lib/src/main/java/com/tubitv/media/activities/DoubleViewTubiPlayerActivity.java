@@ -34,6 +34,7 @@ import com.tubitv.media.fsm.listener.AdPlayingMonitor;
 import com.tubitv.media.fsm.listener.CuePointMonitor;
 import com.tubitv.media.fsm.state_machine.FsmPlayer;
 import com.tubitv.media.helpers.Constants;
+import com.tubitv.media.helpers.PIPHandler;
 import com.tubitv.media.interfaces.AutoPlay;
 import com.tubitv.media.interfaces.DoublePlayerInterface;
 import com.tubitv.media.models.AdMediaModel;
@@ -47,8 +48,14 @@ import com.tubitv.media.utilities.Utils;
 import com.tubitv.media.views.UIControllerView;
 import javax.inject.Inject;
 
+import static com.tubitv.media.helpers.Constants.PIP_ACTION_PAUSE;
+import static com.tubitv.media.helpers.Constants.PIP_ACTION_PLAY;
 import static com.tubitv.media.helpers.Constants.PIP_DENOMINATOR_DEFAULT;
 import static com.tubitv.media.helpers.Constants.PIP_NUMERATOR_DEFAULT;
+import static com.tubitv.media.helpers.PIPHandler.CONTROL_TYPE_PAUSE;
+import static com.tubitv.media.helpers.PIPHandler.CONTROL_TYPE_PLAY;
+import static com.tubitv.media.helpers.PIPHandler.REQUEST_PAUSE;
+import static com.tubitv.media.helpers.PIPHandler.REQUEST_PLAY;
 
 /**
  * Created by allensun on 7/24/17.
@@ -126,7 +133,7 @@ public class DoubleViewTubiPlayerActivity extends TubiPlayerActivity implements 
     @Override
     protected void initMoviePlayer() {
         super.initMoviePlayer();
-        setPIPEnable(true);
+        PIPHandler.getInstance().setPIPEnable(true);
         createMediaSource(mediaModel);
         if (!PlayerDeviceUtils.useSinglePlayer()) {
             setupAdPlayer();
@@ -137,7 +144,9 @@ public class DoubleViewTubiPlayerActivity extends TubiPlayerActivity implements 
     protected void onPlayerReady() {
         prepareFSM();
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            updatePictureInPictureActions(R.drawable.exo_controls_pause, "pause", CONTROL_TYPE_PAUSE, REQUEST_PAUSE);
+            PIPHandler.getInstance()
+                    .updatePictureInPictureActions(this, R.drawable.exo_controls_pause, "pause", CONTROL_TYPE_PAUSE,
+                            REQUEST_PAUSE);
         }
     }
 
@@ -274,8 +283,9 @@ public class DoubleViewTubiPlayerActivity extends TubiPlayerActivity implements 
             return;
         }
 
-        if (isPIPEnable()) {
-            enterPIP(PIP_NUMERATOR_DEFAULT, PIP_DENOMINATOR_DEFAULT);
+        if (PIPHandler.getInstance().isPIPEnable()) {
+            PIPHandler.getInstance()
+                    .enterPIP(DoubleViewTubiPlayerActivity.this, PIP_NUMERATOR_DEFAULT, PIP_DENOMINATOR_DEFAULT);
             return;
         }
 
@@ -347,9 +357,13 @@ public class DoubleViewTubiPlayerActivity extends TubiPlayerActivity implements 
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             if (playing) {
-                updatePictureInPictureActions(R.drawable.exo_controls_pause, "pause", CONTROL_TYPE_PAUSE, REQUEST_PAUSE);
+                PIPHandler.getInstance()
+                        .updatePictureInPictureActions(this, R.drawable.exo_controls_pause, PIP_ACTION_PAUSE, CONTROL_TYPE_PAUSE,
+                                REQUEST_PAUSE);
             } else {
-                updatePictureInPictureActions(R.drawable.exo_controls_play, "play", CONTROL_TYPE_PLAY, REQUEST_PLAY);
+                PIPHandler.getInstance()
+                        .updatePictureInPictureActions(this, R.drawable.exo_controls_play, PIP_ACTION_PLAY, CONTROL_TYPE_PLAY,
+                                REQUEST_PLAY);
             }
         }
     }
