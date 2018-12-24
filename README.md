@@ -4,7 +4,7 @@ The official android player of [Tubi TV](https://play.google.com/store/apps/deta
 ## Purposes of TubiPlayer
 In the industry of streaming free multi-media contents to users, companies choose to show in-stream video ads to users between the main content as their business model. Examples include **YouTube** and **Tubi TV**.
 
-From the technology side of things, in order to implement an android player that streams multiple media very well, switches between movies and ads dynamically, and presents users with a seamless user experience, it requires a series of stateful actions that poses a lot of complexities for enginners to manage. **TubiPlayer offers an industry standard, multi-media streaming and ad-supported solution on the Android platform, with highly customized code architecture and implementation**
+From the technology side of things, in order to implement an android player that streams multiple media very well, switches between movies and ads dynamically, and presents users with a seamless user experience, it requires a series of stateful actions that poses a lot of complexities for enginners to manage. **TubiPlayer offers an industry standard, multi-media streaming and ad-supported solution on the Android platform, with highly customized code architecture and implementation**.
 
 ## What TubiPlayer Does Well.
 * Native multi-media streaming on Android
@@ -15,29 +15,31 @@ From the technology side of things, in order to implement an android player that
 
 
 ## Dependency Management
-In order to provide a highly customized code base, we have leveraged [Dagger's](https://github.com/google/dagger) dependency management framework to better manage dependencies for your own business logic.(We recommend having a decent understanding of how Dagger works before making changes to our code)
+In order to provide a highly customized code base, we have leveraged [Dagger's](https://github.com/google/dagger) dependency management framework to better manage dependencies for your own business logic (We recommend having a decent understanding of how Dagger works before making changes to our code).
 Our goal is to provide flexibility. Let's say your business requires the use of multiple ads of different types, playing at different positions. TubiPlayer's dependency management provides the basic classes and functionality
 to implement a playback experience.
 You can choose to use the default behavior by using the module out of box, but if you need to change how the player is implemented to suit your particular needs, you only need to override the classes or functions relevant to your project's requirements. This way you can setup and use TubiPlayer quickly and easily without the need to thoroughly understand the entire code base.
 
-Nearly every business related dependency is managed by [PlayerModuleDefault](./lib/src/main/java/com/tubitv/media/di/PlayerModuleDefault.java), with each dependency being instantiated and being injected into [DoubleViewTubiPlayerActivity](./lib/src/main/java/com/tubitv/media/activities/DoubleViewTubiPlayerActivity.java)
-If you have customized business logic, you can directly change the dependencies in  [PlayerModuleDefault](./lib/src/main/java/com/tubitv/media/di/PlayerModuleDefault.java).
+Nearly every business related dependency is managed by [PlayerModuleDefault](./lib/src/main/java/com/tubitv/media/di/PlayerModuleDefault.java), with each dependency being instantiated and being injected into [DoubleViewTubiPlayerActivity](./lib/src/main/java/com/tubitv/media/activities/DoubleViewTubiPlayerActivity.java).
+If you have customized business logic, you can directly change or override the dependencies found in  [PlayerModuleDefault](./lib/src/main/java/com/tubitv/media/di/PlayerModuleDefault.java).
 
 ## How to use
 Different applications often require different sets of rules and logic to satisfy business requirements. As a result, Tubiplayer was built to provide high degree of
-customization. However, highly customizable code, if not managed well, can quickly turn into a nightmare. Therefore, Tubiplayer leverages the third party Dependency Injection framework,[Dagger](https://github.com/google/dagger) 
+customization. However, highly customizable code, if not managed well, can quickly turn into a nightmare. Therefore, Tubiplayer leverages the third party Dependency Injection framework, [Dagger](https://github.com/google/dagger) 
 to provide the best of both worlds.
 
 ### Different use cases:
 1. If you just simply want to play a video without any forms of interruption, you can just use ***DoubleViewTubiPlayerActivity*** out of box. The code starts a self contained activity to handle your playback experience
 ```java
-      String subs = "http://put_your_own_subtitle.srt";
-                 String artwork = "http://www.put_your_own_art_work.png";
-                 String name = "Example Video";
-                 String video_url = "http://put_your_own_video_url.mp4";
-                 Intent intent = new Intent(SelectionActivity.this, DoubleViewTubiPlayerActivity.class);
-                 intent.putExtra(TubiPlayerActivity.TUBI_MEDIA_KEY, MediaModel.video(name, video_url, artwork, null));
-                 startActivity(intent);
+String subs = "http://put_your_own_subtitle.srt";
+String artwork = "http://www.put_your_own_art_work.png";
+String name = "Example Video";
+String video_url = "http://put_your_own_video_url.mp4";
+Intent intent = new Intent(SelectionActivity.this,
+                            DoubleViewTubiPlayerActivity.class);
+intent.putExtra(TubiPlayerActivity.TUBI_MEDIA_KEY,
+                    MediaModel.video(name, video_url, artwork, null));
+startActivity(intent);
 ```
 
 2. If you want to implement pre-roll or middle-roll video ads, use the DoubleViewTubiPlayerActivity implementation from step 1, and then follow the additional steps:
