@@ -16,8 +16,9 @@
         <activity
             android:name="com.tubitv.media.activities.DoubleViewTubiPlayerActivity"
             android:configChanges="keyboard|keyboardHidden|orientation|screenSize|screenLayout|smallestScreenSize|uiMode"
-            android:launchMode="singleTop"
-            android:theme="@style/TubiPlayerTheme" />
+            android:launchMode="singleTask"
+            android:theme="@style/TubiPlayerTheme"
+            android:supportsPictureInPicture="true" />
     </application>
 
 </manifest>

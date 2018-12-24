@@ -3,6 +3,7 @@ package com.tubitv.media.activities;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.graphics.Color;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.annotation.NonNull;
@@ -36,12 +37,16 @@ import com.google.android.exoplayer2.util.MimeTypes;
 import com.google.android.exoplayer2.util.Util;
 import com.tubitv.media.R;
 import com.tubitv.media.helpers.MediaHelper;
+import com.tubitv.media.helpers.PIPHandler;
 import com.tubitv.media.interfaces.PlaybackActionCallback;
 import com.tubitv.media.interfaces.TubiPlaybackControlInterface;
 import com.tubitv.media.models.MediaModel;
 import com.tubitv.media.utilities.EventLogger;
 import com.tubitv.media.utilities.Utils;
 import com.tubitv.media.views.TubiExoPlayerView;
+
+import static com.tubitv.media.helpers.Constants.PIP_ENABLE_KEY;
+import static com.tubitv.media.helpers.Constants.PIP_ENABLE_VALUE_DEFAULT;
 
 /**
  * This is the base activity that prepare one instance of {@link SimpleExoPlayer} mMoviePlayer, this player is mean to serve as the main player to player content.
@@ -88,6 +93,11 @@ public abstract class TubiPlayerActivity extends LifeCycleActivity
         Utils.hideSystemUI(this, true);
         mMediaDataSourceFactory = buildDataSourceFactory(true);
         initLayout();
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            PIPHandler.getInstance()
+                    .setUpPIPActionReceiver(play -> mTubiPlayerView.getPlayerController().triggerPlayOrPause(play));
+        }
     }
 
     @Override
@@ -133,6 +143,24 @@ public abstract class TubiPlayerActivity extends LifeCycleActivity
         return isActive;
     }
 
+    @Override
+    public void onPictureInPictureModeChanged(final boolean isInPictureInPictureMode, final Configuration newConfig) {
+        final View controlView = mTubiPlayerView.getControlView();
+        if (isInPictureInPictureMode) {
+            if (controlView.getVisibility() == View.VISIBLE) {
+                controlView.setVisibility(View.GONE);
+            }
+
+            PIPHandler.getInstance().registerReceiver(TubiPlayerActivity.this);
+        } else {
+            if (controlView.getVisibility() == View.GONE) {
+                controlView.setVisibility(View.VISIBLE);
+            }
+
+            PIPHandler.getInstance().unregisterReceiver(TubiPlayerActivity.this);
+        }
+    }
+
     @SuppressWarnings("ConstantConditions")
     protected void parseIntent() {
         String errorNoMediaMessage = getResources().getString(R.string.activity_tubi_player_no_media_error_message);
@@ -141,6 +169,7 @@ public abstract class TubiPlayerActivity extends LifeCycleActivity
         mediaModel = (MediaModel) getIntent().getExtras().getSerializable(TUBI_MEDIA_KEY);
         Assertions.checkState(mediaModel != null,
                 errorNoMediaMessage);
+        PIPHandler.getInstance().setPIPEnable(getIntent().getBooleanExtra(PIP_ENABLE_KEY, PIP_ENABLE_VALUE_DEFAULT));
     }
 
     protected void initLayout() {
@@ -267,5 +296,4 @@ public abstract class TubiPlayerActivity extends LifeCycleActivity
         }
         return null;
     }
-
 }
