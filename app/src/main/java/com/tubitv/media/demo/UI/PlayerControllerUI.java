@@ -10,6 +10,8 @@ import android.widget.FrameLayout;
 import com.tubitv.demo.R;
 import com.tubitv.demo.databinding.ExampleUiControlBinding;
 import com.tubitv.media.bindings.UserController;
+import com.tubitv.media.demo.enums.ScaleMode;
+import com.tubitv.media.demo.presenters.ScalePresenter;
 import com.tubitv.media.utilities.ExoPlayerLogger;
 
 public class PlayerControllerUI extends FrameLayout implements View.OnClickListener {
@@ -21,6 +23,8 @@ public class PlayerControllerUI extends FrameLayout implements View.OnClickListe
     private boolean playOrPause = true;
 
     ExampleUiControlBinding binding;
+
+    private ScalePresenter mScalePresenter;
 
     public PlayerControllerUI(final Context context) {
         this(context, null);
@@ -38,6 +42,8 @@ public class PlayerControllerUI extends FrameLayout implements View.OnClickListe
     public View setController(UserController controller) {
         this.mUserController = controller;
         binding.setController(mUserController);
+        mScalePresenter = new ScalePresenter(getContext(), mUserController);
+        binding.videoScaleButton.setText(mScalePresenter.getCurrentScaleMode().getDescription());
         return this;
     }
 
@@ -69,6 +75,18 @@ public class PlayerControllerUI extends FrameLayout implements View.OnClickListe
                 printVideoDetail();
                 break;
 
+            case "scale":
+                mScalePresenter.doScale();
+                ScaleMode scaleMode = mScalePresenter.getCurrentScaleMode();
+                binding.videoScaleButton.setText(scaleMode.getDescription());
+                break;
+
+            case "speedx2":
+                mUserController.setPlaybackSpeed(2.0f);
+                break;
+            case "speedx4":
+                mUserController.setPlaybackSpeed(4.0f);
+                break;
             default:
                 return;
         }
@@ -82,7 +100,9 @@ public class PlayerControllerUI extends FrameLayout implements View.OnClickListe
         binding.getRoot().findViewById(R.id.rewind).setOnClickListener(this);
         binding.getRoot().findViewById(R.id.play_pause).setOnClickListener(this);
         binding.getRoot().findViewById(R.id.fastford).setOnClickListener(this);
-
+        binding.videoScaleButton.setOnClickListener(this);
+        binding.videoSpeedX2Button.setOnClickListener(this);
+        binding.videoSpeedX4Button.setOnClickListener(this);
     }
 
     private void printVideoDetail() {
@@ -96,6 +116,7 @@ public class PlayerControllerUI extends FrameLayout implements View.OnClickListe
         builder.append(mUserController.currentProgressPosition());
 
         ExoPlayerLogger.i(TAG, builder.toString());
+
     }
 
 }
