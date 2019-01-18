@@ -385,6 +385,7 @@ public class UserController extends BaseObservable
             dialogPair.second.setShowDisableOption(true);
             dialogPair.second.setAllowAdaptiveSelections(allowAdaptiveSelections);
             dialogPair.first.show();
+            Utils.hideSystemUI(context, true);
             return true;
         }
         return false;
