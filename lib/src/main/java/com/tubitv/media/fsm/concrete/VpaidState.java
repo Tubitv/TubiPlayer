@@ -3,7 +3,7 @@ package com.tubitv.media.fsm.concrete;
 import android.support.annotation.NonNull;
 import android.view.View;
 import android.webkit.WebView;
-import com.google.android.exoplayer2.ExoPlayer;
+import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.tubitv.media.controller.PlayerAdLogicController;
 import com.tubitv.media.controller.PlayerUIController;
 import com.tubitv.media.fsm.BaseState;
@@ -55,9 +55,11 @@ public class VpaidState extends BaseState {
     private void pausePlayerAndSHowVpaid(PlayerUIController controller, PlayerAdLogicController componentController,
             FsmPlayer fsmPlayer, AdMediaModel adMedia) {
 
-        ExoPlayer player = PlayerContainer.getPlayer();
+        SimpleExoPlayer player = PlayerContainer.getPlayer();
 
         if (player != null && player.getPlayWhenReady()) {
+            // Remove state tracking for movie player
+            player.removeAnalyticsListener(componentController.getMoviePlayingMonitor());
             player.setPlayWhenReady(false);
         }
 

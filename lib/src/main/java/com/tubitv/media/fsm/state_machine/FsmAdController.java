@@ -9,4 +9,6 @@ public interface FsmAdController {
     void removePlayedAdAndTransitToNextState();
 
     void adPlayerError();
+
+    void finishMovieAndTransitToNextState();
 }

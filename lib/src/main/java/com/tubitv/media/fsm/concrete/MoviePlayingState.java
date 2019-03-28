@@ -66,6 +66,9 @@ public class MoviePlayingState extends BaseState {
 
         updatePlayerPosition(PlayerContainer.getPlayer(), controller);
 
+        // Add tracker for end of video
+        PlayerContainer.getPlayer().addAnalyticsListener(componentController.getMoviePlayingMonitor());
+        // Remove state tracking for movie player
         PlayerContainer.getPlayer().setPlayWhenReady(true);
 
         hideVpaidNShowPlayer(controller);

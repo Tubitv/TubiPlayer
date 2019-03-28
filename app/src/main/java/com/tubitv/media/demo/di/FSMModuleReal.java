@@ -16,6 +16,7 @@ import com.tubitv.media.fsm.concrete.FetchCuePointState;
 import com.tubitv.media.fsm.concrete.factory.StateFactory;
 import com.tubitv.media.fsm.listener.AdPlayingMonitor;
 import com.tubitv.media.fsm.listener.CuePointMonitor;
+import com.tubitv.media.fsm.listener.MoviePlayingMonitor;
 import com.tubitv.media.fsm.state_machine.FsmPlayer;
 import com.tubitv.media.fsm.state_machine.FsmPlayerImperial;
 import com.tubitv.media.models.AdMediaModel;
@@ -70,7 +71,7 @@ public class FSMModuleReal {
     @ActicityScope
     @Provides
     PlayerAdLogicController provideComponentController() {
-        return new PlayerAdLogicController(null, null, null, null);
+        return new PlayerAdLogicController(null, null, null, null, null);
     }
 
     @ActicityScope
@@ -89,6 +90,12 @@ public class FSMModuleReal {
     @Provides
     AdPlayingMonitor provideAdPlayingMonitor(FsmPlayer player) {
         return new AdPlayingMonitor(player);
+    }
+
+    @ActicityScope
+    @Provides
+    MoviePlayingMonitor provideMoviePlayingMonitor(FsmPlayer player) {
+        return new MoviePlayingMonitor(player);
     }
 
     @ActicityScope

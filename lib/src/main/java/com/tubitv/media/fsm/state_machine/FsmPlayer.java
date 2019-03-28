@@ -345,6 +345,11 @@ public abstract class FsmPlayer implements Fsm, RetrieveAdCallback, FsmAdControl
     }
 
     @Override
+    public void finishMovieAndTransitToNextState() {
+        transit(Input.MOVIE_FINISH);
+    }
+
+    @Override
     public void updateSelf() {
         if (currentState != null) {
             ExoPlayerLogger

@@ -100,6 +100,9 @@ public class AdPlayingState extends BaseState {
                 //update the numbers of ad left to give user indicator
                 tubiExoPlayerView.setAvailableAdLeft(adMediaModel.nubmerOfAd());
 
+                // Remove state tracking for movie player
+                player.removeAnalyticsListener(componentController.getMoviePlayingMonitor());
+
                 //Player the Ad.
                 player.setPlayWhenReady(true);
                 //TODO move adds monitor to PlayerContainer
