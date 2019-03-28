@@ -30,6 +30,7 @@ import com.tubitv.media.fsm.concrete.AdPlayingState;
 import com.tubitv.media.fsm.concrete.VpaidState;
 import com.tubitv.media.fsm.listener.AdPlayingMonitor;
 import com.tubitv.media.fsm.listener.CuePointMonitor;
+import com.tubitv.media.fsm.listener.MoviePlayingMonitor;
 import com.tubitv.media.fsm.state_machine.FsmPlayer;
 import com.tubitv.media.helpers.Constants;
 import com.tubitv.media.interfaces.AutoPlay;
@@ -59,6 +60,8 @@ public class DoubleViewTubiPlayerActivity extends TubiPlayerActivity implements 
     PlayerUIController playerUIController;
     @Inject
     AdPlayingMonitor adPlayingMonitor;
+    @Inject
+    MoviePlayingMonitor moviePlayingMonitor;
     @Inject
     CuePointMonitor cuePointMonitor;
     @Inject
@@ -226,6 +229,7 @@ public class DoubleViewTubiPlayerActivity extends TubiPlayerActivity implements 
 
         //set the PlayerComponentController.
         playerComponentController.setAdPlayingMonitor(adPlayingMonitor);
+        playerComponentController.setMoviePlayingMonitor(moviePlayingMonitor);
         playerComponentController.setTubiPlaybackInterface(this);
         playerComponentController.setDoublePlayerInterface(this);
         playerComponentController.setCuePointMonitor(cuePointMonitor);

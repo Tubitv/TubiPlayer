@@ -59,6 +59,8 @@ public class MoviePlayingState extends BaseState {
 
         //first remove the AdPlayer's listener and pause the player
         adPlayer.removeAnalyticsListener(componentController.getAdPlayingMonitor());
+        // then, add listener for movie completing playback
+        moviePlayer.addAnalyticsListener(componentController.getMoviePlayingMonitor());
 
         if (shouldReprepareForSinglePlayer) {
             adPlayer.setPlayWhenReady(false);

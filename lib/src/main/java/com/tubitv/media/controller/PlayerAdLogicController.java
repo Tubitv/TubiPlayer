@@ -3,6 +3,7 @@ package com.tubitv.media.controller;
 import android.support.annotation.Nullable;
 import com.tubitv.media.fsm.listener.AdPlayingMonitor;
 import com.tubitv.media.fsm.listener.CuePointMonitor;
+import com.tubitv.media.fsm.listener.MoviePlayingMonitor;
 import com.tubitv.media.interfaces.DoublePlayerInterface;
 import com.tubitv.media.interfaces.PlaybackActionCallback;
 import com.tubitv.media.models.VpaidClient;
@@ -14,6 +15,8 @@ import com.tubitv.media.models.VpaidClient;
 public class PlayerAdLogicController {
 
     private AdPlayingMonitor adPlayingMonitor;
+
+    private MoviePlayingMonitor moviePlayingMonitor;
 
     private PlaybackActionCallback playbackActionCallback;
 
@@ -27,9 +30,11 @@ public class PlayerAdLogicController {
     }
 
     public PlayerAdLogicController(@Nullable AdPlayingMonitor adPlayingMonitor,
+            @Nullable MoviePlayingMonitor moviePlayingMonitor,
             @Nullable PlaybackActionCallback playbackActionCallback,
             @Nullable DoublePlayerInterface doublePlayerInterface, @Nullable CuePointMonitor cuePointMonitor) {
         this.adPlayingMonitor = adPlayingMonitor;
+        this.moviePlayingMonitor = moviePlayingMonitor;
         this.playbackActionCallback = playbackActionCallback;
         this.doublePlayerInterface = doublePlayerInterface;
         this.cuePointMonitor = cuePointMonitor;
@@ -37,10 +42,12 @@ public class PlayerAdLogicController {
     }
 
     public PlayerAdLogicController(@Nullable AdPlayingMonitor adPlayingMonitor,
+            @Nullable MoviePlayingMonitor moviePlayingMonitor,
             @Nullable PlaybackActionCallback playbackActionCallback,
             @Nullable DoublePlayerInterface doublePlayerInterface, @Nullable CuePointMonitor cuePointMonitor,
             @Nullable VpaidClient vpaidClient) {
         this.adPlayingMonitor = adPlayingMonitor;
+        this.moviePlayingMonitor = moviePlayingMonitor;
         this.playbackActionCallback = playbackActionCallback;
         this.doublePlayerInterface = doublePlayerInterface;
         this.cuePointMonitor = cuePointMonitor;
@@ -61,6 +68,14 @@ public class PlayerAdLogicController {
 
     public void setAdPlayingMonitor(AdPlayingMonitor adPlayingMonitor) {
         this.adPlayingMonitor = adPlayingMonitor;
+    }
+
+    public MoviePlayingMonitor getMoviePlayingMonitor() {
+        return moviePlayingMonitor;
+    }
+
+    public void setMoviePlayingMonitor(final MoviePlayingMonitor moviePlayingMonitor) {
+        this.moviePlayingMonitor = moviePlayingMonitor;
     }
 
     public PlaybackActionCallback getTubiPlaybackInterface() {
