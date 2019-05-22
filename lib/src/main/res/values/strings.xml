@@ -23,4 +23,14 @@
         <item quantity="other">Your title will begin after %1$d ads</item>
     </plurals>
 
+    <!--Playback Speed copy-->
+    <string name="playback_speed_a_quarter">0.25x</string>
+    <string name="playback_speed_a_half">0.5x</string>
+    <string name="playback_speed_three_quarter">0.75x</string>
+    <string name="playback_speed_normal">Normal</string>
+    <string name="playback_speed_one_and_a_quarter">1.25x</string>
+    <string name="playback_speed_one_and_a_half">1.5x</string>
+    <string name="playback_speed_one_and_three_quarter">1.75x</string>
+    <string name="playback_speed_two">2x</string>
+
 </resources>
