@@ -11,6 +11,7 @@ import android.support.annotation.NonNull;
 import android.text.TextUtils;
 import android.view.View;
 import android.widget.SeekBar;
+
 import com.google.android.exoplayer2.ExoPlaybackException;
 import com.google.android.exoplayer2.ExoPlayer;
 import com.google.android.exoplayer2.PlaybackParameters;
@@ -25,6 +26,7 @@ import com.tubitv.media.models.MediaModel;
 import com.tubitv.media.utilities.ExoPlayerLogger;
 import com.tubitv.media.utilities.PlayerDeviceUtils;
 import com.tubitv.media.utilities.SeekCalculator;
+import com.tubitv.media.utilities.PlaybackSettingDialog;
 import com.tubitv.media.utilities.Utils;
 import com.tubitv.media.views.TubiExoPlayerView;
 
@@ -443,6 +445,11 @@ public class UserController extends BaseObservable
 
         isDraggingSeekBar.set(false);
         ExoPlayerLogger.i(TAG, "onStopTrackingTouch");
+    }
+
+    @Override
+    public void clickSetting() {
+        PlaybackSettingDialog.show(mTubiExoPlayerView.getContext());
     }
 
     //---------------------------------------private method---------------------------------------------------------------------------//

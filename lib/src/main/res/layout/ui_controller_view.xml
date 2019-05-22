@@ -63,6 +63,20 @@
                 app:state_checked="@drawable/tubi_tv_drawable_subtitles_on_selector"
                 app:state_not_checked="@drawable/tubi_tv_drawable_subtitles_off_selector" />
 
+            <ImageButton
+                android:id="@+id/view_tubi_controller_setting_ib"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="16dp"
+                android:layout_marginLeft="8dp"
+                android:layout_marginRight="16dp"
+                android:background="@drawable/baseline_more_vert_white_24"
+                android:onClick="@{() -> controller.clickSetting()}"
+                android:scaleType="fitCenter"
+                app:layout_constraintBottom_toBottomOf="@+id/tubi_tv_controller_guideline_seek_right"
+                app:layout_constraintRight_toLeftOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/tubi_tv_controller_guideline_top" />
+
             <include
                 android:id="@+id/view_tubi_controller_ad_description"
                 layout="@layout/view_tubi_ad_learn_more"
