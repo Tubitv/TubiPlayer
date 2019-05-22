@@ -335,6 +335,11 @@ public class UserController extends BaseObservable
     }
 
     @Override
+    public void clickSetting() {
+        PlaybackSettingDialog.show(mTubiExoPlayerView.getContext());
+    }
+
+    @Override
     public String getCurrentVideoName() {
         return videoName.get();
     }
@@ -445,11 +450,6 @@ public class UserController extends BaseObservable
 
         isDraggingSeekBar.set(false);
         ExoPlayerLogger.i(TAG, "onStopTrackingTouch");
-    }
-
-    @Override
-    public void clickSetting() {
-        PlaybackSettingDialog.show(mTubiExoPlayerView.getContext());
     }
 
     //---------------------------------------private method---------------------------------------------------------------------------//
