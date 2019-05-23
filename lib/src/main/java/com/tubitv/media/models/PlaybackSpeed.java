@@ -1,5 +1,7 @@
 package com.tubitv.media.models;
 
+import android.content.Context;
+
 import com.tubitv.media.R;
 
 /**
@@ -30,6 +32,10 @@ public enum PlaybackSpeed {
 
     public int getStringResourceId() {
         return stringResourceId;
+    }
+
+    public String getCopy(Context context) {
+        return context.getResources().getString(stringResourceId);
     }
 
     public float getSpeed() {
