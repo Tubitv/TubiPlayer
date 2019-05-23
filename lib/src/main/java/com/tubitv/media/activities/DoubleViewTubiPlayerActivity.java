@@ -40,6 +40,7 @@ import com.tubitv.media.models.CuePointsRetriever;
 import com.tubitv.media.models.MediaModel;
 import com.tubitv.media.models.VpaidClient;
 import com.tubitv.media.utilities.ExoPlayerLogger;
+import com.tubitv.media.utilities.PlaybackSettingMenu;
 import com.tubitv.media.utilities.PlayerDeviceUtils;
 import com.tubitv.media.utilities.Utils;
 import com.tubitv.media.views.UIControllerView;
@@ -71,6 +72,9 @@ public class DoubleViewTubiPlayerActivity extends TubiPlayerActivity implements 
     PlayerAdLogicController playerComponentController;
     @Inject
     VpaidClient vpaidClient;
+    @Inject
+    PlaybackSettingMenu playbackSettingMenu;
+
     private DefaultTrackSelector trackSelector_ad;
 
     protected AdRetriever getAdRetriever() {
@@ -210,6 +214,7 @@ public class DoubleViewTubiPlayerActivity extends TubiPlayerActivity implements 
         //update the playerUIController view, need to update the view everything when two ExoPlayer being recreated in activity lifecycle.
         playerUIController.setContentPlayer(mMoviePlayer);
 
+
         if (!PlayerDeviceUtils.useSinglePlayer()) {
             playerUIController.setAdPlayer(adPlayer);
         }
@@ -239,6 +244,9 @@ public class DoubleViewTubiPlayerActivity extends TubiPlayerActivity implements 
         } else {
             fsmPlayer.transit(Input.INITIALIZE);
         }
+
+        playbackSettingMenu.setContentPlayer(mMoviePlayer);
+        playbackSettingMenu.setContext(this);
     }
 
     @Override
@@ -335,7 +343,8 @@ public class DoubleViewTubiPlayerActivity extends TubiPlayerActivity implements 
     @Override
     public void onPlayerSettingClick() {
         // TODO
-        mMoviePlayer.setPlaybackParameters();
+        playbackSettingMenu.show();
+        // mMoviePlayer.setPlaybackParameters();
     }
 
     @Override
