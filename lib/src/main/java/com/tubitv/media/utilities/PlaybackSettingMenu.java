@@ -8,16 +8,12 @@ import android.view.Gravity;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
-import android.widget.Toast;
 
 import com.google.android.exoplayer2.PlaybackParameters;
 import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.tubitv.media.models.PlaybackSpeed;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.LinkedList;
 
 public class PlaybackSettingMenu {
 
@@ -46,7 +42,6 @@ public class PlaybackSettingMenu {
     public void show() {
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         builder.setTitle("Setting");
-
         builder.setItems(settingOptions, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int i) {
@@ -65,13 +60,11 @@ public class PlaybackSettingMenu {
     }
 
     private void showPlaybackSpeedMenu() {
-        ArrayList<PlaybackSpeed> playbackSpeeds = new ArrayList<>(Arrays.asList(PlaybackSpeed.class.getEnumConstants()));
+        ArrayList<String> playbackSpeedTexts = new ArrayList<>();
+        ArrayList<Float> playbackSpeedValues = new ArrayList<>();
 
-        LinkedList<String> playbackSpeedTexts = new LinkedList<>();
-        LinkedList<Float> playbackSpeedValues = new LinkedList<>();
-
-        for (PlaybackSpeed playbackSpeed : playbackSpeeds) {
-            playbackSpeedTexts.add(playbackSpeed.getCopy(context));
+        for (PlaybackSpeed playbackSpeed : PlaybackSpeed.getAllPlaybackSpeedEnums()) {
+            playbackSpeedTexts.add(playbackSpeed.getText(context));
             playbackSpeedValues.add(playbackSpeed.getSpeed());
         }
 
@@ -80,8 +73,6 @@ public class PlaybackSettingMenu {
                 new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int i) {
-                Toast.makeText(context, playbackSpeedTexts.get(i), Toast.LENGTH_SHORT).show();
-
                 PlaybackParameters originParameters = contentPlayer.getPlaybackParameters();
                 PlaybackParameters updatedSpeedParameters = new PlaybackParameters(
                         playbackSpeedValues.get(i),

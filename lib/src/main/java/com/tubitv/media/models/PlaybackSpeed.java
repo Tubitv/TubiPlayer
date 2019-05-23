@@ -4,6 +4,9 @@ import android.content.Context;
 
 import com.tubitv.media.R;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+
 /**
  * Playback Speed in percent.
  * e.g.
@@ -34,11 +37,15 @@ public enum PlaybackSpeed {
         return stringResourceId;
     }
 
-    public String getCopy(Context context) {
+    public String getText(Context context) {
         return context.getResources().getString(stringResourceId);
     }
 
     public float getSpeed() {
         return speed;
+    }
+
+    public static ArrayList<PlaybackSpeed> getAllPlaybackSpeedEnums() {
+        return new ArrayList<>(Arrays.asList(PlaybackSpeed.class.getEnumConstants()));
     }
 }
