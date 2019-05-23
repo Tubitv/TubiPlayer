@@ -26,7 +26,7 @@ import com.tubitv.media.models.MediaModel;
 import com.tubitv.media.utilities.ExoPlayerLogger;
 import com.tubitv.media.utilities.PlayerDeviceUtils;
 import com.tubitv.media.utilities.SeekCalculator;
-import com.tubitv.media.utilities.PlaybackSettingDialog;
+import com.tubitv.media.utilities.PlaybackSettingMenu;
 import com.tubitv.media.utilities.Utils;
 import com.tubitv.media.views.TubiExoPlayerView;
 
@@ -335,8 +335,13 @@ public class UserController extends BaseObservable
     }
 
     @Override
-    public void clickSetting() {
-        PlaybackSettingDialog.show(mTubiExoPlayerView.getContext());
+    public void clickPlayerSetting() {
+        if (mPlaybackActionCallback == null) {
+            ExoPlayerLogger.w(TAG, "clickPlayerSetting params is null");
+            return;
+        }
+
+        mPlaybackActionCallback.onPlayerSettingClick();
     }
 
     @Override

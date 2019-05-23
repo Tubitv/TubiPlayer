@@ -333,6 +333,12 @@ public class DoubleViewTubiPlayerActivity extends TubiPlayerActivity implements 
     }
 
     @Override
+    public void onPlayerSettingClick() {
+        // TODO
+        mMoviePlayer.setPlaybackParameters();
+    }
+
+    @Override
     public void onLearnMoreClick(@NonNull MediaModel mediaModel) {
         //        ExoPlayerLogger.v(TAG, mediaModel.getMediaName() + ": " + mediaModel.toString() + " onLearnMoreClick :" + mediaModel.getClickThroughUrl());
 
