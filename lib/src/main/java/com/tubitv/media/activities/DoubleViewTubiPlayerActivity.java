@@ -246,6 +246,7 @@ public class DoubleViewTubiPlayerActivity extends TubiPlayerActivity implements 
 
         playbackSettingMenu.setContentPlayer(mMoviePlayer);
         playbackSettingMenu.setContext(this);
+        playbackSettingMenu.buildSettingMenuOptions();
     }
 
     @Override

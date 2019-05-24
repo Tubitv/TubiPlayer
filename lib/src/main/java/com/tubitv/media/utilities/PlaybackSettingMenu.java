@@ -42,10 +42,9 @@ public class PlaybackSettingMenu {
 
     public void setContext(@NonNull Context context) {
         this.context = context;
-        buildSettingMenuOptions();
     }
 
-    private void buildSettingMenuOptions() {
+    public void buildSettingMenuOptions() {
         // Option can be separately injected from root activity if needed.
         // It requires dependencies: activityContext & contentSimpleExoPlayer.
         MenuOption playbackSpeedOption = new MenuOption(context.getString(
