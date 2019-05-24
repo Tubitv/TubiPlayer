@@ -29,13 +29,11 @@ public class PlaybackSettingMenu {
     private ArrayList<MenuOption> menuOptions = new ArrayList<>();
 
     public PlaybackSettingMenu() {
-        buildSettingMenuOptions();
     }
 
     public PlaybackSettingMenu(@NonNull SimpleExoPlayer contentPlayer, @NonNull View exoPlayerView) {
         this.contentPlayer = contentPlayer;
         this.context = exoPlayerView.getContext();
-        buildSettingMenuOptions();
     }
 
     public void setContentPlayer(@NonNull SimpleExoPlayer contentPlayer) {
@@ -44,6 +42,7 @@ public class PlaybackSettingMenu {
 
     public void setContext(@NonNull Context context) {
         this.context = context;
+        buildSettingMenuOptions();
     }
 
     private void buildSettingMenuOptions() {
