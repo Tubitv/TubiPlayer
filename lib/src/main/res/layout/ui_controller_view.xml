@@ -72,7 +72,7 @@
                 android:layout_marginLeft="8dp"
                 android:layout_marginRight="16dp"
                 android:background="@drawable/tubi_tv_drawable_playback_setting"
-                android:onClick="@{() -> controller.clickPlayerSetting()}"
+                android:onClick="@{() -> controller.clickPlaybackSetting()}"
                 android:scaleType="fitCenter"
                 app:layout_constraintBottom_toBottomOf="@+id/tubi_tv_controller_guideline_seek_right"
                 app:layout_constraintRight_toLeftOf="parent"

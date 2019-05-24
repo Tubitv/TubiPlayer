@@ -340,7 +340,7 @@ public class DoubleViewTubiPlayerActivity extends TubiPlayerActivity implements 
     }
 
     @Override
-    public void onPlayerSettingClick() {
+    public void onPlaybackSettingClick() {
         playbackSettingMenu.show();
     }
 
