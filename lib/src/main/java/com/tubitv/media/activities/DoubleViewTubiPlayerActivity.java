@@ -342,9 +342,7 @@ public class DoubleViewTubiPlayerActivity extends TubiPlayerActivity implements 
 
     @Override
     public void onPlayerSettingClick() {
-        // TODO
         playbackSettingMenu.show();
-        // mMoviePlayer.setPlaybackParameters();
     }
 
     @Override
