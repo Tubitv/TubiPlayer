@@ -3,8 +3,6 @@ package com.tubitv.media.controller;
 import android.support.annotation.Nullable;
 import android.view.View;
 import android.webkit.WebView;
-import android.widget.Toast;
-
 import com.google.android.exoplayer2.C;
 import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.tubitv.media.utilities.PlayerDeviceUtils;
