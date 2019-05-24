@@ -76,9 +76,9 @@ public class PlaybackSettingMenu {
                             }
                         });
 
-                AlertDialog dialog = builder.create();
-                setAlertDialogGravityBottomCenter(dialog);
-                dialog.show();
+                AlertDialog chooseSpeedDialog = builder.create();
+                setAlertDialogGravityBottomCenter(chooseSpeedDialog);
+                chooseSpeedDialog.show();
             }
 
             @Override
