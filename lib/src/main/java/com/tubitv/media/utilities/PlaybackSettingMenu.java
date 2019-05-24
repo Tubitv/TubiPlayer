@@ -60,7 +60,7 @@ public class PlaybackSettingMenu {
                     playbackSpeedValues.add(playbackSpeed.getSpeedValue());
                 }
 
-                String[] speedOptionTextArray = playbackSpeedTexts.toArray(new String[playbackSpeedTexts.size()]);
+                String[] speedOptionTextArray = playbackSpeedTexts.toArray(new String[0]);
                 int currentSpeedPosition = PlaybackSpeed.getPlaybackSpeedPositionBySpeedValue(
                         contentPlayer.getPlaybackParameters().speed);
 
