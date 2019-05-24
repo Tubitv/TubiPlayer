@@ -84,12 +84,11 @@ public class PlaybackSettingMenu {
                         });
 
                 AlertDialog chooseSpeedDialog = builder.create();
+                setDialogGravityBottomCenter(chooseSpeedDialog);
 
-                chooseSpeedDialog.getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE, WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE);
-                setAlertDialogGravityBottomCenter(chooseSpeedDialog);
+                makeDialogNotShowingNavBarBeforeShow(chooseSpeedDialog);
                 chooseSpeedDialog.show();
-                chooseSpeedDialog.getWindow().getDecorView().setSystemUiVisibility(activity.getWindow().getDecorView().getSystemUiVisibility());
-                chooseSpeedDialog.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE);
+                makeDialogNotShowingNavBarAfterShow(chooseSpeedDialog);
             }
 
             @Override
@@ -125,14 +124,11 @@ public class PlaybackSettingMenu {
         });
 
         mainDialog = builder.create();
-//        setAlertDialogGravityBottomCenter(mainDialog);   // TODO: add cancel listener to hide sysUI
-//        mainDialog.show();
+        setDialogGravityBottomCenter(mainDialog);
 
-        mainDialog.getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE, WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE);
-        setAlertDialogGravityBottomCenter(mainDialog);
+        makeDialogNotShowingNavBarBeforeShow(mainDialog);
         mainDialog.show();
-        mainDialog.getWindow().getDecorView().setSystemUiVisibility(activity.getWindow().getDecorView().getSystemUiVisibility());
-        mainDialog.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE);
+        makeDialogNotShowingNavBarAfterShow(mainDialog);
     }
 
     public void dismiss() {
@@ -141,7 +137,7 @@ public class PlaybackSettingMenu {
         }
     }
 
-    private void setAlertDialogGravityBottomCenter(AlertDialog alertDialog) {
+    private void setDialogGravityBottomCenter(AlertDialog alertDialog) {
         alertDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         WindowManager.LayoutParams layoutParams = alertDialog.getWindow().getAttributes();
         if (layoutParams != null) {
@@ -149,8 +145,23 @@ public class PlaybackSettingMenu {
         }
     }
 
-    private void makeAlertDialogNotToShowNavigationBar(AlertDialog alertDialog) {
-
+    /*
+     * This pair of methods is to keep the system navigation bar not appearing after .show()
+     * More on this problem:
+     * https://stackoverflow.com/questions/22794049/how-do-i-maintain-the-immersive-mode-in-dialogs
+     */
+    private void makeDialogNotShowingNavBarBeforeShow(AlertDialog alertDialog) {
+        // Set dialog not-focusable.
+        alertDialog.getWindow().setFlags(
+                WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE,
+                WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE);
+    }
+    private void makeDialogNotShowingNavBarAfterShow(AlertDialog alertDialog) {
+        // Copy the hosted activity systemUI setting.
+        alertDialog.getWindow().getDecorView().setSystemUiVisibility(
+                activity.getWindow().getDecorView().getSystemUiVisibility());
+        // Clear the not-focusable.
+        alertDialog.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE);
     }
 
     interface MenuOptionCallback {
