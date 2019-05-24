@@ -57,11 +57,26 @@
                 android:onClick="@{()-> controller.triggerSubtitlesToggle(!controller.isSubtitleEnabled)}"
                 android:visibility="@{controller.videoHasSubtitle &amp;&amp; !controller.isCurrentAd ? View.VISIBLE : View.GONE}"
                 app:layout_constraintLeft_toLeftOf="@+id/tubi_tv_controller_guideline_seek_right"
-                app:layout_constraintRight_toLeftOf="@+id/view_tubi_controller_quality_ib"
+                app:layout_constraintRight_toLeftOf="@+id/view_tubi_controller_setting_ib"
                 app:layout_constraintTop_toTopOf="@+id/tubi_tv_controller_guideline_top"
                 app:setCheckedState="@{controller.isSubtitleEnabled}"
                 app:state_checked="@drawable/tubi_tv_drawable_subtitles_on_selector"
                 app:state_not_checked="@drawable/tubi_tv_drawable_subtitles_off_selector" />
+
+            <ImageButton
+                android:id="@+id/view_tubi_controller_setting_ib"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginEnd="16dp"
+                android:layout_marginLeft="8dp"
+                android:layout_marginRight="16dp"
+                android:background="@drawable/tubi_tv_drawable_playback_setting"
+                android:onClick="@{() -> controller.clickPlaybackSetting()}"
+                android:scaleType="fitCenter"
+                app:layout_constraintBottom_toBottomOf="@+id/tubi_tv_controller_guideline_seek_right"
+                app:layout_constraintRight_toLeftOf="parent"
+                app:layout_constraintTop_toTopOf="@+id/tubi_tv_controller_guideline_top" />
 
             <include
                 android:id="@+id/view_tubi_controller_ad_description"

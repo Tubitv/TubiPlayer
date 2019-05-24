@@ -20,6 +20,8 @@ public interface PlaybackActionCallback {
 
     void onLearnMoreClick(@NonNull MediaModel mediaModel);
 
+    void onPlaybackSettingClick();
+
     void onSubtitles(@Nullable MediaModel mediaModel, boolean enabled);
 
     void onQuality(@Nullable MediaModel mediaModel);

@@ -18,6 +18,8 @@ import com.tubitv.media.models.AdRetriever;
 import com.tubitv.media.models.CuePointsRetriever;
 import com.tubitv.media.models.MediaModel;
 import com.tubitv.media.models.VpaidClient;
+import com.tubitv.media.utilities.PlaybackSettingMenu;
+
 import dagger.Module;
 import dagger.Provides;
 import java.util.ArrayList;
@@ -159,5 +161,11 @@ public class PlayerModuleDefault {
                 return null;
             }
         };
+    }
+
+    @ActicityScope
+    @Provides
+    PlaybackSettingMenu providePlaybackSettingMenu() {
+        return new PlaybackSettingMenu();
     }
 }

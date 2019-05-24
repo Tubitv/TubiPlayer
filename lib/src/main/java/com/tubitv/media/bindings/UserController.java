@@ -333,6 +333,16 @@ public class UserController extends BaseObservable
     }
 
     @Override
+    public void clickPlaybackSetting() {
+        if (mPlaybackActionCallback == null) {
+            ExoPlayerLogger.w(TAG, "clickPlaybackSetting params is null");
+            return;
+        }
+
+        mPlaybackActionCallback.onPlaybackSettingClick();
+    }
+
+    @Override
     public String getCurrentVideoName() {
         return videoName.get();
     }

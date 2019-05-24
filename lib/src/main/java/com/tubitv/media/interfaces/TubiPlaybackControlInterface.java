@@ -16,6 +16,8 @@ public interface TubiPlaybackControlInterface {
 
     void clickCurrentAd();
 
+    void clickPlaybackSetting();
+
     //display control
     String getCurrentVideoName();
 
