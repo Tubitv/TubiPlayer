@@ -16,6 +16,7 @@ import java.util.Arrays;
  */
 public enum PlaybackSpeed {
 
+    // Ordering here will effect ordering in UI
     A_QUARTER(R.string.playback_speed_a_quarter, 0.25f),
     A_HALF(R.string.playback_speed_a_half, 0.5f),
     THREE_QUARTER(R.string.playback_speed_three_quarter, 0.75f),
@@ -50,6 +51,11 @@ public enum PlaybackSpeed {
             }
         }
         return null;
+    }
+
+    public static int getPlaybackSpeedPositionBySpeedValue(Float speedValue) {
+        PlaybackSpeed targetPlaybackSpeed = getPlaybackSpeedBySpeedValue(speedValue);
+        return getAllPlaybackSpeedEnums().indexOf(targetPlaybackSpeed);
     }
 
     public float getSpeedValue() {

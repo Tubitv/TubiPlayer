@@ -53,13 +53,20 @@ public class PlaybackSettingMenu {
             public void onClick() {
                 ArrayList<String> playbackSpeedTexts = new ArrayList<>();
                 ArrayList<Float> playbackSpeedValues = new ArrayList<>();
+
                 for (PlaybackSpeed playbackSpeed : PlaybackSpeed.getAllPlaybackSpeedEnums()) {
                     playbackSpeedTexts.add(playbackSpeed.getText(context));
                     playbackSpeedValues.add(playbackSpeed.getSpeedValue());
                 }
 
+                String[] speedOptionTextArray = playbackSpeedTexts.toArray(new String[playbackSpeedTexts.size()]);
+                int currentSpeedPosition = PlaybackSpeed.getPlaybackSpeedPositionBySpeedValue(
+                        contentPlayer.getPlaybackParameters().speed);
+
                 AlertDialog.Builder builder = new AlertDialog.Builder(context);
-                builder.setItems(playbackSpeedTexts.toArray(new String[playbackSpeedTexts.size()]),
+                builder.setSingleChoiceItems(
+                        speedOptionTextArray,
+                        currentSpeedPosition,   // When is -1, none will be selected.
                         new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int i) {
