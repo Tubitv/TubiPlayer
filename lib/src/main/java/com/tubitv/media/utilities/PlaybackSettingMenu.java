@@ -26,7 +26,7 @@ public class PlaybackSettingMenu {
 
     private AlertDialog mainDialog;
 
-    private ArrayList<MenuOption> menuOptions = new ArrayList<>();
+    private ArrayList<MenuOption> menuOptions;
 
     public PlaybackSettingMenu() {
     }
@@ -45,6 +45,8 @@ public class PlaybackSettingMenu {
     }
 
     public void buildSettingMenuOptions() {
+        menuOptions = new ArrayList<>();
+
         // Option can be separately injected from root activity if needed.
         // It requires dependencies: activityContext & contentSimpleExoPlayer.
         MenuOption playbackSpeedOption = new MenuOption(context.getString(
