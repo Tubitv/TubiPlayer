@@ -1,6 +1,5 @@
 package com.tubitv.media.utilities;
 
-import android.app.Activity;
 import android.content.DialogInterface;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AlertDialog;
@@ -10,6 +9,7 @@ import android.view.WindowManager;
 import com.google.android.exoplayer2.PlaybackParameters;
 import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.tubitv.media.R;
+import com.tubitv.media.activities.TubiPlayerActivity;
 import com.tubitv.media.models.PlaybackSpeed;
 
 import java.util.ArrayList;
@@ -21,7 +21,7 @@ public class PlaybackSettingMenu {
 
     private SimpleExoPlayer contentPlayer;
 
-    private Activity activity;
+    private TubiPlayerActivity activity;
 
     private AlertDialog mainDialog;
 
@@ -30,7 +30,7 @@ public class PlaybackSettingMenu {
     public PlaybackSettingMenu() {
     }
 
-    public PlaybackSettingMenu(@NonNull SimpleExoPlayer contentPlayer, @NonNull Activity playerActivity) {
+    public PlaybackSettingMenu(@NonNull SimpleExoPlayer contentPlayer, @NonNull TubiPlayerActivity playerActivity) {
         this.contentPlayer = contentPlayer;
         this.activity = playerActivity;
     }
@@ -39,7 +39,7 @@ public class PlaybackSettingMenu {
         this.contentPlayer = contentPlayer;
     }
 
-    public void setActivity(@NonNull Activity activity) {
+    public void setActivity(@NonNull TubiPlayerActivity activity) {
         this.activity = activity;
     }
 
