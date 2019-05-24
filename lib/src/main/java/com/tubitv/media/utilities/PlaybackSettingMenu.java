@@ -1,11 +1,10 @@
 package com.tubitv.media.utilities;
 
-import android.content.Context;
+import android.app.Activity;
 import android.content.DialogInterface;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AlertDialog;
 import android.view.Gravity;
-import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import com.google.android.exoplayer2.PlaybackParameters;
@@ -22,7 +21,7 @@ public class PlaybackSettingMenu {
 
     private SimpleExoPlayer contentPlayer;
 
-    private Context context;
+    private Activity activity;
 
     private AlertDialog mainDialog;
 
@@ -31,17 +30,17 @@ public class PlaybackSettingMenu {
     public PlaybackSettingMenu() {
     }
 
-    public PlaybackSettingMenu(@NonNull SimpleExoPlayer contentPlayer, @NonNull View exoPlayerView) {
+    public PlaybackSettingMenu(@NonNull SimpleExoPlayer contentPlayer, @NonNull Activity playerActivity) {
         this.contentPlayer = contentPlayer;
-        this.context = exoPlayerView.getContext();
+        this.activity = playerActivity;
     }
 
     public void setContentPlayer(@NonNull SimpleExoPlayer contentPlayer) {
         this.contentPlayer = contentPlayer;
     }
 
-    public void setContext(@NonNull Context context) {
-        this.context = context;
+    public void setActivity(@NonNull Activity activity) {
+        this.activity = activity;
     }
 
     public void buildSettingMenuOptions() {
@@ -49,7 +48,7 @@ public class PlaybackSettingMenu {
 
         // Option can be separately injected from root activity if needed.
         // It requires dependencies: activityContext & contentSimpleExoPlayer.
-        MenuOption playbackSpeedOption = new MenuOption(context.getString(
+        MenuOption playbackSpeedOption = new MenuOption(activity.getString(
                 R.string.playback_setting_speed_title), new MenuOptionCallback() {
             @Override
             public void onClick() {
@@ -57,7 +56,7 @@ public class PlaybackSettingMenu {
                 ArrayList<Float> playbackSpeedValues = new ArrayList<>();
 
                 for (PlaybackSpeed playbackSpeed : PlaybackSpeed.getAllPlaybackSpeedEnums()) {
-                    playbackSpeedTexts.add(playbackSpeed.getText(context));
+                    playbackSpeedTexts.add(playbackSpeed.getText(activity));
                     playbackSpeedValues.add(playbackSpeed.getSpeedValue());
                 }
 
@@ -65,7 +64,7 @@ public class PlaybackSettingMenu {
                 int currentSpeedPosition = PlaybackSpeed.getPlaybackSpeedPositionBySpeedValue(
                         contentPlayer.getPlaybackParameters().speed);
 
-                AlertDialog.Builder builder = new AlertDialog.Builder(context);
+                AlertDialog.Builder builder = new AlertDialog.Builder(activity);
                 builder.setSingleChoiceItems(
                         speedOptionTextArray,
                         currentSpeedPosition,   // When is -1, none will be selected.
@@ -85,8 +84,12 @@ public class PlaybackSettingMenu {
                         });
 
                 AlertDialog chooseSpeedDialog = builder.create();
+
+                chooseSpeedDialog.getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE, WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE);
                 setAlertDialogGravityBottomCenter(chooseSpeedDialog);
                 chooseSpeedDialog.show();
+                chooseSpeedDialog.getWindow().getDecorView().setSystemUiVisibility(activity.getWindow().getDecorView().getSystemUiVisibility());
+                chooseSpeedDialog.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE);
             }
 
             @Override
@@ -95,7 +98,7 @@ public class PlaybackSettingMenu {
                 Float currentSpeedValue = contentPlayer.getPlaybackParameters().speed;
                 PlaybackSpeed currentPlaybackSpeed = PlaybackSpeed.getPlaybackSpeedBySpeedValue(currentSpeedValue);
                 if (currentPlaybackSpeed != null) {
-                    defaultTitle = defaultTitle + " - " + currentPlaybackSpeed.getText(context);
+                    defaultTitle = defaultTitle + " - " + currentPlaybackSpeed.getText(activity);
                 }
                 return defaultTitle;
             }
@@ -105,8 +108,8 @@ public class PlaybackSettingMenu {
     }
 
     public void show() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(context);
-        builder.setTitle(context.getString(R.string.playback_setting_title));
+        AlertDialog.Builder builder = new AlertDialog.Builder(activity);
+        builder.setTitle(activity.getString(R.string.playback_setting_title));
 
         String[] settingOptionTitles = new String[menuOptions.size()];
         for (int i = 0; i < menuOptions.size(); i++) {
@@ -122,8 +125,14 @@ public class PlaybackSettingMenu {
         });
 
         mainDialog = builder.create();
+//        setAlertDialogGravityBottomCenter(mainDialog);   // TODO: add cancel listener to hide sysUI
+//        mainDialog.show();
+
+        mainDialog.getWindow().setFlags(WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE, WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE);
         setAlertDialogGravityBottomCenter(mainDialog);
         mainDialog.show();
+        mainDialog.getWindow().getDecorView().setSystemUiVisibility(activity.getWindow().getDecorView().getSystemUiVisibility());
+        mainDialog.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE);
     }
 
     public void dismiss() {
@@ -138,6 +147,10 @@ public class PlaybackSettingMenu {
         if (layoutParams != null) {
             layoutParams.gravity = Gravity.BOTTOM | Gravity.CENTER;
         }
+    }
+
+    private void makeAlertDialogNotToShowNavigationBar(AlertDialog alertDialog) {
+
     }
 
     interface MenuOptionCallback {
