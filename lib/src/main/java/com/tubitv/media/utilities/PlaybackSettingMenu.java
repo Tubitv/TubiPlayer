@@ -26,12 +26,16 @@ public class PlaybackSettingMenu {
 
     private AlertDialog mainDialog;
 
+    private ArrayList<MenuOption> menuOptions = new ArrayList<>();
+
     public PlaybackSettingMenu() {
+        buildSettingMenuOptions();
     }
 
     public PlaybackSettingMenu(@NonNull SimpleExoPlayer contentPlayer, @NonNull View exoPlayerView) {
         this.contentPlayer = contentPlayer;
         this.context = exoPlayerView.getContext();
+        buildSettingMenuOptions();
     }
 
     public void setContentPlayer(@NonNull SimpleExoPlayer contentPlayer) {
@@ -42,28 +46,69 @@ public class PlaybackSettingMenu {
         this.context = context;
     }
 
+    private void buildSettingMenuOptions() {
+        // Option can be separately injected from root activity if needed.
+        // It requires dependencies: activityContext & contentSimpleExoPlayer.
+        MenuOption playbackSpeedOption = new MenuOption("Playback Speed", new MenuOptionCallback() {
+            @Override
+            public void onClick() {
+                ArrayList<String> playbackSpeedTexts = new ArrayList<>();
+                ArrayList<Float> playbackSpeedValues = new ArrayList<>();
+                for (PlaybackSpeed playbackSpeed : PlaybackSpeed.getAllPlaybackSpeedEnums()) {
+                    playbackSpeedTexts.add(playbackSpeed.getText(context));
+                    playbackSpeedValues.add(playbackSpeed.getSpeedValue());
+                }
+
+                AlertDialog.Builder builder = new AlertDialog.Builder(context);
+                builder.setItems(playbackSpeedTexts.toArray(new String[playbackSpeedTexts.size()]),
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int i) {
+                                PlaybackParameters originParameters = contentPlayer.getPlaybackParameters();
+                                PlaybackParameters updatedSpeedParameters = new PlaybackParameters(
+                                        playbackSpeedValues.get(i),
+                                        originParameters.pitch, // Keeping old values
+                                        originParameters.skipSilence
+                                );
+
+                                contentPlayer.setPlaybackParameters(updatedSpeedParameters);
+                                dialog.dismiss();
+                            }
+                        });
+
+                AlertDialog dialog = builder.create();
+                setAlertDialogGravityBottomCenter(dialog);
+                dialog.show();
+            }
+
+            @Override
+            public String getDynamicTitle(String defaultTitle) {
+                Float currentSpeedValue = contentPlayer.getPlaybackParameters().speed;
+                PlaybackSpeed currentPlaybackSpeed = PlaybackSpeed.getPlaybackSpeedBySpeedValue(currentSpeedValue);
+                if (currentPlaybackSpeed != null) {
+                    defaultTitle = defaultTitle + " - " + currentPlaybackSpeed.getText(context);
+                }
+                return defaultTitle;
+            }
+        });
+
+        menuOptions.add(playbackSpeedOption);
+    }
+
     public void show() {
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         builder.setTitle("Setting");
 
-        // TODO: move this as a method. Maybe have an Option object with onClick interface or whatnot
-        String playbackOptionText = "Playback Speed";
-        Float currentSpeedValue = contentPlayer.getPlaybackParameters().speed;
-        PlaybackSpeed currentPlaybackSpeed = PlaybackSpeed.getPlaybackSpeedBySpeedValue(currentSpeedValue);
-        if (currentPlaybackSpeed != null) {
-            playbackOptionText = playbackOptionText + ": " + currentPlaybackSpeed.getText(context);
+        String[] settingOptionTitles = new String[menuOptions.size()];
+        for (int i = 0; i < menuOptions.size(); i++) {
+            settingOptionTitles[i] = menuOptions.get(i).getTitle();
         }
-        String[] settingOptions = {playbackOptionText};
 
-        builder.setItems(settingOptions, new DialogInterface.OnClickListener() {
+        builder.setItems(settingOptionTitles, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int i) {
-                switch (i) {
-                    case 0:
-                        showPlaybackSpeedMenu();
-                        break;
-                }
-                dialog.dismiss();   // always close after click
+                menuOptions.get(i).onClick();
+                dialog.dismiss();
             }
         });
 
@@ -78,41 +123,34 @@ public class PlaybackSettingMenu {
         }
     }
 
-    private void showPlaybackSpeedMenu() {
-        ArrayList<String> playbackSpeedTexts = new ArrayList<>();
-        ArrayList<Float> playbackSpeedValues = new ArrayList<>();
-        for (PlaybackSpeed playbackSpeed : PlaybackSpeed.getAllPlaybackSpeedEnums()) {
-            playbackSpeedTexts.add(playbackSpeed.getText(context));
-            playbackSpeedValues.add(playbackSpeed.getSpeedValue());
-        }
-
-        AlertDialog.Builder builder = new AlertDialog.Builder(context);
-        builder.setItems(playbackSpeedTexts.toArray(new String[playbackSpeedTexts.size()]),
-                new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int i) {
-                PlaybackParameters originParameters = contentPlayer.getPlaybackParameters();
-                PlaybackParameters updatedSpeedParameters = new PlaybackParameters(
-                        playbackSpeedValues.get(i),
-                        originParameters.pitch, // Keeping old values
-                        originParameters.skipSilence
-                );
-
-                contentPlayer.setPlaybackParameters(updatedSpeedParameters);
-                dialog.dismiss();
-            }
-        });
-
-        AlertDialog dialog = builder.create();
-        setAlertDialogGravityBottomCenter(dialog);
-        dialog.show();
-    }
-
     private void setAlertDialogGravityBottomCenter(AlertDialog alertDialog) {
         alertDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         WindowManager.LayoutParams layoutParams = alertDialog.getWindow().getAttributes();
         if (layoutParams != null) {
             layoutParams.gravity = Gravity.BOTTOM | Gravity.CENTER;
+        }
+    }
+
+    interface MenuOptionCallback {
+        void onClick();
+        String getDynamicTitle(String defaultTitle);
+    }
+
+    class MenuOption {
+        private String title;
+        private MenuOptionCallback callback;
+
+        MenuOption(String title, MenuOptionCallback callback) {
+            this.title = title;
+            this.callback = callback;
+        }
+
+        void onClick() {
+            callback.onClick();
+        }
+
+        String getTitle() {
+            return callback.getDynamicTitle(title);
         }
     }
 }

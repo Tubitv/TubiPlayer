@@ -10,9 +10,9 @@ import java.util.Arrays;
 /**
  * Playback Speed in percent.
  * e.g.
- * 1.0f == normal speed
- * 0.75f == three-quarter of normal speed
- * 2.0f == double normal speed
+ * 1.0f = normal speed
+ * 0.75f = three-quarter of normal speed
+ * 2.0f = double normal speed
  */
 public enum PlaybackSpeed {
 
@@ -25,10 +25,10 @@ public enum PlaybackSpeed {
     ONE_AND_THREE_QUARTER(R.string.playback_speed_one_and_three_quarter, 1.75f),
     TWO(R.string.playback_speed_two, 2f);
 
+    private static final float EPSILON = 0.01f;
+
     private final int stringResourceId;
     private final float speedValue;
-
-    private static final float EPSILON = 0.01f;
 
     PlaybackSpeed(int stringResourceId, float speedValue) {
         this.stringResourceId = stringResourceId;
