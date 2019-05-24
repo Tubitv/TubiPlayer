@@ -88,7 +88,8 @@ public class PlaybackSettingMenu {
             }
 
             @Override
-            public String getDynamicTitle(String defaultTitle) {
+            public String getTitle(String defaultTitle) {
+                // Dynamic title
                 Float currentSpeedValue = contentPlayer.getPlaybackParameters().speed;
                 PlaybackSpeed currentPlaybackSpeed = PlaybackSpeed.getPlaybackSpeedBySpeedValue(currentSpeedValue);
                 if (currentPlaybackSpeed != null) {
@@ -139,7 +140,7 @@ public class PlaybackSettingMenu {
 
     interface MenuOptionCallback {
         void onClick();
-        String getDynamicTitle(String defaultTitle);
+        String getTitle(String defaultTitle);
     }
 
     class MenuOption {
@@ -156,7 +157,7 @@ public class PlaybackSettingMenu {
         }
 
         String getTitle() {
-            return callback.getDynamicTitle(title);
+            return callback.getTitle(title);
         }
     }
 }
