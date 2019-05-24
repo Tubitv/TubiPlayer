@@ -46,12 +46,12 @@ public class PlaybackSettingMenu {
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         builder.setTitle("Setting");
 
-        // TODO: dynamically display current playback speed
+        // TODO: move this as a method. Maybe have an Option object with onClick interface or whatnot
         String playbackOptionText = "Playback Speed";
         Float currentSpeedValue = contentPlayer.getPlaybackParameters().speed;
-        String currentSpeedText = PlaybackSpeed.getTextBySpeedValue(context, currentSpeedValue);
-        if (currentSpeedText != null) {
-            playbackOptionText = playbackOptionText + ": " + currentSpeedText;
+        PlaybackSpeed currentPlaybackSpeed = PlaybackSpeed.getPlaybackSpeedBySpeedValue(currentSpeedValue);
+        if (currentPlaybackSpeed != null) {
+            playbackOptionText = playbackOptionText + ": " + currentPlaybackSpeed.getText(context);
         }
         String[] settingOptions = {playbackOptionText};
 
