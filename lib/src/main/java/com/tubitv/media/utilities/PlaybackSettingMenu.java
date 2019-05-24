@@ -140,7 +140,8 @@ public class PlaybackSettingMenu {
     }
 
     /*
-     * This methods is to keep the system navigation bar not appearing after calling .show()
+     * This method is to keep the system navigation bar not appearing after dialog calling .show().
+     *
      * More on this problem:
      * https://stackoverflow.com/questions/22794049/how-do-i-maintain-the-immersive-mode-in-dialogs
      */
@@ -149,13 +150,13 @@ public class PlaybackSettingMenu {
         alertDialog.getWindow().setFlags(
                 WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE,
                 WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE);
-        
+
         alertDialog.show();
 
         // Copy the hosted activity systemUI setting.
         alertDialog.getWindow().getDecorView().setSystemUiVisibility(
                 activity.getWindow().getDecorView().getSystemUiVisibility());
-        // Clear the not-focusable.
+        // Clear the not-focusable, which let the dialog re-gain focus.
         alertDialog.getWindow().clearFlags(WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE);
     }
 
