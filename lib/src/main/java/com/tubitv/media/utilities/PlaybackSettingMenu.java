@@ -15,11 +15,16 @@ import com.tubitv.media.models.PlaybackSpeed;
 
 import java.util.ArrayList;
 
+/**
+ * A nested setting menu using AlertDialog.
+ */
 public class PlaybackSettingMenu {
 
     private SimpleExoPlayer contentPlayer;
 
     private Context context;
+
+    private AlertDialog mainDialog;
 
     private static String[] settingOptions = {"Playback Speed"};    // hard coded for now
 
@@ -54,9 +59,15 @@ public class PlaybackSettingMenu {
             }
         });
 
-        AlertDialog dialog = builder.create();
-        setAlertDialogGravityBottomCenter(dialog);
-        dialog.show();
+        mainDialog = builder.create();
+        setAlertDialogGravityBottomCenter(mainDialog);
+        mainDialog.show();
+    }
+
+    public void dismiss() {
+        if (mainDialog != null) {
+            mainDialog.dismiss();
+        }
     }
 
     private void showPlaybackSpeedMenu() {
