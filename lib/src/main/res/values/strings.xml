@@ -23,6 +23,10 @@
         <item quantity="other">Your title will begin after %1$d ads</item>
     </plurals>
 
+    <!--Playback Menu titles-->
+    <string name="playback_setting_title">Setting</string>
+    <string name="playback_setting_speed_title">Playback Speed</string>
+
     <!--Playback Speed copy-->
     <string name="playback_speed_a_quarter">0.25x</string>
     <string name="playback_speed_a_half">0.5x</string>

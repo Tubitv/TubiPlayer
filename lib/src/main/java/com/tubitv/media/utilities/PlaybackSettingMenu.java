@@ -10,6 +10,7 @@ import android.view.Window;
 import android.view.WindowManager;
 import com.google.android.exoplayer2.PlaybackParameters;
 import com.google.android.exoplayer2.SimpleExoPlayer;
+import com.tubitv.media.R;
 import com.tubitv.media.models.PlaybackSpeed;
 
 import java.util.ArrayList;
@@ -48,7 +49,8 @@ public class PlaybackSettingMenu {
     private void buildSettingMenuOptions() {
         // Option can be separately injected from root activity if needed.
         // It requires dependencies: activityContext & contentSimpleExoPlayer.
-        MenuOption playbackSpeedOption = new MenuOption("Playback Speed", new MenuOptionCallback() {
+        MenuOption playbackSpeedOption = new MenuOption(context.getString(
+                R.string.playback_setting_speed_title), new MenuOptionCallback() {
             @Override
             public void onClick() {
                 ArrayList<String> playbackSpeedTexts = new ArrayList<>();
@@ -104,7 +106,7 @@ public class PlaybackSettingMenu {
 
     public void show() {
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
-        builder.setTitle("Setting");
+        builder.setTitle(context.getString(R.string.playback_setting_title));
 
         String[] settingOptionTitles = new String[menuOptions.size()];
         for (int i = 0; i < menuOptions.size(); i++) {

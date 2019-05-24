@@ -1,6 +1,7 @@
 package com.tubitv.media.models;
 
 import android.content.Context;
+import android.support.annotation.NonNull;
 
 import com.tubitv.media.R;
 
@@ -41,7 +42,7 @@ public enum PlaybackSpeed {
     }
 
     public String getText(Context context) {
-        return context.getResources().getString(stringResourceId);
+        return context.getString(stringResourceId);
     }
 
     public static PlaybackSpeed getPlaybackSpeedBySpeedValue(Float speedValue) {
