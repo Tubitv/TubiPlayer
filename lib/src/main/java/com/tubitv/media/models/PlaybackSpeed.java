@@ -26,11 +26,13 @@ public enum PlaybackSpeed {
     TWO(R.string.playback_speed_two, 2f);
 
     private final int stringResourceId;
-    private final float speed;
+    private final float speedValue;
 
-    PlaybackSpeed(int stringResourceId, float speed) {
+    private static final float epsilon = 0.01f;
+
+    PlaybackSpeed(int stringResourceId, float speedValue) {
         this.stringResourceId = stringResourceId;
-        this.speed = speed;
+        this.speedValue = speedValue;
     }
 
     public int getStringResourceId() {
@@ -41,8 +43,17 @@ public enum PlaybackSpeed {
         return context.getResources().getString(stringResourceId);
     }
 
-    public float getSpeed() {
-        return speed;
+    public static String getTextBySpeedValue(Context context, Float speedValue) {
+        for (PlaybackSpeed playbackSpeed : PlaybackSpeed.getAllPlaybackSpeedEnums()) {
+            if(Math.abs(playbackSpeed.speedValue - speedValue) < epsilon) {
+                return playbackSpeed.getText(context);
+            }
+        }
+        return null;
+    }
+
+    public float getSpeedValue() {
+        return speedValue;
     }
 
     public static ArrayList<PlaybackSpeed> getAllPlaybackSpeedEnums() {

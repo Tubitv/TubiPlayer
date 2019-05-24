@@ -16,7 +16,7 @@ import com.tubitv.media.models.PlaybackSpeed;
 import java.util.ArrayList;
 
 /**
- * A nested setting menu using AlertDialog.
+ * A nested playback setting menu using AlertDialog.
  */
 public class PlaybackSettingMenu {
 
@@ -25,8 +25,6 @@ public class PlaybackSettingMenu {
     private Context context;
 
     private AlertDialog mainDialog;
-
-    private static String[] settingOptions = {"Playback Speed"};    // hard coded for now
 
     public PlaybackSettingMenu() {
     }
@@ -47,6 +45,16 @@ public class PlaybackSettingMenu {
     public void show() {
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         builder.setTitle("Setting");
+
+        // TODO: dynamically display current playback speed
+        String playbackOptionText = "Playback Speed";
+        Float currentSpeedValue = contentPlayer.getPlaybackParameters().speed;
+        String currentSpeedText = PlaybackSpeed.getTextBySpeedValue(context, currentSpeedValue);
+        if (currentSpeedText != null) {
+            playbackOptionText = playbackOptionText + ": " + currentSpeedText;
+        }
+        String[] settingOptions = {playbackOptionText};
+
         builder.setItems(settingOptions, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int i) {
@@ -73,10 +81,9 @@ public class PlaybackSettingMenu {
     private void showPlaybackSpeedMenu() {
         ArrayList<String> playbackSpeedTexts = new ArrayList<>();
         ArrayList<Float> playbackSpeedValues = new ArrayList<>();
-
         for (PlaybackSpeed playbackSpeed : PlaybackSpeed.getAllPlaybackSpeedEnums()) {
             playbackSpeedTexts.add(playbackSpeed.getText(context));
-            playbackSpeedValues.add(playbackSpeed.getSpeed());
+            playbackSpeedValues.add(playbackSpeed.getSpeedValue());
         }
 
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
