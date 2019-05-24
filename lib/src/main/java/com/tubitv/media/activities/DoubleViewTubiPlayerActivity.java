@@ -214,7 +214,6 @@ public class DoubleViewTubiPlayerActivity extends TubiPlayerActivity implements 
         //update the playerUIController view, need to update the view everything when two ExoPlayer being recreated in activity lifecycle.
         playerUIController.setContentPlayer(mMoviePlayer);
 
-
         if (!PlayerDeviceUtils.useSinglePlayer()) {
             playerUIController.setAdPlayer(adPlayer);
         }

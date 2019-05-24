@@ -64,6 +64,7 @@ public class TubiExoPlayerView extends FrameLayout {
     private SimpleExoPlayer player;
 
     private UserController userController;
+
     public TubiExoPlayerView(Context context) {
         this(context, null);
     }
