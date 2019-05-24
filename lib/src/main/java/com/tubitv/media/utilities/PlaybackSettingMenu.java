@@ -84,11 +84,8 @@ public class PlaybackSettingMenu {
                         });
 
                 AlertDialog chooseSpeedDialog = builder.create();
-                setDialogGravityBottomCenter(chooseSpeedDialog);
-
-                makeDialogNotShowingNavBarBeforeShow(chooseSpeedDialog);
-                chooseSpeedDialog.show();
-                makeDialogNotShowingNavBarAfterShow(chooseSpeedDialog);
+                setAlertDialogGravityBottomCenter(chooseSpeedDialog);
+                alertDialogImmersiveShow(chooseSpeedDialog);
             }
 
             @Override
@@ -124,11 +121,8 @@ public class PlaybackSettingMenu {
         });
 
         mainDialog = builder.create();
-        setDialogGravityBottomCenter(mainDialog);
-
-        makeDialogNotShowingNavBarBeforeShow(mainDialog);
-        mainDialog.show();
-        makeDialogNotShowingNavBarAfterShow(mainDialog);
+        setAlertDialogGravityBottomCenter(mainDialog);
+        alertDialogImmersiveShow(mainDialog);
     }
 
     public void dismiss() {
@@ -137,7 +131,7 @@ public class PlaybackSettingMenu {
         }
     }
 
-    private void setDialogGravityBottomCenter(AlertDialog alertDialog) {
+    private void setAlertDialogGravityBottomCenter(AlertDialog alertDialog) {
         alertDialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         WindowManager.LayoutParams layoutParams = alertDialog.getWindow().getAttributes();
         if (layoutParams != null) {
@@ -146,17 +140,18 @@ public class PlaybackSettingMenu {
     }
 
     /*
-     * This pair of methods is to keep the system navigation bar not appearing after .show()
+     * This methods is to keep the system navigation bar not appearing after calling .show()
      * More on this problem:
      * https://stackoverflow.com/questions/22794049/how-do-i-maintain-the-immersive-mode-in-dialogs
      */
-    private void makeDialogNotShowingNavBarBeforeShow(AlertDialog alertDialog) {
-        // Set dialog not-focusable.
+    private void alertDialogImmersiveShow(AlertDialog alertDialog) {
+        // Set dialog not-focusable, to avoid popping the nav bar.
         alertDialog.getWindow().setFlags(
                 WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE,
                 WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE);
-    }
-    private void makeDialogNotShowingNavBarAfterShow(AlertDialog alertDialog) {
+        
+        alertDialog.show();
+
         // Copy the hosted activity systemUI setting.
         alertDialog.getWindow().getDecorView().setSystemUiVisibility(
                 activity.getWindow().getDecorView().getSystemUiVisibility());
