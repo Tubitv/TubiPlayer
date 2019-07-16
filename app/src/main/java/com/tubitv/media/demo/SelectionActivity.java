@@ -16,7 +16,7 @@ import com.tubitv.media.models.MediaModel;
  */
 public class SelectionActivity extends Activity {
 
-    private static final String VIDEO_URL = "https://tungsten.aaplimg.com/VOD/bipbop_adv_fmp4_example/master.m3u8";
+    private static final String VIDEO_URL = "http://techslides.com/demos/sample-videos/small.mp4";
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
