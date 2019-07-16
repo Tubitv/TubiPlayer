@@ -108,7 +108,7 @@ public class MediaModel implements Serializable {
     }
 
     public String getMediaExtension() {
-        return "m3u8";
+        return null;
     }
 
     public MediaSource getMediaSource() {
